@@ -50,9 +50,12 @@ function getUserVoiceChannel(user_id) {
 };
 
 function sendMessage(channel_id, message) {
-  bot.sendMessage({
-      to: channel_id,
-      message: message
+  
+  bot.simulateTyping(channel_id, function() {
+    bot.sendMessage({
+        to: channel_id,
+        message: message
+    });
   });
 };
 
@@ -68,7 +71,7 @@ function getNickFromUserId( channel_id, user_id ) {
       return bot.servers[server].members[user_id].nick;        
     }
   }
-  return "";
+  return null;
 };
 
 function convertCamelCaseNicksToEnglish( nick_name ) {
@@ -79,7 +82,13 @@ function convertCamelCaseNicksToEnglish( nick_name ) {
 
 function convertDiscordUserIdsToNicks(channel_id, message) {
   return message.replace(/<@\!(\d{12,19})>/g, function(a,b){
-    return convertCamelCaseNicksToEnglish(getNickFromUserId(channel_id, b));
+    var nick = getNickFromUserId(channel_id, b);
+    if ( !nick ) {
+      console.error('Cant find nick for ' + b);
+      return b;
+    }
+    else     
+      return convertCamelCaseNicksToEnglish(nick);
   })
 };
 
@@ -88,6 +97,7 @@ function stripUrls(message) {
 };
 
 function neglected_timeout() {
+  console.log("Neglected");
   bondage.neglected();
 };
 
@@ -99,10 +109,9 @@ function neglected_release() {
 };
 
 var bondage = {
+  NEGLECT_TIMEOUT_IN_MS: 30 * 60 * 1000, // 30 mins
   
   state: {
-    NEGLECT_TIMEOUT_IN_MS: 30 * 60 * 1000, // 30 mins
-    
     bound_to: null,
     bound_to_username: null,
     current_voice_channel_id: null,
@@ -148,11 +157,16 @@ var bondage = {
     
   joinVoiceChannel: function(channel_id, callback) {
     if ( !callback ) callback = function() {};
-    this.state.current_voice_channel_id = channel_id;
     bot.joinVoiceChannel(channel_id, function(error, events) { 
-      if ( error ) bondage.state.current_voice_channel_id = null;
-      console.log('joined channel: ' + channel_id); 
-      callback();
+      if ( error ) { 
+        console.error(error);
+        bondage.state.current_voice_channel_id = null;
+      }
+      else {
+        bondage.state.current_voice_channel_id = channel_id;
+        console.log('joined channel: ' + channel_id); 
+        callback();
+      }
     });
     this._save();
   },
@@ -186,7 +200,7 @@ var bondage = {
   resetNeglectTimeout: function() {
     if ( this.neglect_timeout ) 
       clearTimeout(this.neglect_timeout);
-    this.neglect_timeout = setTimeout(neglected_timeout, this.state.NEGLECT_TIMEOUT_IN_MS);
+    this.neglect_timeout = setTimeout(neglected_timeout, this.NEGLECT_TIMEOUT_IN_MS);
   },
   
   talk: function(message) {
@@ -198,20 +212,37 @@ var bondage = {
     var play_padding = (message.length < 20);
     if ( !callback ) callback = function() {};
     tts(message, 'en', 1).then(function(url) {
-      console.log(url);
+      console.log(message);
       bot.getAudioContext(bondage.state.current_voice_channel_id, function(error, stream) {
         if ( error) return console.error(error);
-        request
-          .get(url)
-          .on('end', function() {
-            if ( play_padding )
-              fs.createReadStream('./padding.m4a')
-              .on('end', callback)            
-              .pipe(stream, {end:false});
-            else 
-              callback();
-          })
-          .pipe(stream, {end:false});
+                
+        try {
+          request
+            .get(url)
+            .on('end', function() {
+              if ( play_padding )
+                fs.createReadStream('./padding.m4a')
+                .on('end', callback)            
+                .pipe(stream, {end:false})
+                .on('error', function() {
+                  console.error('Error writing to discord voice stream');
+                });
+              else 
+                callback();
+            })
+            .on('error', function() {
+              console.error('Error fetching: ' + url);
+            })
+            .pipe(stream, {end:false});
+            
+            // memory leak here, have to only do this once
+            /*.on('error', function() {
+              console.error('Error writing to discord voice stream');
+            });*/
+        }
+        catch( ex ) {
+          console.error(ex);
+        }
 
       });
     })
@@ -227,17 +258,22 @@ var bondage = {
   },
   
   _save: function() {
-    console.log(this.state);
     fs.writeFileSync('./state.json', JSON.stringify(this.state) , 'utf-8'); 
   },
   
   load: function() {
     try {
-      this.state = require('./state.json') || {};
-      if ( this.inChannel() )
-        this.joinVoiceChannel(this.state.current_voice_channel_id);
+      var file = require('./state.json');
+      this.state = file;
+      if ( this.isBound() )
+        this.setMaster(this.state.bound_to, this.state.bound_to_username);
+      var voiceChan = getUserVoiceChannel(this.state.bound_to);
+      if ( voiceChan )
+        this.joinVoiceChannel(voiceChan);
+      
     } catch (ex) {
-      console.log(ex);
+      console.log("Failed to load state from file");
+      this._save();
     }
   },
 };
@@ -258,6 +294,7 @@ bot.on('disconnect', function(evt) {
   console.log('Disconnected');
   bot.connect();
 });
+
 bot.on('any', function(evt) {
   
   if ( evt.d && bondage.isPermitted(evt.d.user_id)) {
@@ -278,6 +315,7 @@ bot.on('any', function(evt) {
   }
   //console.log(evt);
 });
+
 bot.on('message', function (username, user_id, channel_id, message, evt) {
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
@@ -288,19 +326,30 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     args = args.splice(1);
     switch(cmd) {
       case 'who':
-        sendMessage(channel_id, "My master is " + getNickFromUserId(channel_id, bondage.state.bound_to));
+     
+        var master_nick = getNickFromUserId(channel_id, bondage.state.bound_to);
+        if ( !master_nick )
+          master_nick = bondage.state.bound_to;
+        sendMessage(channel_id, "My master is " + master_nick);
         break;
+        
       // !ping
       case 'ping':
-        bot.sendMessage({
-            to: channel_id,
-            message: 'Pong!'
-        });
+        sendMessage(channel_id, 'Pong!');
         break;
+        
       case 'follow':
+      
         if ( bondage.isBound() ) {
-          if ( !bondage.isMaster(user_id))
-            sendMessage(channel_id, "Sorry, "+getNickFromUserId(channel_id, bondage.state.bound_to)+" is my master today. Get them to release me from my bonds and I'll serve you.");
+          if ( !bondage.isMaster(user_id)) {
+            var master_nick = getNickFromUserId(channel_id, bondage.state.bound_to);
+            if ( !master_nick )
+              master_nick = bondage.state.bound_to;
+            sendMessage(channel_id, "Sorry, "+master_nick+" is my master today. Get them to release me from my bonds and I'll serve you.");
+          }
+          else {
+            sendMessage(channel_id, "Yes master?");
+          }
         }
         else {
           bondage.setMaster(user_id, username);
@@ -310,31 +359,54 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           sendMessage(channel_id, "Yes, master!");
         }
         break;
+        
       case 'unfollow':
-        if ( !bondage.isMaster(user_id)) break;
         if ( bondage.isBound() ) {
-          bondage.release();
-          sendMessage(channel_id, "Goodbye master");
+          if ( !bondage.isMaster(user_id)) {
+            sendMessage(channel_id, "Sorry, you're not my master");
+          }
+          else {
+            bondage.release();
+            sendMessage(channel_id, "Goodbye master");
+          }
         }
         else
           sendMessage(channel_id, "I have no master... would you like to be my master?");
         break;
         
       case 'permit':
-        if ( !bondage.isMaster(user_id)) break;
-        var target_id = getDiscordUserIdFromMessage(args[0]);
-        if ( target_id ) {
-          bondage.permit(target_id);
-          sendMessage(channel_id, "I'll listen to " + getNickFromUserId(channel_id, target_id) + " now"); 
+        if ( !bondage.isMaster(user_id)) {
+          sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+        }
+        else {
+          var target_id = getDiscordUserIdFromMessage(args[0]);
+          if ( target_id ) {
+            var nick = getNickFromUserId(channel_id, target_id);
+            if ( !nick )
+              nick = target_id;
+            bondage.permit(target_id);
+            sendMessage(channel_id, "I'll listen to " + nick + " now"); 
+          }
+          else {
+            sendMessage(channel_id, "I don't know who " + args[0] + " is?");
+          }
         }
         break;
         
       case 'unpermit':
-        if ( !bondage.isMaster(user_id)) break;
-        var target_id = getDiscordUserIdFromMessage(args[0]);
-        if ( target_id ) {
-          bondage.unpermit(target_id);
-          sendMessage(channel_id, getNickFromUserId(channel_id, target_id) + " talk to the hand"); 
+        if ( !bondage.isMaster(user_id)) {
+          sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+        }
+        else {
+          var target_id = getDiscordUserIdFromMessage(args[0]);
+          if ( target_id ) {
+            var nick = getNickFromUserId(channel_id, target_id);
+            bondage.unpermit(target_id);
+            sendMessage(channel_id, nick + " talk to the hand"); 
+          }
+          else {
+            sendMessage(channel_id, "I don't know who " + args[0] + " is?");
+          }
         }
         break;
         
@@ -343,15 +415,28 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         break;
         
       case 'leave':
-        if ( !bondage.isMaster(user_id)) break;
-        bondage.leaveVoiceChannel();
+        if ( !bondage.isMaster(user_id)) {
+          sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+        }
+        else {
+          bondage.leaveVoiceChannel();
+        }
         break;
+        
       case 'join':
-        if ( !bondage.isMaster(user_id)) break;
-        var voiceChan = getUserVoiceChannel(user_id);
-        if ( voiceChan )
-          bondage.joinVoiceChannel(voiceChan);
+        if ( !bondage.isMaster(user_id)) {
+          sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+        }
+        else {
+          var voiceChan = getUserVoiceChannel(user_id);
+          if ( voiceChan )
+            bondage.joinVoiceChannel(voiceChan);
+          else {
+            sendMessage(channel_id, "You're not in a voice channel?");
+          }
+        }
         break;
+        
       case 'reset':
         if ( !bondage.isMaster(user_id)) break;
         var voiceChan = getUserVoiceChannel(user_id);
@@ -370,14 +455,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     
     if ( message.length > 199 ) return;
     if ( message.length < 1 ) return;
-    
-    console.log(bondage.isPermitted(user_id));
-    console.log(bondage.inChannel());
-    
-//    if ( message.length < 20 ) message = message.padEnd(20, '_');
-    if ( bondage.isPermitted(user_id) && bondage.inChannel() ) {
-      bondage.talk(message);
 
+    if ( bondage.inChannel() ) {
+      if ( bondage.isPermitted(user_id) ) {
+        bondage.talk(message);
+      }
     }
   }
 });
