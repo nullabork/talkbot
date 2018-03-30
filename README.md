@@ -4,6 +4,7 @@ Discord bot for text-to-speech
 # requirements
 - node js
 - npm
+- ffmpeg
 
 # setup
 Copy auth.example to auth.json and put in your discord app key. 
