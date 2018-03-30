@@ -5,12 +5,12 @@ var request = require('request');
 var fs = require('fs');
 
 function listVoiceChannels(server) {
-    var channels = bot.servers[server].channels;
-    for (var channel in channels) {
-        if (channels[channel].type === 2) {
-            console.log(channel + " - " + channels[channel].name);
-        }
+  var channels = bot.servers[server].channels;
+  for (var channel in channels) {
+    if (channels[channel].type === 2) {
+      console.log(channel + " - " + channels[channel].name);
     }
+  }
 }
 
 function isVoiceChannel(channel_id) {
@@ -84,72 +84,164 @@ function convertDiscordUserIdsToNicks(channel_id, message) {
 };
 
 function stripUrls(message) {
-  return message.replace(/(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/g, "");
+  return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, "");
+};
+
+function neglected_timeout() {
+  bondage.neglected();
+};
+
+function timeout_neglected_release() {
+  bondage.release();
+};
+function neglected_release() {
+  setTimeout(timeout_neglected_release, 3000);
 };
 
 var bondage = {
-  bound_to: null,
-  bound_to_username: null,
-  current_voice_channel_id: null,
-  permitted: [],
+  
+  state: {
+    NEGLECT_TIMEOUT_IN_MS: 30 * 60 * 1000, // 30 mins
+    
+    bound_to: null,
+    bound_to_username: null,
+    current_voice_channel_id: null,
+    permitted: {},
+  },
+  
+  neglect_timeout: null,
   
   setMaster: function(user_id, username) {
-    this.bound_to = user_id;
-    this.bound_to_username = username;
+    this.resetNeglectTimeout();
+    this.state.bound_to = user_id;
+    this.state.bound_to_username = username;
     this.permit(user_id);
+    this._save();
   },
   
   release: function() {
-    this.bound_to = null;
-    this.bound_to_username = null;
-    this.permitted = [];
+    this.state.bound_to = null;
+    this.state.bound_to_username = null;
+    this.state.permitted = {};
+    this.current_voice_channel_id = null;
+    this.neglect_timeout = null;
     if ( this.inChannel() )
       this.leaveVoiceChannel();
+    this._save();
   },
   
   isMaster: function(user_id) {
-    return this.bound_to == user_id;
+    return this.state.bound_to == user_id;
   },
   
   isBound: function() {
-    return this.bound_to != null;
+    return this.state.bound_to != null;
   },
   
   inChannel: function() {
-    return this.current_voice_channel_id != null;
+    return this.state.current_voice_channel_id != null;
   },
   
   isPermitted: function(user_id) {
-    return this.permitted[user_id] != null;
+    return this.state.permitted[user_id] != null;
   },
     
-  joinVoiceChannel: function(channel_id) {
-    this.current_voice_channel_id = channel_id;
+  joinVoiceChannel: function(channel_id, callback) {
+    if ( !callback ) callback = function() {};
+    this.state.current_voice_channel_id = channel_id;
     bot.joinVoiceChannel(channel_id, function(error, events) { 
-      if ( error ) this.current_voice_channel_id = null;
+      if ( error ) bondage.state.current_voice_channel_id = null;
       console.log('joined channel: ' + channel_id); 
+      callback();
     });
+    this._save();
   },
   
-  leaveVoiceChannel: function() {
-    if ( this.current_voice_channel_id != null )
-      bot.leaveVoiceChannel(this.current_voice_channel_id);
-    this.current_voice_channel_id = null;
+  leaveVoiceChannel: function(callback) {
+    if ( !callback ) callback = function() {};
+    if ( this.state.current_voice_channel_id != null )
+      bot.leaveVoiceChannel(this.state.current_voice_channel_id, callback);
+    this.state.current_voice_channel_id = null;
+    this._save();
   },
   
   shutup: function() {
-    bot.getAudioContext(bondage.current_voice_channel_id, function(error, stream) {
+    this.resetNeglectTimeout();
+    bot.getAudioContext(bondage.state.current_voice_channel_id, function(error, stream) {
       stream.stop();
     });    
   },
   
   permit: function(user_id) {
-    this.permitted[user_id] = true;
+    this.resetNeglectTimeout();
+    this.state.permitted[user_id] = true;
+    this._save();
   },
   unpermit: function(user_id) {
-    this.permitted[user_id] = null;
+    this.resetNeglectTimeout();
+    this.state.permitted[user_id] = null;
+    this._save();
+  },
+  
+  resetNeglectTimeout: function() {
+    if ( this.neglect_timeout ) 
+      clearTimeout(this.neglect_timeout);
+    this.neglect_timeout = setTimeout(neglected_timeout, this.state.NEGLECT_TIMEOUT_IN_MS);
+  },
+  
+  talk: function(message) {
+    this.resetNeglectTimeout();
+    this._talk(message);
+  },
+  
+  _talk: function(message, callback) {
+    var play_padding = (message.length < 20);
+    if ( !callback ) callback = function() {};
+    tts(message, 'en', 1).then(function(url) {
+      console.log(url);
+      bot.getAudioContext(bondage.state.current_voice_channel_id, function(error, stream) {
+        if ( error) return console.error(error);
+        request
+          .get(url)
+          .on('end', function() {
+            if ( play_padding )
+              fs.createReadStream('./padding.m4a')
+              .on('end', callback)            
+              .pipe(stream, {end:false});
+            else 
+              callback();
+          })
+          .pipe(stream, {end:false});
+
+      });
+    })
+    .catch(function(err) {
+      console.error(err.stack);
+    });
+  },
+  neglected: function() {
+    if ( this.inChannel() )
+      this._talk("I feel neglected, I'm leaving", neglected_release);
+    else 
+      this.release();    
+  },
+  
+  _save: function() {
+    console.log(this.state);
+    fs.writeFileSync('./state.json', JSON.stringify(this.state) , 'utf-8'); 
+  },
+  
+  load: function() {
+    try {
+      this.state = require('./state.json') || {};
+      if ( this.inChannel() )
+        this.joinVoiceChannel(this.state.current_voice_channel_id);
+    } catch (ex) {
+      console.log(ex);
+    }
   },
 };
+
 
 var bot = new Discord.Client({
    token: auth.token,
@@ -159,6 +251,8 @@ bot.on('ready', function (evt) {
   console.log('Connected');
   console.log('Logged in as: ');
   console.log(bot.username + ' - (' + bot.id + ')');
+  // load the state
+  bondage.load();
 });
 bot.on('disconnect', function(evt) {
   console.log('Disconnected');
@@ -194,7 +288,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     args = args.splice(1);
     switch(cmd) {
       case 'who':
-        sendMessage(channel_id, "My master is " + getNickFromUserId(channel_id, bondage.bound_to));
+        sendMessage(channel_id, "My master is " + getNickFromUserId(channel_id, bondage.state.bound_to));
         break;
       // !ping
       case 'ping':
@@ -206,7 +300,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       case 'follow':
         if ( bondage.isBound() ) {
           if ( !bondage.isMaster(user_id))
-            sendMessage(channel_id, "Sorry, "+getNickFromUserId(channel_id, bondage.bound_to)+" is my master today. Get them to release me from my bonds and I'll serve you.");
+            sendMessage(channel_id, "Sorry, "+getNickFromUserId(channel_id, bondage.state.bound_to)+" is my master today. Get them to release me from my bonds and I'll serve you.");
         }
         else {
           bondage.setMaster(user_id, username);
@@ -258,6 +352,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( voiceChan )
           bondage.joinVoiceChannel(voiceChan);
         break;
+      case 'reset':
+        if ( !bondage.isMaster(user_id)) break;
+        var voiceChan = getUserVoiceChannel(user_id);
+        if ( voiceChan ) {
+          bondage.leaveVoiceChannel(function() {
+            bondage.joinVoiceChannel(voiceChan);
+          });
+        }
+        break;
     }
   }
   else { // tts that
@@ -268,24 +371,12 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if ( message.length > 199 ) return;
     if ( message.length < 1 ) return;
     
+    console.log(bondage.isPermitted(user_id));
+    console.log(bondage.inChannel());
+    
 //    if ( message.length < 20 ) message = message.padEnd(20, '_');
     if ( bondage.isPermitted(user_id) && bondage.inChannel() ) {
-      tts(message, 'en', 1).then(function(url) {
-        console.log(url);
-        bot.getAudioContext(bondage.current_voice_channel_id, function(error, stream) {
-          if ( error) return console.error(error);
-          request
-            .get(url)
-            .on('end', function() {console.log("Done : " + url);})
-            .pipe(stream, {end:false})
-            .on('end', function() { console.log('Discord got: ' + url); fs.createReadStream('./padding.mp3').pipe(stream, {end:false});});
-            
-           
-        });
-      })
-      .catch(function(err) {
-        console.error(err.stack);
-      });
+      bondage.talk(message);
 
     }
   }
