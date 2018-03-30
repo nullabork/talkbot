@@ -14,9 +14,8 @@ https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-
 node bot.js
 
 # in discord
-!follow - bind the bot to you so only you can control it
-!unfollow - release the bot so someone else can use it
-!leave - get the bot to leave the channel
-!quiet - keep the bot quiet
-
-all other text will be spoken in text-to-speech
+* !follow - bind the bot to you so only you can control it
+* !unfollow - release the bot so someone else can use it
+* !leave - get the bot to leave the channel
+* !quiet - keep the bot quiet
+* all other text will be spoken in text-to-speech
