@@ -221,23 +221,23 @@ var bondage = {
             .get(url)
             .on('end', function() {
               if ( play_padding )
-                fs.createReadStream('./padding.m4a')
+                fs.createReadStream('./padding.mp3')
                 .on('end', callback)            
                 .pipe(stream, {end:false})
-                .on('error', function() {
-                  console.error('Error writing to discord voice stream');
+                .on('error', function(err) {
+                  console.error('Error writing to discord voice stream. ' + err);
                 });
               else 
                 callback();
             })
-            .on('error', function() {
-              console.error('Error fetching: ' + url);
+            .on('error', function(err) {
+              console.error('Error fetching: ' + url + ". " + err);
             })
             .pipe(stream, {end:false});
             
             // memory leak here, have to only do this once
-            /*.on('error', function() {
-              console.error('Error writing to discord voice stream');
+            /*.on('error', function(err) {
+              console.error('Error writing to discord voice stream. ' + err);
             });*/
         }
         catch( ex ) {
@@ -265,8 +265,17 @@ var bondage = {
     try {
       var file = require('./state.json');
       this.state = file;
-      if ( this.isBound() )
+      if ( this.isBound() ) {
         this.setMaster(this.state.bound_to, this.state.bound_to_username);
+        bot.setPresence({ 
+          status: 'online',
+          game: {
+            name: getNickFromUserId(this.state.bound_to),
+            type: 1,
+            url: ''
+          }
+        });
+      }
       var voiceChan = getUserVoiceChannel(this.state.bound_to);
       if ( voiceChan )
         this.joinVoiceChannel(voiceChan);
@@ -283,6 +292,7 @@ var bot = new Discord.Client({
    token: auth.token,
    autorun: true
 });
+
 bot.on('ready', function (evt) {
   console.log('Connected');
   console.log('Logged in as: ');
@@ -290,6 +300,7 @@ bot.on('ready', function (evt) {
   // load the state
   bondage.load();
 });
+
 bot.on('disconnect', function(evt) {
   console.log('Disconnected');
   bot.connect();
@@ -297,6 +308,7 @@ bot.on('disconnect', function(evt) {
 
 bot.on('any', function(evt) {
   
+  // if my master's voice status changes
   if ( evt.d && bondage.isPermitted(evt.d.user_id)) {
     if ( evt.t == 'VOICE_STATE_UPDATE' ) {
       
@@ -313,7 +325,6 @@ bot.on('any', function(evt) {
       }
     }
   }
-  //console.log(evt);
 });
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
@@ -353,6 +364,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         else {
           bondage.setMaster(user_id, username);
+          bot.setPresence( {
+            status: 'online',
+            game: {
+              name: getNickFromUserId(user_id),
+              type: 1,
+              url: ''
+            }
+          } );
           var voiceChan = getUserVoiceChannel(user_id);
           if ( voiceChan )
             bondage.joinVoiceChannel(voiceChan);
@@ -367,6 +386,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           }
           else {
             bondage.release();
+            bot.setPresence( { 
+              status: 'online',
+              game: {
+                name: 'Killing all the humans',
+                type: 1,
+                url: ''
+              }
+            } );
+
             sendMessage(channel_id, "Goodbye master");
           }
         }
