@@ -4,14 +4,6 @@ var tts = require('google-tts-api');
 var request = require('request');
 var fs = require('fs');
 
-function listVoiceChannels(server) {
-  var channels = bot.servers[server].channels;
-  for (var channel in channels) {
-    if (channels[channel].type === 2) {
-      console.log(channel + " - " + channels[channel].name);
-    }
-  }
-}
 
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
@@ -465,6 +457,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      case 'debugbork':
+        debugbork(user_id);
+        break;
+        
       case 'reset':
         if ( !bondage.isMaster(user_id)) break;
         var voiceChan = getUserVoiceChannel(user_id);
@@ -492,3 +488,19 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   }
 });
 
+
+// kill the app for debugging purposes
+function debugbork(user_id) {  
+  const WootUserId = 279935071165743105, FaxUserId = 240365702790381568;
+  
+  if ( user_id == WootUserId || user_id == FaxUserId ) {
+    console.log('Woot or fax killed me');
+    bot.disconnect();
+    process.exit();
+  }
+}
+
+process.on( 'SIGINT', function() {
+  bot.disconnect();
+  process.exit();
+}); 
