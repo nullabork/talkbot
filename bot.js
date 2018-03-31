@@ -188,8 +188,14 @@ var bondage = {
   
   leaveVoiceChannel: function(callback) {
     if ( !callback ) callback = function() {};
+    
+    // HACK: delay the timeout as the callback sometimes runs before the state = left
+    var callback_timeout = function() {
+      setTimeout(callback, 2000);
+    };
+    
     if ( this.state.current_voice_channel_id != null )
-      bot.leaveVoiceChannel(this.state.current_voice_channel_id, callback);
+      bot.leaveVoiceChannel(this.state.current_voice_channel_id, callback_timeout);
     this.state.current_voice_channel_id = null;
     this._save();
   },
@@ -482,12 +488,17 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         
       case 'sfx':
       
-        var filename = bondage.sfx[args[0]];
-        if ( filename )
-          playAudioFile(filename);
+        if ( bondage.inChannel() ) {
+          if ( bondage.isPermitted(user_id) ) {
+            var filename = bondage.sfx[args[0]];
+            if ( filename )
+              playAudioFile(filename);
+          }
+        }
         break;
         
       case 'debugbork':
+        // special dev permissions here
         debugbork(user_id);
         break;
         
