@@ -84,6 +84,25 @@ function convertDiscordUserIdsToNicks(channel_id, message) {
   })
 };
 
+function playAudioFile(filename, callback) {
+  if ( !callback ) callback = function() {};
+  bot.getAudioContext(bondage.state.current_voice_channel_id, function(error, stream) {
+    if ( error) return console.error(error);
+            
+    try {
+      fs.createReadStream(filename)
+      .on('end', callback)            
+      .pipe(stream, {end:false})
+      .on('error', function(err) {
+        console.error('Error writing to discord voice stream. ' + err);
+      });
+    }
+    catch( ex ) {
+      console.error(ex);
+    }
+  });
+};
+
 function stripUrls(message) {
   return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, "");
 };
@@ -108,6 +127,10 @@ var bondage = {
     bound_to_username: null,
     current_voice_channel_id: null,
     permitted: {},
+  },
+  
+  sfx: {
+    airhorn: 'sfx/airhorn.mp3',
   },
   
   neglect_timeout: null,
@@ -194,7 +217,7 @@ var bondage = {
       clearTimeout(this.neglect_timeout);
     this.neglect_timeout = setTimeout(neglected_timeout, this.NEGLECT_TIMEOUT_IN_MS);
   },
-  
+    
   talk: function(message) {
     this.resetNeglectTimeout();
     this._talk(message);
@@ -455,6 +478,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             sendMessage(channel_id, "You're not in a voice channel?");
           }
         }
+        break;
+        
+      case 'sfx':
+      
+        var filename = bondage.sfx[args[0]];
+        if ( filename )
+          playAudioFile(filename);
         break;
         
       case 'debugbork':
