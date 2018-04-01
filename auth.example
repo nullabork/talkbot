@@ -1,3 +1,4 @@
 {
-   "token": "yourdiscord.tokenhere"
+   "token": "yourdiscord.tokenhere",
+   "command_char" : "!"
 }

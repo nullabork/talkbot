@@ -190,7 +190,7 @@ function Server(server_data) {
     }
     
     var voiceChan = getUserVoiceChannel(this.bound_to);
-    if ( voiceChan )
+    if ( voiceChan && voiceChan != this.current_voice_channel_id )
       this.joinVoiceChannel(voiceChan);
   };
   
@@ -410,7 +410,11 @@ bot.on('disconnect', function(evt) {
 });
 
 bot.on('any', function(evt) {
+  console.log(evt.t);
   
+  var channel_id = null;
+  if ( evt.d ) 
+    var channel_id = evt.d.channel_id; 
   var server = world.getServerFromChannel(channel_id);
   if ( server == null ) return null;
  
@@ -418,7 +422,6 @@ bot.on('any', function(evt) {
   if ( evt.d && server.isMaster(evt.d.user_id)) {
     if ( evt.t == 'VOICE_STATE_UPDATE' ) {
       
-      var channel_id = evt.d.channel_id; 
       
       if ( !channel_id ) {
         if ( server.inChannel() )
@@ -427,7 +430,8 @@ bot.on('any', function(evt) {
       else if ( !isVoiceChannel(channel_id))
         console.log('Not a voice channel');
       else {
-        server.joinVoiceChannel(channel_id);
+        if ( !server.inChannel() )
+          server.joinVoiceChannel(channel_id);
       }
     }
   }
@@ -435,7 +439,7 @@ bot.on('any', function(evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
-  var command_char = '!';
+  var command_char = auth.command_char || '!';
 
   if ( isExcluded(message)) return null;
 
