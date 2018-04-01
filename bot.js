@@ -210,7 +210,6 @@ function Server(server_data) {
     this.bound_to = null;
     this.bound_to_username = null;
     this.permitted = {};
-    this.current_voice_channel_id = null;
     this.neglect_timeout = null;
     if ( this.inChannel() )
       this.leaveVoiceChannel();
