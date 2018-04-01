@@ -391,7 +391,7 @@ bot.on('ready', function (evt) {
   bot.setPresence({ 
     status: 'online',
     game: {
-      name: 'Killing all the humans',
+      name: auth.tagline || 'Killing all the humans',
       type: 1,
       url: ''
     }
