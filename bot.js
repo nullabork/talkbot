@@ -119,9 +119,11 @@ function neglected_release() {
   setTimeout(timeout_neglected_release, 3000);
 };
 
+
 var bondage = {
+
   NEGLECT_TIMEOUT_IN_MS: 30 * 60 * 1000, // 30 mins
-  
+    
   state: {
     bound_to: null,
     bound_to_username: null,
@@ -129,13 +131,14 @@ var bondage = {
     permitted: {},
   },
   
+  neglect_timeout: null,
+  
+  // sfx_key, sfx file path string 
   sfx: {
     airhorn: 'sfx/airhorn.mp3',
   },
   
-  neglect_timeout: null,
-  
-  setMaster: function(user_id, username) {
+  _setMaster: function(user_id, username) {
     this.resetNeglectTimeout();
     this.state.bound_to = user_id;
     this.state.bound_to_username = username;
@@ -143,7 +146,19 @@ var bondage = {
     this._save();
   },
   
-  release: function() {
+  setMaster: function(user_id, username) {
+    bot.setPresence( { 
+      status: 'online',
+      game: {
+        name: username + " is my master",
+        type: 1,
+        url: ''
+      }
+    } );
+    this._setMaster(user_id, username);
+  },
+  
+  _release: function() {
     this.state.bound_to = null;
     this.state.bound_to_username = null;
     this.state.permitted = {};
@@ -152,7 +167,21 @@ var bondage = {
     if ( this.inChannel() )
       this.leaveVoiceChannel();
     this._save();
+
   },
+
+  release: function() {
+    bot.setPresence( { 
+      status: 'online',
+      game: {
+        name: 'Killing all the humans',
+        type: 1,
+        url: ''
+      }
+    } );
+    this._release();
+  },
+  
   
   isMaster: function(user_id) {
     return this.state.bound_to == user_id;
@@ -288,14 +317,6 @@ var bondage = {
       this.state = file;
       if ( this.isBound() ) {
         this.setMaster(this.state.bound_to, this.state.bound_to_username);
-        bot.setPresence({ 
-          status: 'online',
-          game: {
-            name: getNickFromUserId(this.state.bound_to),
-            type: 1,
-            url: ''
-          }
-        });
       }
       var voiceChan = getUserVoiceChannel(this.state.bound_to);
       if ( voiceChan )
@@ -306,12 +327,13 @@ var bondage = {
       this._save();
     }
   },
+    
 };
 
 
 var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+  token: auth.token,
+  autorun: true
 });
 
 bot.on('ready', function (evt) {
@@ -330,7 +352,7 @@ bot.on('disconnect', function(evt) {
 bot.on('any', function(evt) {
   
   // if my master's voice status changes
-  if ( evt.d && bondage.isPermitted(evt.d.user_id)) {
+  if ( evt.d && bondage.isMaster(evt.d.user_id)) {
     if ( evt.t == 'VOICE_STATE_UPDATE' ) {
       
       var channel_id = evt.d.channel_id; 
@@ -354,15 +376,20 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   if (message.substring(0, 1) == '!') {
     var args = message.substring(1).split(' ');
     var cmd = args[0];
+    
+    var state = bondage.state;
    
     args = args.splice(1);
     switch(cmd) {
       case 'who':
      
-        var master_nick = getNickFromUserId(channel_id, bondage.state.bound_to);
+        var master_nick = getNickFromUserId(channel_id, state.bound_to);
         if ( !master_nick )
-          master_nick = bondage.state.bound_to;
-        sendMessage(channel_id, "My master is " + master_nick);
+          master_nick = state.bound_to;
+        if ( !master_nick )
+          sendMessage(channel_id, "I have no master :~(");
+        else 
+          sendMessage(channel_id, "My master is " + master_nick);
         break;
         
       // !ping
@@ -374,9 +401,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       
         if ( bondage.isBound() ) {
           if ( !bondage.isMaster(user_id)) {
-            var master_nick = getNickFromUserId(channel_id, bondage.state.bound_to);
+            var master_nick = getNickFromUserId(channel_id, state.bound_to);
             if ( !master_nick )
-              master_nick = bondage.state.bound_to;
+              master_nick = state.bound_to;
             sendMessage(channel_id, "Sorry, "+master_nick+" is my master today. Get them to release me from my bonds and I'll serve you.");
           }
           else {
@@ -385,14 +412,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         else {
           bondage.setMaster(user_id, username);
-          bot.setPresence( {
-            status: 'online',
-            game: {
-              name: getNickFromUserId(user_id),
-              type: 1,
-              url: ''
-            }
-          } );
           var voiceChan = getUserVoiceChannel(user_id);
           if ( voiceChan )
             bondage.joinVoiceChannel(voiceChan);
@@ -407,15 +426,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           }
           else {
             bondage.release();
-            bot.setPresence( { 
-              status: 'online',
-              game: {
-                name: 'Killing all the humans',
-                type: 1,
-                url: ''
-              }
-            } );
-
             sendMessage(channel_id, "Goodbye master");
           }
         }
