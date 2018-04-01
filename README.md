@@ -1,6 +1,10 @@
 # talkbot
 Discord bot for text-to-speech
 
+# quick start
+
+Go here to add the bot https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
+
 # requirements
 - node js
 - npm
