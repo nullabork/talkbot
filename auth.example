@@ -1,4 +1,5 @@
 {
    "token": "yourdiscord.tokenhere",
-   "command_char" : "!"
+   "command_char" : "!",
+   "tagline": "Killing all the humans"
 }
