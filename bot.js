@@ -163,20 +163,17 @@ var world = {
       }
     } catch (ex) {
       console.error("Failed to load state from file");
-      console.log(ex);
       this._save();
     }
   },
 };
 
 function Server(server_data) {
-    
-  console.log(server_data);  
-    
+        
   this.bound_to = server_data.bound_to || null;
   this.bound_to_username = server_data.bound_to_username || null;
   this.current_voice_channel_id = server_data.current_voice_channel_id || null;
-  this.permitted = server_data.permitted || [];
+  this.permitted = server_data.permitted || {};
   this.neglect_timeout = null;
   
   this.sfx = {
