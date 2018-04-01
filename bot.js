@@ -436,23 +436,25 @@ bot.on('any', function(evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
+  var command_char = '!';
+
   if ( isExcluded(message)) return null;
 
   var server = world.getServerFromChannel(channel_id);
   if ( server == null ) {
-    console.log(world);
     console.error("Can't find server for " + channel_id);
     return null;
   }
 
-  // Our bot needs to know if it will execute a command
-  // It will listen for messages that will start with `!`
-  if (message.substring(0, 1) == '!') {
-    var args = message.substring(1).split(' ');
+  // is the message a command?
+  if (message.substring(0, command_char.length) == command_char) {
+    var args = message.substring(command_char.length).split(' ');
     var cmd = args[0];
    
     args = args.splice(1);
     switch(cmd) {
+      
+      // find out who the current master for this server is
       case 'who':
      
         var master_nick = getNickFromUserId(channel_id, server.bound_to);
@@ -469,6 +471,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         sendMessage(channel_id, 'Pong!');
         break;
         
+      // make you the bots master and have all permissions
       case 'follow':
       
         if ( server.isBound() ) {
@@ -490,7 +493,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           sendMessage(channel_id, "Yes, master!");
         }
         break;
-        
+      
+      // release the bot some it can follow someone else
       case 'unfollow':
         if ( server.isBound() ) {
           if ( !server.isMaster(user_id)) {
@@ -504,7 +508,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         else
           sendMessage(channel_id, "I have no master... would you like to be my master?");
         break;
-        
+      
+      // permit another user to use the TTS capability
       case 'permit':      
         if ( !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
@@ -523,7 +528,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           }
         }
         break;
-        
+      
+      // unpermit another user from using the TTS capability
       case 'unpermit':
         if ( !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
@@ -540,7 +546,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           }
         }
         break;
-                
+           
+      // leave the voice channel
       case 'leave':
         if ( !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
@@ -550,6 +557,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      // join a voice channel
       case 'join':
         if ( !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
@@ -564,8 +572,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      // play a sound effect from the library
       case 'sfx':
-      
         if ( server.inChannel() ) {
           if ( server.isPermitted(user_id) ) {
             var filename = server.sfx[args[0]]; // world.sfx
@@ -575,11 +583,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      // used by the devs to drop the bot remotely
       case 'debugbork':
         // special dev permissions here
         debugbork(user_id);
         break;
-        
+      
+      // leave and join the voice channel - for fixing bugginess
       case 'reset':
         if ( !server.isMaster(user_id)) break;
         var voiceChan = getUserVoiceChannel(user_id);
@@ -591,7 +601,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         break;
     }
   }
-  else { // tts that
+  else { 
+    // tts bit
     message = message.replace('\n', ' ');
     message = convertDiscordUserIdsToNicks(channel_id, message);
     message = stripUrls(message);
