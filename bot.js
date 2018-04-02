@@ -62,10 +62,9 @@ function getDiscordUserIdFromMessage(message) {
 };
 
 function getNickFromUserId( channel_id, user_id ) {
-  for ( var server in bot.servers ) {
-    if ( bot.servers[server].members[user_id] && bot.servers[server].channels[channel_id] ) {
-      return bot.servers[server].members[user_id].nick;        
-    }
+  
+  if ( bot.channels[channel_id] && bot.servers[bot.channels[channel_id].guild_id].members[user_id] ) {
+    return bot.servers[bot.channels[channel_id].guild_id].members[user_id].nick;        
   }
   return null;
 };
@@ -98,7 +97,7 @@ var world = {
   servers: {},
   
   addServer: function(serverObj) {
-    this.servers[serverObj.id] = new Server(serverObj);
+    this.servers[serverObj.id] = new Server(serverObj, serverObj.id);
   },
   
   removeServer: function(server_id) {
@@ -157,7 +156,7 @@ var world = {
     try {
       var file = require('./state.json');
       for ( var server_id in file ) {
-        var server = new Server(file[server_id]);
+        var server = new Server(file[server_id], server_id);
         this.servers[server_id] = server;
         server.init();
       }
@@ -168,13 +167,15 @@ var world = {
   },
 };
 
-function Server(server_data) {
+function Server(server_data, server_id) {
         
+  this.server_id = server_id;
   this.bound_to = server_data.bound_to || null;
   this.bound_to_username = server_data.bound_to_username || null;
   this.current_voice_channel_id = server_data.current_voice_channel_id || null;
   this.permitted = server_data.permitted || {};
   this.neglect_timeout = null;
+  this.neglect_neglect = !!server_data.neglect_neglect;
   
   this.sfx = {
     airhorn: 'sfx/airhorn.mp3',
@@ -190,8 +191,12 @@ function Server(server_data) {
     }
     
     var voiceChan = getUserVoiceChannel(this.bound_to);
-    if ( voiceChan && voiceChan != this.current_voice_channel_id )
-      this.joinVoiceChannel(voiceChan);
+    if ( voiceChan ) {
+      if ( !this.isServerChannel(voiceChan))
+        this.leaveVoiceChannel();
+      else 
+        this.joinVoiceChannel(voiceChan);
+    }
   };
   
   this._setMaster = function(user_id, username) {
@@ -204,6 +209,10 @@ function Server(server_data) {
   this.setMaster = function(user_id, username) {
     this._setMaster(user_id, username);
     world.save();
+  };
+  
+  this.isServerChannel = function(channel_id) {
+    return bot.channels[channel_id].guild_id == this.server_id ;
   };
   
   this._release = function() {
@@ -240,6 +249,7 @@ function Server(server_data) {
     
   this.joinVoiceChannel = function(channel_id, callback) {
     var server = this;
+    if ( !server.isServerChannel(channel_id) ) return;
     if ( !callback ) callback = function() {};
     bot.joinVoiceChannel(channel_id, function(error, events) { 
       if ( error ) { 
@@ -284,15 +294,24 @@ function Server(server_data) {
   };
   
   this.resetNeglectTimeout = function() {
-
-    var server = this;
-    var neglected_timeout = function() {
-      server.neglected();
-    };
     
-    if ( this.neglect_timeout ) 
-      clearTimeout(this.neglect_timeout);
-    this.neglect_timeout = setTimeout(neglected_timeout, world.NEGLECT_TIMEOUT_IN_MS);
+    var server = this;
+    
+    if ( server.neglect_neglect ) 
+    {
+      if ( this.neglect_timeout ) 
+        clearTimeout(this.neglect_timeout);
+    }
+    else
+    {
+      var neglected_timeout = function() {
+        server.neglected();
+      };
+      
+      if ( this.neglect_timeout ) 
+        clearTimeout(this.neglect_timeout);
+      this.neglect_timeout = setTimeout(neglected_timeout, world.NEGLECT_TIMEOUT_IN_MS);
+    }
   };
     
   this.talk = function(message) {
@@ -422,7 +441,6 @@ bot.on('any', function(evt) {
   if ( evt.d && server.isMaster(evt.d.user_id)) {
     if ( evt.t == 'VOICE_STATE_UPDATE' ) {
       
-      
       if ( !channel_id ) {
         if ( server.inChannel() )
           server.leaveVoiceChannel();
@@ -430,8 +448,7 @@ bot.on('any', function(evt) {
       else if ( !isVoiceChannel(channel_id))
         console.log('Not a voice channel');
       else {
-        if ( !server.inChannel() )
-          server.joinVoiceChannel(channel_id);
+        server.joinVoiceChannel(channel_id);
       }
     }
   }
@@ -514,6 +531,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       
       // permit another user to use the TTS capability
       case 'permit':      
+        if ( args.length == 0 ) break;
+        
         if ( !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
         }
@@ -534,12 +553,17 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       
       // unpermit another user from using the TTS capability
       case 'unpermit':
-        if ( !server.isMaster(user_id)) {
-          sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+     
+        if ( !server.isPermitted(user_id)) {
+          sendMessage(channel_id, "Sorry I can't do that, you're not permitted.");
         }
         else {
-          var target_id = getDiscordUserIdFromMessage(args[0]);
-          if ( target_id ) {
+          var target_id = user_id; 
+          if ( args.length > 0 ) 
+            target_id = getDiscordUserIdFromMessage(args[0]);
+          if ( target_id != user_id && !server.isMaster(user_id))
+            sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
+          else if ( target_id == user_id || server.isMaster(user_id) ) {
             var nick = getNickFromUserId(channel_id, target_id);
             server.unpermit(target_id);
             sendMessage(channel_id, nick + " talk to the hand"); 
@@ -586,6 +610,19 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      case 'toggle_neglect':
+      
+        if ( !server.isMaster(user_id))
+          sendMessage(channel_id, "Sorry, you're not my master");
+        else {
+          server.neglect_neglect = !server.neglect_neglect;
+          if ( server.neglect_neglect )
+            sendMessage(channel_id, "Neglecting neglect");
+          else 
+            sendMessage(channel_id, "Attending neglect");
+        }
+        break;
+        
       // used by the devs to drop the bot remotely
       case 'debugbork':
         // special dev permissions here
@@ -605,6 +642,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
   }
   else { 
+    console.log(message);
+    if ( message == null ) return;
+    
     // tts bit
     message = message.replace('\n', ' ');
     message = convertDiscordUserIdsToNicks(channel_id, message);
