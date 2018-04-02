@@ -133,6 +133,17 @@ var world = {
       return null;
   },
   
+  checkMastersVoiceChannels: function( user_id ) {
+    var voiceChan = getUserVoiceChannel(user_id);
+    for ( var server in this.servers ) {
+      var s = this.servers[server];
+      if ( s.bound_to == user_id ) {
+        if ( voiceChan != s.current_voice_channel_id )
+          s.leaveVoiceChannel();
+      }
+    }
+  },
+  
   initServers: function() { 
     for ( var server in bot.servers ) {
       if ( !this.servers[server] )
@@ -176,6 +187,7 @@ function Server(server_data, server_id) {
   this.permitted = server_data.permitted || {};
   this.neglect_timeout = null;
   this.neglect_neglect = !!server_data.neglect_neglect;
+  this.language = server_data.language || 'en';
   
   this.sfx = {
     airhorn: 'sfx/airhorn.mp3',
@@ -324,12 +336,13 @@ function Server(server_data, server_id) {
     var play_padding = (message.length < 20);
     if ( !callback ) callback = function() {};
     
-    tts(message, 'en', 1)
+    tts(message, server.language, 1)
     .then(function(url) {
       bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
         if ( error) return console.error(error);
                 
         try {
+                    
           request
             .get(url)
             .on('end', function() {
@@ -431,15 +444,20 @@ bot.on('disconnect', function(evt) {
 bot.on('any', function(evt) {
   console.log(evt.t);
   
-  var channel_id = null;
-  if ( evt.d ) 
-    var channel_id = evt.d.channel_id; 
-  var server = world.getServerFromChannel(channel_id);
-  if ( server == null ) return null;
  
-  // if my master's voice status changes
-  if ( evt.d && server.isMaster(evt.d.user_id)) {
-    if ( evt.t == 'VOICE_STATE_UPDATE' ) {
+  if ( evt.t == 'VOICE_STATE_UPDATE' ) {
+    // if my master's voice status changes
+    var channel_id = null;
+    if ( evt.d ) 
+      var channel_id = evt.d.channel_id; 
+    var server = world.getServerFromChannel(channel_id);
+    if ( server == null ) { 
+      world.checkMastersVoiceChannels(evt.d.user_id);
+      return null;
+    }
+    
+    
+    if ( evt.d && server.isMaster(evt.d.user_id)) {
       
       if ( !channel_id ) {
         if ( server.inChannel() )
@@ -607,6 +625,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             if ( filename )
               server.playAudioFile(filename);
           }
+        }
+        break;
+        
+      case 'lang':
+        if ( args.length == 0 ) break;
+        if ( server.isMaster(user_id)) {
+          server.language = args[0];
         }
         break;
         
