@@ -21,6 +21,30 @@ function isVoiceChannel(channel_id) {
   return false;
 };
 
+function stripRepeatingChars( message, maxChars )
+{
+  var leaveOneRemaining = true;
+  var thresholdToStartStriping = maxChars;
+
+  var lastletter = '';
+  var stripLength = leaveOneRemaining?0:1;
+  for (var i = message.length; i > 0; i--) {
+    var letter = message[i - 1];
+
+    if (lastletter == letter) {
+        stripLength++;
+    } else if (stripLength > thresholdToStartStriping) {
+        message.splice(i, stripLength);
+        stripLength = leaveOneRemaining?0:1;;
+    } else {
+        stripLength = leaveOneRemaining?0:1;;
+    }
+    lastletter = letter;
+  }
+  
+  return message;
+};
+
 function isExcluded(message) {
   return message.startsWith('```');
 };
@@ -63,10 +87,16 @@ function getDiscordUserIdFromMessage(message) {
 
 function getNickFromUserId( channel_id, user_id ) {
   
-  if ( bot.channels[channel_id] && bot.servers[bot.channels[channel_id].guild_id].members[user_id] ) {
+  if ( !bot.channels[channel_id] ) 
+    console.log("getNickFromUserId(): Cant find channel " + channel_id + ", " + user_id); 
+  else if ( !bot.servers[bot.channels[channel_id].guild_id] ) 
+    console.log("getNickFromUserId(): Cant find server " + bot.channels[channel_id].guild_id + " for channel " + channel_id);
+  else if ( !bot.servers[bot.channels[channel_id].guild_id].members[user_id] )
+    console.log("getNickFromUserId(): Cant find member on the server for " + bot.channels[channel_id].guild_id + ", " + user_id);
+  else 
     return bot.servers[bot.channels[channel_id].guild_id].members[user_id].nick;        
-  }
   return null;
+
 };
 
 function convertCamelCaseNicksToEnglish( nick_name ) {
@@ -297,7 +327,7 @@ function Server(server_data, server_id) {
   
   this.permit = function(user_id) {
     this.resetNeglectTimeout();
-    this.permitted[user_id] = true;
+    this.permitted[user_id] = {};
     world.save();
   };
   
@@ -328,17 +358,17 @@ function Server(server_data, server_id) {
     }
   };
     
-  this.talk = function(message) {
+  this.talk = function(message, language) {
     this.resetNeglectTimeout();
-    this._talk(message);
+    this._talk(message, language);
   };
   
-  this._talk = function(message, callback) {
+  this._talk = function(message, language, callback) {
     var server = this;
     var play_padding = (message.length < 20);
     if ( !callback ) callback = function() {};
     
-    tts(message, server.language, 1)
+    tts(message, language || server.language, 1)
     .then(function(url) {
       bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
         if ( error) return console.error(error);
@@ -387,7 +417,7 @@ function Server(server_data, server_id) {
     };
     
     if ( this.inChannel() )
-      this._talk("I feel neglected, I'm leaving", neglected_release);
+      this._talk("I feel neglected, I'm leaving", server.language, neglected_release);
     else 
       this.release();    
   };
@@ -658,6 +688,17 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         // special dev permissions here
         debugbork(user_id);
         break;
+        
+      case 'mylang':
+        if ( args.length == 0 ) break; 
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].language = args[0];
+          sendMessage(channel_id, "OK, your personal language is now " + args[0]);
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        
+        break;
       
       // leave and join the voice channel - for fixing bugginess
       case 'reset':
@@ -676,7 +717,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if ( message == null ) return;
     
     // tts bit
+    message = message.trim();
     message = message.replace('\n', ' ');
+    message = stripRepeatingChars(message, 6);
     message = convertDiscordUserIdsToNicks(channel_id, message);
     message = stripUrls(message);
     
@@ -685,7 +728,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
     if ( server.inChannel() ) {
       if ( server.isPermitted(user_id) ) {
-        server.talk(message);
+        server.talk(message, server.permitted[user_id].language);
       }
     }
   }
