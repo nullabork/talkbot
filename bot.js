@@ -178,9 +178,11 @@ var world = {
   },
 };
 
-function Server(server_data, server_id) {
-        
+function Server(server_data, server_id) {       
   this.server_id = server_id;
+  this.server_name = bot.servers[server_id].name;
+  this.server_owner_user_id = bot.servers[server_id].owner_id;
+  this.server_owner_username = bot.users[this.server_owner_user_id].username;
   this.bound_to = server_data.bound_to || null;
   this.bound_to_username = server_data.bound_to_username || null;
   this.current_voice_channel_id = server_data.current_voice_channel_id || null;
@@ -630,8 +632,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         
       case 'lang':
         if ( args.length == 0 ) break;
-        if ( server.isMaster(user_id)) {
+        if ( !server.isMaster(user_id))
+          sendMessage(channel_id, "Sorry, you're not my master");
+        else {
           server.language = args[0];
+          sendMessage(channel_id, "OK, I'll now speak using language " + server.language);
         }
         break;
         
