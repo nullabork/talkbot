@@ -105,16 +105,20 @@ function convertCamelCaseNicksToEnglish( nick_name ) {
   });
 };
 
-function convertDiscordUserIdsToNicks(channel_id, message) {
-  return message.replace(/<@\!(\d{12,19})>/g, function(a,b){
-    var nick = getNickFromUserId(channel_id, b);
-    if ( !nick ) {
-      console.error('Cant find nick for ' + b);
-      return b;
-    }
-    else     
-      return convertCamelCaseNicksToEnglish(nick);
-  })
+function resolveDiscordSnowflakes(channel_id, message) {
+	return message.replace(/<@&(\d*)>|<@!(\d*)>|<@(\d*)>|<#(\d*)>/g, function(match, RID, NID, UID, CID) {
+		var k, i;
+		if (UID || CID) {
+			if (bot.users[UID]) return convertCamelCaseNicksToEnglish(bot.users[UID].username);
+			if (bot.channels[CID]) return convertCamelCaseNicksToEnglish(bot.channels[CID].name);
+		}
+		if (RID || NID) {
+			if ( bot.servers[bot.channels[channel_id].guild_id].roles[RID])
+				return convertCamelCaseNicksToEnglish(bot.servers[bot.channels[channel_id].guild_id].roles[RID].name);
+			if ( bot.servers[bot.channels[channel_id].guild_id].members[NID]) 
+				return convertCamelCaseNicksToEnglish(bot.servers[bot.channels[channel_id].guild_id].members[NID].nick);
+		}
+	});
 };
 
 function stripUrls(message) {
@@ -720,7 +724,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     message = message.trim();
     message = message.replace('\n', ' ');
     message = stripRepeatingChars(message, 6);
-    message = convertDiscordUserIdsToNicks(channel_id, message);
+    message = resolveDiscordSnowflakes(channel_id, message);
     message = stripUrls(message);
     
     if ( message.length > 199 ) return;
