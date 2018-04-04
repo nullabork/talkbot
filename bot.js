@@ -4,40 +4,6 @@ var tts = require('google-tts-api');
 var request = require('request');
 var fs = require('fs');
 
-// https://www.bennadel.com/blog/2160-adding-a-splice-method-to-the-javascript-string-prototype.htm
-// Extend the String prototype to include a splice method.
-// This will use an Array-based splitting / joining approach
-// internally.
-String.prototype.splice = function(
-    index,
-    howManyToDelete,
-    stringToInsert /* [, ... N-1, N] */
-    ){
-    // Create a character array out of the current string
-    // by splitting it. In the context of this prototype
-    // method, THIS refers to the current string value
-    // being spliced.
-    var characterArray = this.split( "" );
-    // Now, let's splice the given strings (stringToInsert)
-    // into this character array. It won't matter that we
-    // are mix-n-matching character data and string data as
-    // it will utlimately be joined back into one value.
-    //
-    // NOTE: Because splice() mutates the actual array (and
-    // returns the removed values), we need to apply it to
-    // an existing array to which we have an existing
-    // reference.
-    Array.prototype.splice.apply(
-        characterArray,
-        arguments
-    );
-    // To return the new string, join the character array
-    // back into a single string value.
-    return(
-        characterArray.join( "" )
-    );
-};
-
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
   for (var server in bot.servers) {
@@ -56,18 +22,19 @@ function isVoiceChannel(channel_id) {
 
 function stripRepeatingChars( message, maxChars )
 {
+  var a = message.split('');
   var leaveOneRemaining = true;
   var thresholdToStartStriping = maxChars;
 
   var lastletter = '';
   var stripLength = leaveOneRemaining?0:1;
-  for (var i = message.length; i > 0; i--) {
-    var letter = message[i - 1];
+  for (var i = a.length; i > 0; i--) {
+    var letter = a[i - 1];
 
     if (lastletter == letter) {
         stripLength++;
     } else if (stripLength > thresholdToStartStriping) {
-        message.splice(i, stripLength);
+        a.splice(i, stripLength);
         stripLength = leaveOneRemaining?0:1;;
     } else {
         stripLength = leaveOneRemaining?0:1;;
@@ -75,7 +42,7 @@ function stripRepeatingChars( message, maxChars )
     lastletter = letter;
   }
   
-  return message;
+  return a.join('');
 };
 
 function isExcluded(message) {
