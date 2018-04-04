@@ -85,6 +85,10 @@ function getDiscordUserIdFromMessage(message) {
   });
 };
 
+function awesomeHacks(message) {
+  return message.replace("(Y)", "thumbs up").replace("(N)", "thumbs down");
+};
+
 function getNickFromUserId( channel_id, user_id ) {
   
   if ( !bot.channels[channel_id] ) 
@@ -664,6 +668,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      // set the language the bot should use default is en, other examples: en-AU, de-DE, eu-CA 
       case 'lang':
         if ( args.length == 0 ) break;
         if ( !server.isMaster(user_id))
@@ -674,6 +679,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         }
         break;
         
+      // toggle the neglect function
       case 'toggle_neglect':
       
         if ( !server.isMaster(user_id))
@@ -693,6 +699,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         debugbork(user_id);
         break;
         
+      // set your personal language to use with tts, see !lang for examples 
       case 'mylang':
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
@@ -723,6 +730,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     // tts bit
     message = message.trim();
     message = message.replace('\n', ' ');
+    message = awesomeHacks(message);
     message = stripRepeatingChars(message, 6);
     message = resolveDiscordSnowflakes(channel_id, message);
     message = stripUrls(message);
