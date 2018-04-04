@@ -86,7 +86,7 @@ function getDiscordUserIdFromMessage(message) {
 };
 
 function awesomeHacks(message) {
-  return message.replace("(Y)", "thumbs up").replace("(N)", "thumbs down");
+  return message.replace(/\(y\)/gi, "thumbs up").replace(/\(n\)/gi, "thumbs down");
 };
 
 function getNickFromUserId( channel_id, user_id ) {
