@@ -4,6 +4,39 @@ var tts = require('google-tts-api');
 var request = require('request');
 var fs = require('fs');
 
+// https://www.bennadel.com/blog/2160-adding-a-splice-method-to-the-javascript-string-prototype.htm
+// Extend the String prototype to include a splice method.
+// This will use an Array-based splitting / joining approach
+// internally.
+String.prototype.splice = function(
+    index,
+    howManyToDelete,
+    stringToInsert /* [, ... N-1, N] */
+    ){
+    // Create a character array out of the current string
+    // by splitting it. In the context of this prototype
+    // method, THIS refers to the current string value
+    // being spliced.
+    var characterArray = this.split( "" );
+    // Now, let's splice the given strings (stringToInsert)
+    // into this character array. It won't matter that we
+    // are mix-n-matching character data and string data as
+    // it will utlimately be joined back into one value.
+    //
+    // NOTE: Because splice() mutates the actual array (and
+    // returns the removed values), we need to apply it to
+    // an existing array to which we have an existing
+    // reference.
+    Array.prototype.splice.apply(
+        characterArray,
+        arguments
+    );
+    // To return the new string, join the character array
+    // back into a single string value.
+    return(
+        characterArray.join( "" )
+    );
+};
 
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
@@ -626,7 +659,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
            
       // leave the voice channel
       case 'leave':
-        if ( !server.isMaster(user_id)) {
+        if ( server.isBound() && !server.isMaster(user_id)) {
           sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
         }
         else {
