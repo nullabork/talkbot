@@ -338,11 +338,15 @@ function Server(server_data, server_id) {
     .then(function(url) {
       bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
         if ( error) return console.error(error);
-                
+                        
         try {
-                    
+                    // if content length is too short don't play it
           request
             .get(url)
+            .on('response', function(response) {
+              if ( response.headers['content-length'] < 1024 ) 
+                this.end();
+            })
             .on('end', function() {
               if ( play_padding )
                 fs.createReadStream('./padding.mp3')
