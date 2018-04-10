@@ -3,47 +3,13 @@ var auth = require('./auth.json');
 var tts = require('google-tts-api');
 var request = require('request');
 var fs = require('fs');
+var hacks = require('./modules/awesome-hacks.js');
 
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
-  for (var server in bot.servers) {
-    for (var channel in bot.servers[server].channels) {
-      var chan = bot.servers[server].channels[channel];
-      if ( chan.type == 2 ) {
-        if ( chan.id.toString() == channel_id.toString() ) {
-          console.log(chan);
-          return true;
-        }
-      }
-    }
-  }
-  return false;
+  return ( bot.channels[channel_id].type == 2 ); 
 };
 
-function stripRepeatingChars( message, maxChars )
-{
-  var a = message.split('');
-  var leaveOneRemaining = true;
-  var thresholdToStartStriping = maxChars;
-
-  var lastletter = '';
-  var stripLength = leaveOneRemaining?0:1;
-  for (var i = a.length; i > 0; i--) {
-    var letter = a[i - 1];
-
-    if (lastletter == letter) {
-        stripLength++;
-    } else if (stripLength > thresholdToStartStriping) {
-        a.splice(i, stripLength);
-        stripLength = leaveOneRemaining?0:1;;
-    } else {
-        stripLength = leaveOneRemaining?0:1;;
-    }
-    lastletter = letter;
-  }
-  
-  return a.join('');
-};
 
 function isExcluded(message) {
   return message.startsWith('```');
@@ -85,10 +51,6 @@ function getDiscordUserIdFromMessage(message) {
   });
 };
 
-function awesomeHacks(message) {
-  return message.replace(/\(y\)/gi, "thumbs up").replace(/\(n\)/gi, "thumbs down");
-};
-
 function getNickFromUserId( channel_id, user_id ) {
   
   if ( !bot.channels[channel_id] ) 
@@ -123,10 +85,6 @@ function resolveDiscordSnowflakes(channel_id, message) {
 				return convertCamelCaseNicksToEnglish(bot.servers[bot.channels[channel_id].guild_id].members[NID].nick);
 		}
 	});
-};
-
-function stripUrls(message) {
-  return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, "");
 };
 
 var world = {
@@ -252,10 +210,10 @@ function Server(server_data, server_id) {
   };
   
   this._setMaster = function(user_id, username) {
-    this.resetNeglectTimeout();
     this.bound_to = user_id;
     this.bound_to_username = username;
     this.permit(user_id);
+    this.resetNeglectTimeout();
   };
   
   this.setMaster = function(user_id, username) {
@@ -728,14 +686,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if ( message == null ) return;
     
     // tts bit
-    message = message.trim();
-    message = message.replace('\n', ' ');
-    message = awesomeHacks(message);
-    message = stripRepeatingChars(message, 6);
     message = resolveDiscordSnowflakes(channel_id, message);
-    message = stripUrls(message);
+    message = hacks.parse(channel_id, message);
     
-    if ( message.length > 199 ) return;
     if ( message.length < 1 ) return;
 
     if ( server.inChannel() ) {
