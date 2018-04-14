@@ -46,7 +46,7 @@ function sendMessage(channel_id, message) {
 };
 
 function getDiscordUserIdFromMessage(message) {
-  return message.replace(/<@!(\d{12,19})>/g, function(a,b){
+  return message.replace(/<@!{0,1}(\d{12,19})>/g, function(a,b){
     return b;
   });
 };
@@ -559,10 +559,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         else {
           var target_id = getDiscordUserIdFromMessage(args[0]);
           if ( target_id ) {
+            server.permit(target_id);
             var nick = getNickFromUserId(channel_id, target_id);
             if ( !nick )
               nick = target_id;
-            server.permit(target_id);
             sendMessage(channel_id, "I'll listen to " + nick + " now"); 
           }
           else {
@@ -584,8 +584,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           if ( target_id != user_id && !server.isMaster(user_id))
             sendMessage(channel_id, "Sorry I can't do that, you're not my master.");
           else if ( target_id == user_id || server.isMaster(user_id) ) {
-            var nick = getNickFromUserId(channel_id, target_id);
             server.unpermit(target_id);
+            var nick = getNickFromUserId(channel_id, target_id);
             sendMessage(channel_id, nick + " talk to the hand"); 
           }
           else {
@@ -686,7 +686,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
   }
   else { 
-    console.log(message);
     if ( message == null ) return;
     
     // tts bit
