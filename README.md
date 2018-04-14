@@ -35,3 +35,8 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !sfx [sound] - !sfx airhorn... just because
 * !toggle_neglect - turns on/off the neglect timer
 * all other text will be spoken in text-to-speech
+
+# Props to
+* WootoSmash - coder/shitposter
+* FaxWang - coder/bugfinder/shitposter
+* GreenLionVoltronPilot - bugfinder/shitposter
