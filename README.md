@@ -37,6 +37,6 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * all other text will be spoken in text-to-speech
 
 # Props to
-* WootoSmash - coder/shitposter
+* WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
