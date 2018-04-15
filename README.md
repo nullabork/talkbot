@@ -29,4 +29,14 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !who - find out who is the bot's current master
 * !join - get the bot to join the voice channel the master is in
 * !leave - get the bot to leave the current voice channel
+* !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
+* !mylang [lang] - set your personal language for the bot
+* !reset - if the bot gets broken in chat run this
+* !sfx [sound] - !sfx airhorn... just because
+* !toggle_neglect - turns on/off the neglect timer
 * all other text will be spoken in text-to-speech
+
+# Props to
+* WootoSmash - coder/bugmaker/shitposter
+* FaxWang - coder/bugfinder/shitposter
+* GreenLionVoltronPilot - bugfinder/shitposter
