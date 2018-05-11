@@ -147,16 +147,18 @@ var world = {
     }
   },
   
-  _save: function() {
+  _save: function( _filename ) {
     var replacer = function(key,value) {
       if ( key == "neglect_timeout" ) return undefined; // this key is an internal that we dont want to save 
       else return value;
     };
-    fs.writeFileSync('./state.json', JSON.stringify(this.servers, replacer) , 'utf-8'); 
+    
+    if ( !_filename ) _filename = "./state.json";
+    fs.writeFileSync(_filename, JSON.stringify(this.servers, replacer) , 'utf-8'); 
   },
   
-  save: function() {
-    this._save();
+  save: function( _filename ) {
+    this._save( _filename );
   },
   
   load: function() {
@@ -688,6 +690,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             server.joinVoiceChannel(voiceChan);
           });
         }
+        break;
+        
+      case 'ohshit':
+        world.save('./ohshit'+(new Date().getTime()) + '.json');
+        sendMessage(channel_id, "Saved a debug file");
         break;
     }
   }
