@@ -16,10 +16,12 @@ function isExcluded(message) {
 };
 
 function isUserInVoiceChannel(user_id) {
+  if ( !user_id ) return false;
   return getUserVoiceChannel(user_id) != null;
 };
 
 function getUserVoiceChannel(user_id) {
+  if ( !user_id ) return;
   for ( var server in bot.servers ) {
     for ( var channel in bot.servers[server].channels) {
       var chan = bot.servers[server].channels[channel];
@@ -94,6 +96,8 @@ var world = {
   
   addServer: function(serverObj) {
     this.servers[serverObj.id] = new Server(serverObj, serverObj.id);
+    
+    this.save();
   },
   
   removeServer: function(server_id) {
@@ -130,6 +134,7 @@ var world = {
   },
   
   checkMastersVoiceChannels: function( user_id ) {
+    if ( !user_id ) return;
     var voiceChan = getUserVoiceChannel(user_id);
     for ( var server in this.servers ) {
       var s = this.servers[server];
@@ -177,6 +182,9 @@ var world = {
 };
 
 function Server(server_data, server_id) {       
+
+  console.log("NEW SERVER: " + server_id);
+
   this.server_id = server_id;
   this.server_name = bot.servers[server_id].name;
   this.server_owner_user_id = bot.servers[server_id].owner_id;
@@ -219,6 +227,7 @@ function Server(server_data, server_id) {
   };
   
   this.setMaster = function(user_id, username) {
+    console.log('setMaster(' + user_id + ')');
     this._setMaster(user_id, username);
     world.save();
   };
@@ -231,6 +240,7 @@ function Server(server_data, server_id) {
     this.bound_to = null;
     this.bound_to_username = null;
     this.permitted = {};
+    clearTimeout(this.neglect_timeout);
     this.neglect_timeout = null;
     if ( this.inChannel() )
       this.leaveVoiceChannel();
@@ -239,11 +249,13 @@ function Server(server_data, server_id) {
   };
 
   this.release = function() {
+    console.log('release');
     this._release();
     world.save();
   };  
   
   this.isMaster = function(user_id) {
+    if ( !user_id ) return false;
     return this.bound_to == user_id;
   };
   
@@ -256,17 +268,21 @@ function Server(server_data, server_id) {
   };
   
   this.isPermitted = function(user_id) {
+    if ( !user_id ) return false;
     return this.permitted[user_id] != null;
   };
     
   this.joinVoiceChannel = function(channel_id, callback) {
     var server = this;
-    if ( !server.isServerChannel(channel_id) ) return;
+    if ( !server.isServerChannel(channel_id) ) {
+      console.log("joinVoiceChannel() on the wrong server");
+      return;
+    }
+    
     if ( !callback ) callback = function() {};
     bot.joinVoiceChannel(channel_id, function(error, events) { 
       if ( error ) { 
         console.error(error);
-        server.current_voice_channel_id = null;
       }
       else {
         server.current_voice_channel_id = channel_id;
@@ -311,8 +327,8 @@ function Server(server_data, server_id) {
     
     if ( server.neglect_neglect ) 
     {
-      if ( this.neglect_timeout ) 
-        clearTimeout(this.neglect_timeout);
+      clearTimeout(server.neglect_timeout);
+      server.neglect_timeout = null;
     }
     else
     {
@@ -320,9 +336,8 @@ function Server(server_data, server_id) {
         server.neglected();
       };
       
-      if ( this.neglect_timeout ) 
-        clearTimeout(this.neglect_timeout);
-      this.neglect_timeout = setTimeout(neglected_timeout, world.NEGLECT_TIMEOUT_IN_MS);
+      clearTimeout(server.neglect_timeout);
+      server.neglect_timeout = setTimeout(neglected_timeout, world.NEGLECT_TIMEOUT_IN_MS);
     }
   };
     
@@ -382,16 +397,18 @@ function Server(server_data, server_id) {
   
   this.neglected = function() {
     var server = this;
+
+    if ( server.neglect_neglect ) return;
     // delay for 3 seconds to allow the bot to talk
     var neglected_release = function() {
       var timeout_neglected_release = function() { server.release(); };
       setTimeout(timeout_neglected_release, 3000);
     };
     
-    if ( this.inChannel() )
-      this._talk("I feel neglected, I'm leaving", server.language, neglected_release);
+    if ( server.inChannel() )
+      server._talk("I feel neglected, I'm leaving", server.language, neglected_release);
     else 
-      this.release();    
+      server.release();    
   };
   
   this.playAudioFile = function(filename, callback) {
@@ -462,6 +479,7 @@ bot.on('any', function(evt) {
       var channel_id = evt.d.channel_id; 
     var server = world.getServerFromChannel(channel_id);
     if ( server == null ) { 
+      console.log("What server?: " + channel_id);
       world.checkMastersVoiceChannels(evt.d.user_id);
       return null;
     }
@@ -487,7 +505,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   var command_char = auth.command_char || '!';
 
   if ( isExcluded(message)) return null;
-
+  
   var server = world.getServerFromChannel(channel_id);
   if ( server == null ) {
     console.error("Can't find server for " + channel_id);
@@ -496,6 +514,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   // is the message a command?
   if (message.substring(0, command_char.length) == command_char) {
+
+    server.resetNeglectTimeout();
     var args = message.substring(command_char.length).split(' ');
     var cmd = args[0];
    
@@ -504,7 +524,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       
       // find out who the current master for this server is
       case 'who':
-     
+          
         var master_nick = getNickFromUserId(channel_id, server.bound_to);
         if ( !master_nick )
           master_nick = server.bound_to;
@@ -521,9 +541,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         
       // make you the bots master and have all permissions
       case 'follow':
-      
         if ( server.isBound() ) {
           if ( !server.isMaster(user_id)) {
+          console.log('YOU ARENT EVEN');
             var master_nick = getNickFromUserId(channel_id, server.bound_to);
             if ( !master_nick )
               master_nick = server.bound_to;
