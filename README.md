@@ -40,3 +40,5 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
+
+Want to shitpost also? https://discord.gg/NxrPp8g
