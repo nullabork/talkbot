@@ -6,8 +6,8 @@
   "author": "YOUR-NAME-HERE",
   "dependencies": {
     "discord.io": "github:wootosmash/discord.io#master",
-    "google-tts-api": "0.0.2",
-    "request": "^2.85.0",
-    "winston": "^2.4.1"
+    "google-tts-api": "0.0.3",
+    "request": "^2.88.0",
+    "winston": "^2.4.4"
   }
 }
