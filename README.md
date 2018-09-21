@@ -3,7 +3,11 @@ Discord bot for text-to-speech
 
 # quick start
 
-Go here to add the bot https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
+1. Go here to add the bot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
+2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about yourself server
+3. Join a voice channel
+4. Type !follow
+5. Type some text to hear it read out to you
 
 # requirements
 - node js
@@ -40,3 +44,5 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
+
+Want to shitpost also? https://discord.gg/NxrPp8g
