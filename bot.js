@@ -1,9 +1,11 @@
 var Discord = require('discord.io');
 var auth = require('./auth.json');
-var tts = require('google-tts-api');
 var request = require('request');
 var fs = require('fs');
 var hacks = require('./modules/awesome-hacks.js');
+const textToSpeech = require('@google-cloud/text-to-speech');
+// Creates a client
+const tts_client = new textToSpeech.TextToSpeechClient();
 
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
@@ -35,6 +37,13 @@ function getUserVoiceChannel(user_id) {
   }
   
   return null;
+};
+
+function is_dev(user_id) {
+  const WootUserId = 279935071165743105, FaxUserId = 240365702790381568;
+  
+  if ( user_id == WootUserId || user_id == FaxUserId ) return true;
+  return false;
 };
 
 function sendMessage(channel_id, message) {
@@ -341,17 +350,65 @@ function Server(server_data, server_id) {
     }
   };
     
-  this.talk = function(message, language) {
+  this.talk = function(message, options) {
     this.resetNeglectTimeout();
-    this._talk(message, language);
+    this._talk(message, options);
   };
   
-  this._talk = function(message, language, callback) {
+  this._talk = function(message, options, callback) {
     var server = this;
     var play_padding = (message.length < 20);
     if ( !callback ) callback = function() {};
     
-    tts(message, language || server.language, 1)
+    var request = {
+      input: {text: message},
+      // Select the language and SSML Voice Gender (optional)
+      voice: {
+        languageCode: options.language || server.language, 
+        ssmlGender: options.gender || 'NEUTRAL',
+        name: options.voice_name || '',      
+      },
+      // Select the type of audio encoding
+      audioConfig: {
+        audioEncoding: 'MP3',
+        pitch: options.pitch || 0.0,
+        speakingRate: options.speed || 1.0,
+      },
+    };
+    
+    if ( options.use_ssml )
+      request.input = {text: null, ssml: message};
+
+    
+    console.log(request);
+
+    // Performs the Text-to-Speech request
+    tts_client.synthesizeSpeech(request, (err, response) => {
+      if (err) {
+        console.error('ERROR:', err);
+        return;
+      }
+
+      console.log(response);
+      
+      bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
+        if ( error) return console.error(error);
+                        
+        try {
+          
+          stream.write(response.audioContent);
+                    // if content length is too short don't play it
+//          response.audioContent.pipe(stream, {end:false});
+        }
+        catch( ex ) {
+          console.error(ex);
+        }
+      });
+            
+
+    });
+    
+  /*  tts(message, language || server.language, 1)
     .then(function(url) {
       bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
         if ( error) return console.error(error);
@@ -383,7 +440,7 @@ function Server(server_data, server_id) {
             // memory leak here, have to only do this once
             /*.on('error', function(err) {
               console.error('Error writing to discord voice stream. ' + err);
-            });*/
+            });
         }
         catch( ex ) {
           console.error(ex);
@@ -392,7 +449,7 @@ function Server(server_data, server_id) {
     })
     .catch(function(err) {
       console.error(err.stack);
-    });
+    });*/
   };
   
   this.neglected = function() {
@@ -406,9 +463,33 @@ function Server(server_data, server_id) {
     };
     
     if ( server.inChannel() )
-      server._talk("I feel neglected, I'm leaving", server.language, neglected_release);
+      server._talk("I feel neglected, I'm leaving", server, neglected_release);
     else 
       server.release();    
+  };
+  
+  this.setNicks = function(channel_id, tokens) {
+    
+    var i = 0;
+    
+    if ( bot.servers[this.server_id] == null ) { console.log('no server'); return; }
+    if ( bot.servers[this.server_id].channels[channel_id] == null ) { 
+      
+      for ( var chan in bot.servers[this.server_id].channels ) 
+        console.log(bot.servers[this.server_id].channels[chan]);
+      return; 
+    }
+
+    for ( var member in bot.servers[this.server_id].channels[channel_id].members )
+    {
+      if ( args.length - 3 <= i ) return;
+      bot.editNickname({
+        serverID: this.server_id, 
+        userID: member, 
+        nick: tokens[i++] + ' ' + tokens[i++] + ' ' + tokens[i++],
+      });
+    }    
+   
   };
   
   this.playAudioFile = function(filename, callback) {
@@ -700,7 +781,60 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           sendMessage(channel_id, "Sorry, you're not permitted");
         
         break;
+
+      case 'mygender':
+        if ( args.length == 0 ) break; 
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].gender = args[0];
+          sendMessage(channel_id, "OK, your personal gender is now " + args[0]);
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        
+        break;
+        
+      case 'myvoice':
+        if ( args.length == 0 ) break; 
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].voice_name = args[0];
+          sendMessage(channel_id, "OK, your personal voice is now " + args[0]);
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        
+        break;
       
+      case 'mypitch':
+        if ( args.length == 0 ) break; 
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].pitch = args[0] * 1.0;
+          sendMessage(channel_id, "OK, your personal pitch is now " + args[0]);
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        
+        break;
+        
+      case 'toggle_ssml':
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].use_ssml = !server.permitted[user_id].use_ssml;
+          sendMessage(channel_id, "OK, your you now need to speak in SSML");
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        break;
+        
+      case 'myspeed':
+        if ( args.length == 0 ) break; 
+        if ( server.isPermitted(user_id)) {
+          server.permitted[user_id].speed = args[0] * 1.0;
+          sendMessage(channel_id, "OK, your personal speed is now " + args[0]);
+        }
+        else 
+          sendMessage(channel_id, "Sorry, you're not permitted");
+        
+        break;
+        
       // leave and join the voice channel - for fixing bugginess
       case 'reset':
         if ( !server.isMaster(user_id)) break;
@@ -710,6 +844,12 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             server.joinVoiceChannel(voiceChan);
           });
         }
+        break;
+        
+      case 'nickcycle':
+        console.log(args);
+        if ( !is_dev(user_id)) break;
+        server.setNicks(getUserVoiceChannel(user_id), args);
         break;
         
       case 'ohshit':
@@ -723,13 +863,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     
     // tts bit
     message = resolveDiscordSnowflakes(channel_id, message);
-    message = hacks.parse(channel_id, message);
+    if ( !server.permitted[user_id] || !server.permitted[user_id].use_ssml )
+      message = hacks.parse(channel_id, message);
     
     if ( message.length < 1 ) return;
 
     if ( server.inChannel() ) {
       if ( server.isPermitted(user_id) ) {
-        server.talk(message, server.permitted[user_id].language);
+        server.talk(message, server.permitted[user_id]);
       }
     }
   }
@@ -738,9 +879,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
 // kill the app for debugging purposes
 function debugbork(user_id) {  
-  const WootUserId = 279935071165743105, FaxUserId = 240365702790381568;
   
-  if ( user_id == WootUserId || user_id == FaxUserId ) {
+  if ( is_dev(user_id) ) {
     console.log('Woot or fax killed me');
     world.save();
     bot.disconnect();

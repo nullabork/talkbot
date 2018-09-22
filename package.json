@@ -5,6 +5,7 @@
   "main": "bot.js",
   "author": "YOUR-NAME-HERE",
   "dependencies": {
+    "@google-cloud/text-to-speech": "^0.3.0",
     "discord.io": "github:wootosmash/discord.io#master",
     "google-tts-api": "0.0.3",
     "request": "^2.88.0",
