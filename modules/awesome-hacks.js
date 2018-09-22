@@ -1,4 +1,4 @@
-
+var ssaml = require('./discord-to-ssaml');
 
 (function() {"use strict"
 
@@ -60,6 +60,10 @@
   hacks["99-big-long-message"] = function(channel_id, message) {
     if ( message.length > 200 ) message = message.substring(0,200);
     return message;
+  };
+
+  hacks["ssmal-build"] = function(channel_id, message) {
+    return ssaml.build(message);
   };
   
   /**
