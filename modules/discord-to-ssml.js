@@ -1,3 +1,13 @@
+/***************
+  
+  SSML = require('./discord-to-ssml'),
+  var ssml = new SSML({
+
+  });
+
+ ****************/
+
+
 (function () {
   "use strict"
 
@@ -18,28 +28,37 @@
     var _this = this;
     this.config = {
       //default : opts
-      minLength : 20,
-      minLengthBuff : '500ms'
+      minLength: 20,
+      minLengthBuff: '500ms',
+      tags: []
     }
 
     //override any config
+    // ***strong***   ~~>   <emphasis level="strong">strong</emphasis>
+    // ***moderate***   ~~>   <emphasis level="moderate">moderate</emphasis>
+    // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
     Object.assign(this.config, config);
 
     this.tags = [
-      { md: '__***', ssml: '', attr: '' },     //underline bold italics
-      { md: '__**', ssml: '', attr: '' },     //Underline bold
-      { md: '__*', ssml: '', attr: '' },     //Underline italics
-      { md: '__', ssml: '', attr: '' },     //underline
-      { md: '***', ssml: 'emphasis', attr: 'level="strong"' },     //bold italics
-      { md: '**', ssml: 'emphasis', attr: 'level="moderate"' },     //bold
-      { md: '*', ssml: 'emphasis', attr: 'level="reduced"' },     //italics strong,moderate,none,reduced
-      { md: '#', ssml: 'prosody', attr: 'rate="slow"' },          //not mark down
-      { md: '~~', ssml: '', attr: '' },     //strikethrough
-      { md: '```', ssml: '', attr: '' },     //codeblock
+      { md: '__***', ssml: '', attr: ''},
+      { md: '__**', ssml: '', attr: ''},
+      { md: '__*', ssml: '', attr: ''},
+      { md: '__', ssml: '', attr: ''},
+      { md: '***', ssml: 'emphasis', attr: 'level="strong"'},
+      { md: '**', ssml: 'emphasis', attr: 'level="moderate"'},
+      { md: '*', ssml: 'emphasis', attr: 'level="reduced"'},
+      { md: '#', ssml: 'prosody', attr: 'rate="slow"'},
+      { md: '~~', ssml: '', attr: ''},
+      { md: '```', ssml: '', attr: ''},
+      { md: '&&&&&', ssml: 'break', attr: 'time="500"', selfClosing: true},
+      { md: '&&&&', ssml: 'break', attr: 'time="400"', selfClosing: true},
+      { md: '&&&', ssml: 'break', attr: 'time="300"', selfClosing: true }
     ];
 
-    this.addBuffer = function(message) {
-      if(message.length < this.config.minLength) {
+    this.tags = this.tags.concat(this.tags);
+
+    this.addBuffer = function (message) {
+      if (message.length < this.config.minLength) {
         message = '<break time=' + this.config.minLengthBuff + '/> ' + message;
       }
       return message;
@@ -49,17 +68,24 @@
       tags.forEach(function (tag) {
 
         var open = tag.md.escapeRegExp(),
-          close = tag.md.reverse().escapeRegExp(),
-          regex = new RegExp(open + '([^' + open + ']*)' + close, 'g');
-
-        message = message.replace(regex, function (a, b, c) {
-          return '<' + tag.ssml + ' ' + tag.attr + '>' + b + '</' + tag.ssml + '>';
-        });
-
+          close = tag.md.reverse().escapeRegExp();
+          
+        if(this.selfClosing){
+          // &&&  ~~>  <break time="300" />
+          var regex = new RegExp(open, 'g');
+          message = message.replace(regex, function (a, b, c) {
+            return '<' + tag.ssml + ' ' + tag.attr + '/>';
+          });
+        } else {
+          // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
+          var regex = new RegExp(open + '([^' + open + ']*)' + close, 'g');
+          message = message.replace(regex, function (a, b, c) {
+            return '<' + tag.ssml + ' ' + tag.attr + '>' + b + '</' + tag.ssml + '>';
+          });
+        }
       });
 
       message = this.addBuffer(message);
-
       return '<speak>' + message + '</speak>';
     }
   }
