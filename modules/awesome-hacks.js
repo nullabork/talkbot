@@ -1,4 +1,4 @@
-var ssaml = require('./discord-to-ssaml');
+var ssaml = require('./discord-to-ssml');
 
 (function() {"use strict"
 
