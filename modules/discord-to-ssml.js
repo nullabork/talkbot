@@ -15,8 +15,11 @@
 
   exports.SSML = function (config) {
 
+    var _this = this;
     this.config = {
       //default : opts
+      minLength : 20,
+      minLengthBuff : '500ms'
     }
 
     //override any config
@@ -35,7 +38,12 @@
       { md: '```', ssml: '', attr: '' },     //codeblock
     ];
 
-
+    this.addBuffer = function(message) {
+      if(message.length < this.config.minLength) {
+        message = '<break time=' + this.config.minLengthBuff + '/> ' + message;
+      }
+      return message;
+    }
 
     this.build = function (message) {
       tags.forEach(function (tag) {
@@ -49,6 +57,8 @@
         });
 
       });
+
+      message = this.addBuffer(message);
 
       return '<speak>' + message + '</speak>';
     }
