@@ -122,7 +122,13 @@
           'Standard-A'
         ],
       },
-      'tr': 'tr-TR'
+      'tr': {
+        code: 'tr-TR',
+        voices: [
+          'Standard-A'
+        ],
+      }
+      
     };
   }
 })();
