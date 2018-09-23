@@ -1,17 +1,30 @@
-var Discord = require('discord.io');
-var auth = require('./auth.json');
-var request = require('request');
-var fs = require('fs');
-var hacks = require('./modules/awesome-hacks.js');
-const textToSpeech = require('@google-cloud/text-to-speech');
+//npm imports
+var fs = require('fs'),
+  request = require('request'),
+  Discord = require('discord.io'),
+  textToSpeech = require('@google-cloud/text-to-speech');
+
+//local imports
+var auth = require('./auth.json'),
+  SSML = require('./discord-to-ssml'),
+  hacks = require('./modules/awesome-hacks.js');
+
 // Creates a client
-const tts_client = new textToSpeech.TextToSpeechClient();
+var tts_client = new textToSpeech.TextToSpeechClient();
+
+var bot = new Discord.Client({
+  token: auth.token,
+  autorun: true
+});
+
+var ssml = new SSML({
+
+});
 
 function isVoiceChannel(channel_id) {
   if ( !channel_id ) return false;
   return ( bot.channels[channel_id].type == 2 ); 
 };
-
 
 function isExcluded(message) {
   return message.startsWith('```');
@@ -865,7 +878,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     message = resolveDiscordSnowflakes(channel_id, message);
     if ( !server.permitted[user_id] || !server.permitted[user_id].use_ssml )
       message = hacks.parse(channel_id, message);
-    
+      message = ssml.build(message);
+
     if ( message.length < 1 ) return;
 
     if ( server.inChannel() ) {

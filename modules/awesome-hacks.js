@@ -1,5 +1,3 @@
-var ssaml = require('./discord-to-ssml');
-
 (function() {"use strict"
 
   var hacks = {};
@@ -62,9 +60,9 @@ var ssaml = require('./discord-to-ssml');
     return message;
   };
 
-  hacks["ssmal-build"] = function(channel_id, message) {
-    return ssaml.build(message);
-  };
+  // hacks["ssmal-build"] = function(channel_id, message) {
+  //   return ssaml.build(message);
+  // };
   
   /**
     * parse() a message and apply awesome hacks
