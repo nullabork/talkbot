@@ -34,9 +34,9 @@
     }
 
     //override any config
-    // ***strong***   ~~>   <emphasis level="strong">strong</emphasis>
+    // ***reduced***    ~~>   <emphasis level="reduced">reduced</emphasis>
+    // ***strong***     ~~>   <emphasis level="strong">strong</emphasis>
     // ***moderate***   ~~>   <emphasis level="moderate">moderate</emphasis>
-    // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
     Object.assign(this.config, config);
 
     this.tags = [
