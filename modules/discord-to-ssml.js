@@ -2,10 +2,11 @@
   "use strict"
 
   var tags = [
-    { md: '__', ssml: '', attr: '' },     //underline
+    
     { md: '__***', ssml: '', attr: '' },     //underline bold italics
     { md: '__**', ssml: '', attr: '' },     //Underline bold
     { md: '__*', ssml: '', attr: '' },     //Underline italics
+    { md: '__', ssml: '', attr: '' },     //underline
     { md: '***', ssml: 'emphasis', attr: 'level="strong"' },     //bold italics
     { md: '**', ssml: 'emphasis', attr: 'level="moderate"' },     //bold
     { md: '*', ssml: 'emphasis', attr: 'level="reduced"' },     //italics strong,moderate,none,reduced
