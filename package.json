@@ -8,7 +8,11 @@
     "@google-cloud/text-to-speech": "^0.3.0",
     "discord.io": "github:wootosmash/discord.io#master",
     "google-tts-api": "0.0.3",
+    "lang.js": "^1.1.12",
     "request": "^2.88.0",
     "winston": "^2.4.4"
+  },
+  "devDependencies": {
+    "sprintf-js": "^1.1.1"
   }
 }

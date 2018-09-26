@@ -23,7 +23,7 @@
   }
 
 
-  exports.SSML = function (config) {
+  exports.default = function (config) {
 
     var _this = this;
     this.config = {
@@ -59,18 +59,18 @@
 
     this.addBuffer = function (message) {
       if (message.length < this.config.minLength) {
-        message = '<break time=' + this.config.minLengthBuff + '/> ' + message;
+        message = '<break time="' + this.config.minLengthBuff + '"/> ' + message;
       }
       return message;
     }
 
     this.build = function (message) {
-      tags.forEach(function (tag) {
+      this.tags.forEach(function (tag) {
 
         var open = tag.md.escapeRegExp(),
           close = tag.md.reverse().escapeRegExp();
           
-        if(this.selfClosing){
+        if(tag.selfClosing){
           // &&&  ~~>  <break time="300" />
           var regex = new RegExp(open, 'g');
           message = message.replace(regex, function (a, b, c) {
