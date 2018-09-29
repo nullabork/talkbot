@@ -8,7 +8,8 @@ var fs = require('fs'),
   request = require('request'),
   Discord = require('discord.io'),
   textToSpeech = require('@google-cloud/text-to-speech'),
-  Lang = require("lang.js");
+  Lang = require("lang.js"),
+  ChildProc   = require('child_process');
 
 //local imports
 
@@ -235,6 +236,7 @@ function Server(server_data, server_id) {
   this.neglect_timeout = null;
   this.neglect_neglect = !!server_data.neglect_neglect;
   this.language = server_data.language || 'en';
+  this.messages = server_data.messages || {};
   
   this.sfx = {
     airhorn: 'sfx/airhorn.mp3',
@@ -257,6 +259,13 @@ function Server(server_data, server_id) {
         this.joinVoiceChannel(voiceChan);
     }
   };
+
+  this.lang = function(key){
+    if(this.messages && this.messages[key]){
+      return this.messages[key];
+    }
+    return lang.get.apply(lang, Array.from(arguments));
+  }
   
   this._setMaster = function(user_id, username) {
     this.bound_to = user_id;
@@ -407,10 +416,8 @@ function Server(server_data, server_id) {
     };
     
     //if ( options.use_ssml )
-      request.input = {text: null, ssml: message};
-
+    request.input = {text: null, ssml: message};
     
-    console.log(request);
 
     // Performs the Text-to-Speech request
     tts_client.synthesizeSpeech(request, (err, response) => {
@@ -418,9 +425,6 @@ function Server(server_data, server_id) {
         console.error('ERROR:', err);
         return;
       }
-
-      console.log(response);
-      console.log('------------------------------------------');
       bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
         
         if ( error) return console.error(error);
@@ -618,10 +622,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   
   var server = world.getServerFromChannel(channel_id);
 
-  if(server.messages){
-    Object.assign(messages, server.messages);
-  }
-
   if ( server == null ) {
     console.error("Can't find server for " + channel_id);
     return null;
@@ -644,14 +644,16 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( !master_nick )
           master_nick = server.bound_to;
         if ( !master_nick )
-          sendMessage(channel_id, lang.get('who.none'));
+          sendMessage(channel_id, server.lang('who.none'));
         else 
-          sendMessage(channel_id, lang.get('who.okay', { name : master_nick }));
+          sendMessage(channel_id, server.lang('who.okay', { name : master_nick }));
         break;
         
       // !ping
       case 'ping':
-        sendMessage(channel_id, lang.get('ping.okay'));
+        sendMessage(channel_id, server.lang('ping.okay'));
+        var s = ChildProc.spawnSync('ffmpeg');
+        console.log(s.file);
         break;
         
       // make you the bots master and have all permissions
@@ -662,10 +664,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             var master_nick = getNickFromUserId(channel_id, server.bound_to);
             if ( !master_nick )
               master_nick = server.bound_to;
-            sendMessage(channel_id, lang.get('follow.nope', { name : master_nick }));
+            sendMessage(channel_id, server.lang('follow.nope', { name : master_nick }));
           }
           else {
-            sendMessage(channel_id, lang.get('follow.huh'));
+            sendMessage(channel_id, server.lang('follow.huh'));
           }
         }
         else {
@@ -673,7 +675,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
           var voiceChan = getUserVoiceChannel(user_id);
           if ( voiceChan )
             server.joinVoiceChannel(voiceChan);
-          sendMessage(channel_id, lang.get('follow.okay'));
+          sendMessage(channel_id, server.lang('follow.okay'));
         }
         break;
       
@@ -681,15 +683,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       case 'unfollow':
         if ( server.isBound() ) {
           if ( !server.isMaster(user_id)) {
-            sendMessage(channel_id, lang.get('unfollow.nope'));
+            sendMessage(channel_id, server.lang('unfollow.nope'));
           }
           else {
             server.release();
-            sendMessage(channel_id, lang.get('unfollow.okay'));
+            sendMessage(channel_id, server.lang('unfollow.okay'));
           }
         }
         else
-          sendMessage(channel_id, lang.get('unfollow.none'));
+          sendMessage(channel_id, server.lang('unfollow.none'));
         break;
       
       // permit another user to use the TTS capability
@@ -697,7 +699,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( args.length == 0 ) break;
         
         if ( !server.isMaster(user_id)) {
-          sendMessage(channel_id, lang.get('permit.nope'));
+          sendMessage(channel_id, server.lang('permit.nope'));
         }
         else {
           var target_id = getDiscordUserIdFromMessage(args[0]);
@@ -706,10 +708,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
             var nick = getNickFromUserId(channel_id, target_id);
             if ( !nick )
               nick = target_id;
-            sendMessage(channel_id, lang.get('permit.okay', { name : nick })); 
+            sendMessage(channel_id, server.lang('permit.okay', { name : nick })); 
           }
           else {
-            sendMessage(channel_id, lang.get('permit.none', { name : args[0] }));
+            sendMessage(channel_id, server.lang('permit.none', { name : args[0] }));
           }
         }
         break;
@@ -718,21 +720,21 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       case 'unpermit':
      
         if ( !server.isPermitted(user_id)) {
-          sendMessage(channel_id, lang.get('unpermit.deny'));
+          sendMessage(channel_id, server.lang('unpermit.deny'));
         }
         else {
           var target_id = user_id; 
           if ( args.length > 0 ) 
             target_id = getDiscordUserIdFromMessage(args[0]);
           if ( target_id != user_id && !server.isMaster(user_id))
-            sendMessage(channel_id, lang.get('unpermit.nope'));
+            sendMessage(channel_id, server.lang('unpermit.nope'));
           else if ( target_id == user_id || server.isMaster(user_id) ) {
             server.unpermit(target_id);
             var nick = getNickFromUserId(channel_id, target_id);
-            sendMessage(channel_id,  lang.get('unpermit.okay', { name : nick })); 
+            sendMessage(channel_id,  server.lang('unpermit.okay', { name : nick })); 
           }
           else {
-            sendMessage(channel_id, lang.get('unpermit.none', { name : args[0] }));
+            sendMessage(channel_id, server.lang('unpermit.none', { name : args[0] }));
           }
         }
         break;
@@ -740,7 +742,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       // leave the voice channel
       case 'leave':
         if ( server.isBound() && !server.isMaster(user_id)) {
-          sendMessage(channel_id, lang.get('leave.nope'));
+          sendMessage(channel_id, server.lang('leave.nope'));
         }
         else {
           server.leaveVoiceChannel();
@@ -750,14 +752,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       // join a voice channel
       case 'join':
         if ( !server.isMaster(user_id)) {
-          sendMessage(channel_id, lang.get('join.nope'));
+          sendMessage(channel_id, server.lang('join.nope'));
         }
         else {
           var voiceChan = getUserVoiceChannel(user_id);
           if ( voiceChan )
             server.joinVoiceChannel(voiceChan);
           else {
-            sendMessage(channel_id, lang.get('join.none'));
+            sendMessage(channel_id, server.lang('join.none'));
           }
         }
         break;
@@ -777,24 +779,27 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       case 'set':
         if ( args.length == 0 ) break;
         if ( !server.isMaster(user_id))
-          sendMessage(channel_id, lang.get('set.nope'));
+          sendMessage(channel_id, server.lang('set.nope'));
         else {
           if(!server.messages){
             server.messages = {};
           }
+          
+          var a = [].concat([], args);
+          a.shift();
 
-          server.messages[args[0]] = args[0];
-          sendMessage(channel_id, lang.get('set.okay'));
+          server.messages[args[0]] = a.join(" ");
+          sendMessage(channel_id, server.lang('set.okay'));
         }
         break;
       
       case 'lang':
         if ( args.length == 0 ) break;
         if ( !server.isMaster(user_id))
-          sendMessage(channel_id, lang.get('lang.nope'));
+          sendMessage(channel_id, server.lang('lang.nope'));
         else {
           server.language = args[0];
-          sendMessage(channel_id, lang.get('lang.okay', { lang : server.language }));
+          sendMessage(channel_id, server.lang('lang.okay', { lang : server.language }));
         }
         break;
         
@@ -802,13 +807,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       case 'toggle_neglect':
       
         if ( !server.isMaster(user_id))
-          sendMessage(channel_id, lang.get('toggle_neglect.nope'));
+          sendMessage(channel_id, server.lang('toggle_neglect.nope'));
         else {
           server.neglect_neglect = !server.neglect_neglect;
           if ( server.neglect_neglect )
-            sendMessage(channel_id, lang.get('toggle_neglect.none'));
+            sendMessage(channel_id, server.lang('toggle_neglect.none'));
           else 
-            sendMessage(channel_id, lang.get('toggle_neglect.okay'));
+            sendMessage(channel_id, server.lang('toggle_neglect.okay'));
         }
         break;
         
@@ -823,10 +828,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].language = args[0];
-          sendMessage(channel_id, lang.get('mylang.okay', { lang : args[0] }));
+          sendMessage(channel_id, server.lang('mylang.okay', { lang : args[0] }));
         }
         else 
-          sendMessage(channel_id, lang.get('mylang.deny'));
+          sendMessage(channel_id, server.lang('mylang.deny'));
         
         break;
 
@@ -834,10 +839,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].gender = args[0];
-          sendMessage(channel_id, lang.get('mygender.okay', { gender : args[0] }));
+          sendMessage(channel_id, server.lang('mygender.okay', { gender : args[0] }));
         }
         else 
-          sendMessage(channel_id, lang.get('mygender.deny'));
+          sendMessage(channel_id, server.lang('mygender.deny'));
         
         break;
         
@@ -845,10 +850,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].voice_name = args[0];
-          sendMessage(channel_id, lang.get('myvoice.okay', { voice : args[0] }));
+          sendMessage(channel_id, server.lang('myvoice.okay', { voice : args[0] }));
         }
         else 
-          sendMessage(channel_id, lang.get('myvoice.deny'));
+          sendMessage(channel_id, server.lang('myvoice.deny'));
         
         break;
       
@@ -856,30 +861,30 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].pitch = args[0] * 1.0;
-          sendMessage(channel_id, lang.get('mypitch.okay', { pitch : args[0] }));
+          sendMessage(channel_id, server.lang('mypitch.okay', { pitch : args[0] }));
         }
         else 
-          sendMessage(channel_id, lang.get('mypitch.deny'));
+          sendMessage(channel_id, server.lang('mypitch.deny'));
         
         break;
         
       case 'toggle_ssml':
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].use_ssml = !server.permitted[user_id].use_ssml;
-          sendMessage(channel_id, lang.get('toggle_ssml.okay'));
+          sendMessage(channel_id, server.lang('toggle_ssml.okay'));
         }
         else 
-          sendMessage(channel_id,lang.get('toggle_ssml.deny'));
+          sendMessage(channel_id,server.lang('toggle_ssml.deny'));
         break;
         
       case 'myspeed':
         if ( args.length == 0 ) break; 
         if ( server.isPermitted(user_id)) {
           server.permitted[user_id].speed = args[0] * 1.0;
-          sendMessage(channel_id, lang.get('myspeed.okay', { speed : args[0] }));
+          sendMessage(channel_id, server.lang('myspeed.okay', { speed : args[0] }));
         }
         else 
-          sendMessage(channel_id, lang.get('myspeed.deny'));
+          sendMessage(channel_id, server.lang('myspeed.deny'));
         
         break;
         
@@ -914,7 +919,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if ( !server.permitted[user_id] || !server.permitted[user_id].use_ssml )
       message = hacks.parse(channel_id, message);
       message = ssml.build(message);
-
+    
     if ( message.length < 1 ) return;
 
     if ( server.inChannel() ) {

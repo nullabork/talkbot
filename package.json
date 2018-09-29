@@ -6,6 +6,7 @@
   "author": "YOUR-NAME-HERE",
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.3.0",
+    "child_process": "^1.0.2",
     "discord.io": "github:wootosmash/discord.io#master",
     "google-tts-api": "0.0.3",
     "lang.js": "^1.1.12",

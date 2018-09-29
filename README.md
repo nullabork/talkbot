@@ -19,6 +19,16 @@ Copy auth.example to auth.json and put in your discord app key.
 To learn how to setup a discord app and get this token go here 
 https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 
+# node version
+## install nvm
+### windows
+https://github.com/coreybutler/nvm-windows/releases
+### mac/linux
+https://github.com/creationix/nvm
+
+cd to project root and run `nvm use`
+
+
 # to run
 node bot.js
 

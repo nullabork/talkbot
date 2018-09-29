@@ -50,9 +50,9 @@
       { md: '#', ssml: 'prosody', attr: 'rate="slow"'},
       { md: '~~', ssml: '', attr: ''},
       { md: '```', ssml: '', attr: ''},
-      { md: '&&&&&', ssml: 'break', attr: 'time="500"', selfClosing: true},
-      { md: '&&&&', ssml: 'break', attr: 'time="400"', selfClosing: true},
-      { md: '&&&', ssml: 'break', attr: 'time="300"', selfClosing: true }
+      { md: '&&&&&', ssml: 'break', attr: 'time="500ms"', selfClosing: true},
+      { md: '&&&&', ssml: 'break', attr: 'time="400ms"', selfClosing: true},
+      { md: '&&&', ssml: 'break', attr: 'time="300ms"', selfClosing: true }
     ];
 
     this.tags = this.tags.concat(this.tags);
