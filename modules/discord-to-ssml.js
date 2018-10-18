@@ -29,7 +29,7 @@
     this.config = {
       //default : opts
       minLength: 20,
-      minLengthBuff: '500ms',
+      minLengthBuff: '3000ms',
       tags: []
     }
 
@@ -59,7 +59,7 @@
 
     this.addBuffer = function (message) {
       if (message.length < this.config.minLength) {
-        message = '<break time="' + this.config.minLengthBuff + '"/> ' + message;
+        message = message + '<break time="' + this.config.minLengthBuff + '"/> ';
       }
       return message;
     }

@@ -1,4 +1,5 @@
 var _config = './config',
+  //commands_path = './commands',
   state_path = _config + '/state.json',
   auth_path = _config + '/auth.json',
   lang_path = _config + '/lang.json';
@@ -8,17 +9,19 @@ var fs = require('fs'),
   request = require('request'),
   Discord = require('discord.io'),
   textToSpeech = require('@google-cloud/text-to-speech'),
-  Lang = require("lang.js"),
-  ChildProc   = require('child_process');
+  Lang = require("lang.js");
 
 //local imports
 
 var SSML = require('./modules/discord-to-ssml').default,
-  hacks = require('./modules/awesome-hacks.js');
+  hacks = require('./modules/awesome-hacks.js'),
+  commands = require('./modules/commands/index').default,
+  common = require('./modules/common');
 
 var auth = require(auth_path),
   messages = require(lang_path),
-  state = require(state_path);   
+  state = require(state_path);
+  //commands = require(commands_path);
 
 
 // Creates a client
@@ -29,9 +32,7 @@ var bot = new Discord.Client({
   autorun: true
 });
 
-var ssml = new SSML({
-
-});
+var ssml = new SSML({});
 
 var lang = new Lang({
   messages: messages,
@@ -221,6 +222,72 @@ var world = {
   },
 };
 
+function MessageDetails(client_data){
+
+  if(!this instanceof MessageDetails) {
+    return new MessageDetails();
+  }
+
+  this.channel_id = null;
+  this.user_id = null;
+  this.bot = null;
+  this.world = null;
+  this.server = null;
+  this.username = null;
+  this.args = null;
+  this.message = '';
+  var self = this;
+  Object.assign(this, client_data);
+
+  this.sendMessage = this.response = function(message) {
+    self.bot.simulateTyping(self.channel_id, function() {
+      self.bot.sendMessage({
+          to: self.channel_id,
+          message: message
+      });
+    });
+  }
+
+  this.getNick = function(user_id) {
+    var members = this.server.getChannelMembers(this.channel_id);
+    if(members && members[user_id]){
+      return members[user_id].nick;
+    }      
+    return null;
+  };
+
+  
+
+  this.ownerIsMaster = function(){
+    return this.server.isMaster(this.user_id);
+  }
+
+  this.ownerIsDev = function(){
+    if(!auth.dev_ids || !auth.dev_ids.length){
+      return false;
+    }
+    return auth.dev_ids.indexOf(this.user_id) >= 0;
+  }
+
+  this.messageNick = function() {
+    return this.getNick(this.user_id);
+  }
+
+  this.boundNick = function() {
+    return this.getNick(this.server.bound_to);
+  }
+  
+  this.getOwnersVoiceChannel = function() {
+    return getUserVoiceChannel(this.user_id);
+  };  
+
+  this.getUserIds = function() {
+    return common.parseMessageIDs(this.message);
+  };
+  
+  
+}
+
 function Server(server_data, server_id) {       
 
   console.log("NEW SERVER: " + server_id);
@@ -283,6 +350,10 @@ function Server(server_data, server_id) {
   this.isServerChannel = function(channel_id) {
     return bot.channels[channel_id].guild_id == this.server_id ;
   };
+
+  this.getOwnersVoiceChannel = function(user_id) {
+    return getUserVoiceChannel(user_id);
+  };  
   
   this._release = function() {
     this.bound_to = null;
@@ -295,6 +366,22 @@ function Server(server_data, server_id) {
     
     world.save();
   };
+
+  this.getChannelMembers = function( channel_id ) {
+    if( !bot.channels[channel_id]
+        && !bot.servers[bot.channels[channel_id].guild_id] 
+        &&  bot.servers[bot.channels[channel_id].guild_id].members ) {
+      return bot.servers[bot.channels[channel_id].guild_id].members;
+    }
+    return null;
+  };
+
+  this.kill = function(){
+    world.save();
+    bot.disconnect();
+    process.exit();
+  }
+
 
   this.release = function() {
     console.log('release');
@@ -370,7 +457,6 @@ function Server(server_data, server_id) {
   };
   
   this.resetNeglectTimeout = function() {
-    
     var server = this;
     
     if ( server.neglect_neglect ) 
@@ -631,284 +717,312 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   if (message.substring(0, command_char.length) == command_char) {
 
     server.resetNeglectTimeout();
-    var args = message.substring(command_char.length).split(' ');
-    var cmd = args[0];
+    //var args = message.substring(command_char.length).split(' ');
+    var parts = message.match(
+      new RegExp("(" + common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
+    );
+
+    var cmdChar = parts[1];
+    var cmdVerb = parts[2] || null;
+    var cmdArgs = (parts[3] && parts[3].split(/\s+/)) || null;
+    var cmdMessage = parts[3] ||  null;
+    // var cmd = args[0];
    
-    args = args.splice(1);
-    switch(cmd) {
+    //args = args.splice(1);
+
+    var msgDets = new MessageDetails({
+      channel_id : channel_id,
+      user_id : user_id,
+      bot : bot,
+      world : world,
+      server : server,
+      username : username,
+      cmdChar: cmdChar,
+      cmd : cmdVerb,
+      args : cmdArgs,
+      message : cmdMessage,
+    });
+
+    //console.log(commands, "<----");
+    var command = commands.get(msgDets.cmd);
+
+    console.log(msgDets.cmd, command(msgDets, server));
+
+    //console.log(msgDets);
+//commands
+    switch('asd') {
       
+      //commands
       // find out who the current master for this server is
-      case 'who':
+      // case 'who':
           
-        var master_nick = getNickFromUserId(channel_id, server.bound_to);
-        if ( !master_nick )
-          master_nick = server.bound_to;
-        if ( !master_nick )
-          sendMessage(channel_id, server.lang('who.none'));
-        else 
-          sendMessage(channel_id, server.lang('who.okay', { name : master_nick }));
-        break;
+      //   var master_nick = getNickFromUserId(channel_id, server.bound_to);
+      //   if ( !master_nick )
+      //     master_nick = server.bound_to;
+      //   if ( !master_nick )
+      //     sendMessage(channel_id, server.lang('who.none'));
+      //   else 
+      //     sendMessage(channel_id, server.lang('who.okay', { name : master_nick }));
+      //   break;
         
       // !ping
-      case 'ping':
-        sendMessage(channel_id, server.lang('ping.okay'));
-        var s = ChildProc.spawnSync('ffmpeg');
-        console.log(s.file);
-        break;
+      // case 'ping':
+      //   sendMessage(channel_id, server.lang('ping.okay'));
+      //   break;
         
       // make you the bots master and have all permissions
-      case 'follow':
-        if ( server.isBound() ) {
-          if ( !server.isMaster(user_id)) {
-          console.log('YOU ARENT EVEN');
-            var master_nick = getNickFromUserId(channel_id, server.bound_to);
-            if ( !master_nick )
-              master_nick = server.bound_to;
-            sendMessage(channel_id, server.lang('follow.nope', { name : master_nick }));
-          }
-          else {
-            sendMessage(channel_id, server.lang('follow.huh'));
-          }
-        }
-        else {
-          server.setMaster(user_id, username);
-          var voiceChan = getUserVoiceChannel(user_id);
-          if ( voiceChan )
-            server.joinVoiceChannel(voiceChan);
-          sendMessage(channel_id, server.lang('follow.okay'));
-        }
-        break;
+      // case 'follow':
+      //   if ( server.isBound() ) {
+      //     if ( !server.isMaster(user_id)) {
+      //     console.log('YOU ARENT EVEN');
+      //       var master_nick = getNickFromUserId(channel_id, server.bound_to);
+      //       if ( !master_nick )
+      //         master_nick = server.bound_to;
+      //       sendMessage(channel_id, server.lang('follow.nope', { name : master_nick }));
+      //     }
+      //     else {
+      //       sendMessage(channel_id, server.lang('follow.huh'));
+      //     }
+      //   }
+      //   else {
+      //     server.setMaster(user_id, username);
+      //     var voiceChan = getUserVoiceChannel(user_id);
+      //     if ( voiceChan )
+      //       server.joinVoiceChannel(voiceChan);
+      //     sendMessage(channel_id, server.lang('follow.okay'));
+      //   }
+      //   break;
       
       // release the bot some it can follow someone else
-      case 'unfollow':
-        if ( server.isBound() ) {
-          if ( !server.isMaster(user_id)) {
-            sendMessage(channel_id, server.lang('unfollow.nope'));
-          }
-          else {
-            server.release();
-            sendMessage(channel_id, server.lang('unfollow.okay'));
-          }
-        }
-        else
-          sendMessage(channel_id, server.lang('unfollow.none'));
-        break;
+      // case 'unfollow':
+      //   if ( server.isBound() ) {
+      //     if ( !server.isMaster(user_id)) {
+      //       sendMessage(channel_id, server.lang('unfollow.nope'));
+      //     }
+      //     else {
+      //       server.release();
+      //       sendMessage(channel_id, server.lang('unfollow.okay'));
+      //     }
+      //   }
+      //   else
+      //     sendMessage(channel_id, server.lang('unfollow.none'));
+      //   break;
       
       // permit another user to use the TTS capability
-      case 'permit':      
-        if ( args.length == 0 ) break;
+      // case 'permit':      
+      //   if ( args.length == 0 ) break;
         
-        if ( !server.isMaster(user_id)) {
-          sendMessage(channel_id, server.lang('permit.nope'));
-        }
-        else {
-          var target_id = getDiscordUserIdFromMessage(args[0]);
-          if ( target_id ) {
-            server.permit(target_id);
-            var nick = getNickFromUserId(channel_id, target_id);
-            if ( !nick )
-              nick = target_id;
-            sendMessage(channel_id, server.lang('permit.okay', { name : nick })); 
-          }
-          else {
-            sendMessage(channel_id, server.lang('permit.none', { name : args[0] }));
-          }
-        }
-        break;
+      //   if ( !server.isMaster(user_id)) {
+      //     sendMessage(channel_id, server.lang('permit.nope'));
+      //   }
+      //   else {
+      //     var target_id = getDiscordUserIdFromMessage(args[0]);
+      //     if ( target_id ) {
+      //       server.permit(target_id);
+      //       var nick = getNickFromUserId(channel_id, target_id);
+      //       if ( !nick )
+      //         nick = target_id;
+      //       sendMessage(channel_id, server.lang('permit.okay', { name : nick })); 
+      //     }
+      //     else {
+      //       sendMessage(channel_id, server.lang('permit.none', { name : args[0] }));
+      //     }
+      //   }
+      //   break;
       
       // unpermit another user from using the TTS capability
-      case 'unpermit':
+      // case 'unpermit':
      
-        if ( !server.isPermitted(user_id)) {
-          sendMessage(channel_id, server.lang('unpermit.deny'));
-        }
-        else {
-          var target_id = user_id; 
-          if ( args.length > 0 ) 
-            target_id = getDiscordUserIdFromMessage(args[0]);
-          if ( target_id != user_id && !server.isMaster(user_id))
-            sendMessage(channel_id, server.lang('unpermit.nope'));
-          else if ( target_id == user_id || server.isMaster(user_id) ) {
-            server.unpermit(target_id);
-            var nick = getNickFromUserId(channel_id, target_id);
-            sendMessage(channel_id,  server.lang('unpermit.okay', { name : nick })); 
-          }
-          else {
-            sendMessage(channel_id, server.lang('unpermit.none', { name : args[0] }));
-          }
-        }
-        break;
+      //   if ( !server.isPermitted(user_id)) {
+      //     sendMessage(channel_id, server.lang('unpermit.deny'));
+      //   }
+      //   else {
+      //     var target_id = user_id; 
+      //     if ( args.length > 0 ) 
+      //       target_id = getDiscordUserIdFromMessage(args[0]);
+      //     if ( target_id != user_id && !server.isMaster(user_id))
+      //       sendMessage(channel_id, server.lang('unpermit.nope'));
+      //     else if ( target_id == user_id || server.isMaster(user_id) ) {
+      //       server.unpermit(target_id);
+      //       var nick = getNickFromUserId(channel_id, target_id);
+      //       sendMessage(channel_id,  server.lang('unpermit.okay', { name : nick })); 
+      //     }
+      //     else {
+      //       sendMessage(channel_id, server.lang('unpermit.none', { name : args[0] }));
+      //     }
+      //   }
+      //   break;
            
       // leave the voice channel
-      case 'leave':
-        if ( server.isBound() && !server.isMaster(user_id)) {
-          sendMessage(channel_id, server.lang('leave.nope'));
-        }
-        else {
-          server.leaveVoiceChannel();
-        }
-        break;
+      // case 'leave':
+      //   if ( server.isBound() && !server.isMaster(user_id)) {
+      //     sendMessage(channel_id, server.lang('leave.nope'));
+      //   }
+      //   else {
+      //     server.leaveVoiceChannel();
+      //   }
+      //   break;
         
       // join a voice channel
-      case 'join':
-        if ( !server.isMaster(user_id)) {
-          sendMessage(channel_id, server.lang('join.nope'));
-        }
-        else {
-          var voiceChan = getUserVoiceChannel(user_id);
-          if ( voiceChan )
-            server.joinVoiceChannel(voiceChan);
-          else {
-            sendMessage(channel_id, server.lang('join.none'));
-          }
-        }
-        break;
+      // case 'join':
+      //   if ( !server.isMaster(user_id)) {
+      //     sendMessage(channel_id, server.lang('join.nope'));
+      //   }
+      //   else {
+      //     var voiceChan = getUserVoiceChannel(user_id);
+      //     if ( voiceChan )
+      //       server.joinVoiceChannel(voiceChan);
+      //     else {
+      //       sendMessage(channel_id, server.lang('join.none'));
+      //     }
+      //   }
+      //   break;
         
       // play a sound effect from the library
-      case 'sfx':
-        if ( server.inChannel() ) {
-          if ( server.isPermitted(user_id) ) {
-            var filename = server.sfx[args[0]]; // world.sfx
-            if ( filename )
-              server.playAudioFile(filename);
-          }
-        }
-        break;
+      // case 'sfx':
+      //   if ( server.inChannel() ) {
+      //     if ( server.isPermitted(user_id) ) {
+      //       var filename = server.sfx[args[0]]; // world.sfx
+      //       if ( filename )
+      //         server.playAudioFile(filename);
+      //     }
+      //   }
+      //   break;
         
       // set the language the bot should use default is en, other examples: en-AU, de-DE, eu-CA 
-      case 'set':
-        if ( args.length == 0 ) break;
-        if ( !server.isMaster(user_id))
-          sendMessage(channel_id, server.lang('set.nope'));
-        else {
-          if(!server.messages){
-            server.messages = {};
-          }
+      // case 'set':
+      //   if ( args.length == 0 ) break;
+      //   if ( !server.isMaster(user_id))
+      //     sendMessage(channel_id, server.lang('set.nope'));
+      //   else {
+      //     if(!server.messages){
+      //       server.messages = {};
+      //     }
           
-          var a = [].concat([], args);
-          a.shift();
+      //     var a = [].concat([], args);
+      //     a.shift();
 
-          server.messages[args[0]] = a.join(" ");
-          sendMessage(channel_id, server.lang('set.okay'));
-        }
-        break;
+      //     server.messages[args[0]] = a.join(" ");
+      //     sendMessage(channel_id, server.lang('set.okay'));
+      //   }
+      //   break;
       
-      case 'lang':
-        if ( args.length == 0 ) break;
-        if ( !server.isMaster(user_id))
-          sendMessage(channel_id, server.lang('lang.nope'));
-        else {
-          server.language = args[0];
-          sendMessage(channel_id, server.lang('lang.okay', { lang : server.language }));
-        }
-        break;
+      // case 'lang':
+      //   if ( args.length == 0 ) break;
+      //   if ( !server.isMaster(user_id))
+      //     sendMessage(channel_id, server.lang('lang.nope'));
+      //   else {
+      //     server.language = args[0];
+      //     sendMessage(channel_id, server.lang('lang.okay', { lang : server.language }));
+      //   }
+      //   break;
         
       // toggle the neglect function
-      case 'toggle_neglect':
+      // case 'toggle_neglect':
       
-        if ( !server.isMaster(user_id))
-          sendMessage(channel_id, server.lang('toggle_neglect.nope'));
-        else {
-          server.neglect_neglect = !server.neglect_neglect;
-          if ( server.neglect_neglect )
-            sendMessage(channel_id, server.lang('toggle_neglect.none'));
-          else 
-            sendMessage(channel_id, server.lang('toggle_neglect.okay'));
-        }
-        break;
+      //   if ( !server.isMaster(user_id))
+      //     sendMessage(channel_id, server.lang('toggle_neglect.nope'));
+      //   else {
+      //     server.neglect_neglect = !server.neglect_neglect;
+      //     if ( server.neglect_neglect )
+      //       sendMessage(channel_id, server.lang('toggle_neglect.none'));
+      //     else 
+      //       sendMessage(channel_id, server.lang('toggle_neglect.okay'));
+      //   }
+      //   break;
         
       // used by the devs to drop the bot remotely
-      case 'debugbork':
-        // special dev permissions here
-        debugbork(user_id);
-        break;
+      // case 'debugbork':
+      //   // special dev permissions here
+      //   debugbork(user_id);
+      //   break;
         
       // set your personal language to use with tts, see !lang for examples 
-      case 'mylang':
-        if ( args.length == 0 ) break; 
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].language = args[0];
-          sendMessage(channel_id, server.lang('mylang.okay', { lang : args[0] }));
-        }
-        else 
-          sendMessage(channel_id, server.lang('mylang.deny'));
+      // case 'mylang':
+      //   if ( args.length == 0 ) break; 
+      //   if ( server.isPermitted(user_id)) {
+      //     server.permitted[user_id].language = args[0];
+      //     sendMessage(channel_id, server.lang('mylang.okay', { lang : args[0] }));
+      //   }
+      //   else 
+      //     sendMessage(channel_id, server.lang('mylang.deny'));
         
-        break;
+      //   break;
 
-      case 'mygender':
-        if ( args.length == 0 ) break; 
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].gender = args[0];
-          sendMessage(channel_id, server.lang('mygender.okay', { gender : args[0] }));
-        }
-        else 
-          sendMessage(channel_id, server.lang('mygender.deny'));
+      // case 'mygender':
+      //   if ( args.length == 0 ) break; 
+      //   if ( server.isPermitted(user_id)) {
+      //     server.permitted[user_id].gender = args[0];
+      //     sendMessage(channel_id, server.lang('mygender.okay', { gender : args[0] }));
+      //   }
+      //   else 
+      //     sendMessage(channel_id, server.lang('mygender.deny'));
         
-        break;
+      //   break;
         
-      case 'myvoice':
-        if ( args.length == 0 ) break; 
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].voice_name = args[0];
-          sendMessage(channel_id, server.lang('myvoice.okay', { voice : args[0] }));
-        }
-        else 
-          sendMessage(channel_id, server.lang('myvoice.deny'));
+      // case 'myvoice':
+      //   if ( args.length == 0 ) break; 
+      //   if ( server.isPermitted(user_id)) {
+      //     server.permitted[user_id].voice_name = args[0];
+      //     sendMessage(channel_id, server.lang('myvoice.okay', { voice : args[0] }));
+      //   }
+      //   else 
+      //     sendMessage(channel_id, server.lang('myvoice.deny'));
         
-        break;
+      //   break;
       
-      case 'mypitch':
-        if ( args.length == 0 ) break; 
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].pitch = args[0] * 1.0;
-          sendMessage(channel_id, server.lang('mypitch.okay', { pitch : args[0] }));
-        }
-        else 
-          sendMessage(channel_id, server.lang('mypitch.deny'));
+      // case 'mypitch':
+      //   if ( args.length == 0 ) break; 
+      //   if ( server.isPermitted(user_id)) {
+      //     server.permitted[user_id].pitch = args[0] * 1.0;
+      //     sendMessage(channel_id, server.lang('mypitch.okay', { pitch : args[0] }));
+      //   }
+      //   else 
+      //     sendMessage(channel_id, server.lang('mypitch.deny'));
         
-        break;
+      //   break;
         
-      case 'toggle_ssml':
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].use_ssml = !server.permitted[user_id].use_ssml;
-          sendMessage(channel_id, server.lang('toggle_ssml.okay'));
-        }
-        else 
-          sendMessage(channel_id,server.lang('toggle_ssml.deny'));
-        break;
+      // case 'toggle_ssml':
+      //   if ( server.isPermitted(user_id)) {
+      //     server.permitted[user_id].use_ssml = !server.permitted[user_id].use_ssml;
+      //     sendMessage(channel_id, server.lang('toggle_ssml.okay'));
+      //   }
+      //   else 
+      //     sendMessage(channel_id,server.lang('toggle_ssml.deny'));
+      //   break;
         
-      case 'myspeed':
-        if ( args.length == 0 ) break; 
-        if ( server.isPermitted(user_id)) {
-          server.permitted[user_id].speed = args[0] * 1.0;
-          sendMessage(channel_id, server.lang('myspeed.okay', { speed : args[0] }));
-        }
-        else 
-          sendMessage(channel_id, server.lang('myspeed.deny'));
+      //case 'myspeed':
+        // if ( args.length == 0 ) break; 
+        // if ( server.isPermitted(user_id)) {
+        //   server.permitted[user_id].speed = args[0] * 1.0;
+        //   sendMessage(channel_id, server.lang('myspeed.okay', { speed : args[0] }));
+        // }
+        // else 
+        //   sendMessage(channel_id, server.lang('myspeed.deny'));
         
-        break;
+        // break;
         
       // leave and join the voice channel - for fixing bugginess
-      case 'reset':
-        if ( !server.isMaster(user_id)) break;
-        var voiceChan = getUserVoiceChannel(user_id);
-        if ( voiceChan ) {
-          server.leaveVoiceChannel(function() {
-            server.joinVoiceChannel(voiceChan);
-          });
-        }
-        break;
+      // case 'reset':
+      //   if ( !server.isMaster(user_id)) break;
+      //   var voiceChan = getUserVoiceChannel(user_id);
+      //   if ( voiceChan ) {
+      //     server.leaveVoiceChannel(function() {
+      //       server.joinVoiceChannel(voiceChan);
+      //     });
+      //   }
+      //   break;
         
-      case 'nickcycle':
-        console.log(args);
-        if ( !is_dev(user_id)) break;
-        server.setNicks(getUserVoiceChannel(user_id), args);
-        break;
+      // case 'nickcycle':
+      //   console.log(args);
+      //   if ( !is_dev(user_id)) break;
+      //   server.setNicks(getUserVoiceChannel(user_id), args);
+      //   break;
         
-      case 'ohshit':
-        world.save('./ohshit'+(new Date().getTime()) + '.json');
-        sendMessage(channel_id, "Saved a debug file");
-        break;
+      // case 'ohshit':
+      //   world.save('./ohshit'+(new Date().getTime()) + '.json');
+      //   sendMessage(channel_id, "Saved a debug file");
+      //   break;
     }
   }
   else { 
