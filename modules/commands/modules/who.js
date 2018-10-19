@@ -1,5 +1,3 @@
-
-
 var command = function (msg, server) {
   var master_nick = msg.getOwner();
   if (!master_nick)

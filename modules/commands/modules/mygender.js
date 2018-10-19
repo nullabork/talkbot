@@ -5,7 +5,6 @@ var command = function (msg, server) {
   if ( args.length == 0 ) return;
 
   if ( server.isPermitted(msg.user_id) ) {
-   
     gender = args[0].trim();
     if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
       gender = "MALE";
