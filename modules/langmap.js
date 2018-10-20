@@ -40,7 +40,7 @@ function LangMap(config) {
     },
     {
       code: 'ja-JP',
-      voices: ['Standard-A', 'Wavenet-A' ]
+      voices: ['Standard-A', 'Wavenet-A']
     },
     {
       code: 'ko-KR',

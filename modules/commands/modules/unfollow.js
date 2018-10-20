@@ -1,9 +1,9 @@
 
 
 var command = function (msg, server) {
-  if ( server.isBound() ) {
-    if ( !msg.ownerIsMaster()) {
-      msg.response( server.lang('unfollow.nope'));
+  if (server.isBound()) {
+    if (!msg.ownerIsMaster()) {
+      msg.response(server.lang('unfollow.nope'));
     }
     else {
       server.release();
@@ -19,6 +19,6 @@ exports.register = function (commands) {
   commands.add('unfollow', command);
 };
 
-exports.unRegister = function(commands){
+exports.unRegister = function (commands) {
   commands.remove('unfollow');
 };

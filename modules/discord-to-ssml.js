@@ -6,7 +6,7 @@
   });
 
  ****************/
-
+var common = require('./common');
 
 (function () {
   "use strict"
@@ -16,10 +16,6 @@
       reverseArray = splitString.reverse(),
       joinArray = reverseArray.join("");
     return joinArray;
-  }
-
-  String.prototype.escapeRegExp = function () {
-    return this.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
 
@@ -40,18 +36,18 @@
     Object.assign(this.config, config);
 
     this.tags = [
-      { md: '__***', ssml: '', attr: ''},
-      { md: '__**', ssml: '', attr: ''},
-      { md: '__*', ssml: '', attr: ''},
-      { md: '__', ssml: '', attr: ''},
-      { md: '***', ssml: 'emphasis', attr: 'level="strong"'},
-      { md: '**', ssml: 'emphasis', attr: 'level="moderate"'},
-      { md: '*', ssml: 'emphasis', attr: 'level="reduced"'},
-      { md: '#', ssml: 'prosody', attr: 'rate="slow"'},
-      { md: '~~', ssml: '', attr: ''},
-      { md: '```', ssml: '', attr: ''},
-      { md: '&&&&&', ssml: 'break', attr: 'time="500ms"', selfClosing: true},
-      { md: '&&&&', ssml: 'break', attr: 'time="400ms"', selfClosing: true},
+      { md: '__***', ssml: '', attr: '' },
+      { md: '__**', ssml: '', attr: '' },
+      { md: '__*', ssml: '', attr: '' },
+      { md: '__', ssml: '', attr: '' },
+      { md: '***', ssml: 'emphasis', attr: 'level="strong"' },
+      { md: '**', ssml: 'emphasis', attr: 'level="moderate"' },
+      { md: '*', ssml: 'emphasis', attr: 'level="reduced"' },
+      { md: '#', ssml: 'prosody', attr: 'rate="slow"' },
+      { md: '~~', ssml: '', attr: '' },
+      { md: '```', ssml: '', attr: '' },
+      { md: '&&&&&', ssml: 'break', attr: 'time="500ms"', selfClosing: true },
+      { md: '&&&&', ssml: 'break', attr: 'time="400ms"', selfClosing: true },
       { md: '&&&', ssml: 'break', attr: 'time="300ms"', selfClosing: true }
     ];
 
@@ -67,10 +63,10 @@
     this.build = function (message) {
       this.tags.forEach(function (tag) {
 
-        var open = tag.md.escapeRegExp(),
-          close = tag.md.reverse().escapeRegExp();
-          
-        if(tag.selfClosing){
+        var open = common.escapeRegExp(tag.md),
+          close = common.escapeRegExp(tag.md.reverse());
+
+        if (tag.selfClosing) {
           // &&&  ~~>  <break time="300" />
           var regex = new RegExp(open, 'g');
           message = message.replace(regex, function (a, b, c) {

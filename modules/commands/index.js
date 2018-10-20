@@ -1,15 +1,15 @@
 var path = require("path");
 
-function Commands(){
+function Commands() {
   var self = this;
   this.commands = {};
 
-  this.add = function(key, command, force){
-    if(!this.commands[key] || force)
-    this.commands[key] = command;
+  this.add = function (key, command, force) {
+    if (!this.commands[key] || force)
+      this.commands[key] = command;
   }
 
-  this.registerAllCommands = function(){
+  this.registerAllCommands = function () {
     //console.log(normalizedPath);
     require("fs").readdirSync("./modules/commands/modules/").forEach(function (file) {
       var filename = path.join("modules/", file);
@@ -18,13 +18,13 @@ function Commands(){
     });
   }
 
-  this.remove = function(key){
+  this.remove = function (key) {
     delete this.commands[key];
   }
 
-  this.get = function(key){
-    if(!this.commands[key]){
-      return function(){};
+  this.get = function (key) {
+    if (!this.commands[key]) {
+      return function () { };
     }
     return this.commands[key];
   }

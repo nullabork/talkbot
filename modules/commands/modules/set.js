@@ -1,10 +1,10 @@
 
 
 var command = function (msg, server) {
-  if ( !msg.ownerIsMaster()) {
+  if (!msg.ownerIsMaster()) {
     msg.response(server.lang('set.nope'));
   } else {
-    if(!server.messages){
+    if (!server.messages) {
       server.messages = {};
     }
 
@@ -20,7 +20,7 @@ exports.register = function (commands) {
   commands.add('set', command);
 };
 
-exports.unRegister = function(commands){
+exports.unRegister = function (commands) {
   commands.remove('set');
 };
 

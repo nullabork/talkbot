@@ -8,6 +8,6 @@ exports.register = function (commands) {
   commands.add('ping', command);
 };
 
-exports.unRegister = function(commands){
+exports.unRegister = function (commands) {
   commands.remove('ping');
 };

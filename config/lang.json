@@ -1,74 +1,74 @@
-{   
+{
     "en.set": {
-        "okay" : "yes",
-        "none" :  "no"
+        "okay": "yes",
+        "none": "no"
     },
     "en.who": {
-        "okay" : "My master is :name",
-        "none" :  "I have no master :~("
+        "okay": "My master is :name",
+        "none": "I have no master :~("
     },
     "en.ping": {
-        "okay" : "pong"
+        "okay": "pong"
     },
     "en.follow": {
-        "okay" : "Yes, master!",
-        "huh" :  "Yes, master?",
-        "nope" : "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you."        
+        "okay": "Yes, master!",
+        "huh": "Yes, master?",
+        "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you."
     },
     "en.unfollow": {
-        "okay" : "Goodbye master",
-        "nope" : "Sorry, you're not my master.",
-        "none" : "I have no master... would you like to be my master?"
+        "okay": "Goodbye master",
+        "nope": "Sorry, you're not my master.",
+        "none": "I have no master... would you like to be my master?"
     },
     "en.permit": {
-        "okay" : "I'll listen to :name now",
-        "nope" : "Sorry I can't do that, you're not my master.",
-        "none" :  "I don't know who :name is?"
+        "okay": "I'll listen to :name now",
+        "nope": "Sorry I can't do that, you're not my master.",
+        "none": "I don't know who :name is?"
     },
     "en.unpermit": {
-        "okay" : ":name talk to the hand",
-        "nope" : "Sorry I can't do that, you're not my master.",
-        "none" : "I don't know who :name is?",
-        "deny" : "Sorry I can't do that, you're not permitted."    
+        "okay": ":name talk to the hand",
+        "nope": "Sorry I can't do that, you're not my master.",
+        "none": "I don't know who :name is?",
+        "deny": "Sorry I can't do that, you're not permitted."
     },
     "en.leave": {
-        "nope" : "Sorry I can't do that, you're not my master."
+        "nope": "Sorry I can't do that, you're not my master."
     },
     "en.join": {
-        "nope" : "Sorry I can't do that, you're not my master.",
-        "none" : "You're not in a voice channel?"
+        "nope": "Sorry I can't do that, you're not my master.",
+        "none": "You're not in a voice channel?"
     },
     "en.lang": {
-        "okay" : "OK, I'll now speak using language :lang.",
-        "nope" : "Sorry, you're not my master"
+        "okay": "OK, I'll now speak using language :lang.",
+        "nope": "Sorry, you're not my master"
     },
     "en.toggle_neglect": {
-        "okay" : "Attending neglect",
-        "none" : "Neglecting neglect",
-        "nope" : "Sorry, you're not my master"
+        "okay": "Attending neglect",
+        "none": "Neglecting neglect",
+        "nope": "Sorry, you're not my master"
     },
     "en.toggle_ssml": {
-        "okay" : "OK, your you now need to speak in SSML",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your you now need to speak in SSML",
+        "deny": "Sorry, you're not permitted"
     },
     "en.mylang": {
-        "okay" : "OK, your personal language is now :lang.",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your personal language is now :lang.",
+        "deny": "Sorry, you're not permitted"
     },
     "en.mygender": {
-        "okay" : "OK, your personal gender is now :gender.",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your personal gender is now :gender.",
+        "deny": "Sorry, you're not permitted"
     },
     "en.myvoice": {
-        "okay" : "OK, your personal voice is now :voice.",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your personal voice is now :voice.",
+        "deny": "Sorry, you're not permitted"
     },
     "en.mypitch": {
-        "okay" : "OK, your personal pitch is now :pitch.",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your personal pitch is now :pitch.",
+        "deny": "Sorry, you're not permitted"
     },
     "en.myspeed": {
-        "okay" : "OK, your personal speed is now :speed.",
-        "deny" : "Sorry, you're not permitted"
+        "okay": "OK, your personal speed is now :speed.",
+        "deny": "Sorry, you're not permitted"
     }
 }
