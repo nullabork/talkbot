@@ -7,7 +7,7 @@ var command = function (msg, server) {
 
   if ( server.isPermitted(msg.user_id) ) {
     speed = parseFloat(args[0]);
-    speed = common.clamp(pitch, 0.25, 4.0);
+    speed = common.numberClamp(pitch, 0.25, 4.0);
     server.permitted[user_id].speed = speed;
 
     msg.response(server.lang('myspeed.okay', { gender : gender }));

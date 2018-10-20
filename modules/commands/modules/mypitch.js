@@ -7,7 +7,7 @@ var command = function (msg, server) {
 
   if ( server.isPermitted(msg.user_id) ) {
     pitch = parseFloat(args[0]);
-    pitch = common.clamp(pitch, -20, 20);
+    pitch = common.numberClamp(pitch, -20, 20);
     server.permitted[user_id].pitch = pitch;
 
     msg.response(server.lang('mypitch.okay', { gender : gender }));

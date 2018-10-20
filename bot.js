@@ -16,7 +16,7 @@ var fs = require('fs'),
 var SSML = require('./modules/discord-to-ssml').default,
   hacks = require('./modules/awesome-hacks.js'),
   commands = require('./modules/commands/index').default,
-  commands = require('./modules/bot-stuff'),
+  botStuff = require('./modules/bot-stuff'),
   common = require('./modules/common');
 
 var auth = require(auth_path),
@@ -28,10 +28,7 @@ var auth = require(auth_path),
 // Creates a client
 var tts_client = new textToSpeech.TextToSpeechClient();
 
-var bot = new Discord.Client({
-  token: auth.token,
-  autorun: true
-});
+var bot = botStuff.bot;
 
 var ssml = new SSML({});
 
@@ -40,23 +37,6 @@ var lang = new Lang({
   locale: 'en',
   fallback: 'en'
 });
-
-
-function resolveDiscordSnowflakes(channel_id, message) {
-	return message.replace(/<@&(\d*)>|<@!(\d*)>|<@(\d*)>|<#(\d*)>/g, function(match, RID, NID, UID, CID) {
-		var k, i;
-		if (UID || CID) {
-			if (bot.users[UID]) return convertCamelCaseNicksToEnglish(bot.users[UID].username);
-			if (bot.channels[CID]) return convertCamelCaseNicksToEnglish(bot.channels[CID].name);
-		}
-		if (RID || NID) {
-			if ( bot.servers[bot.channels[channel_id].guild_id].roles[RID])
-				return convertCamelCaseNicksToEnglish(bot.servers[bot.channels[channel_id].guild_id].roles[RID].name);
-			if ( bot.servers[bot.channels[channel_id].guild_id].members[NID])
-				return convertCamelCaseNicksToEnglish(bot.servers[bot.channels[channel_id].guild_id].members[NID].nick);
-		}
-	});
-};
 
 var world = {
   NEGLECT_TIMEOUT_IN_MS: 30 * 60 * 1000, // 30 mins
@@ -104,7 +84,7 @@ var world = {
 
   checkMastersVoiceChannels: function( user_id ) {
     if ( !user_id ) return;
-    var voiceChan = getUserVoiceChannel(user_id);
+    var voiceChan = botStuff.getUserVoiceChannel(user_id);
     for ( var server in this.servers ) {
       var s = this.servers[server];
       if ( s.bound_to == user_id ) {
@@ -153,7 +133,7 @@ var world = {
 function MessageDetails(client_data){
 
   if(!this instanceof MessageDetails) {
-    return new MessageDetails();
+    return new MessageDetails(client_data);
   }
 
   this.channel_id = null;
@@ -165,7 +145,10 @@ function MessageDetails(client_data){
   this.args = null;
   this.message = '';
   var self = this;
-  Object.assign(this, client_data);
+  
+  if(client_data){
+    Object.assign(this, client_data);
+  }
 
   this.sendMessage = this.response = function(message) {
     self.bot.simulateTyping(self.channel_id, function() {
@@ -177,11 +160,7 @@ function MessageDetails(client_data){
   }
 
   this.getNick = function(user_id) {
-    var members = this.server.getChannelMembers(this.channel_id);
-    if(members && members[user_id]){
-      return members[user_id].nick;
-    }
-    return null;
+    return botStuff.findThingsName(this.channel_id, user_id);
   };
 
 
@@ -202,23 +181,21 @@ function MessageDetails(client_data){
   }
 
   this.boundNick = function() {
-    return this.getNick(this.server.bound_to);
+    return botStuff.findThingsName(this.channel_id, this.server.bound_to);
   }
 
   this.getOwnersVoiceChannel = function() {
-    return getUserVoiceChannel(this.user_id);
+    return botStuff.getUserVoiceChannel(this.user_id);
   };
 
   this.getUserIds = function() {
     return common.parseMessageIDs(this.message);
   };
-
-
 }
 
 function Server(server_data, server_id) {
 
-  console.log("NEW SERVER: " + server_id);
+  var bot = botStuff.bot;
 
   this.server_id = server_id;
   this.server_name = bot.servers[server_id].name;
@@ -246,7 +223,7 @@ function Server(server_data, server_id) {
       this.release();
     }
 
-    var voiceChan = getUserVoiceChannel(this.bound_to);
+    var voiceChan = botStuff.getUserVoiceChannel(this.bound_to);
     if ( voiceChan ) {
       if ( !this.isServerChannel(voiceChan))
         this.leaveVoiceChannel();
@@ -270,7 +247,6 @@ function Server(server_data, server_id) {
   };
 
   this.setMaster = function(user_id, username) {
-    console.log('setMaster(' + user_id + ')');
     this._setMaster(user_id, username);
     world.save();
   };
@@ -280,7 +256,7 @@ function Server(server_data, server_id) {
   };
 
   this.getOwnersVoiceChannel = function(user_id) {
-    return getUserVoiceChannel(user_id);
+    return botStuff.getUserVoiceChannel(user_id);
   };
 
   this._release = function() {
@@ -455,48 +431,6 @@ function Server(server_data, server_id) {
 
     });
 
-  /*  tts(message, language || server.language, 1)
-    .then(function(url) {
-      bot.getAudioContext(server.current_voice_channel_id, function(error, stream) {
-        if ( error) return console.error(error);
-
-        try {
-                    // if content length is too short don't play it
-          request
-            .get(url)
-            .on('response', function(response) {
-              if ( response.headers['content-length'] < 1024 )
-                this.end();
-            })
-            .on('end', function() {
-              if ( play_padding )
-                fs.createReadStream('./padding.mp3')
-                .on('end', callback)
-                .pipe(stream, {end:false})
-                .on('error', function(err) {
-                  console.error('Error writing to discord voice stream. ' + err);
-                });
-              else
-                callback();
-            })
-            .on('error', function(err) {
-              console.error('Error fetching: ' + url + ". " + err);
-            })
-            .pipe(stream, {end:false});
-
-            // memory leak here, have to only do this once
-            /*.on('error', function(err) {
-              console.error('Error writing to discord voice stream. ' + err);
-            });
-        }
-        catch( ex ) {
-          console.error(ex);
-        }
-      });
-    })
-    .catch(function(err) {
-      console.error(err.stack);
-    });*/
   };
 
   this.neglected = function() {
@@ -560,10 +494,10 @@ function Server(server_data, server_id) {
 
 };
 
-var bot = new Discord.Client({
-  token: auth.token,
-  autorun: true
-});
+// var bot = new Discord.Client({
+//   token: auth.token,
+//   autorun: true
+// });
 
 bot.on('ready', function (evt) {
   console.log('Logged in as: '+ bot.username + ' - (' + bot.id + ')');
@@ -632,7 +566,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   var command_char = auth.command_char || '!';
 
-  if ( isExcluded(message)) return null;
+  if ( common.isMessageExcluded(message)) return null;
 
   var server = world.getServerFromChannel(channel_id);
 
@@ -661,7 +595,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var msgDets = new MessageDetails({
       channel_id : channel_id,
       user_id : user_id,
-      bot : bot,
+      bot : botStuff.bot,
       world : world,
       server : server,
       username : username,
@@ -682,7 +616,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if ( message == null ) return;
 
     // tts bit
-    message = resolveDiscordSnowflakes(channel_id, message);
+    message = common.resolveDiscordSnowflakes(channel_id, message);
     if ( !server.permitted[user_id] || !server.permitted[user_id].use_ssml )
       message = hacks.parse(channel_id, message);
       message = ssml.build(message);

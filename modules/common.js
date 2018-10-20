@@ -1,3 +1,5 @@
+var botStuff = require('./bot-stuff');
+
 class Common {
     static escapeRegExp (string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -10,7 +12,7 @@ class Common {
         if(!user_ids) return [];
 
         user_ids.map(function(element) {
-            return element.replace(/<@!{0,1}(\d{12,19})>/g, function(a,b) {
+            return element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function(a,b) {
                 return b;
             });
         });
@@ -18,7 +20,7 @@ class Common {
         return user_ids;
     }
 
-    static messageExcluded (message) {
+    static isMessageExcluded (message) {
         return message.startsWith('```');
     }
 
@@ -29,6 +31,13 @@ class Common {
     static caseToSpace( nick_name ) {
         return nick_name.replace(/([a-z])([A-Z])/g, function(a,b,c){
             return b + " " + c;
+        });
+    };
+
+    static resolveDiscordSnowflakes (channel_id, message) {
+        return message.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function(match, entity_id) {
+            var name = botStuff.findThingsName(channel_id, entity_id);
+            return this.caseToSpace(name);
         });
     };
 

@@ -1,5 +1,5 @@
 var Discord = require('discord.io'),
-    auth = require("../config/auth.json"),
+    auth = require("../config/auth.json");
 
 class BotStuff {
   constructor() {
@@ -64,13 +64,21 @@ class BotStuff {
     return null;
   };
 
-  findNameOfThingByID (IDref){
+  findThingsName (channel_id, entity_id) {
     let bot = this.bot;
 
     if(bot.users && bot.users[IDref]) return bot.users[IDref].username;
-    if(bot.channels && bot.channels[IDref]) return bot.channels[CID].name;
+    if(bot.channels && bot.channels[IDref]) return bot.channels[IDref].name;
+    
+    var roles = bot.servers[bot.channels[channel_id].guild_id].roles;
+    if ( roles[entity_id] && roles[entity_id].name ) return role.name;
+
+    var members = bot.servers[bot.channels[channel_id].guild_id].members;
+    if ( members[entity_id] && members[entity_id].name ) return members.name;
+
+    return null;
   }
 
 }
 
-module.exports = z
+module.exports = new BotStuff();
