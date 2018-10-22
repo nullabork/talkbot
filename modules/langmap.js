@@ -65,9 +65,9 @@ function LangMap(config) {
 
   ];
 
-  this.get = function (code) {
+  this.get = function (key) {
 
-    var lang = key.split('/ +/');
+    var lang = key.split(/\s+/);
 
     if (!lang || !lang.length) {
       return self.defaultLang;

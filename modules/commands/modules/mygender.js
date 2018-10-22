@@ -1,11 +1,10 @@
 
 
 var command = function (msg, server) {
-  var args = msg.message.split(/ +/);
-  if (args.length == 0) return;
+  if (msg.args.length == 0) return;
 
   if (server.isPermitted(msg.user_id)) {
-    gender = args[0].trim();
+    gender = msg.args[0].trim();
     if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
       gender = "MALE";
     } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
@@ -14,7 +13,7 @@ var command = function (msg, server) {
       gender = "FEMALE";
     }
 
-    server.permitted[user_id].gender = gender;
+    server.permitted[msg.user_id].gender = gender;
 
     msg.response(server.lang('mygender.okay', { gender: gender }));
   } else {

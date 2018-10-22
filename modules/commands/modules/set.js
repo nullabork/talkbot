@@ -3,17 +3,18 @@
 var command = function (msg, server) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('set.nope'));
-  } else {
-    if (!server.messages) {
-      server.messages = {};
-    }
-
-    var a = msg.message.split(/ +/);
-    var cmd = a.shift();
-
-    server.messages[cmd] = a.join(" ");
-    msg.response(server.lang('set.okay'));
+    return;
   }
+
+  if (!server.messages) {
+    server.messages = {};
+  }
+
+  var parts = msg.message.match(/(\S+\.\S+)\s+(.*)/i);
+
+  server.messages[parts[1]] = parts[2];
+  msg.response(server.lang('set.okay', { lang : parts[1] }));
+  
 };
 
 exports.register = function (commands) {

@@ -3,23 +3,26 @@
 var command = function (msg, server) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('permit.nope'));
+    return;
   }
-  else {
-    var target_ids = msg.getUserIds();
-    if (target_ids && target_ids.length) {
-      target_ids.forEach(function (target_id) {
-        server.permit(target_id);
-        var nick = msg.getNick(target_id);
-        if (!nick) {
-          nick = target_id;
-          msg.response(server.lang('permit.okay', { name: nick }));
-        }
-      });
-    }
-    else {
-      msg.response(server.lang('permit.none', { name: args[0] }));
-    }
+
+  var target_ids = msg.getUserIds();
+  if (!target_ids || !target_ids.length) {
+    msg.response(server.lang('permit.none'));
+    return;
   }
+
+  target_ids.forEach(function (target_id) {
+    server.permit(target_id);
+    var nick = msg.getNick(target_id);
+    if (!nick) {
+      nick = target_id;
+      msg.response(server.lang('permit.okay', { name: nick }));
+    } else {
+      msg.response(server.lang('permit.huh', { name: target_ids }));
+    }
+  });   
+  
 };
 
 exports.register = function (commands) {

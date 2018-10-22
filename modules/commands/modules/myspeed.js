@@ -6,11 +6,11 @@ var command = function (msg, server) {
   if (args.length == 0) return;
 
   if (server.isPermitted(msg.user_id)) {
-    speed = parseFloat(args[0]);
-    speed = common.numberClamp(pitch, 0.25, 4.0);
-    server.permitted[user_id].speed = speed;
+    var speed = parseFloat(msg.args[0]);
+    speed = common.numberClamp(speed, 0.25, 4.0);
+    server.permitted[msg.user_id].speed = speed;
 
-    msg.response(server.lang('myspeed.okay', { gender: gender }));
+    msg.response(server.lang('myspeed.okay', { speed: speed }));
   } else {
     msg.response(server.lang('myspeed.deny'));
   }
@@ -20,6 +20,6 @@ exports.register = function (commands) {
   commands.add('myspeed', command);
 };
 
-exports.unRegister = function (commands) {
+exports.unRegister = function (commands) {d
   commands.remove('myspeed');
 };

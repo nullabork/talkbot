@@ -2,20 +2,21 @@
 var langMap = require("../../langmap").instance;
 
 var command = function (msg, server) {
-  var args = msg.message.split(/ +/);
-  if (args.length == 0) return;
-
   if (server.isPermitted(msg.user_id)) {
-    var lang = args.shift(),
-      doc = langMap.get(lang);
+
+    // /console.log(lang,, "<-- lang");
+    // /var msg = msg.args;
+    //msg.trim().split( /\s+/ );
+
+    var doc = langMap.get(msg.args[0]);
 
     if (doc && doc.code) {
-      server.permitted[user_id].language = doc.code;
+      server.permitted[msg.user_id].language = doc.code;
     }
 
     msg.response(server.lang('mylang.okay', { lang: doc.code }));
   } else {
-    msg.response(sserver.lang('mylang.deny'));
+    msg.response(server.lang('mylang.deny'));
   }
 };
 

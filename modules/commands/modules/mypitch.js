@@ -2,15 +2,16 @@
 var common = require("../../common");
 
 var command = function (msg, server) {
-  var args = msg.message.split(/ +/);
-  if (args.length == 0) return;
+  console.log("Asd");
+  if (!msg.args.length) return;
 
-  if (server.isPermitted(msg.user_id)) {
-    pitch = parseFloat(args[0]);
-    pitch = common.numberClamp(pitch, -20, 20);
-    server.permitted[user_id].pitch = pitch;
+  if (msg.ownerIsPermitted()) {
+    var pitch = parseFloat(msg.args[0]),
+      pitch = common.numberClamp(pitch, -20, 20);
+    
+    server.permitted[msg.user_id].pitch = pitch;
 
-    msg.response(server.lang('mypitch.okay', { gender: gender }));
+    msg.response(server.lang('mypitch.okay', { pitch: pitch }));
   } else {
     msg.response(server.lang('mypitch.deny'));
   }

@@ -163,8 +163,6 @@ function MessageDetails(client_data) {
     return botStuff.findThingsName(this.channel_id, user_id);
   };
 
-
-
   this.ownerIsMaster = function () {
     return this.server.isMaster(this.user_id);
   }
@@ -176,8 +174,16 @@ function MessageDetails(client_data) {
     return auth.dev_ids.indexOf(this.user_id) >= 0;
   }
 
+  this.ownerIsPermitted = function () {
+    return this.server.permitted[this.user_id] != null;
+  };
+
   this.messageNick = function () {
     return this.getNick(this.user_id);
+  }
+
+  this.getMessage = function () {
+    return this.message;
   }
 
   this.boundNick = function () {
@@ -189,7 +195,7 @@ function MessageDetails(client_data) {
   };
 
   this.getUserIds = function () {
-    return common.parseMessageIDs(this.message);
+    return common.messageIDs(this.message);
   };
 }
 
@@ -303,14 +309,22 @@ function Server(server_data, server_id) {
     return this.bound_to != null;
   };
 
-  this.getBoundTo = function () {
+  this.getBoundToNick = function () {
     var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-    console.log(channel_id);
+    
+    if (!this.bound_to || !channel_id) {
+      return null;
+    }
+
     if (channel_id && this.bound_to) {
       return botStuff.findThingsName(channel_id, this.bound_to);
     }
 
-    return this.bound_to_username;
+    if (this.bound_to_username) {
+      return this.bound_to_username;
+    }
+    
+    return this.bound_to;
   };
 
   this.inChannel = function () {
@@ -425,14 +439,12 @@ function Server(server_data, server_id) {
         return;
       }
       bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
-
         if (error) return console.error(error);
 
         try {
           stream.write(response.audioContent);
         }
         catch (ex) {
-
           console.error(ex);
         }
       });
@@ -457,6 +469,11 @@ function Server(server_data, server_id) {
     else
       server.release();
   };
+
+  this.toggleNeglect = function() {
+    this.neglect_neglect = !this.neglect_neglect;
+    return this.neglect_neglect;
+  }
 
   this.setNicks = function (channel_id, tokens) {
 
@@ -594,8 +611,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
-    var cmdArgs = (parts[3] && parts[3].split(/\s+/)) || null;
-    var cmdMessage = parts[3] || null;
+    var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
+    var cmdMessage = parts[3].trim() || null;
     // var cmd = args[0];
 
     //args = args.splice(1);

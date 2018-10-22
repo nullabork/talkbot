@@ -1,18 +1,18 @@
 
 
 var command = function (msg, server) {
-  if (server.isBound()) {
-    if (!msg.ownerIsMaster()) {
-      msg.response(server.lang('unfollow.nope'));
-    }
-    else {
-      server.release();
-      msg.response(server.lang('unfollow.okay'));
-    }
-  }
-  else
+  if (!server.isBound()) {
     msg.response(server.lang('unfollow.none'));
+    return;
+  }
 
+  if (!msg.ownerIsMaster()) {
+    msg.response(server.lang('unfollow.nope'));
+    return;
+  }
+
+  server.release();
+  msg.response(server.lang('unfollow.okay'));
 };
 
 exports.register = function (commands) {

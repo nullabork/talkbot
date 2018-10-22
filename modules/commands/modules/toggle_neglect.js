@@ -4,14 +4,15 @@ var langMap = require("../../langmap").instance;
 var command = function (msg, server) {
     if (!msg.ownerIsMaster()) {
         msg.response(server.lang('toggle_neglect.nope'));
+        return;
+    } 
+
+    if (server.toggleNeglect()) {
+        msg.response(server.lang('toggle_neglect.none'));
     } else {
-        server.neglect_neglect = !server.neglect_neglect;
-        if (server.neglect_neglect) {
-            msg.response(server.lang('toggle_neglect.none'));
-        } else {
-            msg.response(server.lang('toggle_neglect.okay'));
-        }
+        msg.response(server.lang('toggle_neglect.okay'));
     }
+    
 };
 
 exports.register = function (commands) {

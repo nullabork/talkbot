@@ -1,6 +1,6 @@
 {
     "en.set": {
-        "okay": "yes",
+        "okay": "Set message for :lang",
         "none": "no"
     },
     "en.who": {
@@ -23,7 +23,8 @@
     "en.permit": {
         "okay": "I'll listen to :name now",
         "nope": "Sorry I can't do that, you're not my master.",
-        "none": "I don't know who :name is?"
+        "none": "I don't see any legit names",
+        "huh": "I don't know who :name is?"
     },
     "en.unpermit": {
         "okay": ":name talk to the hand",

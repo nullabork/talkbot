@@ -11,13 +11,15 @@ class Common {
 
         if (!user_ids) return [];
 
-        user_ids.map(function (element) {
-            return element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (a, b) {
+        var map = user_ids.map(function (element) {
+            var tt = element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (a, b) {
                 return b;
             });
+
+            return  tt + 0;
         });
 
-        return user_ids;
+        return map;
     }
 
     static isMessageExcluded(message) {

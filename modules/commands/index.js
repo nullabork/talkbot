@@ -5,6 +5,8 @@ function Commands() {
   this.commands = {};
 
   this.add = function (key, command, force) {
+    key = key.toLowerCase();
+    
     if (!this.commands[key] || force)
       this.commands[key] = command;
   }
@@ -19,10 +21,13 @@ function Commands() {
   }
 
   this.remove = function (key) {
+    key = key.toLowerCase();
     delete this.commands[key];
   }
 
   this.get = function (key) {
+    key = key.toLowerCase();
+
     if (!this.commands[key]) {
       return function () { };
     }
