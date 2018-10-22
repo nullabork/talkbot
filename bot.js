@@ -293,6 +293,10 @@ function Server(server_data, server_id) {
     console.log("asd");
   }
 
+  this.reload = function () {
+    world.save();
+    commands.registerAllCommands();
+  }
 
   this.release = function () {
     console.log('release');
