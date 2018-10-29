@@ -15,11 +15,10 @@ var command = function (msg, server) {
   target_ids.forEach(function (target_id) {
     server.permit(target_id);
     var nick = msg.getNick(target_id);
-    if (!nick) {
-      nick = target_id;
+    if (nick) {
       msg.response(server.lang('permit.okay', { name: nick }));
     } else {
-      msg.response(server.lang('permit.huh', { name: target_ids }));
+      msg.response(server.lang('permit.huh', { name: target_id }));
     }
   });   
   

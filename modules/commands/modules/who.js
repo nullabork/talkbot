@@ -1,7 +1,7 @@
 var command = function (msg, server) {
   var master_nick = server.getBoundToNick();
   if (!master_nick) {
-    msg.response("asdasd");
+    msg.response(server.lang('who.none'));
   } else {
     msg.response(server.lang('who.okay', { name: master_nick }));
   }

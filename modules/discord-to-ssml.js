@@ -36,19 +36,24 @@ var common = require('./common');
     Object.assign(this.config, config);
 
     this.tags = [
-      { md: '__***', ssml: '', attr: '' },
-      { md: '__**', ssml: '', attr: '' },
-      { md: '__*', ssml: '', attr: '' },
-      { md: '__', ssml: '', attr: '' },
-      { md: '***', ssml: 'emphasis', attr: 'level="strong"' },
-      { md: '**', ssml: 'emphasis', attr: 'level="moderate"' },
-      { md: '*', ssml: 'emphasis', attr: 'level="reduced"' },
-      { md: '#', ssml: 'prosody', attr: 'rate="slow"' },
-      { md: '~~', ssml: '', attr: '' },
-      { md: '```', ssml: '', attr: '' },
-      { md: '&&&&&', ssml: 'break', attr: 'time="500ms"', selfClosing: true },
-      { md: '&&&&', ssml: 'break', attr: 'time="400ms"', selfClosing: true },
-      { md: '&&&', ssml: 'break', attr: 'time="300ms"', selfClosing: true }
+      { tags: ['__***', '***__'], ssml: 'presody', attr: 'volume="+6dB"' },
+      { tags: ['__**', ' **__'], ssml: '', attr: '' },
+      { tags: ['__*', '*__'], ssml: '', attr: '' },
+      { tags: ['__', '__'], ssml: '', attr: '' },
+      { tags: ['***', '***'], ssml: 'emphasis', attr: 'level="strong" volume="+6dB"' },
+      { tags: ['**','**'], ssml: 'emphasis', attr: 'level="moderate"' },
+      { tags: ['*','*'], ssml: 'emphasis', attr: 'level="reduced"' },
+      { tags: ['#','#'], ssml: 'prosody', attr: 'rate="slow"' },
+      { tags: ['----', '----'], ssml: 'prosody', attr: 'pitch="-100%" rate="slow"' },
+      { tags: ['---','---'], ssml: 'prosody', attr: 'pitch="-100%"' },
+      { tags: ['--','--'], ssml: 'prosody', attr: 'pitch="-50%"' },
+      { tags: ['+++','+++'], ssml: 'prosody', attr: 'pitch="+100%"' },
+      { tags: ['++','++'], ssml: 'prosody', attr: 'pitch="+50%"' },
+      { tags: ['~~','~~'], ssml: '', attr: '' },
+      { tags: ['```', '```'], ssml: '', attr: '' },
+      { tags: ['&&&&&'], ssml: 'break', attr: 'time="500ms"', selfClosing: true },
+      { tags: ['&&&&'], ssml: 'break', attr: 'time="400ms"', selfClosing: true },
+      { tags: ['&&&'], ssml: 'break', attr: 'time="300ms"', selfClosing: true }
     ];
 
     this.tags = this.tags.concat(this.tags);
@@ -63,16 +68,18 @@ var common = require('./common');
     this.build = function (message) {
       this.tags.forEach(function (tag) {
 
-        var open = common.escapeRegExp(tag.md),
-          close = common.escapeRegExp(tag.md.reverse());
-
-        if (tag.selfClosing) {
+        if (tag.tags.length == 1) {
+          var open = common.escapeRegExp(tag.tags[0]);
           // &&&  ~~>  <break time="300" />
           var regex = new RegExp(open, 'g');
           message = message.replace(regex, function (a, b, c) {
             return '<' + tag.ssml + ' ' + tag.attr + '/>';
           });
-        } else {
+        }
+        
+        if (tag.tags.length == 2) {
+          var open = common.escapeRegExp(tag.tags[0]),
+            close = common.escapeRegExp(tag.tags[1]);
           // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
           var regex = new RegExp(open + '([^' + open + ']*)' + close, 'g');
           message = message.replace(regex, function (a, b, c) {
@@ -82,7 +89,9 @@ var common = require('./common');
       });
 
       message = this.addBuffer(message);
-      return '<speak>' + message + '</speak>';
+      message = '<speak>' + message + '</speak>';
+      console.log(message);
+      return message;
     }
   }
 

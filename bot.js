@@ -1,6 +1,6 @@
 var _config = './config',
   //commands_path = './commands',
-  state_path = _config + '/state.json',
+  state_path = './state.json',
   auth_path = _config + '/auth.json',
   lang_path = _config + '/lang.json';
 

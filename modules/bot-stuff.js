@@ -66,6 +66,10 @@ class BotStuff {
 
   findThingsName(channel_id, entity_id) {
     let bot = this.bot;
+    
+    var members = bot.servers[bot.channels[channel_id].guild_id].members;
+    if (members[entity_id] && members[entity_id].nick) return members[entity_id].nick;
+    if (members[entity_id] && members[entity_id].name) return members[entity_id].name;
 
     if (bot.users && bot.users[entity_id]) return bot.users[entity_id].username;
     if (bot.channels && bot.channels[entity_id]) return bot.channels[entity_id].name;
@@ -73,8 +77,7 @@ class BotStuff {
     var roles = bot.servers[bot.channels[channel_id].guild_id].roles;
     if (roles[entity_id] && roles[entity_id].name) return role.name;
 
-    var members = bot.servers[bot.channels[channel_id].guild_id].members;
-    if (members[entity_id] && members[entity_id].name) return members.name;
+
 
     return null;
   }

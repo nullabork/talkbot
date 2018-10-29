@@ -2,7 +2,6 @@
 var common = require("../../common");
 
 var command = function (msg, server) {
-  console.log("Asd");
   if (!msg.args.length) return;
 
   if (msg.ownerIsPermitted()) {
