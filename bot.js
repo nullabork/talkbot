@@ -1,7 +1,7 @@
 var _config = './config',
   //commands_path = './commands',
-  state_path = './state.json',
-  auth_path = _config + '/auth.json',
+  state_path = '../state.json',
+  auth_path = '../auth.json',
   lang_path = _config + '/lang.json';
 
 //npm imports
