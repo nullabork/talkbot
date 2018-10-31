@@ -2,7 +2,7 @@ var command = function (msg, server) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('join.nope'));
   } else {
-    var voiceChan = server.getUserVoiceChannel(user_id);
+    var voiceChan = server.getOwnersVoiceChannel(msg.user_id);
     if (voiceChan) {
       server.joinVoiceChannel(voiceChan);
     } else {

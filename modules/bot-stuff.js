@@ -75,9 +75,7 @@ class BotStuff {
     if (bot.channels && bot.channels[entity_id]) return bot.channels[entity_id].name;
 
     var roles = bot.servers[bot.channels[channel_id].guild_id].roles;
-    if (roles[entity_id] && roles[entity_id].name) return role.name;
-
-
+    if (roles[entity_id] && roles[entity_id].name) return roles[entity_id].name;
 
     return null;
   }
