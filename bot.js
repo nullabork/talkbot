@@ -1,3 +1,5 @@
+console.log(process.env);
+
 var _config = './config',
   //commands_path = './commands',
   state_path = '../state.json',

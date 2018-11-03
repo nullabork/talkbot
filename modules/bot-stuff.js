@@ -1,5 +1,5 @@
 var Discord = require('discord.io'),
-  auth = require("../config/auth.json");
+  auth = require("../../auth.json");
 
 class BotStuff {
   constructor() {
