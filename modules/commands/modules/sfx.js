@@ -17,7 +17,7 @@ var command = function (msg, server) {
   }
   else {
     if (!server.audioEmojis) server.audioEmojis = [];
-    if (msg.args.length == 1) msg.response(server.audioEmojis[msg.args[0]);
+    if (msg.args.length == 1) msg.response(server.audioEmojis[msg.args[0]]);
     else {
       server.audioEmojis[msg.args.shift()] = msg.args.join();
       server.world.save();
