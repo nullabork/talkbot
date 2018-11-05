@@ -19,7 +19,7 @@ var common = require('./common');
   }
 
 
-  exports.default = function (config) {
+  module.exports = function (config) {
 
     var _this = this;
     this.config = {
@@ -90,7 +90,6 @@ var common = require('./common');
 
       message = this.addBuffer(message);
       message = '<speak>' + message + '</speak>';
-      console.log(message);
       return message;
     }
   }

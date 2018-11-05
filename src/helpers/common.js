@@ -23,7 +23,7 @@ class Common {
         // } else {
         //     protocol += "{0,1}";
         // }
-s
+//s
     }
 
     static messageIDs(message) {

@@ -1,5 +1,5 @@
 
-var langMap = require("../../langmap").instance;
+var langMap = require("../../langmap");
 
 var command = function (msg, server) {
   if (!msg.args.length) return;
