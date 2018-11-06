@@ -1,7 +1,9 @@
 var Discord = require('discord.io'),
-  auth = require("../../auth.json");
+  auth = require("../../auth.json"),
+  common = require("../helpers/common");
 
 class BotStuff {
+  
   constructor() {
     this.auth = auth;
     this.bot = new Discord.Client({
@@ -33,6 +35,14 @@ class BotStuff {
     }
     return null;
   };
+
+  resolveMessageSnowFlakes (channel_id, message) {
+    var self = this;
+    common.replaceSnowFlakes (message, function(entity_id){
+      var name = self.findThingsName(channel_id, entity_id);
+      return Common.caseToSpace(name);
+    })
+  }
 
   isUserInVoiceChannel(user_id) {
     if (!user_id) return false;

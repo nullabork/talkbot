@@ -145,20 +145,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       message: cmdMessage,
     });
 
-    //console.log(commands, "<----");
     var command = commands.get(msgDets.cmd);
-
-    console.log(msgDets.cmd, command(msgDets, server));
-
-    //console.log(msgDets);
-
   } else {
     if (message == null) return;
 
     // tts bit
-    message = common.resolveDiscordSnowflakes(channel_id, message);
-    if (!server.permitted[user_id] || !server.permitted[user_id].use_ssml)
-      message = hacks.parse(channel_id, message);
+    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
+    if (!server.permitted[user_id] || !server.permitted[user_id].use_ssml) {
+      message = common.cleanMessage(message);
+    }
     message = ssml.build(message);
 
     if (message.length < 1) return;

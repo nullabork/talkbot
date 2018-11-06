@@ -1,4 +1,5 @@
-var botStuff = require('../helpers/bot-stuff');
+var botStuff = require('../helpers/bot-stuff'),
+  common = require('../helpers/common');
 
 function MessageDetails(client_data) {
 
@@ -27,6 +28,11 @@ function MessageDetails(client_data) {
           message: message
         });
       });
+    }
+
+    this.getResolvedMessage = function() {
+      var message = this.message;
+      return botStuff.resolveMessageSnowFlakes(message);
     }
   
     this.getNick = function (user_id) {
