@@ -28,11 +28,7 @@ var common = require('./common');
       minLengthBuff: '3000ms',
       tags: []
     }
-
-    //override any config
-    // ***reduced***    ~~>   <emphasis level="reduced">reduced</emphasis>
-    // ***strong***     ~~>   <emphasis level="strong">strong</emphasis>
-    // ***moderate***   ~~>   <emphasis level="moderate">moderate</emphasis>
+    
     Object.assign(this.config, config);
 
     this.tags = [
@@ -81,7 +77,7 @@ var common = require('./common');
           var open = common.escapeRegExp(tag.tags[0]),
             close = common.escapeRegExp(tag.tags[1]);
           // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
-          var regex = new RegExp(open + '([^' + open + ']*)' + close, 'g');
+          var regex = new RegExp(open + '([^' + open + ']+)' + close, 'g');
           message = message.replace(regex, function (a, b, c) {
             return '<' + tag.ssml + ' ' + tag.attr + '>' + b + '</' + tag.ssml + '>';
           });
