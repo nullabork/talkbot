@@ -8,22 +8,23 @@ var _config = './config',
 var fs = require('fs'),
   request = require('request'),
   Discord = require('discord.io'),
-  textToSpeech = require('@google-cloud/text-to-speech'),
-  Lang = require("lang.js");
+  textToSpeech = require('@google-cloud/text-to-speech');
 
-//local imports
-
+//helpers
 var SSML = require('./src/helpers/discord-to-ssml'),
-  hacks = require('./src/helpers/awesome-hacks.js'),
   commands = require('./src/commands'),
   botStuff = require('./src/helpers/bot-stuff'),
   common = require('./src/helpers/common');
 
+//models
+var MessageDetails = require('./src/models/MessageDetails'),
+  Server = require('./src/models/Server'),
+  world = require('./src/models/World');
+
+//configs
 var auth = require(auth_path),
   messages = require(lang_path),
   state = require(state_path);
-//commands = require(commands_path);
-
 
 // Creates a client
 var tts_client = new textToSpeech.TextToSpeechClient();
@@ -31,12 +32,6 @@ var tts_client = new textToSpeech.TextToSpeechClient();
 var bot = botStuff.bot;
 
 var ssml = new SSML({});
-
-var lang = new Lang({
-  messages: messages,
-  locale: 'en',
-  fallback: 'en'
-});
 
 // var bot = new Discord.Client({
 //   token: auth.token,
@@ -128,13 +123,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       new RegExp("(" + common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
     );
 
+    if (parts && parts.length > 2) {
+      return;
+    }
+
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
     var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
     var cmdMessage = parts[3].trim() || null;
-    // var cmd = args[0];
-
-    //args = args.splice(1);
 
     var msgDets = new MessageDetails({
       channel_id: channel_id,

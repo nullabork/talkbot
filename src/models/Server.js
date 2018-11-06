@@ -1,6 +1,8 @@
 
-var botStuff = require('../helpers/bot-stuff'),
+var Lang = require("lang.js"),
+  botStuff = require('../helpers/bot-stuff'),
   world = require('../models/World'),
+  messages = require('../../config/lang'),
   bot = botStuff.bot;
 
 class Server {
@@ -21,6 +23,13 @@ class Server {
     this.neglect_timeout = null;
     this.neglect_neglect = null;
     this.language = 'en';
+
+    this.commandResponses = new Lang({
+      messages: messages,
+      locale: this.language,
+      fallback: this.language
+    });
+    
     this.messages = {};
 
     if (server_data) {
@@ -38,8 +47,7 @@ class Server {
   init () {
     if (this.isBound()) {
       this.setMaster(this.bound_to, this.bound_to_username);
-    }
-    else {
+    } else {
       // inits empty
       this.release();
     }
@@ -57,7 +65,7 @@ class Server {
     if (this.messages && this.messages[key]) {
       return this.messages[key];
     }
-    return lang.get.apply(lang, Array.from(arguments));
+    return this.commandResponses.get.apply(this.commandResponses, Array.from(arguments));
   }
 
  setMaster (user_id, username) {
