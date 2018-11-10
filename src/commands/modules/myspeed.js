@@ -20,6 +20,6 @@ exports.register = function (commands) {
   commands.add('myspeed', command);
 };
 
-exports.unRegister = function (commands) {d
+exports.unRegister = function (commands) {
   commands.remove('myspeed');
 };

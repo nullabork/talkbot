@@ -13,8 +13,8 @@ var command = function (msg, server) {
   var parts = msg.message.match(/(\S+\.\S+)\s+(.*)/i);
 
   server.messages[parts[1]] = parts[2];
-  msg.response(server.lang('set.okay', { lang : parts[1] }));
-  
+  msg.response(server.lang('set.okay', { lang: parts[1] }));
+
 };
 
 exports.register = function (commands) {

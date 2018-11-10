@@ -8,7 +8,7 @@ class Common {
 
         // var regex = "[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?"
 
-        
+
         // var protocol = "(";
         // if (opts.https) {
         //     protocol += 'https:\/\/)';
@@ -35,7 +35,7 @@ class Common {
                 return b;
             });
 
-            return  tt;
+            return tt;
         });
 
         return map;
@@ -61,60 +61,60 @@ class Common {
         });
     };
 
-    static replaceURLS (message, fn) {
+    static replaceURLS(message, fn) {
         return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, fn ? fn : "");
     }
 
-    static stripRepeatingChar (message) {
+    static stripRepeatingChar(message) {
         var maxChars = 6;
         var a = message.split('');
         var leaveOneRemaining = true;
         var thresholdToStartStriping = maxChars;
-    
+
         var lastletter = '';
         var stripLength = leaveOneRemaining ? 0 : 1;
         for (var i = a.length; i > 0; i--) {
-          var letter = a[i - 1];
-    
-          if (lastletter == letter) {
-            stripLength++;
-          } else if (stripLength > thresholdToStartStriping) {
-            a.splice(i, stripLength);
-            stripLength = leaveOneRemaining ? 0 : 1;
-          } else {
-            stripLength = leaveOneRemaining ? 0 : 1;
-          }
-          lastletter = letter;
+            var letter = a[i - 1];
+
+            if (lastletter == letter) {
+                stripLength++;
+            } else if (stripLength > thresholdToStartStriping) {
+                a.splice(i, stripLength);
+                stripLength = leaveOneRemaining ? 0 : 1;
+            } else {
+                stripLength = leaveOneRemaining ? 0 : 1;
+            }
+            lastletter = letter;
         }
-    
+
         return a.join('');
     }
 
-    static stripNullsChars (message) {
+    static stripNullsChars(message) {
         return message.replace(/\n|\r/gi, "");
     }
 
-    static truncateMessage (message) {
+    static truncateMessage(message) {
         if (message.length > 200) {
             message = message.substring(0, 200);
         }
         return message;
     }
 
-    static replaceWavyMen (message) {
+    static replaceWavyMen(message) {
         message = message.replace(/\\o/gi, "wave");
         message = message.replace(/o\//gi, "wave ack");
         message = message.replace(/\\o\//gi, "hooray");
         return message;
     }
 
-    static replaceYesNo (message) {
+    static replaceYesNo(message) {
         message = message.replace(/\(y\)/gi, "thumbs up");
         message = message.replace(/\(n\)/gi, "thumbs down");
         return message;
     }
 
-    static cleanMessage (message) {
+    static cleanMessage(message) {
         message = message.trim();
         message = Common.stripRepeatingChar(message);
         message = Common.stripNullsChars(message);
@@ -122,7 +122,7 @@ class Common {
         message = Common.replaceYesNo(message);
         message = Common.truncateMessage(message);
         return message;
-    } 
+    }
 
 }
 

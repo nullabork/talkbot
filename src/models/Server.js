@@ -3,22 +3,22 @@ var Lang = require("lang.js"),
   botStuff = require('../helpers/bot-stuff'),
   messages = require('../../config/lang'),
   bot = botStuff.bot;
-  
+
 
 class Server {
 
-  constructor(server_data, server_id ) {
+  constructor(server_data, server_id) {
     this.server_id = server_id;
-    if(!this.server_id && server_data.id) {
+    if (!this.server_id && server_data.id) {
       this.server_id = server_data.id;
     }
 
     var inst = bot.servers[this.server_id];
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
-    this.users = bot.users[this.server_owner_user_id];    
+    this.users = bot.users[this.server_owner_user_id];
     this.server_owner_username = this.users[this.server_owner_user_id];
-   
+
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;
@@ -32,18 +32,18 @@ class Server {
       locale: this.language,
       fallback: this.language
     });
-    
+
     this.messages = {};
   }
 
-  setMaster (user_id, username) {
+  setMaster(user_id, username) {
     this.bound_to = user_id;
     this.bound_to_username = username;
     this.permit(user_id);
     this.resetNeglectTimeout();
   };
 
-  init () {
+  init() {
     if (this.isBound()) {
       this.setMaster(this.bound_to, this.bound_to_username);
     } else {
@@ -61,14 +61,14 @@ class Server {
     }
   }
 
-  lang (key) {
+  lang(key) {
     if (this.messages && this.messages[key]) {
       return this.messages[key];
     }
     return this.commandResponses.get.apply(this.commandResponses, Array.from(arguments));
   }
 
- setMaster (user_id, username) {
+  setMaster(user_id, username) {
     this.bound_to = user_id;
     this.bound_to_username = username;
     this.permit(user_id);
@@ -76,15 +76,15 @@ class Server {
     require('./World').save();
   }
 
-  isServerChannel (channel_id) {
+  isServerChannel(channel_id) {
     return bot.channels[channel_id].guild_id == this.server_id;
   }
 
-  getOwnersVoiceChannel (user_id) {
+  getOwnersVoiceChannel(user_id) {
     return botStuff.getUserVoiceChannel(user_id);
   };
 
-  release () {
+  release() {
     console.log('2222');
     this.bound_to = null;
     this.bound_to_username = null;
@@ -98,7 +98,7 @@ class Server {
     require('./World').save();
   };
 
-  getChannelMembers (channel_id) {
+  getChannelMembers(channel_id) {
     if (!bot.channels[channel_id]
       && !bot.servers[bot.channels[channel_id].guild_id]
       && bot.servers[bot.channels[channel_id].guild_id].members) {
@@ -107,24 +107,24 @@ class Server {
     return null;
   }
 
-  kill () {
+  kill() {
     require('./World').save();
     bot.disconnect();
     process.exit();
   }
 
-  isMaster (user_id) {
+  isMaster(user_id) {
     if (!user_id) return false;
     return this.bound_to == user_id;
   };
 
-  isBound () {
+  isBound() {
     return this.bound_to != null;
   };
 
-  getBoundToNick () {
+  getBoundToNick() {
     var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-    
+
     if (!this.bound_to || !channel_id) {
       return null;
     }
@@ -136,20 +136,20 @@ class Server {
     if (this.bound_to_username) {
       return this.bound_to_username;
     }
-    
+
     return this.bound_to;
   };
 
-  inChannel () {
+  inChannel() {
     return this.current_voice_channel_id != null;
   };
 
-  isPermitted (user_id) {
+  isPermitted(user_id) {
     if (!user_id) return false;
     return this.permitted[user_id] != null;
   };
 
- joinVoiceChannel (channel_id, callback) {
+  joinVoiceChannel(channel_id, callback) {
     var server = this;
     if (!server.isServerChannel(channel_id)) {
       console.log("joinVoiceChannel() on the wrong server");
@@ -171,7 +171,7 @@ class Server {
     });
   };
 
-  leaveVoiceChannel (callback) {
+  leaveVoiceChannel(callback) {
     if (!callback) callback = function () { };
 
     // HACK: delay the timeout as the callback sometimes runs before the state = left
@@ -179,7 +179,7 @@ class Server {
       setTimeout(callback, 2000);
     };
 
-    if (this.current_voice_channel_id != null){
+    if (this.current_voice_channel_id != null) {
       bot.leaveVoiceChannel(this.current_voice_channel_id, callback_timeout);
     }
 
@@ -187,19 +187,19 @@ class Server {
     require('./World').save();
   }
 
-  permit (user_id) {
+  permit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = {};
     require('./World').save();
   }
 
-  unpermit (user_id) {
+  unpermit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = null;
     require('./World').save();
   }
 
-  resetNeglectTimeout () {
+  resetNeglectTimeout() {
     var server = this;
 
     if (server.neglect_neglect) {
@@ -216,7 +216,7 @@ class Server {
     }
   };
 
-  talk (message, options, callback) {
+  talk(message, options, callback) {
     this.resetNeglectTimeout();
     var server = this;
     var play_padding = (message.length < 20);
@@ -260,7 +260,7 @@ class Server {
     });
   }
 
-  neglected () {
+  neglected() {
     var server = this;
 
     if (server.neglect_neglect) return;
@@ -277,12 +277,12 @@ class Server {
     }
   }
 
-  toggleNeglect () {
+  toggleNeglect() {
     this.neglect_neglect = !this.neglect_neglect;
     return this.neglect_neglect;
   }
 
-  setNicks (channel_id, tokens) {
+  setNicks(channel_id, tokens) {
 
     var i = 0;
 
@@ -305,7 +305,7 @@ class Server {
 
   };
 
- playAudioFile (filename, callback) {
+  playAudioFile(filename, callback) {
     if (!callback) callback = function () { };
     bot.getAudioContext(this.current_voice_channel_id, function (error, stream) {
       if (error) return console.error(error);

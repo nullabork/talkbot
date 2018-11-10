@@ -9,7 +9,7 @@ var command = function (msg, server) {
   if (!target_ids || !target_ids.length) {
     return;
   }
-  
+
   //target_ids.forEach(function(target_id) {
   for (let i = 0; i < target_ids.length; i++) {
     var target_id = target_ids[i];
@@ -20,7 +20,7 @@ var command = function (msg, server) {
     }
 
     server.unpermit(target_id);
-    
+
     var nick = msg.getNick(target_id);
     if (!nick) {
       msg.response(server.lang('unpermit.okay', { name: target_id }));

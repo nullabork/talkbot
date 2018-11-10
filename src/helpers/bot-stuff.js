@@ -4,14 +4,14 @@ var Discord = require('discord.io'),
   textToSpeech = require('@google-cloud/text-to-speech');
 
 class BotStuff {
-  
+
   constructor() {
     this.auth = auth;
     this.bot = new Discord.Client({
       token: auth.token,
       autorun: true
     });
-    
+
     this.tts_client = new textToSpeech.TextToSpeechClient();
   }
 
@@ -39,9 +39,9 @@ class BotStuff {
     return null;
   };
 
-  resolveMessageSnowFlakes (channel_id, message) {
+  resolveMessageSnowFlakes(channel_id, message) {
     var self = this;
-    return common.replaceSnowFlakes (message, function(entity_id){
+    return common.replaceSnowFlakes(message, function (entity_id) {
       var name = self.findThingsName(channel_id, entity_id);
       return common.caseToSpace(name);
     })
@@ -63,7 +63,7 @@ class BotStuff {
     });
   };
 
-  tts () {
+  tts() {
     return this.tts_client;
   }
 
@@ -83,7 +83,7 @@ class BotStuff {
 
   findThingsName(channel_id, entity_id) {
     let bot = this.bot;
-    
+
     var members = bot.servers[bot.channels[channel_id].guild_id].members;
     if (members[entity_id] && members[entity_id].nick) return members[entity_id].nick;
     if (members[entity_id] && members[entity_id].name) return members[entity_id].name;

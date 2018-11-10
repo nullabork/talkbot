@@ -7,7 +7,7 @@ var command = function (msg, server) {
   if (msg.ownerIsPermitted()) {
     var pitch = parseFloat(msg.args[0]),
       pitch = common.numberClamp(pitch, -20, 20);
-    
+
     server.permitted[msg.user_id].pitch = pitch;
 
     msg.response(server.lang('mypitch.okay', { pitch: pitch }));

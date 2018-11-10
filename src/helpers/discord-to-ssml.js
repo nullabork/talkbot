@@ -28,7 +28,7 @@ var common = require('./common');
       minLengthBuff: '3000ms',
       tags: []
     }
-    
+
     Object.assign(this.config, config);
 
     this.tags = [
@@ -37,15 +37,15 @@ var common = require('./common');
       { tags: ['__*', '*__'], ssml: '', attr: '' },
       { tags: ['__', '__'], ssml: '', attr: '' },
       { tags: ['***', '***'], ssml: 'emphasis', attr: 'level="strong" volume="+6dB"' },
-      { tags: ['**','**'], ssml: 'emphasis', attr: 'level="moderate"' },
-      { tags: ['*','*'], ssml: 'emphasis', attr: 'level="reduced"' },
-      { tags: ['#','#'], ssml: 'prosody', attr: 'rate="slow"' },
+      { tags: ['**', '**'], ssml: 'emphasis', attr: 'level="moderate"' },
+      { tags: ['*', '*'], ssml: 'emphasis', attr: 'level="reduced"' },
+      { tags: ['#', '#'], ssml: 'prosody', attr: 'rate="slow"' },
       { tags: ['----', '----'], ssml: 'prosody', attr: 'pitch="-100%" rate="slow"' },
-      { tags: ['---','---'], ssml: 'prosody', attr: 'pitch="-100%"' },
-      { tags: ['--','--'], ssml: 'prosody', attr: 'pitch="-50%"' },
-      { tags: ['+++','+++'], ssml: 'prosody', attr: 'pitch="+100%"' },
-      { tags: ['++','++'], ssml: 'prosody', attr: 'pitch="+50%"' },
-      { tags: ['~~','~~'], ssml: '', attr: '' },
+      { tags: ['---', '---'], ssml: 'prosody', attr: 'pitch="-100%"' },
+      { tags: ['--', '--'], ssml: 'prosody', attr: 'pitch="-50%"' },
+      { tags: ['+++', '+++'], ssml: 'prosody', attr: 'pitch="+100%"' },
+      { tags: ['++', '++'], ssml: 'prosody', attr: 'pitch="+50%"' },
+      { tags: ['~~', '~~'], ssml: '', attr: '' },
       { tags: ['```', '```'], ssml: '', attr: '' },
       { tags: ['&&&&&'], ssml: 'break', attr: 'time="500ms"', selfClosing: true },
       { tags: ['&&&&'], ssml: 'break', attr: 'time="400ms"', selfClosing: true },
@@ -72,7 +72,7 @@ var common = require('./common');
             return '<' + tag.ssml + ' ' + tag.attr + '/>';
           });
         }
-        
+
         if (tag.tags.length == 2) {
           var open = common.escapeRegExp(tag.tags[0]),
             close = common.escapeRegExp(tag.tags[1]);

@@ -20,8 +20,8 @@ var command = function (msg, server) {
     } else {
       msg.response(server.lang('permit.huh', { name: target_id }));
     }
-  });   
-  
+  });
+
 };
 
 exports.register = function (commands) {

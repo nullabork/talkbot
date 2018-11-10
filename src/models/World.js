@@ -15,7 +15,7 @@ class World {
   }
 
   addServer(server) {
-    if(!server.server_id){
+    if (!server.server_id) {
       return;
     }
     this.servers[server.server_id] = server;

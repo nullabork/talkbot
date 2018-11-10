@@ -6,7 +6,7 @@ function Commands() {
 
   this.add = function (key, command, force) {
     key = key.toLowerCase();
-    
+
     if (!this.commands[key] || force)
       this.commands[key] = command;
   }
@@ -42,7 +42,7 @@ function Commands() {
     }
     var func = this.commands[key];
 
-    if(typeof func == 'function') {
+    if (typeof func == 'function') {
       return func.apply(this, args);
     }
   }

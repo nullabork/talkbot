@@ -5,7 +5,7 @@ var _config = './config',
   lang_path = _config + '/lang.json';
 
 var paths = require('./config/urls');
-  
+
 
 //npm imports
 var fs = require('fs'),
@@ -17,13 +17,13 @@ var fs = require('fs'),
 var SSML = require('./src/helpers/discord-to-ssml'),
   commands = require('./src/commands/index'),
   botStuff = require('./src/helpers/bot-stuff');
-  common = require('./src/helpers/common');
+common = require('./src/helpers/common');
 
 //models
 var world = require('./src/models/World'),
   Server = require('./src/models/Server'),
   MessageDetails = require('./src/models/MessageDetails');
-  
+
 //configs
 var auth = require(auth_path),
   messages = require(lang_path),
@@ -128,7 +128,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if (!parts || parts.length < 2) {
       return;
     }
-    
+
 
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
