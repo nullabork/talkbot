@@ -1,6 +1,6 @@
 {
   "name": "greeter-bot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "My own Discord bot",
   "main": "bot.js",
   "author": "YOUR-NAME-HERE",
