@@ -8,9 +8,6 @@ fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-sed -i '' -e "s/\"version\": \".*\"/\"version\": \"$1\"/g" "$DIR/../bower.json"
-sed -i '' -e "s/\"version\": \".*\"/\"version\": \"$1\"/g" "$DIR/../package.json"
-
 git add -A
 git commit -am "commit for release $1"
 git tag -a $1 -m "$1"
