@@ -30,7 +30,7 @@ var auth = require(auth_path),
   state = require(state_path);
 
 // Creates a client
-var tts_client = new textToSpeech.TextToSpeechClient();
+
 
 var bot = botStuff.bot;
 
@@ -67,7 +67,6 @@ bot.on('disconnect', function (evt) {
 });
 
 bot.on('any', function (evt) {
-  console.log(evt.t);
 
   if (evt.t == 'GUILD_CREATE') {
 
@@ -88,16 +87,16 @@ bot.on('any', function (evt) {
       return null;
     }
 
-
+    //was this eventer the current
     if (evt.d && server.isMaster(evt.d.user_id)) {
 
       if (!channel_id) {
-        if (server.inChannel())
+        if (server.inChannel()) {
           server.leaveVoiceChannel();
-      }
-      else if (!botStuff.isVoiceChannel(channel_id))
+        }
+      } else if (!botStuff.isVoiceChannel(channel_id)) {
         console.log('Not a voice channel');
-      else {
+      } else {
         server.joinVoiceChannel(channel_id);
       }
     }

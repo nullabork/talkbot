@@ -86,4 +86,4 @@ function LangMap(config) {
   }
 }
 
-module.export = new LangMap();
+module.exports = new LangMap();

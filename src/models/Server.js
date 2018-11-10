@@ -48,6 +48,7 @@ class Server {
       this.setMaster(this.bound_to, this.bound_to_username);
     } else {
       // inits empty
+      console.log('1111');
       this.release();
     }
 
@@ -84,12 +85,12 @@ class Server {
   };
 
   release () {
-    console.log('asdasd');
+    console.log('2222');
     this.bound_to = null;
     this.bound_to_username = null;
     this.permitted = {};
     clearTimeout(this.neglect_timeout);
-    this.neglect_timeout = null;
+
     if (this.inChannel()) {
       this.leaveVoiceChannel();
     }
@@ -211,7 +212,7 @@ class Server {
       };
 
       clearTimeout(server.neglect_timeout);
-      server.neglect_timeout = setTimeout(neglected_timeout, require('./World').NEGLECT_TIMEOUT_IN_MS);
+      server.neglect_timeout = setTimeout(neglected_timeout, 30 * 60 * 1000);
     }
   };
 
@@ -242,7 +243,7 @@ class Server {
 
 
     // Performs the Text-to-Speech request
-    tts_client.synthesizeSpeech(request, (err, response) => {
+    botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
         console.error('ERROR:', err);
         return;
@@ -252,15 +253,11 @@ class Server {
 
         try {
           stream.write(response.audioContent);
-        }
-        catch (ex) {
+        } catch (ex) {
           console.error(ex);
         }
       });
-
-
     });
-
   }
 
   neglected () {

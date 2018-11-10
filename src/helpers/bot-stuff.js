@@ -1,8 +1,7 @@
 var Discord = require('discord.io'),
   auth = require("../../../auth.json"),
-  common = require("./common");
-
-console.log(common);
+  common = require("./common"),
+  textToSpeech = require('@google-cloud/text-to-speech');
 
 class BotStuff {
   
@@ -12,6 +11,8 @@ class BotStuff {
       token: auth.token,
       autorun: true
     });
+    
+    this.tts_client = new textToSpeech.TextToSpeechClient();
   }
 
   isVoiceChannel(channel_id) {
@@ -42,7 +43,7 @@ class BotStuff {
     var self = this;
     return common.replaceSnowFlakes (message, function(entity_id){
       var name = self.findThingsName(channel_id, entity_id);
-      return Common.caseToSpace(name);
+      return common.caseToSpace(name);
     })
   }
 
@@ -61,6 +62,10 @@ class BotStuff {
       });
     });
   };
+
+  tts () {
+    return this.tts_client;
+  }
 
   getNickFromUserId(channel_id, user_id) {
     let bot = this.bot;
