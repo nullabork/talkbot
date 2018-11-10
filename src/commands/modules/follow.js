@@ -1,4 +1,4 @@
-var command = function (msg, server) {
+var command = function (msg, server, world) {
   if (server.isBound()) {
     if (!server.isMaster(msg.user_id))
       msg.response(server.lang('follow.nope', { name: msg.boundNick() }));

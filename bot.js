@@ -4,6 +4,9 @@ var _config = './config',
   auth_path = '../auth.json',
   lang_path = _config + '/lang.json';
 
+var paths = require('./config/urls');
+  
+
 //npm imports
 var fs = require('fs'),
   request = require('request'),
@@ -12,15 +15,15 @@ var fs = require('fs'),
 
 //helpers
 var SSML = require('./src/helpers/discord-to-ssml'),
-  commands = require('./src/commands'),
-  botStuff = require('./src/helpers/bot-stuff'),
+  commands = require('./src/commands/index'),
+  botStuff = require('./src/helpers/bot-stuff');
   common = require('./src/helpers/common');
 
 //models
-var MessageDetails = require('./src/models/MessageDetails'),
+var world = require('./src/models/World'),
   Server = require('./src/models/Server'),
-  world = require('./src/models/World');
-
+  MessageDetails = require('./src/models/MessageDetails');
+  
 //configs
 var auth = require(auth_path),
   messages = require(lang_path),
@@ -123,9 +126,10 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       new RegExp("(" + common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
     );
 
-    if (parts && parts.length > 2) {
+    if (!parts || parts.length < 2) {
       return;
     }
+    
 
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
@@ -145,7 +149,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       message: cmdMessage,
     });
 
-    var command = commands.get(msgDets.cmd);
+    commands.run(msgDets.cmd, [msgDets, server, world]);
+
   } else {
     if (message == null) return;
 

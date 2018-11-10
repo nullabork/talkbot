@@ -1,18 +1,21 @@
 
 var Lang = require("lang.js"),
   botStuff = require('../helpers/bot-stuff'),
-  world = require('../models/World'),
   messages = require('../../config/lang'),
   bot = botStuff.bot;
+  
 
 class Server {
 
-  constructor(server_id, server_data) {
-    
+  constructor(server_data, server_id ) {
     this.server_id = server_id;
-    this.inst = bot.servers[server_id];
-    this.server_name = this.inst.name;
-    this.server_owner_user_id = this.inst.owner_id;
+    if(!this.server_id && server_data.id) {
+      this.server_id = server_data.id;
+    }
+
+    var inst = bot.servers[this.server_id];
+    this.server_name = inst.name;
+    this.server_owner_user_id = inst.owner_id;
     this.users = bot.users[this.server_owner_user_id];    
     this.server_owner_username = this.users[this.server_owner_user_id];
    
@@ -31,10 +34,6 @@ class Server {
     });
     
     this.messages = {};
-
-    if (server_data) {
-      Object.assign(this, client_data);
-    }
   }
 
   setMaster (user_id, username) {
@@ -73,7 +72,7 @@ class Server {
     this.bound_to_username = username;
     this.permit(user_id);
     this.resetNeglectTimeout();
-    world.save();
+    require('./World').save();
   }
 
   isServerChannel (channel_id) {
@@ -85,6 +84,7 @@ class Server {
   };
 
   release () {
+    console.log('asdasd');
     this.bound_to = null;
     this.bound_to_username = null;
     this.permitted = {};
@@ -94,7 +94,7 @@ class Server {
       this.leaveVoiceChannel();
     }
 
-    world.save();
+    require('./World').save();
   };
 
   getChannelMembers (channel_id) {
@@ -107,7 +107,7 @@ class Server {
   }
 
   kill () {
-    world.save();
+    require('./World').save();
     bot.disconnect();
     process.exit();
   }
@@ -166,7 +166,7 @@ class Server {
         callback();
       }
 
-      world.save();
+      require('./World').save();
     });
   };
 
@@ -183,19 +183,19 @@ class Server {
     }
 
     this.current_voice_channel_id = null;
-    world.save();
+    require('./World').save();
   }
 
   permit (user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = {};
-    world.save();
+    require('./World').save();
   }
 
   unpermit (user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = null;
-    world.save();
+    require('./World').save();
   }
 
   resetNeglectTimeout () {
@@ -211,7 +211,7 @@ class Server {
       };
 
       clearTimeout(server.neglect_timeout);
-      server.neglect_timeout = setTimeout(neglected_timeout, world.NEGLECT_TIMEOUT_IN_MS);
+      server.neglect_timeout = setTimeout(neglected_timeout, require('./World').NEGLECT_TIMEOUT_IN_MS);
     }
   };
 
@@ -273,10 +273,11 @@ class Server {
       setTimeout(timeout_neglectedrelease, 3000);
     };
 
-    if (server.inChannel())
-      server._talk("I feel neglected, I'm leaving", server, neglectedrelease);
-    else
+    if (server.inChannel()) {
+      server.talk("I feel neglected, I'm leaving", server, neglectedrelease);
+    } else {
       server.release();
+    }
   }
 
   toggleNeglect () {

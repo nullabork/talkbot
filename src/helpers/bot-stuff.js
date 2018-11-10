@@ -1,6 +1,8 @@
 var Discord = require('discord.io'),
-  auth = require("../../auth.json"),
-  common = require("../helpers/common");
+  auth = require("../../../auth.json"),
+  common = require("./common");
+
+console.log(common);
 
 class BotStuff {
   
@@ -38,7 +40,7 @@ class BotStuff {
 
   resolveMessageSnowFlakes (channel_id, message) {
     var self = this;
-    common.replaceSnowFlakes (message, function(entity_id){
+    return common.replaceSnowFlakes (message, function(entity_id){
       var name = self.findThingsName(channel_id, entity_id);
       return Common.caseToSpace(name);
     })

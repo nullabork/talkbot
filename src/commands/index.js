@@ -33,6 +33,19 @@ function Commands() {
     }
     return this.commands[key];
   }
+
+  this.run = function (key, args) {
+    key = key.toLowerCase();
+
+    if (!this.commands[key]) {
+      return function () { };
+    }
+    var func = this.commands[key];
+
+    if(typeof func == 'function') {
+      return func.apply(this, args);
+    }
+  }
 }
 
 commands = new Commands();

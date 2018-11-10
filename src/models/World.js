@@ -1,6 +1,8 @@
 
-var botStuff = require('../helpers/bot-stuff'),
-  Server = require('../models/Server'),
+var paths = require('../../config/urls'),
+  fs = require('fs'),
+  botStuff = require('../helpers/bot-stuff'),
+  Server = require(paths.join(paths.models, 'Server')),
   bot = botStuff.bot;
 
 class World {
@@ -13,6 +15,9 @@ class World {
   }
 
   addServer(server) {
+    if(!server.server_id){
+      return;
+    }
     this.servers[server.server_id] = server;
     this.save();
   }
@@ -50,7 +55,7 @@ class World {
     return null;
   }
 
-  checkMastersVoiceChannels() {
+  checkMastersVoiceChannels(user_id) {
     if (!user_id) return;
     var voiceChan = botStuff.getUserVoiceChannel(user_id);
     for (var server in this.servers) {
@@ -64,8 +69,11 @@ class World {
 
   initServers() {
     for (var server in bot.servers) {
-      if (!this.servers[server])
-        this.addServer(bot.servers[server]);
+      if (!this.servers[server]) {
+        this.addServer(
+          new Server(bot.servers[server])
+        );
+      }
     }
   }
 
@@ -75,20 +83,20 @@ class World {
       else return value;
     };
 
-    if (!_filename) _filename = state_path;
+    if (!_filename) _filename = paths.state;
     fs.writeFileSync(_filename, JSON.stringify(this.servers, replacer), 'utf-8');
   }
 
   load() {
     try {
-      var file = require(state_path);
+      var file = require(paths.state);
       for (var server_id in file) {
         var server = new Server(file[server_id], server_id);
         this.servers[server_id] = server;
         server.init();
       }
     } catch (ex) {
-      console.error("Failed to load state from file");
+      console.error(ex);
       this.save();
     }
   }

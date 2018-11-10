@@ -1,5 +1,5 @@
 
-var common = require("../../common");
+var common = require("../../helpers/common");
 
 var command = function (msg, server) {
   var args = msg.message.split(/ +/);

@@ -1,5 +1,3 @@
-var botStuff = require('./bot-stuff');
-
 class Common {
     static escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -59,7 +57,7 @@ class Common {
 
     static replaceSnowFlakes(message, fn) {
         return message.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (match, entity_id) {
-            return fn(id);
+            return fn(entity_id);
         });
     };
 
