@@ -35,6 +35,7 @@ class MessageDetails {
     return botStuff.resolveMessageSnowFlakes(message);
   }
 
+
   getNick(user_id) {
     return botStuff.findThingsName(this.channel_id, user_id);
   };
