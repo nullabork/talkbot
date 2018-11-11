@@ -116,6 +116,7 @@ class Common {
 
     static cleanMessage(message) {
         message = message.trim();
+        message = common.replaceURLS(message);
         message = Common.stripRepeatingChar(message);
         message = Common.stripNullsChars(message);
         message = Common.replaceWavyMen(message);

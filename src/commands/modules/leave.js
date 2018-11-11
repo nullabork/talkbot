@@ -1,6 +1,6 @@
 
 
-var command = function (msg, server) {
+function leave (msg, server) {
   if (server.isBound() && !server.isMaster(msg.user_id)) {
     msg.response(server.lang('leave.nope'));
   } else {
@@ -9,7 +9,7 @@ var command = function (msg, server) {
 };
 
 exports.register = function (commands) {
-  commands.add('leave', command);
+  commands.add('leave', leave);
 };
 
 exports.unRegister = function (commands) {

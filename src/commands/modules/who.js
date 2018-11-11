@@ -1,4 +1,4 @@
-var command = function (msg, server) {
+function who (msg, server) {
   var master_nick = server.getBoundToNick();
   if (!master_nick) {
     msg.response(server.lang('who.none'));
@@ -8,7 +8,7 @@ var command = function (msg, server) {
 };
 
 exports.register = function (commands) {
-  commands.add('who', command);
+  commands.add('who', who);
 };
 
 exports.unRegister = function (commands) {

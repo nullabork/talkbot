@@ -1,22 +1,18 @@
+function toggle_neglect (msg, server) {
+  if (!msg.ownerIsMaster()) {
+    msg.response(server.lang('toggle_neglect.nope'));
+    return;
+  }
 
-var langMap = require("../../helpers/langmap").instance;
-
-var command = function (msg, server) {
-    if (!msg.ownerIsMaster()) {
-        msg.response(server.lang('toggle_neglect.nope'));
-        return;
-    }
-
-    if (server.toggleNeglect()) {
-        msg.response(server.lang('toggle_neglect.none'));
-    } else {
-        msg.response(server.lang('toggle_neglect.okay'));
-    }
-
+  if (server.toggleNeglect()) {
+    msg.response(server.lang('toggle_neglect.none'));
+  } else {
+    msg.response(server.lang('toggle_neglect.okay'));
+  }
 };
 
 exports.register = function (commands) {
-    commands.add('toggle_neglect', command);
+    commands.add('toggle_neglect', toggle_neglect);
 };
 
 exports.unRegister = function (commands) {

@@ -40,7 +40,7 @@
         "none": "You're not in a voice channel?"
     },
     "en.lang": {
-        "okay": "OK, I'll now speak using language :lang.",
+        "okay": "OK, The server default is :lang. You can override it with mylang",
         "nope": "Sorry, you're not my master"
     },
     "en.toggle_neglect": {

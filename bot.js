@@ -133,7 +133,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
     var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
-    var cmdMessage = parts[3].trim() || null;
+    var cmdMessage = (parts[3] || "").trim()
+
+    if(!cmdVerb || !cmdChar){
+      return;
+    }
 
     var msgDets = new MessageDetails({
       channel_id: channel_id,

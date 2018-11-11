@@ -1,11 +1,11 @@
-var command = function (msg, server) {
+function reload (msg, server) {
   if (msg.ownerIsDev()) {
     server.reload();
   }
 };
 
 exports.register = function (commands) {
-  commands.add('reload', command);
+  commands.add('reload', reload);
 };
 
 exports.unRegister = function (commands) {

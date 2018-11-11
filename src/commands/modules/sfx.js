@@ -1,4 +1,4 @@
-var command = function (msg, server) {
+function sfx (msg, server) {
 
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('sfx.nope'));
@@ -26,7 +26,7 @@ var command = function (msg, server) {
 };
 
 exports.register = function (commands) {
-  commands.add('sfx', command);
+  commands.add('sfx', sfx);
 };
 
 exports.unRegister = function (commands) {

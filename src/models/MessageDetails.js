@@ -1,5 +1,7 @@
-var botStuff = require('../helpers/bot-stuff'),
-  common = require('../helpers/common');
+var paths = require('../../config/urls'),
+  botStuff = require('../helpers/bot-stuff')
+  common = require('../helpers/common'),
+  auth = require(paths.auth);
 
 class MessageDetails {
 
@@ -12,7 +14,6 @@ class MessageDetails {
     this.username = null;
     this.args = null;
     this.message = '';
-    var self = this;
 
     if (client_data) {
       Object.assign(this, client_data);
@@ -22,10 +23,11 @@ class MessageDetails {
 
 
 
-  response(message) {
-    self.bot.simulateTyping(self.channel_id, function () {
-      self.bot.sendMessage({
-        to: self.channel_id,
+  response(message) {1
+    var _this = this;
+    _this.bot.simulateTyping(_this.channel_id, function () {
+      _this.bot.sendMessage({
+        to: _this.channel_id,
         message: message
       });
     });

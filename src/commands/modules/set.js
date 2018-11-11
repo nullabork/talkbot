@@ -1,6 +1,6 @@
 
 
-var command = function (msg, server) {
+function set(msg, server) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('set.nope'));
     return;
@@ -18,7 +18,7 @@ var command = function (msg, server) {
 };
 
 exports.register = function (commands) {
-  commands.add('set', command);
+  commands.add('set', set);
 };
 
 exports.unRegister = function (commands) {

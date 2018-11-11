@@ -8,7 +8,7 @@ var command = function (msg, server) {
     msg.response(server.lang('lang.nope'));
     return;
   }
-  var doc = langMap.get(msg.args[0]);
+  var doc = langMap.get(msg.getMessage());
 
   if (doc && doc.code) {
     server.language = doc.code;

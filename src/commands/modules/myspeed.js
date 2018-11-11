@@ -1,7 +1,7 @@
 
 var common = require("../../helpers/common");
 
-var command = function (msg, server) {
+function speed (msg, server) {
   var args = msg.message.split(/ +/);
   if (args.length == 0) return;
 
@@ -17,7 +17,7 @@ var command = function (msg, server) {
 };
 
 exports.register = function (commands) {
-  commands.add('myspeed', command);
+  commands.add('myspeed', speed);
 };
 
 exports.unRegister = function (commands) {
