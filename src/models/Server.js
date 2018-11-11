@@ -14,6 +14,7 @@ class Server {
     }
 
     var inst = bot.servers[this.server_id];
+    //this.owner_id = inst.owner_id;
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
     this.users = bot.users[this.server_owner_user_id];
@@ -43,12 +44,17 @@ class Server {
     this.resetNeglectTimeout();
   };
 
+  sendMessageToOwner(message) {
+    bot.sendMessage({
+      to: this.server_owner_user_id,
+      message: message
+    });
+  }
+
   init() {
     if (this.isBound()) {
       this.setMaster(this.bound_to, this.bound_to_username);
     } else {
-      // inits empty
-      console.log('1111');
       this.release();
     }
 

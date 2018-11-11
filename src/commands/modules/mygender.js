@@ -12,7 +12,7 @@
  * @return  {[undefined]}
  */
 
-function mygender (msg, server, world) {
+function mygender(msg, server, world) {
   if (msg.args.length == 0) return;
 
   if (server.isPermitted(msg.user_id)) {
@@ -21,7 +21,7 @@ function mygender (msg, server, world) {
       gender = "MALE";
     } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
       gender = "FEMALE";
-    } else if (!server.permitted[msg.user_id].gender){
+    } else if (!server.permitted[msg.user_id].gender) {
       gender = "FEMALE";
     }
 

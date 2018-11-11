@@ -135,7 +135,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
     var cmdMessage = (parts[3] || "").trim()
 
-    if(!cmdVerb || !cmdChar){
+    if (!cmdVerb || !cmdChar) {
       return;
     }
 

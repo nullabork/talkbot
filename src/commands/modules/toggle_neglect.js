@@ -1,4 +1,4 @@
-function toggle_neglect (msg, server) {
+function toggle_neglect(msg, server) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('toggle_neglect.nope'));
     return;
@@ -12,11 +12,11 @@ function toggle_neglect (msg, server) {
 };
 
 exports.register = function (commands) {
-    commands.add('toggle_neglect', toggle_neglect);
+  commands.add('toggle_neglect', toggle_neglect);
 };
 
 exports.unRegister = function (commands) {
-    commands.remove('toggle_neglect');
+  commands.remove('toggle_neglect');
 };
 
 

@@ -1,4 +1,4 @@
-function sfx (msg, server) {
+function sfx(msg, server) {
 
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('sfx.nope'));

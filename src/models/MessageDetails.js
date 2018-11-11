@@ -1,6 +1,6 @@
 var paths = require('../../config/urls'),
   botStuff = require('../helpers/bot-stuff')
-  common = require('../helpers/common'),
+common = require('../helpers/common'),
   auth = require(paths.auth);
 
 class MessageDetails {
@@ -20,10 +20,7 @@ class MessageDetails {
     }
   }
 
-
-
-
-  response(message) {1
+  response(message) {
     var _this = this;
     _this.bot.simulateTyping(_this.channel_id, function () {
       _this.bot.sendMessage({

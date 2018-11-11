@@ -12,7 +12,7 @@
  *
  * @return  {[undefined]}
  */
-function permit (msg, server, world) {
+function permit(msg, server, world) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('permit.nope'));
     return;
@@ -49,7 +49,7 @@ function permit (msg, server, world) {
  *
  * @return  {[undefined]}
  */
-function unpermit (msg, server) {
+function unpermit(msg, server) {
 
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('unpermit.deny'));
@@ -67,6 +67,7 @@ function unpermit (msg, server) {
 
     if (target_id == msg.user_id) {
       msg.response(server.lang('unpermit.deny'));
+
       continue;
     }
 

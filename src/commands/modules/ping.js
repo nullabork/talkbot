@@ -1,6 +1,6 @@
 
 
-function ping (msg, server) {
+function ping(msg, server) {
   msg.response(server.lang('ping.okay'));
 };
 

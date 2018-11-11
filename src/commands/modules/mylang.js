@@ -28,7 +28,7 @@ var langMap = require("../../helpers/langmap");
  *
  * @return  {[undefined]}
  */
-function mylang (msg, server, world) {
+function mylang(msg, server, world) {
   if (server.isPermitted(msg.user_id)) {
     var doc = langMap.get(msg.getMessage());
 

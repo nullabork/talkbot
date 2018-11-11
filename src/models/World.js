@@ -40,6 +40,12 @@ class World {
     }
   }
 
+  broadcast(message) {
+    for (var server in this.servers) {
+      server.sendMessageToOwner(message);
+    }
+  }
+
   unpermitAll() {
     for (var server in this.servers) {
       server.release();
@@ -76,6 +82,7 @@ class World {
       }
     }
   }
+
 
   save(_filename) {
     function replacer(key, value) {
