@@ -21,7 +21,7 @@ function broadcast(msg, server, world) {
     var message = msg.getMessage();
     var key = world.broadcast(message, msg.user_id);
     if(key != null) {
-      msg.response("Another dev has 8 seconds to type the command `" + auth.command_char + "broadcast " + key + "`");
+      msg.response("Another dev has 20 seconds to type the command `" + auth.command_char + "broadcast " + key + "`");
     }
   }
 };

@@ -63,7 +63,7 @@ class World {
         self.broadcastID = null;
         self.broadcastMessage = null;
         self.broadcaster = null;
-      }, 8000);
+      }, 20000);
 
       return this.broadcastID;
 
