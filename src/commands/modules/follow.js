@@ -1,4 +1,4 @@
-/**
+/* * *
  * Command: follow
  * The bot will listen and respond to command writer if no other person is
  * master
@@ -8,13 +8,14 @@
  * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
- */
+ * * */
 function follow(msg, server, world) {
   if (server.isBound()) {
-    if (!server.isMaster(msg.user_id))
+    if (!server.isMaster(msg.user_id)) {
       msg.response(server.lang('follow.nope', { name: msg.boundNick() }));
-    else
+    } else {
       msg.response(server.lang('follow.huh'));
+    }
   } else {
 
     server.setMaster(msg.user_id, msg.username);
@@ -28,7 +29,7 @@ function follow(msg, server, world) {
   }
 };
 
-/**
+/* * *
  * Command: unfollow
  * The bot will stop following the command writer is they are the master
  *
@@ -37,7 +38,7 @@ function follow(msg, server, world) {
  * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
- */
+ * * */
 function unfollow(msg, server, world) {
   if (!server.isBound()) {
     msg.response(server.lang('unfollow.none'));

@@ -1,5 +1,6 @@
 
-var common = require("../../helpers/common");
+var common = require("../../helpers/common"),
+  auth = require("@auth");
 
 /**
  * Command: broadcast
@@ -18,7 +19,10 @@ var common = require("../../helpers/common");
 function broadcast(msg, server, world) {
   if (msg.ownerIsDev()) {
     var message = msg.getMessage();
-    world.broadcast(message);
+    var key = world.broadcast(message, msg.user_id);
+    if(key != null) {
+      msg.response("Another dev has 8 seconds to type the command `" + auth.command_char + "broadcast " + key + "`");
+    }
   }
 };
 

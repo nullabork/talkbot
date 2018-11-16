@@ -1,6 +1,6 @@
-var paths = require('../../config/urls'),
-  botStuff = require('../helpers/bot-stuff')
-common = require('../helpers/common'),
+var paths = require('../../config/paths'),
+  botStuff = require("@helpers/bot-stuff"),
+  common = require("@helpers/common"),
   auth = require(paths.auth);
 
 class MessageDetails {
@@ -34,7 +34,6 @@ class MessageDetails {
     var message = this.message;
     return botStuff.resolveMessageSnowFlakes(message);
   }
-
 
   getNick(user_id) {
     return botStuff.findThingsName(this.channel_id, user_id);

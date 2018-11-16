@@ -1,5 +1,5 @@
 /***************
-  
+
   SSML = require('./discord-to-ssml'),
   var ssml = new SSML({
 
@@ -32,24 +32,7 @@ var common = require('./common');
     Object.assign(this.config, config);
 
     this.tags = [
-      { tags: ['__***', '***__'], ssml: 'presody', attr: 'volume="+6dB"' },
-      { tags: ['__**', ' **__'], ssml: '', attr: '' },
-      { tags: ['__*', '*__'], ssml: '', attr: '' },
-      { tags: ['__', '__'], ssml: '', attr: '' },
-      { tags: ['***', '***'], ssml: 'emphasis', attr: 'level="strong" volume="+6dB"' },
-      { tags: ['**', '**'], ssml: 'emphasis', attr: 'level="moderate"' },
-      { tags: ['*', '*'], ssml: 'emphasis', attr: 'level="reduced"' },
-      { tags: ['#', '#'], ssml: 'prosody', attr: 'rate="slow"' },
-      { tags: ['----', '----'], ssml: 'prosody', attr: 'pitch="-100%" rate="slow"' },
-      { tags: ['---', '---'], ssml: 'prosody', attr: 'pitch="-100%"' },
-      { tags: ['--', '--'], ssml: 'prosody', attr: 'pitch="-50%"' },
-      { tags: ['+++', '+++'], ssml: 'prosody', attr: 'pitch="+100%"' },
-      { tags: ['++', '++'], ssml: 'prosody', attr: 'pitch="+50%"' },
-      { tags: ['~~', '~~'], ssml: '', attr: '' },
-      { tags: ['```', '```'], ssml: '', attr: '' },
-      { tags: ['&&&&&'], ssml: 'break', attr: 'time="500ms"', selfClosing: true },
-      { tags: ['&&&&'], ssml: 'break', attr: 'time="400ms"', selfClosing: true },
-      { tags: ['&&&'], ssml: 'break', attr: 'time="300ms"', selfClosing: true }
+
     ];
 
     this.tags = this.tags.concat(this.tags);
@@ -75,12 +58,41 @@ var common = require('./common');
 
         if (tag.tags.length == 2) {
           var open = common.escapeRegExp(tag.tags[0]),
-            close = common.escapeRegExp(tag.tags[1]);
-          // ***moderate***   ~~>   <emphasis level="reduced">reduced</emphasis>
-          var regex = new RegExp(open + '([^' + open + ']+)' + close, 'g');
-          message = message.replace(regex, function (a, b, c) {
-            return '<' + tag.ssml + ' ' + tag.attr + '>' + b + '</' + tag.ssml + '>';
+            close = common.escapeRegExp(tag.tags[1]),
+            openRegex = new RegExp(open, 'g'),
+            closeRegex = new RegExp(close, 'g');
+
+
+          // if open and close tags are equal, make sure we have an even number
+          // of tags in the string.
+          if(open == close){
+            var matches = message.match(openRegex) || [];
+
+            // is odd numebr of matches .. then .. quit
+            if(!matches || !matches.length || matches.length%2 ){
+              return;
+            }
+          }
+
+
+          var openMatches = message.match(openRegex) || [];
+          var closeMatches = message.match(closeRegex) || [];
+          //if number of closing tags or count of tags is zero... quit
+          if (openMatches.length != closeMatches.length || !openMatches.length || !closeMatches) {
+            return;
+          }
+
+
+          message = message.replace(openRegex, function (a, b, c) {
+            return '<' + tag.ssml + ' ' + tag.attr + '>';
           });
+
+          message = message.replace(closeRegex, function (a, b, c) {
+            return '</' + tag.ssml + '>';
+          });
+
+
+
         }
       });
 

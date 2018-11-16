@@ -1,8 +1,9 @@
 
-var paths = require('../../config/urls'),
+var paths = require('../../config/paths'),
   fs = require('fs'),
-  botStuff = require('../helpers/bot-stuff'),
-  Server = require(paths.join(paths.models, 'Server')),
+  botStuff =  require("@helpers/bot-stuff"),
+  Server   =  require("@models/Server"),
+  auth   =  require("@auth"),
   bot = botStuff.bot;
 
 class World {
@@ -10,8 +11,13 @@ class World {
     return 30 * 60 * 1000;
   }
 
+
   constructor(server_id, server_data) {
     this.servers = {};
+    this.broadcastTimout = null;
+    this.broadcastID = null;
+    this.broadcastMessage = null;
+    this.broadcaster = null;
   }
 
   addServer(server) {
@@ -40,10 +46,42 @@ class World {
     }
   }
 
-  broadcast(message) {
-    for (var server in this.servers) {
-      server.sendMessageToOwner(message);
+  broadcast(message, user_id) {
+    var self = this;
+    if(!(auth.dev_ids.indexOf(user_id) >= 0)) {
+      return;
     }
+
+    if(this.broadcastID  == null){
+
+
+      this.broadcastID = (Math.floor(Math.random()*90000) + 10000) + "";
+      this.broadcastMessage = message;
+      this.broadcaster = user_id;
+
+      setTimeout(function(){
+        self.broadcastID = null;
+        self.broadcastMessage = null;
+        self.broadcaster = null;
+      }, 8000);
+
+      return this.broadcastID;
+
+    } else if(this.broadcaster != user_id) {
+      for (var key in  bot.servers) {
+        var server = bot.servers[key];
+        bot.sendMessage({
+          to: server.owner_id,
+          message: self.broadcastMessage
+        });
+      }
+
+      self.broadcastID = null;
+      self.broadcastMessage = null;
+      self.broadcaster = null;
+    }
+
+    return null;
   }
 
   unpermitAll() {

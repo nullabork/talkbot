@@ -2,7 +2,8 @@
 var Lang = require("lang.js"),
   botStuff = require('../helpers/bot-stuff'),
   messages = require('../../config/lang'),
-  bot = botStuff.bot;
+                 bot = botStuff.bot;
+
 
 
 class Server {
@@ -45,10 +46,12 @@ class Server {
   };
 
   sendMessageToOwner(message) {
-    bot.sendMessage({
-      to: this.server_owner_user_id,
-      message: message
-    });
+    if(this.server_owner_user_id) {
+      bot.sendMessage({
+        to: this.server_owner_user_id,
+        message: message
+      });
+    }
   }
 
   init() {
@@ -91,7 +94,6 @@ class Server {
   };
 
   release() {
-    console.log('2222');
     this.bound_to = null;
     this.bound_to_username = null;
     this.permitted = {};
@@ -252,13 +254,16 @@ class Server {
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
         console.error('ERROR:', err);
+        callback();
         return;
       }
       bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
-        if (error) return console.error(error);
-
-        try {
+        if (error){
+          callback();
+          return console.error(error);
+        } try {
           stream.write(response.audioContent);
+          callback();
         } catch (ex) {
           console.error(ex);
         }

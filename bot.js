@@ -1,40 +1,36 @@
-var _config = './config',
-  //commands_path = './commands',
-  state_path = '../state.json',
-  auth_path = '../auth.json',
-  lang_path = _config + '/lang.json';
-
-var paths = require('./config/urls');
 
 
 //npm imports
+require('module-alias/register');
+
 var fs = require('fs'),
   request = require('request'),
   Discord = require('discord.io'),
   textToSpeech = require('@google-cloud/text-to-speech');
 
 //helpers
-var SSML = require('./src/helpers/discord-to-ssml'),
-  commands = require('./src/commands/index'),
-  botStuff = require('./src/helpers/bot-stuff');
-common = require('./src/helpers/common');
+var paths = require('./config/paths'),
+  MessageSSML = require('@models/MessageSSML'),
+  commands = require('@commands'),
+  botStuff = require('@helpers/bot-stuff');
+  common = require('@helpers/common');
 
 //models
-var world = require('./src/models/World'),
-  Server = require('./src/models/Server'),
-  MessageDetails = require('./src/models/MessageDetails');
+var world = require('@models/World'),
+  Server = require('@models/Server'),
+  MessageDetails = require('@models/MessageDetails');
 
 //configs
-var auth = require(auth_path),
-  messages = require(lang_path),
-  state = require(state_path);
+var auth = require('@auth'),
+  messages = require('@config/lang.json'),
+  state = require('@state');
 
 // Creates a client
 
 
 var bot = botStuff.bot;
 
-var ssml = new SSML({});
+// var ssml = new SSML({});
 
 // var bot = new Discord.Client({
 //   token: auth.token,
@@ -162,12 +158,17 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if (!server.permitted[user_id] || !server.permitted[user_id].use_ssml) {
       message = common.cleanMessage(message);
     }
-    message = ssml.build(message);
+    // message = ssml.build(message);
+
+
 
     if (message.length < 1) return;
 
     if (server.inChannel()) {
       if (server.isPermitted(user_id)) {
+        var parser = new MessageSSML(message);
+        message = parser.build();
+
         server.talk(message, server.permitted[user_id]);
       }
     }
