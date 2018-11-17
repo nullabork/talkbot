@@ -125,6 +125,7 @@ class World {
   save(_filename) {
     function replacer(key, value) {
       if (key == "neglect_timeout") return undefined; // this key is an internal that we dont want to save
+      if (key == "commandResponses") return undefined;
       else return value;
     };
 
