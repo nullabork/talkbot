@@ -1,9 +1,11 @@
-var path = require("path");
+var path = require("path"),
+  auth = require('@auth');
 
 function Commands() {
   var self = this;
   this.commands = {};
   this.listeners = {};
+  this.command_char = auth.command_char || '!';
   
   this.add = function (key, command, force) {
     key = key.toLowerCase();

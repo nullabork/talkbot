@@ -103,8 +103,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   console.log(evt);
 
-  var command_char = auth.command_char || '!';
-
   if (common.isMessageExcluded(message)) return null;
 
   var server = world.getServerFromChannel(channel_id);
@@ -115,12 +113,12 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   }
   
   // is the message a command?
-  if (message.substring(0, command_char.length) == command_char) {
+  if (message.substring(0, commands.command_char.length) == commands.command_char) {
 
     server.resetNeglectTimeout();
 
     var parts = message.match(
-      new RegExp("(" + common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
+      new RegExp("(" + common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
     );
 
     if (!parts || parts.length < 2) {

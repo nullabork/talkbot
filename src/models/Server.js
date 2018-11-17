@@ -2,9 +2,7 @@
 var Lang = require("lang.js"),
   botStuff = require('../helpers/bot-stuff'),
   messages = require('../../config/lang'),
-                 bot = botStuff.bot;
-
-
+  bot = botStuff.bot;
 
 class Server {
 

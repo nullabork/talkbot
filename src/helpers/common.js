@@ -117,6 +117,12 @@ class Common {
     return message;
   }
 
+  static makeAudioSSML(url) {
+    var ssml = "<speak><audio src='" + url + "' /></speak>";
+    return ssml;
+  };
+ 
+  
 }
 
 module.exports = Common;
