@@ -7,15 +7,15 @@ class SSMLTag {
     Object.assign(this, details);
   }
 
-  openString () {
+  openString() {
     return "<" + this.type + " " + this.getAttributesString() + " >";
   }
 
-  closeString () {
+  closeString() {
     return "</" + this.type + ">";
   }
 
-  getAttributesString () {
+  getAttributesString() {
     var attrs = "";
     for (let key in this.attributes) {
       if (this.attributes.hasOwnProperty(key)) {

@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 /**
  * Command: details
@@ -24,7 +24,7 @@ var command = new BotCommand({
   command_name: 'details',
   execute: details,
   short_help: 'details.shorthelp',
-  long_help: 'details.longhelp', 
+  long_help: 'details.longhelp',
   hidden: true,
 });
 

@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 /**
  * Command: debugbork
@@ -30,9 +30,9 @@ function kill(msg, server, world) {
  * @return  {[undefined]}
  */
 function ohshit(msg, server, world) {
-  if ( !msg.ownerIsMaster()) msg.response(server.lang('ohshit.nope'));
+  if (!msg.ownerIsMaster()) msg.response(server.lang('ohshit.nope'));
   else {
-    world.save('./ohshit'+(new Date().getTime()) + '.json');
+    world.save('./ohshit' + (new Date().getTime()) + '.json');
     msg.response(server.lang('ohshit.okay'));
   }
 };
@@ -41,7 +41,7 @@ var command_kill = new BotCommand({
   command_name: 'debugbork',
   execute: kill,
   short_help: 'debugbork.shorthelp',
-  long_help: 'debugbork.longhelp', 
+  long_help: 'debugbork.longhelp',
   hidden: true,
 });
 
@@ -49,7 +49,7 @@ var command_ohshit = new BotCommand({
   command_name: 'ohshit',
   execute: ohshit,
   short_help: 'ohshit.shorthelp',
-  long_help: 'ohshit.longhelp', 
+  long_help: 'ohshit.longhelp',
   hidden: true,
 });
 

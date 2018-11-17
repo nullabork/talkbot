@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 /* * *
  * Command: follow
@@ -77,7 +77,7 @@ function sidle(msg, server, world) {
   }
 
   if (!msg.ownerIsServerOwner()) {
-    msg.response(server.lang('sidle.nope', {name: server.server_owner_username}));
+    msg.response(server.lang('sidle.nope', { name: server.server_owner_username }));
     return;
   }
 
@@ -95,21 +95,21 @@ var command_follow = new BotCommand({
   command_name: 'follow',
   execute: follow,
   short_help: 'follow.shorthelp',
-  long_help: 'follow.longhelp', 
+  long_help: 'follow.longhelp',
 });
 
 var command_unfollow = new BotCommand({
   command_name: 'unfollow',
   execute: unfollow,
   short_help: 'unfollow.shorthelp',
-  long_help: 'unfollow.longhelp', 
+  long_help: 'unfollow.longhelp',
 });
 
 var command_sidle = new BotCommand({
   command_name: 'sidle',
   execute: sidle,
   short_help: 'sidle.shorthelp',
-  long_help: 'sidle.longhelp', 
+  long_help: 'sidle.longhelp',
 });
 
 exports.register = function (commands) {

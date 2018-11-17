@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 var common = require("../../helpers/common"),
   auth = require("@auth");
@@ -22,7 +22,7 @@ function broadcast(msg, server, world) {
   if (msg.ownerIsDev()) {
     var message = msg.getMessage();
     var key = world.broadcast(message, msg.user_id);
-    if(key != null) {
+    if (key != null) {
       msg.response("Another dev has 20 seconds to type the command `" + auth.command_char + "broadcast " + key + "`");
     }
   }
@@ -32,7 +32,7 @@ var command = new BotCommand({
   command_name: 'broadcast',
   execute: broadcast,
   short_help: 'broadcast.shorthelp',
-  long_help: 'broadcast.longhelp', 
+  long_help: 'broadcast.longhelp',
   hidden: true,
 });
 

@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 function who(msg, server, world) {
@@ -15,7 +15,7 @@ var command = new BotCommand({
   command_name: 'who',
   execute: who,
   short_help: 'who.shorthelp',
-  long_help: 'who.longhelp', 
+  long_help: 'who.longhelp',
 });
 
 

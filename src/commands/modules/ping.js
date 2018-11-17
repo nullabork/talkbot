@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 
@@ -11,7 +11,7 @@ var command = new BotCommand({
   command_name: 'ping',
   execute: ping,
   short_help: 'ping.shorthelp',
-  long_help: 'ping.longhelp', 
+  long_help: 'ping.longhelp',
 });
 
 

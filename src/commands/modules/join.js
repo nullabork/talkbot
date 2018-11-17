@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 /**
  * Command: join
@@ -21,7 +21,7 @@ var command = new BotCommand({
   command_name: 'join',
   execute: join,
   short_help: 'join.shorthelp',
-  long_help: 'join.longhelp', 
+  long_help: 'join.longhelp',
 });
 
 

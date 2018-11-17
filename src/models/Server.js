@@ -27,7 +27,7 @@ class Server {
     this.neglect_timeout = null;
     this.neglect_neglect = null;
     this.language = server_data.language;
-    if ( server_data.audioEmojis ) this.audioEmojis = server_data.audioEmojis;
+    if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
 
     this.commandResponses = new Lang({
       messages: messages,
@@ -46,7 +46,7 @@ class Server {
   };
 
   sendMessageToOwner(message) {
-    if(this.server_owner_user_id) {
+    if (this.server_owner_user_id) {
       bot.sendMessage({
         to: this.server_owner_user_id,
         message: message
@@ -262,7 +262,7 @@ class Server {
         return;
       }
       bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
-        if (error){
+        if (error) {
           callback();
           return console.error(error);
         } try {

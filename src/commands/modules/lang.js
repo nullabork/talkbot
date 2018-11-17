@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 var langMap = require("../../helpers/langmap");
@@ -27,7 +27,7 @@ var command = new BotCommand({
   command_name: 'lang',
   execute: lang,
   short_help: 'lang.shorthelp',
-  long_help: 'lang.longhelp', 
+  long_help: 'lang.longhelp',
 });
 
 
