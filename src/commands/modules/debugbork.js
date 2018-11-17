@@ -42,6 +42,7 @@ var command_kill = new BotCommand({
   execute: kill,
   short_help: 'debugbork.shorthelp',
   long_help: 'debugbork.longhelp', 
+  hidden: true,
 });
 
 var command_ohshit = new BotCommand({
@@ -49,6 +50,7 @@ var command_ohshit = new BotCommand({
   execute: ohshit,
   short_help: 'ohshit.shorthelp',
   long_help: 'ohshit.longhelp', 
+  hidden: true,
 });
 
 exports.register = function (commands) {

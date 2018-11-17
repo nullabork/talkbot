@@ -14,6 +14,7 @@ var command = new BotCommand({
   execute: reload,
   short_help: 'reload.shorthelp',
   long_help: 'reload.longhelp', 
+  hidden: true,
 });
 
 

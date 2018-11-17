@@ -33,6 +33,7 @@ var command = new BotCommand({
   execute: broadcast,
   short_help: 'broadcast.shorthelp',
   long_help: 'broadcast.longhelp', 
+  hidden: true,
 });
 
 exports.register = function (commands) {
