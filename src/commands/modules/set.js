@@ -1,4 +1,8 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
 
+
+// this probably needs to be made into like !langset set set.nope "my fancy message"
 
 function set(msg, server, world) {
   if (!msg.ownerIsMaster()) {
@@ -17,12 +21,18 @@ function set(msg, server, world) {
 
 };
 
+var command = new BotCommand({
+  command_name: 'set',
+  execute: set,
+  short_help: 'set.shorthelp',
+  long_help: 'set.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('set', set);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('set');
+  commands.remove(command);
 };
-
-

@@ -10,14 +10,15 @@ var fs = require('fs'),
 
 //helpers
 var paths = require('./config/paths'),
-  MessageSSML = require('@models/MessageSSML'),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff');
-  common = require('@helpers/common');
+  common = require('@helpers/common'),
+  testing = require('@helpers/runtime-testing');
 
 //models
 var world = require('@models/World'),
   Server = require('@models/Server'),
+  MessageSSML = require('@models/MessageSSML'),
   MessageDetails = require('@models/MessageDetails');
 
 //configs
@@ -25,6 +26,10 @@ var auth = require('@auth'),
   messages = require('@config/lang.json'),
   state = require('@state');
 
+// runtime testing
+testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
+
+  
 // Creates a client
 
 

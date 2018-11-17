@@ -1,13 +1,26 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
+
+
 function reload(msg, server, world) {
   if (msg.ownerIsDev()) {
     server.reload();
   }
 };
 
+var command = new BotCommand({
+  command_name: 'reload',
+  execute: reload,
+  short_help: 'reload.shorthelp',
+  long_help: 'reload.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('reload', reload);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('reload');
+  commands.remove(command);
 };

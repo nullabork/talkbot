@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 
 var common = require("../../helpers/common");
 /**
@@ -29,10 +32,18 @@ function mypitch(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'mypitch',
+  execute: mypitch,
+  short_help: 'mypitch.shorthelp',
+  long_help: 'mypitch.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('mypitch', mypitch);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('mypitch');
+  commands.remove(command);
 };

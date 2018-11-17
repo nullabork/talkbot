@@ -4,7 +4,7 @@ Discord bot for text-to-speech
 # quick start
 
 1. Go here to add the bot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
-2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about yourself server
+2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about your server
 3. Join a voice channel
 4. Type !follow
 5. Type some text to hear it read out to you
@@ -15,11 +15,14 @@ Discord bot for text-to-speech
 - ffmpeg
 
 # setup
-Copy auth.example to auth.json and put in your discord app key. 
-To learn how to setup a discord app and get this token go here 
-https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
 
-# node version
+1. Copy this respository to a folder on linux 
+2. Copy auth.example to ../auth.json and put in your discord app key. To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+3. Setup your google API credentials. To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+4. To run: node bot.js 
+
+# getting the right node version
 ## install nvm
 ### windows
 https://github.com/coreybutler/nvm-windows/releases
@@ -27,7 +30,6 @@ https://github.com/coreybutler/nvm-windows/releases
 https://github.com/creationix/nvm
 
 cd to project root and run `nvm use`
-
 
 # to run
 node bot.js
@@ -46,8 +48,10 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
 * !mylang [lang] - set your personal language for the bot
 * !reset - if the bot gets broken in chat run this
-* !sfx [sound] - !sfx airhorn... just because
+* !sfx [sound_url] - play a sound in channel (this command has lots of other cool stuff as well!)
+* !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
 * !toggle_neglect - turns on/off the neglect timer
+* !help [longer help] - writes out the help for all commands
 * all other text will be spoken in text-to-speech
 
 # Props to

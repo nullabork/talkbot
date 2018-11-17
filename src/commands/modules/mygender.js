@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 
 /**
  * Command: mygender
@@ -33,10 +36,18 @@ function mygender(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'mygender',
+  execute: mygender,
+  short_help: 'mygender.shorthelp',
+  long_help: 'mygender.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('mygender', mygender);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('mygender');
+  commands.remove(command);
 };

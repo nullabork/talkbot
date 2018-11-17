@@ -1,25 +1,47 @@
-var commands_local = null;
+// models 
+var BotCommand = require('@models/BotCommand');  
+
+
+/**
+ * Command: help
+ *
+ * lists all the available commands on this bot
+ *
+ * usage: !help
+ *
+ * @param   {[MessageDetails]}  msg     [message releated helper functions]
+ * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
+ * @param   {[World]}           world   [Object related to the realm and general bot stuff]
+ *
+ * @return  {[undefined]}
+ */
 
 function help(msg, server, world) {
   
-  var response = "```The available commands are:\n";
+  var cmds = require("@commands");
+  var response = "```The available commands are:\n\n";
   
-  for ( var command in commands_local.commands )
-    response += commands_local.command_char + command + '\n'; // + ' ' + commands_local.commands[command].usage_help;
+  for ( var command in cmds.commands )
+    response += '\t' + cmds.command_char + cmds.commands[command].command_name + ' - ' + server.lang(cmds.commands[command].short_help) + '\n'; // + ' ' + commands_local.commands[command].short_help;
   
   response += '```';
   
-  console.log(commands_local);
   msg.response(response);
   
 };
 
+var command = new BotCommand({
+  command_name: 'help',
+  execute: help,
+  short_help: 'help.shorthelp',
+  long_help: 'help.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands_local = commands;
-  commands.add('help', help);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands_local = null;
-  commands.remove('help');
+  commands.remove(command);
 };

@@ -1,3 +1,5 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
 
 
 /**
@@ -51,7 +53,7 @@ function permit(msg, server, world) {
  */
 function unpermit(msg, server) {
 
-  if (!msg.ownerIsMaster()) {
+  if (!server.isPermitted(msg.user_id)) {
     msg.response(server.lang('unpermit.deny'));
     return;
   }
@@ -65,7 +67,7 @@ function unpermit(msg, server) {
   for (let i = 0; i < target_ids.length; i++) {
     var target_id = target_ids[i];
 
-    if (target_id == msg.user_id) {
+    if (target_id != msg.user_id && !msg.ownerIsMaster()) {
       msg.response(server.lang('unpermit.deny'));
 
       continue;
@@ -82,12 +84,27 @@ function unpermit(msg, server) {
   }
 };
 
+var command_permit = new BotCommand({
+  command_name: 'permit',
+  execute: permit,
+  short_help: 'permit.shorthelp',
+  long_help: 'permit.longhelp', 
+});
+
+var command_unpermit = new BotCommand({
+  command_name: 'unpermit',
+  execute: unpermit,
+  short_help: 'unpermit.shorthelp',
+  long_help: 'unpermit.longhelp', 
+});
+
 exports.register = function (commands) {
-  commands.add('permit', permit);
-  commands.add('unpermit', unpermit);
+  commands.add(command_permit);
+  commands.add(command_unpermit);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('permit');
-  commands.remove('unpermit');
+  commands.remove(command_permit);
+  commands.remove(command_unpermit);
 };
+

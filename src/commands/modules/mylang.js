@@ -1,6 +1,9 @@
 
 var langMap = require("../../helpers/langmap");
 
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 /**
  * Command: mylang
  * sets language user config
@@ -42,10 +45,18 @@ function mylang(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'mylang',
+  execute: mylang,
+  short_help: 'mylang.shorthelp',
+  long_help: 'mylang.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('mylang', mylang);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('mylang');
+  commands.remove(command);
 };

@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 /**
  * Command: join
  * need to fix this command,
@@ -14,10 +17,18 @@ function join(msg, server, world) {
   msg.response("I think you're looking for ther follow command");
 };
 
+var command = new BotCommand({
+  command_name: 'join',
+  execute: join,
+  short_help: 'join.shorthelp',
+  long_help: 'join.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('join', join);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('join');
+  commands.remove(command);
 };

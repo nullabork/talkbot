@@ -29,7 +29,7 @@ class Server {
     if ( server_data.audioEmojis ) this.audioEmojis = server_data.audioEmojis;
 
     this.commandResponses = new Lang({
-      messages: messages,
+      messages: messages, 
       locale: this.language,
       fallback: this.language
     });
@@ -87,6 +87,11 @@ class Server {
   isServerChannel(channel_id) {
     return bot.channels[channel_id].guild_id == this.server_id;
   }
+  
+  isAdminUser(user_id) {
+    // hack 
+    return this.server_owner_user_id == user_id;
+  }
 
   getOwnersVoiceChannel(user_id) {
     return botStuff.getUserVoiceChannel(user_id);
@@ -128,7 +133,7 @@ class Server {
   isBound() {
     return this.bound_to != null;
   };
-
+  
   getBoundToNick() {
     var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
 

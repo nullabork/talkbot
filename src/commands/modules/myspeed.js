@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 
 var common = require("../../helpers/common");
 
@@ -16,10 +19,18 @@ function speed(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'myspeed',
+  execute: speed,
+  short_help: 'myspeed.shorthelp',
+  long_help: 'myspeed.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('myspeed', speed);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('myspeed');
+  commands.remove(command);
 };

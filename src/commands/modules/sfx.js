@@ -1,4 +1,8 @@
 
+// models 
+var BotCommand = require('@models/BotCommand');  
+
+
 /**
  * Command: sfx
  *
@@ -11,8 +15,8 @@
  * usage: !sfx [emoji_name]           - play this emoji            
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
+ * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
+ * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
@@ -30,14 +34,16 @@ function sfx(msg, server, world) {
   }
 
   if (common.isURL(msg.message)) {
-    server.talk(common.makeAudioSSML(msg.message), server.permitted[msg.user_id]);
+    if ( msg.message.length < 5 ) return;
+    if ( msg.message.substring(0,5) != 'https') msg.response(server.lang('sfx.needshttps'));
+    else server.talk(common.makeAudioSSML(msg.message), server.permitted[msg.user_id]);
   }
   else {
    
     if (!server.audioEmojis) server.audioEmojis = {};
     
     // i cant even
-    if (msg.args.length > 3) msg.response(server.lang('sfx.noper'));
+    if (msg.args.length > 3) msg.response(server.lang('sfx.noper')); // why can't I set all the default lang in this file?
     
     // multiple commands 
     else if (msg.args.length == 1) {
@@ -68,8 +74,14 @@ function sfx(msg, server, world) {
       if ( msg.args[0] != 'set' ) msg.response(server.lang('sfx.noset'));
       var emoji_name = msg.args[1];
       var emoji_url = msg.args[2];
-      server.audioEmojis[emoji_name] = emoji_url;
-      world.save();
+      
+      if ( emoji_url.length < 5 ) return;
+      if ( emoji_url.substring(0,5) != 'https') msg.response(server.lang('sfx.needshttps'));
+      else {
+        server.audioEmojis[emoji_name] = emoji_url;
+        world.save();
+        msg.response(server.lang('sfx.setokay'));
+      }
     }
     
   }
@@ -85,16 +97,29 @@ function sfxPlaySoundListener(message, user_id, server, world) {
   for (var part in parts ) {
     var emoji = parts[part];
     if ( server.audioEmojis[emoji])
-      server.talk(makeAudioSSML(server.audioEmojis[emoji]), server.permitted[user_id]);
+      server.talk(
+        common.makeAudioSSML(server.audioEmojis[emoji]), 
+        server.permitted[user_id]
+      );
   }
 };
 
+var command = new BotCommand({
+  command_name: 'sfx',
+  execute: sfx,
+  short_help: 'sfx.shorthelp',
+  long_help: 'sfx.longhelp', 
+  listeners: {
+    'sfx.msg.args': sfxPlaySoundListener
+  },
+  
+  // langs here?
+});
+
 exports.register = function (commands) {
-  commands.add('sfx', sfx);
-  commands.addListener('sfx.msg.args', sfxPlaySoundListener);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.removeListener('sfx.msg.args');
-  commands.remove('sfx');
+  commands.remove(command);
 };

@@ -1,3 +1,7 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
+
 function who(msg, server, world) {
   var master_nick = server.getBoundToNick();
   if (!master_nick) {
@@ -7,10 +11,20 @@ function who(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'who',
+  execute: who,
+  short_help: 'who.shorthelp',
+  long_help: 'who.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('who', who);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('who');
+  commands.remove(command);
 };
+
+

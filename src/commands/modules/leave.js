@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 
 
 function leave(msg, server, world) {
@@ -8,10 +11,19 @@ function leave(msg, server, world) {
   }
 };
 
+
+var command = new BotCommand({
+  command_name: 'leave',
+  execute: leave,
+  short_help: 'leave.shorthelp',
+  long_help: 'leave.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('leave', leave);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('leave');
+  commands.remove(command);
 };

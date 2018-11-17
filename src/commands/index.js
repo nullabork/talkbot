@@ -1,5 +1,8 @@
 var path = require("path"),
   auth = require('@auth');
+  
+// models 
+var BotCommand = require('@models/BotCommand');  
 
 function Commands() {
   var self = this;
@@ -7,18 +10,17 @@ function Commands() {
   this.listeners = {};
   this.command_char = auth.command_char || '!';
   
-  this.add = function (key, command, force) {
-    key = key.toLowerCase();
-
-    if (!this.commands[key] || force)
-      this.commands[key] = command;
-  };
   
-  this.addListener = function(key, callback) {
-    key = key.toLowerCase();
+  this.add = function (command, force) {
+    key = command.command_name.toLowerCase();
     
-    if (!this.listeners[key] || force)
-      this.listeners[key] = callback;
+    if (!this.commands[key] || force) {
+      this.commands[key] = command;
+      
+      if ( command.listeners )
+        for ( var listener in command.listeners )
+          this.listeners[listener] = command.listeners[listener];
+    }
   };
 
   this.registerAllCommands = function () {
@@ -30,21 +32,19 @@ function Commands() {
     });
   }
 
-  this.remove = function (key) {
-    key = key.toLowerCase();
+  this.remove = function (command) {
+    key = command.command_name.toLowerCase();
+    var command = this.commands[key]
     delete this.commands[key];
+    for ( var listener in command.listeners )
+      delete this.listeners[listener];
   }
-
-  this.removeListener = function(key) {
-    key = key.toLowerCase();
-    delete this.listeners[key];
-  };
   
   this.get = function (key) {
     key = key.toLowerCase();
 
     if (!this.commands[key]) {
-      return function () { };
+      return null;
     }
     return this.commands[key];
   }
@@ -64,11 +64,8 @@ function Commands() {
     if (!this.commands[key]) {
       return function () { };
     }
-    var func = this.commands[key];
-
-    if (typeof func == 'function') {
-      return func.apply(this, args);
-    }
+    
+    return this.commands[key].execute.apply(this, args);
   }
   
   this.notify = function(args) {

@@ -1,7 +1,10 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 
 var langMap = require("../../helpers/langmap");
 
-var command = function (msg, server, world) {
+var lang = function (msg, server, world) {
   if (!msg.args.length) return;
 
   if (!msg.ownerIsMaster()) {
@@ -19,10 +22,19 @@ var command = function (msg, server, world) {
   msg.response(server.lang('lang.okay', { lang: server.language }));
 };
 
+
+var command = new BotCommand({
+  command_name: 'lang',
+  execute: lang,
+  short_help: 'lang.shorthelp',
+  long_help: 'lang.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('lang', command);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('lang');
+  commands.remove(command);
 };

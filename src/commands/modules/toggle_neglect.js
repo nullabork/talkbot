@@ -1,3 +1,6 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
+
 function toggle_neglect(msg, server, world) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('toggle_neglect.nope'));
@@ -11,16 +14,20 @@ function toggle_neglect(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'toggle_neglect',
+  execute: toggle_neglect,
+  short_help: 'toggle_neglect.shorthelp',
+  long_help: 'toggle_neglect.longhelp', 
+});
+
+
 exports.register = function (commands) {
-  commands.add('toggle_neglect', toggle_neglect);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('toggle_neglect');
+  commands.remove(command);
 };
-
-
-
-
 
 

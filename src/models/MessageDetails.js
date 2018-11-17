@@ -53,6 +53,10 @@ class MessageDetails {
   ownerIsPermitted() {
     return this.server.permitted[this.user_id] != null;
   };
+  
+  ownerIsServerOwner() {
+    return this.server.server_owner_user_id == this.user_id;
+  };
 
   messageNick() {
     return this.getNick(this.user_id);

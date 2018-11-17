@@ -1,3 +1,5 @@
+// models 
+var BotCommand = require('@models/BotCommand');  
 
 var common = require("../../helpers/common"),
   auth = require("@auth");
@@ -26,10 +28,17 @@ function broadcast(msg, server, world) {
   }
 };
 
+var command = new BotCommand({
+  command_name: 'broadcast',
+  execute: broadcast,
+  short_help: 'broadcast.shorthelp',
+  long_help: 'broadcast.longhelp', 
+});
+
 exports.register = function (commands) {
-  commands.add('broadcast', broadcast);
+  commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove('broadcast');
+  commands.remove(command);
 };
