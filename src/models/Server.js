@@ -27,7 +27,8 @@ class Server {
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
-    this.language = 'en';
+    this.language = server_data.language;
+    if ( server_data.audioEmojis ) this.audioEmojis = server_data.audioEmojis;
 
     this.commandResponses = new Lang({
       messages: messages,
@@ -248,7 +249,6 @@ class Server {
 
     //if ( options.use_ssml )
     request.input = { text: null, ssml: message };
-
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {

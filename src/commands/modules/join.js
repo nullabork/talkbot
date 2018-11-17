@@ -10,7 +10,7 @@
  * @return  {[undefined]}
  */
 
-function join(msg, server) {
+function join(msg, server, world) {
   msg.response("I think you're looking for ther follow command");
 };
 

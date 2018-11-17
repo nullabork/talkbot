@@ -3,13 +3,21 @@ var path = require("path");
 function Commands() {
   var self = this;
   this.commands = {};
-
+  this.listeners = {};
+  
   this.add = function (key, command, force) {
     key = key.toLowerCase();
 
     if (!this.commands[key] || force)
       this.commands[key] = command;
-  }
+  };
+  
+  this.addListener = function(key, callback) {
+    key = key.toLowerCase();
+    
+    if (!this.listeners[key] || force)
+      this.listeners[key] = callback;
+  };
 
   this.registerAllCommands = function () {
     //console.log(normalizedPath);
@@ -25,6 +33,11 @@ function Commands() {
     delete this.commands[key];
   }
 
+  this.removeListener = function(key) {
+    key = key.toLowerCase();
+    delete this.listeners[key];
+  };
+  
   this.get = function (key) {
     key = key.toLowerCase();
 
@@ -32,6 +45,15 @@ function Commands() {
       return function () { };
     }
     return this.commands[key];
+  }
+  
+  this.getListener = function (key) {
+    key = key.toLowerCase();
+
+    if (!this.listeners[key]) {
+      return function () { };
+    }
+    return this.listeners[key];
   }
 
   this.run = function (key, args) {
@@ -46,6 +68,17 @@ function Commands() {
       return func.apply(this, args);
     }
   }
+  
+  this.notify = function(args) {
+    for ( var listener in this.listeners)
+    {
+      var func = this.listeners[listener];
+
+      if (typeof func == 'function') {
+        return func.apply(this, args);
+      }
+    }
+  };
 }
 
 commands = new Commands();

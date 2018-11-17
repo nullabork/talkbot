@@ -1,6 +1,6 @@
 
 
-function leave(msg, server) {
+function leave(msg, server, world) {
   if (server.isBound() && !server.isMaster(msg.user_id)) {
     msg.response(server.lang('leave.nope'));
   } else {

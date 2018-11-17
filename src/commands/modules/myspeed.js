@@ -1,7 +1,7 @@
 
 var common = require("../../helpers/common");
 
-function speed(msg, server) {
+function speed(msg, server, world) {
   var args = msg.message.split(/ +/);
   if (args.length == 0) return;
 

@@ -14,7 +14,7 @@ var common = require("../../helpers/common");
  *
  * @return  {[undefined]}
  */
-function mypitch(msg, server) {
+function mypitch(msg, server, world) {
   if (!msg.args.length) return;
 
   if (msg.ownerIsPermitted()) {

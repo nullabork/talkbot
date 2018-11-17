@@ -1,4 +1,4 @@
-function reload(msg, server) {
+function reload(msg, server, world) {
   if (msg.ownerIsDev()) {
     server.reload();
   }

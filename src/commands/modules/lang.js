@@ -1,7 +1,7 @@
 
 var langMap = require("../../helpers/langmap");
 
-var command = function (msg, server) {
+var command = function (msg, server, world) {
   if (!msg.args.length) return;
 
   if (!msg.ownerIsMaster()) {

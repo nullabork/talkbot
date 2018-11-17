@@ -1,4 +1,4 @@
-function who(msg, server) {
+function who(msg, server, world) {
   var master_nick = server.getBoundToNick();
   if (!master_nick) {
     msg.response(server.lang('who.none'));

@@ -101,6 +101,8 @@ bot.on('any', function (evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
+  console.log(evt);
+
   var command_char = auth.command_char || '!';
 
   if (common.isMessageExcluded(message)) return null;
@@ -111,12 +113,12 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     console.error("Can't find server for " + channel_id);
     return null;
   }
-
+  
   // is the message a command?
   if (message.substring(0, command_char.length) == command_char) {
 
     server.resetNeglectTimeout();
-    //var args = message.substring(command_char.length).split(' ');
+
     var parts = message.match(
       new RegExp("(" + common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
     );
@@ -124,7 +126,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if (!parts || parts.length < 2) {
       return;
     }
-
 
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
@@ -160,15 +161,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
     // message = ssml.build(message);
 
-
-
     if (message.length < 1) return;
+    commands.notify([message, user_id, server, world]);
 
     if (server.inChannel()) {
       if (server.isPermitted(user_id)) {
         var parser = new MessageSSML(message);
         message = parser.build();
-
+        
         server.talk(message, server.permitted[user_id]);
       }
     }

@@ -1,4 +1,4 @@
-function kill(msg, server) {
+function kill(msg, server, world) {
   if (msg.ownerIsDev()) {
     server.kill();
   }

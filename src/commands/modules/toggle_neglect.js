@@ -1,4 +1,4 @@
-function toggle_neglect(msg, server) {
+function toggle_neglect(msg, server, world) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('toggle_neglect.nope'));
     return;

@@ -1,6 +1,6 @@
 
 
-function set(msg, server) {
+function set(msg, server, world) {
   if (!msg.ownerIsMaster()) {
     msg.response(server.lang('set.nope'));
     return;

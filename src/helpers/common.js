@@ -2,26 +2,18 @@ class Common {
   static escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
+  
+  static isEmoji(str) {
+    if ( str.length < 3 ) return false;
+    return (str[0] == ':' && str[str.length-1] == ':');
+  };
 
-  static isURL(url, opts) {
-    // message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, "")
-
-    // var regex = "[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?"
-
-
-    // var protocol = "(";
-    // if (opts.https) {
-    //     protocol += 'https:\/\/)';
-    // } else {
-    //     protocol += 'http:\/\/)';
-    // }
-
-    // if (opts.protocol) {
-    //     protocol += "{1}";
-    // } else {
-    //     protocol += "{0,1}";
-    // }
-    // s
+  static isURL(url) {
+    
+    // fax, i'm probably a monster
+    if ( url.length < 4 ) return false;
+    if ( url.substring(0,4) == "http") return true;
+    return false;
   }
 
   static messageIDs(message) {
