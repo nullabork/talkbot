@@ -27,10 +27,9 @@ function help(msg, server, world) {
     response += '\t' + cmds.command_char + cmds.commands[command].command_name + ' - ' + server.lang(cmds.commands[command].short_help) + '\n'; // + ' ' + commands_local.commands[command].short_help;
   }
   
-  response += 'To submit bugs go to https://github.com/wootosmash/talkbot```';
+  response += '\nTo submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot```';
   
-  msg.response(response);
-  
+  msg.response(response); 
 };
 
 var command = new BotCommand({
