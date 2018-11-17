@@ -19,6 +19,7 @@ class Server {
     this.users = bot.users[this.server_owner_user_id];
     this.server_owner_username = this.users[this.server_owner_user_id];
 
+    this.audioEmojis = [];
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;
@@ -29,7 +30,7 @@ class Server {
     if ( server_data.audioEmojis ) this.audioEmojis = server_data.audioEmojis;
 
     this.commandResponses = new Lang({
-      messages: messages, 
+      messages: messages,
       locale: this.language,
       fallback: this.language
     });
@@ -87,9 +88,9 @@ class Server {
   isServerChannel(channel_id) {
     return bot.channels[channel_id].guild_id == this.server_id;
   }
-  
+
   isAdminUser(user_id) {
-    // hack 
+    // hack
     return this.server_owner_user_id == user_id;
   }
 
@@ -133,7 +134,7 @@ class Server {
   isBound() {
     return this.bound_to != null;
   };
-  
+
   getBoundToNick() {
     var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
 
