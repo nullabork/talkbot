@@ -21,7 +21,7 @@ function help(msg, server, world) {
   var cmds = require("@commands");
   var response = "```The available commands are:\n\n";
 
-  for ( var command in cmds.commands ) {
+  for (var command in cmds.commands) {
     var cmd = cmds.commands[command];
     if (cmd.hidden) continue;
     response += '\t' + cmds.command_char + cmds.commands[command].command_name + ' - ' + server.lang(cmds.commands[command].short_help) + '\n'; // + ' ' + commands_local.commands[command].short_help;

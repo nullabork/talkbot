@@ -77,5 +77,5 @@
     "okay": "",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls"
-  }    
+  }
 }

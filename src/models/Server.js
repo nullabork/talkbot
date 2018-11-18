@@ -157,25 +157,25 @@ class Server {
 
   // determine if the permissions of the role passed through is the biggest available ie. admin super user
   isAdminRole(role_id) {
-    if ( bot.servers[this.server_id].roles[role_id] == null ) return false;
-    if ( bot.servers[this.server_id].roles[role_id]._permissions & ADMIN_PERMISSION_FLAG ) return true;
+    if (bot.servers[this.server_id].roles[role_id] == null) return false;
+    if (bot.servers[this.server_id].roles[role_id]._permissions & ADMIN_PERMISSION_FLAG) return true;
     else return false;
   };
-  
+
   isServerOwner(user_id) {
     return bot.servers[this.server_id].owner_id == user_id;
   };
-  
+
   // determine if user has the biggest permissions available
   userHasAdminPermissions(user_id) {
-    for ( var r in bot.servers[this.server_id].members[user_id].roles ) {
-      if ( this.isAdminRole(bot.servers[this.server_id].members[user_id].roles[r])) {
+    for (var r in bot.servers[this.server_id].members[user_id].roles) {
+      if (this.isAdminRole(bot.servers[this.server_id].members[user_id].roles[r])) {
         return true;
       }
     }
     return false;
   };
-  
+
   inChannel() {
     return this.current_voice_channel_id != null;
   };

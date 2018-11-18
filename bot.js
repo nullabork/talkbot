@@ -72,8 +72,8 @@ bot.on('any', function (evt) {
   if (evt.t == 'GUILD_CREATE') {
 
     // when added to a server do this - need to wait a bit for the library to init
-    var add_server = function () { 
-      world.addServer(bot.servers[evt.d.id]); 
+    var add_server = function () {
+      world.addServer(bot.servers[evt.d.id]);
     };
 
     setTimeout(add_server, 10000);
@@ -167,11 +167,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     // message = ssml.build(message);
 
     if (message.length < 1) return;
-    commands.notify([message, user_id, server, world]);
+    commands.notify('message', [message, user_id, server, world]);
 
     if (server.inChannel()) {
       if (server.isPermitted(user_id)) {
-        var parser = new MessageSSML(message);
+        var parser = new MessageSSML(message, {
+          server: server
+        });
         message = parser.build();
 
         server.talk(message, server.permitted[user_id]);

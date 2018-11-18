@@ -25,7 +25,7 @@ function sfx(msg, server, world) {
 
   if (!msg.message) return;
 
-  if ( !server.isAdminUserOrServerOwner(msg.user_id)) { 
+  if (!server.isAdminUserOrServerOwner(msg.user_id)) {
     msg.response(server.lang('sfx.nope'));
     return;
   }
@@ -51,15 +51,15 @@ function sfx(msg, server, world) {
       if (!sfx_command) msg.response(server.lang('sfx.nosfx'));
 
       // list all the SFX available
-      else if ( sfx_command == 'list' ) {
-        
+      else if (sfx_command == 'list') {
+
         var rsp = "```";
-        
-        for ( var e in server.audioEmojis )
+
+        for (var e in server.audioEmojis)
           rsp += e + "\t\t" + server.audioEmojis[e] + "\n";
-        
+
         rsp += "```";
-        
+
         msg.response(rsp);
       }
 
@@ -94,20 +94,26 @@ function sfx(msg, server, world) {
   }
 };
 
-// listen to the normal text flow, if an emoji we have a sound for pops up, play it
-function sfxPlaySoundListener(message, user_id, server, world) {
+// // listen to the normal text flow, if an emoji we have a sound for pops up, play it
+// function sfxPlaySoundListener(message, user_id, server, world) {
 
-  if (!server.isPermitted(user_id)) return;
+//   if (!server.isPermitted(user_id)) return;
 
-  var parts = message.split(' ');
+//   var parts = message.split(' ');
 
-  for (var part in parts) {
-    var emoji = parts[part];
-    if (server.audioEmojis[emoji])
-      server.talk(
-        common.makeAudioSSML(server.audioEmojis[emoji]),
-        server.permitted[user_id]
-      );
+//   for (var part in parts) {
+//     var emoji = parts[part];
+//     if (server.audioEmojis[emoji])
+//       server.talk(
+//         common.makeAudioSSML(server.audioEmojis[emoji]),
+//         server.permitted[user_id]
+//       );
+//   }
+// };
+
+function sfxParser(token, server) {
+  if (server.audioEmojis[token]) {
+    return common.makeAudioSSML(server.audioEmojis[token]);
   }
 };
 
@@ -117,7 +123,8 @@ var command = new BotCommand({
   short_help: 'sfx.shorthelp',
   long_help: 'sfx.longhelp',
   listeners: {
-    'sfx.msg.args': sfxPlaySoundListener
+    // 'sfx.msg.args': sfxPlaySoundListener
+    token: sfxParser
   },
 
   // langs here?

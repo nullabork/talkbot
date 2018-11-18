@@ -76,7 +76,7 @@ function sidle(msg, server, world) {
     return;
   }
 
-  if (!server.isAdminUserOrServerOwner(msg.user_id)) { 
+  if (!server.isAdminUserOrServerOwner(msg.user_id)) {
     msg.response(server.lang('sidle.nope'));
     return;
   }
