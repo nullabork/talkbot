@@ -118,7 +118,7 @@ class Common {
   }
 
   static makeAudioSSML(url) {
-    var ssml = "<speak><audio src='" + url + "' /></speak>";
+    var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
 

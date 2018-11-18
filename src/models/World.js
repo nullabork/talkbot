@@ -121,14 +121,14 @@ class World {
       }
     }
   }
-  
+
   setPresence() {
-    
+
     var c = 0;
-    for ( var s in this.servers ) {
-      if ( this.servers[s].isBound() ) c++;
+    for (var s in this.servers) {
+      if (this.servers[s].isBound()) c++;
     }
-    
+
     bot.setPresence({
       status: 'online',
       game: {

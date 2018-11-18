@@ -3,7 +3,7 @@ var MessageParser = require('./MessageParser'),
   common = require('@helpers/common');
 
 class MessageSSML extends MessageParser {
-  constructor(text) {
+  constructor(text, opts) {
     super(text);
 
     var find = ssmlConfig
@@ -12,12 +12,18 @@ class MessageSSML extends MessageParser {
       })
       .join('|');
 
+    this.server = opts.server;
     this.text = text.replace(new RegExp('(' + find + ')', 'g'), ' $1 ');
     this.tagStack = [];
   }
 
   compile(token) {
     token = token || "";
+
+    var alt = commands.notify('token', [token, this.server]);
+    if (alt) {
+      return alt;
+    }
 
     var tag = MessageSSML.getRelatedTagInfo(token);
     var closing = this.tagsToClose(tag);
