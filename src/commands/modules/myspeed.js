@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 var common = require("../../helpers/common");
@@ -23,7 +23,7 @@ var command = new BotCommand({
   command_name: 'myspeed',
   execute: speed,
   short_help: 'myspeed.shorthelp',
-  long_help: 'myspeed.longhelp', 
+  long_help: 'myspeed.longhelp',
 });
 
 

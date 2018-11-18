@@ -1,5 +1,5 @@
 class MessageParser {
-  constructor (text) {
+  constructor(text) {
     this.text = text;
     this.compiled = [];
     this.index = 0;
@@ -9,8 +9,8 @@ class MessageParser {
     return this.index < this.text.length;
   }
 
-  nextToken () {
-    if(!this.tokensRemaining()) {
+  nextToken() {
+    if (!this.tokensRemaining()) {
       return null;
     }
 
@@ -29,16 +29,16 @@ class MessageParser {
     return token;
   }
 
-  compile (token) {
+  compile(token) {
     return token;
   }
 
-  parse () {
+  parse() {
     let token;
     while (token = this.nextToken()) {
-      if(typeof this.compile == 'function') {
+      if (typeof this.compile == 'function') {
         var modified = this.compile.apply(this, [token]);
-        if(modified) token = modified;
+        if (modified) token = modified;
         this.compiled.push(modified);
       }
     }

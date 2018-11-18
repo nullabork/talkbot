@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 /**
@@ -40,7 +40,7 @@ var command = new BotCommand({
   command_name: 'mygender',
   execute: mygender,
   short_help: 'mygender.shorthelp',
-  long_help: 'mygender.longhelp', 
+  long_help: 'mygender.longhelp',
 });
 
 

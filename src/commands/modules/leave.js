@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 
@@ -16,7 +16,7 @@ var command = new BotCommand({
   command_name: 'leave',
   execute: leave,
   short_help: 'leave.shorthelp',
-  long_help: 'leave.longhelp', 
+  long_help: 'leave.longhelp',
 });
 
 

@@ -65,11 +65,11 @@ var common = require('./common');
 
           // if open and close tags are equal, make sure we have an even number
           // of tags in the string.
-          if(open == close){
+          if (open == close) {
             var matches = message.match(openRegex) || [];
 
             // is odd numebr of matches .. then .. quit
-            if(!matches || !matches.length || matches.length%2 ){
+            if (!matches || !matches.length || matches.length % 2) {
               return;
             }
           }

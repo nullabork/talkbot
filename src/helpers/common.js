@@ -2,17 +2,17 @@ class Common {
   static escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
-  
+
   static isEmoji(str) {
-    if ( str.length < 3 ) return false;
-    return (str[0] == ':' && str[str.length-1] == ':');
+    if (str.length < 3) return false;
+    return (str[0] == ':' && str[str.length - 1] == ':');
   };
 
   static isURL(url) {
-    
+
     // fax, i'm probably a monster
-    if ( url.length < 4 ) return false;
-    if ( url.substring(0,4) == "http") return true;
+    if (url.length < 4) return false;
+    if (url.substring(0, 4) == "http") return true;
     return false;
   }
 

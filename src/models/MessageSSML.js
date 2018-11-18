@@ -3,11 +3,11 @@ var MessageParser = require('./MessageParser'),
   common = require('@helpers/common');
 
 class MessageSSML extends MessageParser {
-  constructor (text) {
+  constructor(text) {
     super(text);
 
     var find = ssmlConfig
-      .map(function(tag){
+      .map(function (tag) {
         return common.escapeRegExp(tag.open) + "|" + common.escapeRegExp(tag.close);
       })
       .join('|');
@@ -16,18 +16,18 @@ class MessageSSML extends MessageParser {
     this.tagStack = [];
   }
 
-  compile (token) {
+  compile(token) {
     token = token || "";
 
     var tag = MessageSSML.getRelatedTagInfo(token);
     var closing = this.tagsToClose(tag);
     if (tag) {
-      if(!closing.length) {
+      if (!closing.length) {
         this.tagStack.push(tag);
         return tag.openString();
       } else {
         var close = "";
-        closing.forEach(function(element) {
+        closing.forEach(function (element) {
           close += element.closeString();
         });
         return close;
@@ -39,13 +39,13 @@ class MessageSSML extends MessageParser {
 
 
 
-  tagsToClose (find) {
+  tagsToClose(find) {
     var found = [];
     for (let i = 0; i < this.tagStack.length; i++) {
       var tag = this.tagStack[i];
       found.unshift(tag);
 
-      if(find == tag) {
+      if (find == tag) {
         this.tagStack = this.tagStack.slice(
           (this.tagStack.length - i) - 1,
           this.tagStack.length - 1
@@ -58,16 +58,16 @@ class MessageSSML extends MessageParser {
     return [];
   }
 
-  static getRelatedTagInfo (token) {
+  static getRelatedTagInfo(token) {
     for (let i = 0; i < ssmlConfig.length; i++) {
-      if(token == ssmlConfig[i].open || token == ssmlConfig[i].close) {
+      if (token == ssmlConfig[i].open || token == ssmlConfig[i].close) {
         return ssmlConfig[i];
       }
     }
     return null;
   }
 
-  messageBuffer () {
+  messageBuffer() {
     if (this.text.length < 20) {
       return '<break time="4000ms"/>';
     }
@@ -75,10 +75,10 @@ class MessageSSML extends MessageParser {
   }
 
 
-  build () {
+  build() {
     var compiled = this.parse();
 
-    this.tagStack.forEach(function(element) {
+    this.tagStack.forEach(function (element) {
       compiled.push(element.closeString());
     });
 

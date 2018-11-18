@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 
@@ -13,7 +13,7 @@ var command = new BotCommand({
   command_name: 'reload',
   execute: reload,
   short_help: 'reload.shorthelp',
-  long_help: 'reload.longhelp', 
+  long_help: 'reload.longhelp',
   hidden: true,
 });
 

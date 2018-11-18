@@ -9,32 +9,7 @@ Discord bot for text-to-speech
 4. Type !follow
 5. Type some text to hear it read out to you
 
-# requirements
-- node js
-- npm
-- ffmpeg
-
-# setup
-Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
-
-1. Copy this respository to a folder on linux 
-2. Copy auth.example to ../auth.json and put in your discord app key. To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-3. Setup your google API credentials. To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
-4. To run: node bot.js 
-
-# getting the right node version
-## install nvm
-### windows
-https://github.com/coreybutler/nvm-windows/releases
-### mac/linux
-https://github.com/creationix/nvm
-
-cd to project root and run `nvm use`
-
-# to run
-node bot.js
-
-# in discord
+# commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your non-command text into voice in the current channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
 
 * !follow - bind the bot to you so only you can control it
@@ -53,6 +28,32 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !toggle_neglect - turns on/off the neglect timer
 * !help [longer help] - writes out the help for all commands
 * all other text will be spoken in text-to-speech
+
+# setup your own bot
+Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
+
+## software requirements
+- node js
+- npm
+- ffmpeg
+
+## install and setup
+1. Copy this respository to a folder on linux 
+2. Copy auth.example to ../auth.json and put in your discord app key. To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+3. Setup your google API credentials. To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+4. To run: node bot.js 
+
+## to run
+node bot.js
+
+# Troubleshooting
+## getting the right node version
+
+install nvm
+* windows - https://github.com/coreybutler/nvm-windows/releases
+* mac/linux - https://github.com/creationix/nvm
+
+cd to project root and run `nvm use`
 
 # Props to
 * WootoSmash - coder/bugmaker/shitposter

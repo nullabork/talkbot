@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 // this probably needs to be made into like !langset set set.nope "my fancy message"
@@ -25,7 +25,7 @@ var command = new BotCommand({
   command_name: 'set',
   execute: set,
   short_help: 'set.shorthelp',
-  long_help: 'set.longhelp', 
+  long_help: 'set.longhelp',
 });
 
 

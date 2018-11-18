@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 /**
@@ -88,14 +88,14 @@ var command_permit = new BotCommand({
   command_name: 'permit',
   execute: permit,
   short_help: 'permit.shorthelp',
-  long_help: 'permit.longhelp', 
+  long_help: 'permit.longhelp',
 });
 
 var command_unpermit = new BotCommand({
   command_name: 'unpermit',
   execute: unpermit,
   short_help: 'unpermit.shorthelp',
-  long_help: 'unpermit.longhelp', 
+  long_help: 'unpermit.longhelp',
 });
 
 exports.register = function (commands) {

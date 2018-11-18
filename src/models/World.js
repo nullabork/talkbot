@@ -1,9 +1,9 @@
 
 var paths = require('../../config/paths'),
   fs = require('fs'),
-  botStuff =  require("@helpers/bot-stuff"),
-  Server   =  require("@models/Server"),
-  auth   =  require("@auth"),
+  botStuff = require("@helpers/bot-stuff"),
+  Server = require("@models/Server"),
+  auth = require("@auth"),
   bot = botStuff.bot;
 
 class World {
@@ -49,18 +49,18 @@ class World {
 
   broadcast(message, user_id) {
     var self = this;
-    if(!(auth.dev_ids.indexOf(user_id) >= 0)) {
+    if (!(auth.dev_ids.indexOf(user_id) >= 0)) {
       return;
     }
 
-    if(this.broadcastID  == null){
+    if (this.broadcastID == null) {
 
 
-      this.broadcastID = (Math.floor(Math.random()*90000) + 10000) + "";
+      this.broadcastID = (Math.floor(Math.random() * 90000) + 10000) + "";
       this.broadcastMessage = message;
       this.broadcaster = user_id;
 
-      setTimeout(function(){
+      setTimeout(function () {
         self.broadcastID = null;
         self.broadcastMessage = null;
         self.broadcaster = null;
@@ -68,8 +68,8 @@ class World {
 
       return this.broadcastID;
 
-    } else if(this.broadcaster != user_id) {
-      for (var key in  bot.servers) {
+    } else if (this.broadcaster != user_id) {
+      for (var key in bot.servers) {
         var server = bot.servers[key];
         bot.sendMessage({
           to: server.owner_id,
@@ -142,6 +142,7 @@ class World {
   save(_filename) {
     function replacer(key, value) {
       if (key == "neglect_timeout") return undefined; // this key is an internal that we dont want to save
+      if (key == "commandResponses") return undefined;
       else return value;
     };
 

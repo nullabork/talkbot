@@ -12,7 +12,7 @@ var fs = require('fs'),
 var paths = require('./config/paths'),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff');
-  common = require('@helpers/common'),
+common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
 //models
@@ -29,7 +29,7 @@ var auth = require('@auth'),
 // runtime testing
 testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
 
-  
+
 // Creates a client
 
 
@@ -118,7 +118,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     console.error("Can't find server for " + channel_id);
     return null;
   }
-  
+
   // is the message a command?
   if (message.substring(0, commands.command_char.length) == commands.command_char) {
 
@@ -173,7 +173,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       if (server.isPermitted(user_id)) {
         var parser = new MessageSSML(message);
         message = parser.build();
-        
+
         server.talk(message, server.permitted[user_id]);
       }
     }

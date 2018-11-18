@@ -1,5 +1,5 @@
-// models 
-var BotCommand = require('@models/BotCommand');  
+// models
+var BotCommand = require('@models/BotCommand');
 
 
 var common = require("../../helpers/common");
@@ -36,7 +36,7 @@ var command = new BotCommand({
   command_name: 'mypitch',
   execute: mypitch,
   short_help: 'mypitch.shorthelp',
-  long_help: 'mypitch.longhelp', 
+  long_help: 'mypitch.longhelp',
 });
 
 
