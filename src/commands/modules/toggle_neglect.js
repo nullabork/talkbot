@@ -19,6 +19,7 @@ var command = new BotCommand({
   execute: toggle_neglect,
   short_help: 'toggle_neglect.shorthelp',
   long_help: 'toggle_neglect.longhelp',
+  hidden: true,
 });
 
 

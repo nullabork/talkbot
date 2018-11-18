@@ -5,32 +5,38 @@
   },
   "en.who": {
     "okay": "My master is :name",
-    "none": "I have no master :~("
+    "none": "I have no master :~(",
+    "shorthelp": "Tells you who the current master is"
   },
   "en.ping": {
-    "okay": "pong"
+    "okay": "pong",
+    "shorthelp": "test the bot is up"
   },
   "en.follow": {
     "okay": "Yes, master!",
     "huh": "Yes, master?",
-    "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you."
+    "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",
+    "shorthelp": "Take control of the bot so it reads out what you type, It'll join you in your current voice channel."    
   },
   "en.unfollow": {
     "okay": "Goodbye master",
     "nope": "Sorry, you're not my master.",
-    "none": "I have no master... would you like to be my master?"
+    "none": "I have no master... would you like to be my master?",
+    "shorthelp": "Release the bot so someone else can use it."
   },
   "en.permit": {
     "okay": "I'll listen to :name now",
     "nope": "Sorry I can't do that, you're not my master.",
     "none": "I don't see any legit names",
-    "huh": "I don't know who :name is?"
+    "huh": "I don't know who :name is?",
+    "shorthelp": "Permit someone else to use the bot whilst it's following you"
   },
   "en.unpermit": {
     "okay": ":name talk to the hand",
     "nope": "Sorry I can't do that, you're not my master.",
     "none": "I don't know who :name is?",
-    "deny": "Sorry I can't do that, you're not permitted."
+    "deny": "Sorry I can't do that, you're not permitted.",
+    "shorthelp": "Unpermit someone else from using the bot"
   },
   "en.leave": {
     "nope": "Sorry I can't do that, you're not my master."
@@ -41,24 +47,18 @@
   },
   "en.lang": {
     "okay": "OK, The server default is :lang. You can override it with mylang",
-    "nope": "Sorry, you're not my master"
-  },
-  "en.toggle_neglect": {
-    "okay": "Attending neglect",
-    "none": "Neglecting neglect",
-    "nope": "Sorry, you're not my master"
-  },
-  "en.toggle_ssml": {
-    "okay": "OK, your you now need to speak in SSML",
-    "deny": "Sorry, you're not permitted"
+    "nope": "Sorry, you're not my master",
+    "shorthelp": "Set the global server language. Use mylang for your personal language."
   },
   "en.mylang": {
     "okay": "OK, your personal language is now :lang.",
-    "deny": "Sorry, you're not permitted"
+    "deny": "Sorry, you're not permitted",
+    "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc."
   },
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
-    "deny": "Sorry, you're not permitted"
+    "deny": "Sorry, you're not permitted",
+    "shorthelp": "Set the gender the bot will speak with"
   },
   "en.myvoice": {
     "okay": "OK, your personal voice is now :voice.",
@@ -66,16 +66,25 @@
   },
   "en.mypitch": {
     "okay": "OK, your personal pitch is now :pitch.",
-    "deny": "Sorry, you're not permitted"
+    "deny": "Sorry, you're not permitted",
+    "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20"
   },
   "en.myspeed": {
     "okay": "OK, your personal speed is now :speed.",
-    "deny": "Sorry, you're not permitted"
+    "deny": "Sorry, you're not permitted",
+    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0"
   },
   "en.sfx": {
     "nope": "Sorry, only my master can set emojis",
     "okay": "",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
-    "needshttps": "Sound URLs can only be https urls"
-  }    
+    "needshttps": "Sound URLs can only be https urls",
+    "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]"
+  },
+  "en.sidle": {
+    "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work"
+  },
+  "en.help": {
+    "shorthelp": "Show all the available commands. Get detailed help information using !help [command]"
+  }
 }

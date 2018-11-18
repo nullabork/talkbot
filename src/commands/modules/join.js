@@ -22,6 +22,7 @@ var command = new BotCommand({
   execute: join,
   short_help: 'join.shorthelp',
   long_help: 'join.longhelp',
+  hidden: true,
 });
 
 
