@@ -26,6 +26,7 @@ class World {
     }
     this.servers[server.server_id] = server;
     this.save();
+    this.setPresence();
   }
 
   removeServer(server) {
@@ -120,7 +121,23 @@ class World {
       }
     }
   }
-
+  
+  setPresence() {
+    
+    var c = 0;
+    for ( var s in this.servers ) {
+      if ( this.servers[s].isBound() ) c++;
+    }
+    
+    bot.setPresence({
+      status: 'online',
+      game: {
+        name: Object.keys(bot.servers).length + " servers, " + c + " active",
+        type: 1,
+        url: 'https://github.com/wootosmash/talkbot'
+      }
+    });
+  }
 
   save(_filename) {
     function replacer(key, value) {
@@ -140,6 +157,7 @@ class World {
         this.servers[server_id] = server;
         server.init();
       }
+      this.setPresence();
     } catch (ex) {
       console.error(ex);
       this.save();

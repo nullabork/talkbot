@@ -180,7 +180,9 @@ class Server {
         callback();
       }
 
-      require('./World').save();
+      var w = require('./World');
+      w.save();
+      w.setPresence();
     });
   };
 
@@ -197,7 +199,9 @@ class Server {
     }
 
     this.current_voice_channel_id = null;
-    require('./World').save();
+    var w = require('./World');
+    w.save();
+    w.setPresence();
   }
 
   permit(user_id) {

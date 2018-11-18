@@ -49,7 +49,7 @@ bot.on('ready', function (evt) {
   bot.setPresence({
     status: 'online',
     game: {
-      name: auth.tagline || 'Killing all the humans',
+      name: "",
       type: 1,
       url: ''
     }
@@ -72,7 +72,9 @@ bot.on('any', function (evt) {
   if (evt.t == 'GUILD_CREATE') {
 
     // when added to a server do this - need to wait a bit for the library to init
-    var add_server = function () { world.addServer(bot.servers[evt.d.id]); };
+    var add_server = function () { 
+      world.addServer(bot.servers[evt.d.id]); 
+    };
 
     setTimeout(add_server, 10000);
   }
