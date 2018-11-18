@@ -4,6 +4,9 @@ var Lang = require("lang.js"),
   messages = require('../../config/lang'),
   bot = botStuff.bot;
 
+var ADMIN_PERMISSION_FLAG = 8;
+
+
 class Server {
 
   constructor(server_data, server_id) {
@@ -89,11 +92,6 @@ class Server {
     return bot.channels[channel_id].guild_id == this.server_id;
   }
 
-  isAdminUser(user_id) {
-    // hack
-    return this.server_owner_user_id == user_id;
-  }
-
   getOwnersVoiceChannel(user_id) {
     return botStuff.getUserVoiceChannel(user_id);
   };
@@ -153,6 +151,31 @@ class Server {
     return this.bound_to;
   };
 
+  isAdminUserOrServerOwner(user_id) {
+    return this.userHasAdminPermissions(user_id) || this.isServerOwner(user_id);
+  }
+
+  // determine if the permissions of the role passed through is the biggest available ie. admin super user
+  isAdminRole(role_id) {
+    if ( bot.servers[this.server_id].roles[role_id] == null ) return false;
+    if ( bot.servers[this.server_id].roles[role_id]._permissions & ADMIN_PERMISSION_FLAG ) return true;
+    else return false;
+  };
+  
+  isServerOwner(user_id) {
+    return bot.servers[this.server_id].owner_id == user_id;
+  };
+  
+  // determine if user has the biggest permissions available
+  userHasAdminPermissions(user_id) {
+    for ( var r in bot.servers[this.server_id].members[user_id].roles ) {
+      if ( this.isAdminRole(bot.servers[this.server_id].members[user_id].roles[r])) {
+        return true;
+      }
+    }
+    return false;
+  };
+  
   inChannel() {
     return this.current_voice_channel_id != null;
   };

@@ -23,12 +23,9 @@ var BotCommand = require('@models/BotCommand');
 
 function sfx(msg, server, world) {
 
-  if (!msg.ownerIsMaster()) {
-    msg.response(server.lang('sfx.nope'));
-    return;
-  }
+  if (!msg.message) return;
 
-  if (!msg.message) {
+  if ( !server.isAdminUserOrServerOwner(msg.user_id)) { 
     msg.response(server.lang('sfx.nope'));
     return;
   }
@@ -54,7 +51,17 @@ function sfx(msg, server, world) {
       if ( !sfx_command ) msg.response(server.lang('sfx.nosfx'));
 
       // list all the SFX available
-      else if ( sfx_command == 'list' ) msg.response(JSON.stringify(server.audioEmojis));
+      else if ( sfx_command == 'list' ) {
+        
+        var rsp = "```";
+        
+        for ( var e in server.audioEmojis )
+          rsp += e + "\t\t" + server.audioEmojis[e] + "\n";
+        
+        rsp += "```";
+        
+        msg.response(rsp);
+      }
 
       // play a specific SFX
       else if (server.audioEmojis[sfx_command]) 

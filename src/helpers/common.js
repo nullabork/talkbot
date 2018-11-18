@@ -94,9 +94,9 @@ class Common {
   }
 
   static replaceWavyMen(message) {
+    message = message.replace(/\\o\//gi, "hooray");
     message = message.replace(/\\o/gi, "wave");
     message = message.replace(/o\//gi, "wave ack");
-    message = message.replace(/\\o\//gi, "hooray");
     return message;
   }
 
