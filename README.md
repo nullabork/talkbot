@@ -14,20 +14,15 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 
 * !follow - bind the bot to you so only you can control it
 * !unfollow - release the bot so someone else can use it
-* !leave - get the bot to leave the channel
+* !sidle - take control of the bot from someone else
 * !permit [username] - allow another user to use TTS
 * !unpermit [username] - disallow another user
 * !who - find out who is the bot's current master
-* !join - get the bot to join the voice channel the master is in
-* !leave - get the bot to leave the current voice channel
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
 * !mylang [lang] - set your personal language for the bot
-* !reset - if the bot gets broken in chat run this
 * !sfx [sound_url] - play a sound in channel (this command has lots of other cool stuff as well!)
 * !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
-* !toggle_neglect - turns on/off the neglect timer
 * !help [longer help] - writes out the help for all commands
-* all other text will be spoken in text-to-speech
 
 # setup your own bot
 Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.

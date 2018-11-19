@@ -19,7 +19,7 @@ var BotCommand = require('@models/BotCommand');
 function help(msg, server, world) {
 
   var cmds = require("@commands");
-  var response = "```The available commands are:\n\n";
+  var response = "```Quickstart:\n\n\t1. join a voice channel\n\t2. type " + cmds.command_char + "follow\n\t3. Type some text and hear the bot speak\n\nThe full list of commands are:\n\n";
 
   for (var command in cmds.commands) {
     var cmd = cmds.commands[command];

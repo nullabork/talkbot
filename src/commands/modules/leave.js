@@ -17,6 +17,7 @@ var command = new BotCommand({
   execute: leave,
   short_help: 'leave.shorthelp',
   long_help: 'leave.longhelp',
+  hidden: true,
 });
 
 

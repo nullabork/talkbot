@@ -26,6 +26,7 @@ var command = new BotCommand({
   execute: set,
   short_help: 'set.shorthelp',
   long_help: 'set.longhelp',
+  hidden: true,
 });
 
 
