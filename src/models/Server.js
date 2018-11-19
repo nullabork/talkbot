@@ -1,7 +1,6 @@
 
 var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
-  messages = require('@src/lang'),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
@@ -29,11 +28,11 @@ class Server {
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
-    this.language = server_data.language;
+    this.language = 'en'; //server_data.language || 'en-AU';
     if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
 
     this.commandResponses = new Lang({
-      messages: messages,
+      messages: require('@src/lang.json'),
       locale: this.language,
       fallback: this.language
     });
