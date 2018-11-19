@@ -21,8 +21,9 @@
   },
   "_moduleAliases": {
     "@config": "config",
-    "@state": "../state.json",
-    "@auth": "../auth.json",
+    "@state": "config/state.json",
+    "@auth": "config/auth.json",
+    "@paths": "src/paths",
     "@src": "src",
     "@helpers": "src/helpers",
     "@commands": "src/commands",

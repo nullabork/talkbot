@@ -1,6 +1,6 @@
 
-var paths = require('../../config/paths'),
-  fs = require('fs'),
+var fs = require('fs'),
+  paths = require('@paths'),
   botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
   auth = require("@auth"),

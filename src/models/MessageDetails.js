@@ -1,7 +1,6 @@
-var paths = require('../../config/paths'),
-  botStuff = require("@helpers/bot-stuff"),
+var botStuff = require("@helpers/bot-stuff"),
   common = require("@helpers/common"),
-  auth = require(paths.auth);
+  auth = require("@auth");
 
 class MessageDetails {
 

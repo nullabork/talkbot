@@ -2,17 +2,12 @@
 
 //npm imports
 require('module-alias/register');
-
-var fs = require('fs'),
-  request = require('request'),
-  Discord = require('discord.io'),
-  textToSpeech = require('@google-cloud/text-to-speech');
-
+var path = require('path'),
+  paths = require('@paths');
 //helpers
-var paths = require('./config/paths'),
-  commands = require('@commands'),
+var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff');
-common = require('@helpers/common'),
+  common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
 //models
@@ -20,11 +15,6 @@ var world = require('@models/World'),
   Server = require('@models/Server'),
   MessageSSML = require('@models/MessageSSML'),
   MessageDetails = require('@models/MessageDetails');
-
-//configs
-var auth = require('@auth'),
-  messages = require('@config/lang.json'),
-  state = require('@state');
 
 // runtime testing
 testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();

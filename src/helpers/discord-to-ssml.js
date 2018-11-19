@@ -6,7 +6,7 @@
   });
 
  ****************/
-var common = require('./common');
+var common = require('@helpers/common');
 
 (function () {
   "use strict"

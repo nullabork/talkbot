@@ -1,7 +1,7 @@
 
 var Lang = require("lang.js"),
-  botStuff = require('../helpers/bot-stuff'),
-  messages = require('../../config/lang'),
+  botStuff = require('@helpers/bot-stuff'),
+  messages = require('@src/lang'),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
