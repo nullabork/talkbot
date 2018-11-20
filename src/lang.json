@@ -16,7 +16,7 @@
     "okay": "Yes, master!",
     "huh": "Yes, master?",
     "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",
-    "shorthelp": "Take control of the bot so it reads out what you type, It'll join you in your current voice channel."    
+    "shorthelp": "Take control of the bot so it reads out what you type, It'll join you in your current voice channel."
   },
   "en.unfollow": {
     "okay": "Goodbye master",
@@ -76,7 +76,7 @@
   },
   "en.sfx": {
     "nope": "Sorry, only my master can set emojis",
-    "okay": "",
+    "okay": "Added sound effect for `:emoji`",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
     "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]"

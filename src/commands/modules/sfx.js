@@ -87,7 +87,7 @@ function sfx(msg, server, world) {
       else {
         server.audioEmojis[emoji_name] = emoji_url;
         world.save();
-        msg.response(server.lang('sfx.setokay'));
+        msg.response(server.lang('sfx.okay', { 'emoji' : emoji_name }));
       }
     }
 
@@ -112,7 +112,7 @@ function sfx(msg, server, world) {
 // };
 
 function sfxParser(token, server) {
-  if (server.audioEmojis[token]) {
+  if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
     return common.makeAudioSSML(server.audioEmojis[token]);
   }
 };
