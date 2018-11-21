@@ -30,7 +30,9 @@ class Server {
     this.neglect_timeout = null;
     this.neglect_neglect = null;
     this.language = server_data.language;
+    this.created = new Date();
     if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
+    if (server_data.created) this.created = server_data.created;
 
     this.commandResponses = new Lang({
       messages: messages,
