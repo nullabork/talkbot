@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 
-var langMap = require("../../helpers/langmap");
+var langMap = require("@helpers/langmap");
 
 var lang = function (msg, server, world) {
   if (!msg.args.length) return;

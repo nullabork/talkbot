@@ -32,15 +32,15 @@ var paths = {
   //state & auth  file is found outside of this project. outside of git etc
   //eventually i want to make it so the deploy creates symbolic links to config
   //stuff inside the project.
-  state: make('../state.json'),
-  auth: make('../auth.json'),
+  state: make('config/state.json'),
+  auth: make('config/auth.json'),
 
 
-  config: make('./config'),
-  src: make('./src'),
-  helpers: make('./src/helpers'),
-  commands: make('./src/commands'),
-  models: make('./src/models'),
+  config: make('config'),
+  src: make('src'),
+  helpers: make('src/helpers'),
+  commands: make('src/commands'),
+  models: make('src/models'),
 
   //utils
   join: join,

@@ -1,3 +1,3 @@
 /node_modules/
-/config/auth.json
-/state.json
+auth.json
+state.json

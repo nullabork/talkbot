@@ -1,6 +1,6 @@
 var Discord = require('discord.io'),
-  auth = require("../../../auth.json"),
-  common = require("./common"),
+  auth = require("@auth"),
+  common = require("@helpers/common"),
   textToSpeech = require('@google-cloud/text-to-speech');
 
 class BotStuff {

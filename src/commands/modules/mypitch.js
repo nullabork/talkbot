@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 
-var common = require("../../helpers/common");
+var common = require("@helpers/common");
 /**
  * Command: mypitch
  * sets pitch user config

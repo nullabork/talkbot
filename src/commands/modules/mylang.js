@@ -1,5 +1,5 @@
 
-var langMap = require("../../helpers/langmap");
+var langMap = require("@helpers/langmap");
 
 // models
 var BotCommand = require('@models/BotCommand');
