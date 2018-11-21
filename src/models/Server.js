@@ -347,7 +347,6 @@ class Server {
         nick: tokens[i++] + ' ' + tokens[i++] + ' ' + tokens[i++],
       });
     }
-
   };
 
   playAudioFile(filename, callback) {
