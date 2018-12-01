@@ -2,6 +2,7 @@
 var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
   Common = require('@helpers/Common'),
+  langmap = require('@helpers/langmap'),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
@@ -29,13 +30,16 @@ class Server {
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
-    this.language = 'en'; //server_data.language || 'en-AU';
+    this.language = server_data.language || 'en-AU';
+    this.fallbackLang = 'en';
+    this.created = new Date();
     if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
+    if (server_data.created) this.created = server_data.created;
 
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
-      locale: this.language,
-      fallback: this.language
+      locale: langmap.get(this.language).root,
+      fallback: this.fallbackLang //langmap.get(this.fallbackLang).root
     });
 
     this.messages = {};
@@ -344,7 +348,6 @@ class Server {
         nick: tokens[i++] + ' ' + tokens[i++] + ' ' + tokens[i++],
       });
     }
-
   };
 
   playAudioFile(filename, callback) {
