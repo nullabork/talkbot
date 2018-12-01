@@ -98,7 +98,7 @@ bot.on('any', function (evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
-  console.log(evt);
+  //console.log(evt);
 
   if (common.isMessageExcluded(message)) return null;
 
