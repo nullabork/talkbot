@@ -37,23 +37,33 @@ class Common {
   }
 
   //console.log() if its turned on
-  out (message) {
+  static out (message) {
+
+    if(typeof message == 'object' && message.stack) {
+      message = message.stack;
+    }
+
     if(config.logging && config.logging.out) {
       console.log(
         "\n" +
         new Date() + "\n" +
-        message + "\n"
+        message
       );
     }
   }
 
   //console.error() is its turned out
-  error (message) {
+  static error (message) {
+
+    if(typeof message == 'object' && message.stack) {
+      message = message.stack;
+    }
+
     if(config.logging && config.logging.err) {
       console.error(
         "\n" +
         new Date() + "\n" +
-        message + "\n"
+        message
       );
     }
   }

@@ -98,8 +98,6 @@ bot.on('any', function (evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
-  //console.log(evt);
-
   if (Common.isMessageExcluded(message)) return null;
 
   var server = world.getServerFromChannel(channel_id);
@@ -175,6 +173,12 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
 process.on('SIGINT', function () {
   world.save();
+  bot.disconnect();
+  process.exit();
+});
+
+process.on('uncaughtException', function (err) {
+  Common.error(err);
   bot.disconnect();
   process.exit();
 });
