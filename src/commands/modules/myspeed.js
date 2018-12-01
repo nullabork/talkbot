@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 
-var common = require("@helpers/common");
+var Common = require("@helpers/Common");
 
 function speed(msg, server, world) {
   var args = msg.message.split(/ +/);
@@ -10,7 +10,7 @@ function speed(msg, server, world) {
 
   if (server.isPermitted(msg.user_id)) {
     var speed = parseFloat(msg.args[0]);
-    speed = common.numberClamp(speed, 0.25, 4.0);
+    speed = Common.numberClamp(speed, 0.25, 4.0);
     server.permitted[msg.user_id].speed = speed;
 
     msg.response(server.lang('myspeed.okay', { speed: speed }));

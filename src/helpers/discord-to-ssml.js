@@ -6,7 +6,7 @@
   });
 
  ****************/
-var common = require('@helpers/common');
+var Common = require('@helpers/Common');
 
 (function () {
   "use strict"
@@ -48,7 +48,7 @@ var common = require('@helpers/common');
       this.tags.forEach(function (tag) {
 
         if (tag.tags.length == 1) {
-          var open = common.escapeRegExp(tag.tags[0]);
+          var open = Common.escapeRegExp(tag.tags[0]);
           // &&&  ~~>  <break time="300" />
           var regex = new RegExp(open, 'g');
           message = message.replace(regex, function (a, b, c) {
@@ -57,8 +57,8 @@ var common = require('@helpers/common');
         }
 
         if (tag.tags.length == 2) {
-          var open = common.escapeRegExp(tag.tags[0]),
-            close = common.escapeRegExp(tag.tags[1]),
+          var open = Common.escapeRegExp(tag.tags[0]),
+            close = Common.escapeRegExp(tag.tags[1]),
             openRegex = new RegExp(open, 'g'),
             closeRegex = new RegExp(close, 'g');
 

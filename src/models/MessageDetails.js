@@ -1,5 +1,5 @@
 var botStuff = require("@helpers/bot-stuff"),
-  common = require("@helpers/common"),
+  Common = require("@helpers/Common"),
   auth = require("@auth");
 
 class MessageDetails {
@@ -74,7 +74,7 @@ class MessageDetails {
   };
 
   getUserIds() {
-    return common.messageIDs(this.message);
+    return Common.messageIDs(this.message);
   };
 }
 

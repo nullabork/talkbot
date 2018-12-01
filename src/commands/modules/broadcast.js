@@ -1,6 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand'),
-  common = require("@helpers/common"),
+  Common = require("@helpers/Common"),
   auth = require("@auth");
 
 /**

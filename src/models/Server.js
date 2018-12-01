@@ -1,6 +1,7 @@
 
 var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
+  Common = require('@helpers/Common'),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
@@ -187,7 +188,7 @@ class Server {
   joinVoiceChannel(channel_id, callback) {
     var server = this;
     if (!server.isServerChannel(channel_id)) {
-      console.log("joinVoiceChannel() on the wrong server");
+      Common.out("joinVoiceChannel() on the wrong server");
       return;
     }
 
@@ -198,7 +199,7 @@ class Server {
       }
       else {
         server.current_voice_channel_id = channel_id;
-        console.log('joined channel: ' + channel_id);
+        Common.out('joined channel: ' + channel_id);
         callback();
       }
 
@@ -327,11 +328,11 @@ class Server {
 
     var i = 0;
 
-    if (bot.servers[this.server_id] == null) { console.log('no server'); return; }
+    if (bot.servers[this.server_id] == null) { Common.out('no server'); return; }
     if (bot.servers[this.server_id].channels[channel_id] == null) {
 
       for (var chan in bot.servers[this.server_id].channels)
-        console.log(bot.servers[this.server_id].channels[chan]);
+        Common.out(bot.servers[this.server_id].channels[chan]);
       return;
     }
 

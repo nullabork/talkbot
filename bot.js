@@ -7,7 +7,7 @@ var path = require('path'),
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff');
-  common = require('@helpers/common'),
+  Common = require('@helpers/Common'),
   testing = require('@helpers/runtime-testing');
 
 //models
@@ -33,7 +33,7 @@ var bot = botStuff.bot;
 // });
 
 bot.on('ready', function (evt) {
-  console.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+  Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
 
   // cool status
   bot.setPresence({
@@ -53,7 +53,7 @@ bot.on('ready', function (evt) {
 });
 
 bot.on('disconnect', function (evt) {
-  console.log('Disconnected');
+  Common.out('Disconnected');
   bot.connect();
 });
 
@@ -75,7 +75,7 @@ bot.on('any', function (evt) {
       var channel_id = evt.d.channel_id;
     var server = world.getServerFromChannel(channel_id);
     if (server == null) {
-      console.log("What server?: " + channel_id);
+      Common.out("What server?: " + channel_id);
       world.checkMastersVoiceChannels(evt.d.user_id);
       return null;
     }
@@ -88,7 +88,7 @@ bot.on('any', function (evt) {
           server.leaveVoiceChannel();
         }
       } else if (!botStuff.isVoiceChannel(channel_id)) {
-        console.log('Not a voice channel');
+        Common.out('Not a voice channel');
       } else {
         server.joinVoiceChannel(channel_id);
       }
@@ -98,9 +98,9 @@ bot.on('any', function (evt) {
 
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
-  console.log(evt);
+  Common.out(evt);
 
-  if (common.isMessageExcluded(message)) return null;
+  if (Common.isMessageExcluded(message)) return null;
 
   var server = world.getServerFromChannel(channel_id);
 
@@ -115,7 +115,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     server.resetNeglectTimeout();
 
     var parts = message.match(
-      new RegExp("(" + common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
+      new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
     );
 
     if (!parts || parts.length < 2) {
@@ -152,7 +152,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     // tts bit
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
     if (!server.permitted[user_id] || !server.permitted[user_id].use_ssml) {
-      message = common.cleanMessage(message);
+      message = Common.cleanMessage(message);
     }
     // message = ssml.build(message);
 

@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 
-var common = require("@helpers/common");
+var Common = require("@helpers/Common");
 /**
  * Command: mypitch
  * sets pitch user config
@@ -22,7 +22,7 @@ function mypitch(msg, server, world) {
 
   if (msg.ownerIsPermitted()) {
     var pitch = parseFloat(msg.getMessage()),
-      pitch = common.numberClamp(pitch, -20, 20);
+      pitch = Common.numberClamp(pitch, -20, 20);
 
     server.permitted[msg.user_id].pitch = pitch;
 

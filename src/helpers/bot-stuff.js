@@ -1,6 +1,6 @@
 var Discord = require('discord.io'),
   auth = require("@auth"),
-  common = require("@helpers/common"),
+  Common = require("@helpers/Common"),
   textToSpeech = require('@google-cloud/text-to-speech');
 
 class BotStuff {
@@ -41,9 +41,9 @@ class BotStuff {
 
   resolveMessageSnowFlakes(channel_id, message) {
     var self = this;
-    return common.replaceSnowFlakes(message, function (entity_id) {
+    return Common.replaceSnowFlakes(message, function (entity_id) {
       var name = self.findThingsName(channel_id, entity_id);
-      return common.caseToSpace(name);
+      return Common.caseToSpace(name);
     })
   }
 
@@ -71,11 +71,11 @@ class BotStuff {
     let bot = this.bot;
 
     if (!bot.channels[channel_id])
-      console.log("getNickFromUserId(): Cant find channel " + channel_id + ", " + user_id);
+      Common.out("getNickFromUserId(): Cant find channel " + channel_id + ", " + user_id);
     else if (!bot.servers[bot.channels[channel_id].guild_id])
-      console.log("getNickFromUserId(): Cant find server " + bot.channels[channel_id].guild_id + " for channel " + channel_id);
+      Common.out("getNickFromUserId(): Cant find server " + bot.channels[channel_id].guild_id + " for channel " + channel_id);
     else if (!bot.servers[bot.channels[channel_id].guild_id].members[user_id])
-      console.log("getNickFromUserId(): Cant find member on the server for " + bot.channels[channel_id].guild_id + ", " + user_id);
+      Common.out("getNickFromUserId(): Cant find member on the server for " + bot.channels[channel_id].guild_id + ", " + user_id);
     else
       return bot.servers[bot.channels[channel_id].guild_id].members[user_id].nick;
     return null;

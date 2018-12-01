@@ -1,4 +1,8 @@
 {
    "token": "yourdiscord.tokenhere",
    "command_char" : "!",
+   "logging" : {
+     "err" : false,
+     "out" : false
+   }
 }

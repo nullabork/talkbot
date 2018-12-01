@@ -30,10 +30,10 @@ function sfx(msg, server, world) {
     return;
   }
 
-  if (common.isURL(msg.message)) {
+  if (Common.isURL(msg.message)) {
     if (msg.message.length < 5) return;
     if (msg.message.substring(0, 5) != 'https') msg.response(server.lang('sfx.needshttps'));
-    else server.talk(common.makeAudioSSML(msg.message), server.permitted[msg.user_id]);
+    else server.talk(Common.makeAudioSSML(msg.message), server.permitted[msg.user_id]);
   }
   else {
 
@@ -65,7 +65,7 @@ function sfx(msg, server, world) {
 
       // play a specific SFX
       else if (server.audioEmojis[sfx_command])
-        server.talk(common.makeAudioSSML(server.audioEmojis[sfx_command]), server.permitted[msg.user_id]);
+        server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.permitted[msg.user_id]);
     }
 
     // delete an emoji from this server
@@ -105,7 +105,7 @@ function sfx(msg, server, world) {
 //     var emoji = parts[part];
 //     if (server.audioEmojis[emoji])
 //       server.talk(
-//         common.makeAudioSSML(server.audioEmojis[emoji]),
+//         Common.makeAudioSSML(server.audioEmojis[emoji]),
 //         server.permitted[user_id]
 //       );
 //   }
@@ -113,7 +113,7 @@ function sfx(msg, server, world) {
 
 function sfxParser(token, server) {
   if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
-    return common.makeAudioSSML(server.audioEmojis[token]);
+    return Common.makeAudioSSML(server.audioEmojis[token]);
   }
 };
 

@@ -1,4 +1,4 @@
-var common = require('@helpers/common');
+var Common = require('@helpers/Common');
 
 function LangMap(config) {
   //this.codeMap = {};
@@ -73,7 +73,7 @@ function LangMap(config) {
       return self.defaultLang;
     }
 
-    var find = common.escapeRegExp(lang[0]);
+    var find = Common.escapeRegExp(lang[0]);
 
     for (var i = 0; i < this.voices.length; i++) {
       var voice = this.voices[i];

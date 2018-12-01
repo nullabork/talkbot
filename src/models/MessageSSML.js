@@ -1,6 +1,6 @@
 var MessageParser = require('@models/MessageParser'),
   ssmlConfig = require('@helpers/ssml-dictionary'),
-  common = require('@helpers/common');
+  Common = require('@helpers/Common');
 
 class MessageSSML extends MessageParser {
   constructor(text, opts) {
@@ -8,7 +8,7 @@ class MessageSSML extends MessageParser {
 
     var find = ssmlConfig
       .map(function (tag) {
-        return common.escapeRegExp(tag.open) + "|" + common.escapeRegExp(tag.close);
+        return Common.escapeRegExp(tag.open) + "|" + Common.escapeRegExp(tag.close);
       })
       .join('|');
 

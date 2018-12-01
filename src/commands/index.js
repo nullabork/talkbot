@@ -38,7 +38,7 @@ function Commands() {
   };
 
   this.registerAllCommands = function () {
-    //console.log(normalizedPath);
+    //Common.out(normalizedPath);
     require("fs").readdirSync("./src/commands/modules/").forEach(function (file) {
       var filename = path.join("modules/", file);
       var command = require("./" + filename.replace('.js', ''));

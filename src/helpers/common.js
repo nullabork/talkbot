@@ -1,63 +1,101 @@
+var config = require("@auth");
 class Common {
+  //clean string so its usable in RegExp
   static escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
+  //does string token contain the parts required to be an emoji
   static isEmoji(str) {
     if (str.length < 3) return false;
     return (str[0] == ':' && str[str.length - 1] == ':');
   };
 
+  // woot is a monster
   static isURL(url) {
-
     // fax, i'm probably a monster
     if (url.length < 4) return false;
     if (url.substring(0, 4) == "http") return true;
     return false;
   }
 
+  //fetches all forms of message Ids from a string and returns an array
   static messageIDs(message) {
     var user_ids = message.match(/<@!{0,1}(\d{12,19})>/g);
-    //user_ids.channel_id
 
     if (!user_ids) return [];
 
     var map = user_ids.map(function (element) {
-      var tt = element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (a, b) {
+      var ids = element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (a, b) {
         return b;
       });
 
-      return tt;
+      return ids;
     });
 
     return map;
   }
 
+  //console.log() if its turned on
+  out (message) {
+    if(config.logging && config.logging.out) {
+      console.log(
+        "\n" +
+        new Date() + "\n" +
+        message + "\n"
+      );
+    }
+  }
+
+  //console.error() is its turned out
+  error (message) {
+    if(config.logging && config.logging.err) {
+      console.error(
+        "\n" +
+        new Date() + "\n" +
+        message + "\n"
+      );
+    }
+  }
+
+  //dont know.
   static isMessageExcluded(message) {
     return message.startsWith('```');
   }
 
+  //clamp a number between two range
   static numberClamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
   }
 
+  //map input number from one range to another range
+  static scaleToRange(num, in_min, in_max, out_min, out_max) {
+    var number = Common.numberClamp(num, in_min, in_max);
+    return (number - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
+
+  //make cased names become human readable
   static caseToSpace(nick_name) {
     return nick_name.replace(/([a-z])([A-Z])/g, function (a, b, c) {
       return b + " " + c;
     });
   };
 
+  //replacer than finds and replaces things that look like ids with what the callback returns.
   static replaceSnowFlakes(message, fn) {
     return message.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (match, entity_id) {
       return fn(entity_id);
     });
   };
 
-  static replaceURLS(message, fn) {
+  //remove urls with notheing
+  //used for cleaning
+  static removeUrls(message, fn) {
     return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, fn ? fn : "");
   }
 
-  static stripRepeatingChar(message) {
+  //removes repeating character or character groups aaaaaaaaaaaaa or asdasdasdasdasd
+  static removeRepeatingChar(message) {
     var maxChars = 6;
     var a = message.split('');
     var leaveOneRemaining = true;
@@ -82,10 +120,13 @@ class Common {
     return a.join('');
   }
 
-  static stripNullsChars(message) {
+  //remove line feeds and new lines
+  static removeNullsChars(message) {
     return message.replace(/\n|\r/gi, "");
   }
 
+  //truncate message to 200 characters should be used before all the other things
+  //TODO: define length in config
   static truncateMessage(message) {
     if (message.length > 200) {
       message = message.substring(0, 200);
@@ -93,6 +134,7 @@ class Common {
     return message;
   }
 
+  //replace thigns with words that can be spoken
   static replaceWavyMen(message) {
     message = message.replace(/\\o\//gi, "hooray");
     message = message.replace(/\\o/gi, "wave");
@@ -100,23 +142,26 @@ class Common {
     return message;
   }
 
+  //replace thigns with words that can be spoken
   static replaceYesNo(message) {
     message = message.replace(/\(y\)/gi, "thumbs up");
     message = message.replace(/\(n\)/gi, "thumbs down");
     return message;
   }
 
+  //cleant a message ready for speaking
   static cleanMessage(message) {
     message = message.trim();
-    message = common.replaceURLS(message);
-    message = Common.stripRepeatingChar(message);
-    message = Common.stripNullsChars(message);
+    message = Common.removeUrls(message);
+    message = Common.removeRepeatingChar(message);
+    message = Common.removeNullsChars(message);
     message = Common.replaceWavyMen(message);
     message = Common.replaceYesNo(message);
     message = Common.truncateMessage(message);
     return message;
   }
 
+  //make some sfx audio tag
   static makeAudioSSML(url) {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
