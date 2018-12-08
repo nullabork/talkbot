@@ -31,6 +31,7 @@ function follow(msg, server, world) {
       msg.response(server.lang('follow.nope'));
     }
   }
+  
 };
 
 /* * *
@@ -87,7 +88,54 @@ function sidle(msg, server, world) {
     server.joinVoiceChannel(voiceChan);
     msg.response(server.lang('sidle.okay'));
   } else {
-    msg.response(server.lang('sidle.nope'));
+    msg.response(server.lang('sidle.broken'));
+  }
+};
+
+/* * *
+ * Command: transfer
+ *
+ * The server admin or master can transfer control of the bot to a third party 
+ *
+ * @param   {[MessageDetails]}  msg     [message releated helper functions]
+ * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
+ * @param   {[World]}           world   [Object related to the realm and general bot stuff]
+ *
+ * @return  {[undefined]}
+ * * */
+function transfer(msg, server, world) {
+  
+  if (!msg.ownerIsMaster() && !server.isAdminUserOrServerOwner(msg.user_id)) {
+    msg.response(server.lang('transfer.nopermissions'));
+    return;
+  }
+  
+  if (msg.args.length == 0) {
+    msg.response(server.lang('transfer.args'));
+    return;
+  }
+  
+  var target_ids = msg.getUserIds();
+  if (!target_ids || !target_ids.length || target_ids.length > 1) {
+    msg.response(server.lang('transfer.args'));
+    return;
+  }
+  
+  var user_id = target_ids[0];
+  var username = msg.getNick(user_id);
+  
+  if ( !username || username == "" ) {
+    msg.response(server.lang('transfer.unknownnick'));
+    return;
+  }    
+  
+  server.setMaster(user_id, username);
+  var voiceChan = server.getOwnersVoiceChannel(user_id);
+  if (voiceChan) {
+    server.joinVoiceChannel(voiceChan);
+    msg.response(server.lang('transfer.okay'));
+  } else {
+    msg.response(server.lang('transfer.broken'));
   }
 };
 
@@ -112,15 +160,24 @@ var command_sidle = new BotCommand({
   long_help: 'sidle.longhelp',
 });
 
+var command_transfer = new BotCommand({
+  command_name: 'transfer',
+  execute: transfer,
+  short_help: 'transfer.shorthelp',
+  long_help: 'transfer.longhelp',
+});
+
 exports.register = function (commands) {
   commands.add(command_follow);
   commands.add(command_unfollow);
   commands.add(command_sidle);
+  commands.add(command_transfer);
 };
 
 exports.unRegister = function (commands) {
   commands.remove(command_follow);
   commands.remove(command_unfollow);
   commands.remove(command_sidle);
+  commands.remove(command_transfer);
 };
 

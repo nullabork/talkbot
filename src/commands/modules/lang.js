@@ -20,6 +20,7 @@ var lang = function (msg, server, world) {
   }
 
   msg.response(server.lang('lang.okay', { lang: server.language }));
+  world.save();
 };
 
 
