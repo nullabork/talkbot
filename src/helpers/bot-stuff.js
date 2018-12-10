@@ -1,7 +1,9 @@
 var Discord = require('discord.io'),
   auth = require("@auth"),
   Common = require("@helpers/Common"),
+  tl8 = require('@google-cloud/translate'),
   textToSpeech = require('@google-cloud/text-to-speech');
+
 
 class BotStuff {
 
@@ -13,6 +15,11 @@ class BotStuff {
     });
 
     this.tts_client = new textToSpeech.TextToSpeechClient();
+
+    this.translate_client = new tl8.Translate({
+      projectId: "talk-bork",
+    });
+
   }
 
   isVoiceChannel(channel_id) {

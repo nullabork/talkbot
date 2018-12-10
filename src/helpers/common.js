@@ -1,4 +1,5 @@
 var config = require("@auth");
+
 class Common {
   //clean string so its usable in RegExp
   static escapeRegExp(string) {
@@ -52,7 +53,7 @@ class Common {
     }
   }
 
-  //console.error() is its turned out
+  //Common.error() is its turned out
   static error (message) {
 
     if(typeof message == 'object' && message.stack) {
