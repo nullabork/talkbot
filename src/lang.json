@@ -88,7 +88,13 @@
     "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]"
   },
   "en.sidle": {
-    "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work"
+    "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work",
+    "nope": "You have to be an admin on this server to use this",
+    "okay": "Okay you're now the master",
+    "broken": "Something went wrong getting the voice channel, you might still have been made the master"
+  },
+  "en.transfer": {
+    "shorthelp": "Transfer control of the bot to a third party. You have to be a server admin for this to work"
   },
   "en.help": {
     "shorthelp": "Show all the available commands. Get detailed help information using !help [command]"
