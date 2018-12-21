@@ -10,7 +10,7 @@ Discord bot for text-to-speech
 5. Type some text to hear it read out to you
 
 # commands in discord
-The bot requires a master to control it. Once you're its master it'll convert your non-command text into voice in the current channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
+The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
 
 * !follow - bind the bot to you so only you can control it
 * !unfollow - release the bot so someone else can use it
