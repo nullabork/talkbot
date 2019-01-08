@@ -19,7 +19,8 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !unpermit [username] - disallow another user
 * !who - find out who is the bot's current master
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
-* !mylang [lang] - set your personal language for the bot
+* !mylang [lang] - set your personal language accent for the bot
+* !tolang [lang] - translate to this language
 * !sfx [sound_url] - play a sound in channel (this command has lots of other cool stuff as well!)
 * !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
 * !help [longer help] - writes out the help for all commands
