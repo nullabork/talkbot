@@ -31,7 +31,7 @@ function follow(msg, server, world) {
       msg.response(server.lang('follow.nope'));
     }
   }
-  
+
 };
 
 /* * *
@@ -83,10 +83,13 @@ function sidle(msg, server, world) {
   }
 
   server.setMaster(msg.user_id, msg.username);
+
   var voiceChan = msg.getOwnersVoiceChannel();
   if (voiceChan) {
     server.joinVoiceChannel(voiceChan);
-    msg.response(server.lang('sidle.okay'));
+    msg.response(server.lang('sidle.okay', {
+      name : server.getBoundToNick()
+    }));
   } else {
     msg.response(server.lang('sidle.broken'));
   }
@@ -95,7 +98,7 @@ function sidle(msg, server, world) {
 /* * *
  * Command: transfer
  *
- * The server admin or master can transfer control of the bot to a third party 
+ * The server admin or master can transfer control of the bot to a third party
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
@@ -104,31 +107,31 @@ function sidle(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function transfer(msg, server, world) {
-  
+
   if (!msg.ownerIsMaster() && !server.isAdminUserOrServerOwner(msg.user_id)) {
     msg.response(server.lang('transfer.nopermissions'));
     return;
   }
-  
+
   if (msg.args.length == 0) {
     msg.response(server.lang('transfer.args'));
     return;
   }
-  
+
   var target_ids = msg.getUserIds();
   if (!target_ids || !target_ids.length || target_ids.length > 1) {
     msg.response(server.lang('transfer.args'));
     return;
   }
-  
+
   var user_id = target_ids[0];
   var username = msg.getNick(user_id);
-  
+
   if ( !username || username == "" ) {
     msg.response(server.lang('transfer.unknownnick'));
     return;
-  }    
-  
+  }
+
   server.setMaster(user_id, username);
   var voiceChan = server.getOwnersVoiceChannel(user_id);
   if (voiceChan) {

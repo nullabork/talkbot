@@ -59,7 +59,7 @@
     "okay": "OK, now translating to :lang.",
     "deny": "Sorry, you're not permitted",
     "nope": "Sorry, I dont have a voice for :lang",
-    "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc."
+    "shorthelp": "Set the language the bot will translate to. eg. en-AU, gb, en-US, fr, jp etc."
   },
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
@@ -94,6 +94,7 @@
     "broken": "Something went wrong getting the voice channel, you might still have been made the master"
   },
   "en.transfer": {
+    "okay": "Okay :name is now the master",
     "shorthelp": "Transfer control of the bot to a third party. You have to be a server admin for this to work"
   },
   "en.help": {

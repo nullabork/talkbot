@@ -17,7 +17,7 @@ var BotCommand = require('@models/BotCommand');
  *
  * @return  {[undefined]}
  */
-function mylang(msg, server, world) {
+function toLang(msg, server, world) {
   if (server.isPermitted(msg.user_id)) {
     var doc = langMap.get(msg.getMessage());
 
@@ -27,7 +27,6 @@ function mylang(msg, server, world) {
 
       msg.response(server.lang('tolang.okay', { lang: doc.name }));
     } else {
-
       msg.response(server.lang('tolang.nope', { lang: msg.getMessage() }));
     }
 
@@ -39,7 +38,7 @@ function mylang(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'tolang',
-  execute: mylang,
+  execute: toLang,
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',
 });

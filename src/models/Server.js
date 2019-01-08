@@ -6,6 +6,9 @@ var Lang = require("lang.js"),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
+  // MESSAGE_AVERAGE_TIMEFRAME_MS = 60000,
+  // MESSAGE_TIMEFRAME_RETENTION_MS = MESSAGE_AVERAGE_TIMEFRAME_MS * 5,
+  // MESSAGE_AVERAGE_THRESHOLD = 60;
 
 
 class Server {
@@ -32,6 +35,7 @@ class Server {
     this.neglect_neglect = null;
     this.language = server_data.language || 'en-AU';
     this.fallbackLang = 'en';
+    // this.messagesPerMinute = [];
     this.created = new Date();
     if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
     if (server_data.created) this.created = server_data.created;
@@ -44,6 +48,40 @@ class Server {
 
     this.messages = {};
   }
+
+  // setMessagesPerMinute () {
+  //   var msgTime = new Date().getTime(),
+  //     thresholdTime = msgTime - MESSAGE_TIMEFRAME_RETENTION_MS;
+  //   this.messagesPerMinute.unshift(msgTime);
+
+  //   let i = this.messagesPerMinute.length;
+  //   while(i--){
+  //     var time = array[i];
+  //     if(time <= thresholdTime) {
+  //       this.messagesPerMinute.splice(-1,1);
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // getMessageAverage() {
+  //   var totals = [],
+  //   msgTime = new Date().getTime(),
+  //   thresholdTime = msgTime - MESSAGE_AVERAGE_TIMEFRAME_MS;
+  //   var total = 0;
+  //   for (let msgTime of this.messagesPerMinute) {
+  //     if(msgTime > thresholdTime){
+  //       total++;
+  //     } else {
+  //       thresholdTime -= MESSAGE_AVERAGE_TIMEFRAME_MS;
+  //       totals.push(total);
+  //       total = 0;
+  //     }
+  //   }
+  // }
+
+
 
   setMaster(user_id, username) {
     this.bound_to = user_id;
