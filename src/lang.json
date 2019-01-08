@@ -75,11 +75,12 @@
     "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0"
   },
   "en.sfx": {
-    "nope": "Sorry, only my master can set emojis",
+    "nope": "Sorry, only a server admin can set emojis",
     "okay": "Added sound effect for `:emoji`",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
-    "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]"
+    "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]",
+    "nodelete": "You need to specify an action to perform such as set or del"
   },
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work",

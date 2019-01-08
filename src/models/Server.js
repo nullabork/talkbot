@@ -23,7 +23,7 @@ class Server {
     this.users = bot.users[this.server_owner_user_id];
     this.server_owner_username = this.users[this.server_owner_user_id];
 
-    this.audioEmojis = [];
+    this.audioEmojis = {};
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;

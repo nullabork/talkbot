@@ -159,6 +159,11 @@ class Common {
     return message;
   }
 
+  static replaceSheepEmojiWithWhateverAarySaid(message) {
+    message = message.replace(/🐑/gi, "sheep bar ram ewe");
+    return message;
+  }
+  
   //cleant a message ready for speaking
   static cleanMessage(message) {
     message = message.trim();
@@ -167,6 +172,7 @@ class Common {
     message = Common.removeNullsChars(message);
     message = Common.replaceWavyMen(message);
     message = Common.replaceYesNo(message);
+    message = Common.replaceSheepEmojiWithWhateverAarySaid(message);
     message = Common.truncateMessage(message);
     return message;
   }
