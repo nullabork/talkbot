@@ -1,5 +1,5 @@
 # talkbot
-Discord bot for text-to-speech
+Discord bot for text-to-speech and language translation
 
 # quick start
 
