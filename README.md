@@ -1,5 +1,5 @@
 # talkbot
-Discord bot for text-to-speech
+Discord bot for text-to-speech and language translation
 
 # quick start
 
@@ -10,7 +10,7 @@ Discord bot for text-to-speech
 5. Type some text to hear it read out to you
 
 # commands in discord
-The bot requires a master to control it. Once you're its master it'll convert your non-command text into voice in the current channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
+The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
 
 * !follow - bind the bot to you so only you can control it
 * !unfollow - release the bot so someone else can use it
@@ -19,7 +19,8 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !unpermit [username] - disallow another user
 * !who - find out who is the bot's current master
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
-* !mylang [lang] - set your personal language for the bot
+* !mylang [lang] - set your personal language accent for the bot
+* !tolang [lang] - translate to this language
 * !sfx [sound_url] - play a sound in channel (this command has lots of other cool stuff as well!)
 * !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
 * !help [longer help] - writes out the help for all commands
