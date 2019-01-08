@@ -103,7 +103,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   var server = world.getServerFromChannel(channel_id);
 
   if (server == null) {
-    console.error("Can't find server for " + channel_id);
+    Common.error("Can't find server for " + channel_id);
     return null;
   }
 
@@ -148,25 +148,56 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     if (message == null) return;
 
     // tts bit
-    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
-    if (!server.permitted[user_id] || !server.permitted[user_id].use_ssml) {
-      message = Common.cleanMessage(message);
-    }
+
+
+    // if (!) {
+    //   botStuff.translate_client
+    //     .translate(text, target)
+    //     .then( results => {
+    //       var translation = results[0];
+    //     })
+    //     .catch(err => {
+    //       console.error('ERROR:', err);
+    //     });
+
+    // }
     // message = ssml.build(message);
 
     if (message.length < 1) return;
     commands.notify('message', [message, user_id, server, world]);
 
-    if (server.inChannel()) {
-      if (server.isPermitted(user_id)) {
-        var parser = new MessageSSML(message, {
-          server: server
-        });
-        message = parser.build();
+    if (!server.inChannel()) return;
+    if (!server.isPermitted(user_id)) return;
 
-        server.talk(message, server.permitted[user_id]);
-      }
+
+
+    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
+    message = Common.cleanMessage(message);
+
+
+    function speak(msg) {
+      var message = new MessageSSML(msg, { server: server }).build();
+      server.talk(msg, server.permitted[user_id]);
     }
+
+
+    if (server.permitted[user_id].toLanguage) {
+
+      botStuff.translate_client
+        .translate(message, server.permitted[user_id].toLanguage)
+        .then( results => {
+          speak(results[0]);
+        })
+        .catch(err => {
+          Common.error( err );
+        });
+    } else {
+      speak(message);
+    }
+
+
+
+
   }
 });
 

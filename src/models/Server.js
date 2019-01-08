@@ -199,7 +199,7 @@ class Server {
     if (!callback) callback = function () { };
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
-        console.error(error);
+        Common.error(error);
       }
       else {
         server.current_voice_channel_id = channel_id;
@@ -288,19 +288,19 @@ class Server {
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        console.error('ERROR:', err);
+        Common.error('ERROR:', err);
         callback();
         return;
       }
       bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
         if (error) {
           callback();
-          return console.error(error);
+          return Common.error(error);
         } try {
           stream.write(response.audioContent);
           callback();
         } catch (ex) {
-          console.error(ex);
+          Common.error(ex);
         }
       });
     });
@@ -353,18 +353,18 @@ class Server {
   playAudioFile(filename, callback) {
     if (!callback) callback = function () { };
     bot.getAudioContext(this.current_voice_channel_id, function (error, stream) {
-      if (error) return console.error(error);
+      if (error) return Common.error(error);
 
       try {
         fs.createReadStream(filename)
           .on('end', callback)
           .pipe(stream, { end: false })
           .on('error', function (err) {
-            console.error('Error writing to discord voice stream. ' + err);
+            Common.error('Error writing to discord voice stream. ' + err);
           });
       }
       catch (ex) {
-        console.error(ex);
+        Common.error(ex);
       }
     });
   };

@@ -160,7 +160,7 @@ class World {
       }
       this.setPresence();
     } catch (ex) {
-      console.error(ex);
+      Common.error(ex);
       this.save();
     }
   }
