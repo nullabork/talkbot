@@ -177,7 +177,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
     function speak(msg) {
       var message = new MessageSSML(msg, { server: server }).build();
-      server.talk(msg, server.permitted[user_id]);
+      server.talk(message, server.permitted[user_id]);
     }
 
 
@@ -194,10 +194,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     } else {
       speak(message);
     }
-
-
-
-
   }
 });
 

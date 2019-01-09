@@ -74,8 +74,8 @@ class MessageSSML extends MessageParser {
   }
 
   messageBuffer() {
-    if (this.text.length < 20) {
-      return '<break time="4000ms"/>';
+    if (this.text.replace(/[^a-z0-9 ]*/ig, "").length < 30) {
+      return '<break time="1000ms"/>';
     }
     return '';
   }

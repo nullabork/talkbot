@@ -25,7 +25,7 @@ var Common = require('@helpers/Common');
     this.config = {
       //default : opts
       minLength: 20,
-      minLengthBuff: '3000ms',
+      minLengthBuff: '15000ms',
       tags: []
     }
 
@@ -98,6 +98,7 @@ var Common = require('@helpers/Common');
 
       message = this.addBuffer(message);
       message = '<speak>' + message + '</speak>';
+      console.log(message);
       return message;
     }
   }

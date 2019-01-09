@@ -87,9 +87,7 @@ function sidle(msg, server, world) {
   var voiceChan = msg.getOwnersVoiceChannel();
   if (voiceChan) {
     server.joinVoiceChannel(voiceChan);
-    msg.response(server.lang('sidle.okay', {
-      name : server.getBoundToNick()
-    }));
+    msg.response(server.lang('sidle.okay'));
   } else {
     msg.response(server.lang('sidle.broken'));
   }
@@ -136,7 +134,9 @@ function transfer(msg, server, world) {
   var voiceChan = server.getOwnersVoiceChannel(user_id);
   if (voiceChan) {
     server.joinVoiceChannel(voiceChan);
-    msg.response(server.lang('transfer.okay'));
+    msg.response(server.lang('transfer.okay', {
+      name : server.getBoundToNick()
+    }));
   } else {
     msg.response(server.lang('transfer.broken'));
   }
