@@ -7,7 +7,7 @@ var path = require('path'),
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff');
-  Common = require('@helpers/Common'),
+  Common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
 //models

@@ -1,4 +1,4 @@
-var Common = require('@helpers/Common');
+var Common = require('@helpers/common');
 
 function LangMap(config) {
   //this.codeMap = {};

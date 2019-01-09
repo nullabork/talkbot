@@ -1,6 +1,6 @@
 var Discord = require('discord.io'),
   auth = require("@auth"),
-  Common = require("@helpers/Common"),
+  Common = require("@helpers/common"),
   tl8 = require('@google-cloud/translate'),
   textToSpeech = require('@google-cloud/text-to-speech');
 

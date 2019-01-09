@@ -1,5 +1,5 @@
 var botStuff = require("@helpers/bot-stuff"),
-  Common = require("@helpers/Common"),
+  Common = require("@helpers/common"),
   auth = require("@auth");
 
 class MessageDetails {

@@ -1,6 +1,6 @@
 var MessageParser = require('@models/MessageParser'),
   ssmlConfig = require('@helpers/ssml-dictionary'),
-  Common = require('@helpers/Common');
+  Common = require('@helpers/common');
 
 class MessageSSML extends MessageParser {
   constructor(text, opts) {

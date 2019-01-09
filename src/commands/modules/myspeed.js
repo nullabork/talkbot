@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 
-var Common = require("@helpers/Common");
+var Common = require("@helpers/common");
 
 function speed(msg, server, world) {
   var args = msg.message.split(/ +/);

@@ -1,7 +1,7 @@
 
 var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
-  Common = require('@helpers/Common'),
+  Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   bot = botStuff.bot;
 
