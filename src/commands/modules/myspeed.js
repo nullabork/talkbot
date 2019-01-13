@@ -21,6 +21,7 @@ function speed(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'myspeed',
+  command_arg: 's',
   execute: speed,
   short_help: 'myspeed.shorthelp',
   long_help: 'myspeed.longhelp',

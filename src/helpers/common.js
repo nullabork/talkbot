@@ -38,13 +38,13 @@ class Common {
   }
 
   //console.log() if its turned on
-  static out (message) {
+  static out(message) {
 
-    if(typeof message == 'object' && message.stack) {
+    if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
 
-    if(config.logging && config.logging.out) {
+    if (config.logging && config.logging.out) {
       console.log(
         "\n" +
         new Date() + "\n" +
@@ -54,13 +54,13 @@ class Common {
   }
 
   //Common.error() is its turned out
-  static error (message) {
+  static error(message) {
 
-    if(typeof message == 'object' && message.stack) {
+    if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
 
-    if(config.logging && config.logging.err) {
+    if (config.logging && config.logging.err) {
       console.error(
         "\n" +
         new Date() + "\n" +
@@ -98,6 +98,75 @@ class Common {
       return fn(entity_id);
     });
   };
+
+
+  //const element = string[char];
+  //   if(element != "-"){
+  //     continue;
+  //   }
+
+  //   var index = 0;
+  //   var p = Common.peek(string, char, function(v, c, i){
+  //     if(c == " " || c == "-") {
+  //       return false;
+  //     }
+
+  //     if(/[a-z]/i.test(c)) {
+  //       return true;
+  //     }
+  //   });
+
+  //   if(p){
+
+  //   }
+
+
+  // }
+
+  static arg() {
+    return {
+      name: '',
+      value: ''
+    }
+  };
+
+  static parseArguments(string) {
+    var args = [
+
+    ];
+
+    var command = Common.arg();
+
+    for (let i = 0; i < string.length; i++) {
+      var e = string[i],
+        peek = i == string.length - 1 ? null : string[i + 1];
+
+      if (e == '-' && command.name) {
+        args.push(command);
+        command = Common.arg();
+      }
+
+      if (/[ =]/i.test(e) && peek == '-') {
+        args.push(command);
+        command = Common.arg();
+      } else if (e == '-' && /[a-z]/i.test(peek)) {
+        command.name = peek;
+        ++i;
+      } else if (/[a-z]/i.test(e) && command.name && !command.value) {
+        command.name += e;
+      } else if ((/[ =]/i.test(e) && command.name && !command.value)) {
+        command.value += peek;
+        ++i;
+      } else if (command.name) {
+        command.value += e;
+      }
+    }
+
+    args.push(command);
+    //command = Common.arg();
+
+    return args;
+  }
 
   //remove urls with notheing
   //used for cleaning
@@ -164,7 +233,7 @@ class Common {
     message = message.replace(/🐑/gi, "sheep bar ram ewe");
     return message;
   }
-  
+
   //cleant a message ready for speaking
   static cleanMessage(message) {
     message = message.trim();

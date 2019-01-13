@@ -12,12 +12,14 @@
     "ffmpeg": "0.0.4",
     "google-tts-api": "0.0.3",
     "lang.js": "^1.1.13",
+    "minimist": "^1.2.0",
     "module-alias": "^2.1.0",
     "recursive-readdir": "^2.2.2",
     "request": "^2.88.0",
     "winston": "^2.4.4"
   },
   "devDependencies": {
+    "nodemon": "^1.18.9",
     "sprintf-js": "^1.1.1"
   },
   "_moduleAliases": {

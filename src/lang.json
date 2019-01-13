@@ -13,6 +13,7 @@
     "shorthelp": "test the bot is up"
   },
   "en.follow": {
+    "join": "You need to join a channel before I can follow you!",
     "okay": "Yes, master!",
     "huh": "Yes, master?",
     "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",

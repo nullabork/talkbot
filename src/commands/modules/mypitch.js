@@ -34,6 +34,7 @@ function mypitch(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'mypitch',
+  command_arg: 'p',
   execute: mypitch,
   short_help: 'mypitch.shorthelp',
   long_help: 'mypitch.longhelp',

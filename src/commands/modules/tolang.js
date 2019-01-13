@@ -38,6 +38,7 @@ function toLang(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'tolang',
+  command_arg: 't',
   execute: toLang,
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',

@@ -14,6 +14,7 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  * * */
 function follow(msg, server, world) {
+
   if (server.isBound()) {
     if (!server.isMaster(msg.user_id)) {
       msg.response(server.lang('follow.nope', { name: msg.boundNick() }));
@@ -21,14 +22,13 @@ function follow(msg, server, world) {
       msg.response(server.lang('follow.huh'));
     }
   } else {
-
-    server.setMaster(msg.user_id, msg.username);
     var voiceChan = msg.getOwnersVoiceChannel();
     if (voiceChan) {
+      server.setMaster(msg.user_id, msg.username);
       server.joinVoiceChannel(voiceChan);
       msg.response(server.lang('follow.okay'));
     } else {
-      msg.response(server.lang('follow.nope'));
+      msg.response(server.lang('follow.join'));
     }
   }
 

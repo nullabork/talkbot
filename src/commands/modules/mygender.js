@@ -19,12 +19,12 @@ function mygender(msg, server, world) {
   if (msg.args.length == 0) return;
 
   if (server.isPermitted(msg.user_id)) {
-    gender = msg.getMessage().trim();
+    var gender = msg.getMessage().trim();
     if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
       gender = "MALE";
     } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
       gender = "FEMALE";
-    } else if (!server.permitted[msg.user_id].gender) {
+    } else {
       gender = "FEMALE";
     }
 
@@ -38,11 +38,11 @@ function mygender(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'mygender',
+  command_arg: 'g',
   execute: mygender,
   short_help: 'mygender.shorthelp',
   long_help: 'mygender.longhelp',
 });
-
 
 exports.register = function (commands) {
   commands.add(command);

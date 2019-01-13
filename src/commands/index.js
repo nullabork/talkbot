@@ -15,10 +15,16 @@ function Commands() {
   this.command_char = auth.command_char || '!';
 
   this.add = function (command, force) {
-    key = command.command_name.toLowerCase();
+    var key = command.command_name.toLowerCase();
+
 
     if (!this.commands[key] || force) {
       this.commands[key] = command;
+
+      if (command.command_arg) {
+        var arg = command.command_arg.toLowerCase();
+        this.commands[arg] = command;
+      }
 
       if (command.listeners) {
         for (var type in command.listeners) {
@@ -48,8 +54,16 @@ function Commands() {
 
   this.remove = function (command) {
     key = command.command_name.toLowerCase();
-    var command = this.commands[key]
+    //var command = this.commands[key]
     delete this.commands[key];
+
+
+    if (command.command_arg) {
+      arg = command.command_arg.toLowerCase();
+      delete this.commands[arg];
+    }
+
+
     // for (var listener in command.listeners)
     //   delete this.listeners[listener];
   }

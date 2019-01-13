@@ -47,6 +47,7 @@ function mylang(msg, server, world) {
 
 var command = new BotCommand({
   command_name: 'mylang',
+  command_arg: 'l',
   execute: mylang,
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',
