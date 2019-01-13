@@ -131,6 +131,8 @@ class Common {
   };
 
   static parseArguments(string) {
+    string = string.replace(/\W+/g, ' ');
+
     var args = [
 
     ];
