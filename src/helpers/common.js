@@ -132,11 +132,7 @@ class Common {
 
   static parseArguments(string) {
     string = string.replace(/\W+/g, ' ');
-
-    var args = [
-
-    ];
-
+    var args = [ ];
     var command = Common.arg();
 
     for (let i = 0; i < string.length; i++) {
