@@ -21,10 +21,10 @@ function Commands() {
     if (!this.commands[key] || force) {
       this.commands[key] = command;
 
-      if (command.command_arg) {
-        var arg = command.command_arg.toLowerCase();
-        this.commands[arg] = command;
-      }
+      //if (command.command_arg) {
+      //  var arg = command.command_arg.toLowerCase();
+      //  this.commands[arg] = command;
+      //}
 
       if (command.listeners) {
         for (var type in command.listeners) {

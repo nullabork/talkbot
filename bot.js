@@ -60,10 +60,11 @@ bot.on('disconnect', function (evt) {
 bot.on('any', function (evt) {
 
   if (evt.t == 'GUILD_CREATE') {
+    var server_id = evt.d.id;
 
     // when added to a server do this - need to wait a bit for the library to init
     var add_server = function () {
-      world.addServer(bot.servers[evt.d.id]);
+      world.addServer(new Server(bot.servers[server_id], server_id));
     };
 
     setTimeout(add_server, 10000);

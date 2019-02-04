@@ -65,9 +65,9 @@ var command = new BotCommand({
 });
 
 exports.register = function (commands) {
-  commands.add(command);
+  //commands.add(command);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove(command);
+  //commands.remove(command);
 };
