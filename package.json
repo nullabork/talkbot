@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.9",
-    "sprintf-js": "^1.1.1"
+    "sprintf-js": "^1.1.2"
   },
   "_moduleAliases": {
     "@config": "config",
