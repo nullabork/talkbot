@@ -18,7 +18,6 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function toLang(msg, server, world) {
-  var doc = langMap.get(msg.getMessage());
 
   if(!msg.args || !msg.args.length){
     msg.response(server.lang('mylang.more'));
@@ -37,7 +36,7 @@ function toLang(msg, server, world) {
 
   server.addUserSetting(msg.user_id,'toLanguage', doc.translate);
   server.addUserSetting(msg.user_id,'language', doc.code);
-  msg.response(server.lang('tolang.okay', { lang: doc.name }));
+  var response = server.lang('tolang.okay', { lang: doc.language });
 
 
   var voiceName = server.getUserSetting(msg.user_id,'name');
