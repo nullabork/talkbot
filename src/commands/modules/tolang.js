@@ -1,5 +1,5 @@
 
-var langMap = require("@helpers/langmap");
+var langMap = require("@helpers/voiceMap");
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -18,22 +18,39 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function toLang(msg, server, world) {
-  if (server.isPermitted(msg.user_id)) {
-    var doc = langMap.get(msg.getMessage());
+  var doc = langMap.get(msg.getMessage());
 
-    if (doc && doc.code && doc.translate) {
-      server.permitted[msg.user_id].toLanguage = doc.translate;
-      server.permitted[msg.user_id].language = doc.code;
-
-      msg.response(server.lang('tolang.okay', { lang: doc.name }));
-    } else {
-      msg.response(server.lang('tolang.nope', { lang: msg.getMessage() }));
-    }
-
-
-  } else {
-    msg.response(server.lang('tolang.deny'));
+  if(!msg.args || !msg.args.length){
+    msg.response(server.lang('mylang.more'));
+    return;
   }
+
+  var docs = langMap.getLang(msg.args[0]);
+
+  if(!docs || !docs.length) {
+    //what dont know???? why? you should by now...
+    msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
+    return;
+  }
+
+  var doc = docs[0];
+
+  server.addUserSetting(msg.user_id,'toLanguage', doc.translate);
+  server.addUserSetting(msg.user_id,'language', doc.code);
+  msg.response(server.lang('tolang.okay', { lang: doc.name }));
+
+
+  var voiceName = server.getUserSetting(msg.user_id,'name');
+  if( voiceName && voiceName != "auto" ) {
+    response += "\n" + server.lang('myvoice.noped');
+  }
+
+  server.addUserSetting(msg.user_id,'name', 'auto');
+  msg.response(response);
+
+
+
+
 };
 
 var command = new BotCommand({

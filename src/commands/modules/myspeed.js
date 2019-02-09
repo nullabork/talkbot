@@ -8,15 +8,14 @@ function speed(msg, server, world) {
   var args = msg.message.split(/ +/);
   if (args.length == 0) return;
 
-  if (server.isPermitted(msg.user_id)) {
-    var speed = parseFloat(msg.args[0]);
-    speed = Common.numberClamp(speed, 0.25, 4.0);
-    server.permitted[msg.user_id].speed = speed;
+  //if (server.isPermitted(msg.user_id)) {
+  var speed = parseFloat(msg.args[0]);
+  speed = Common.numberClamp(speed, 0.25, 4.0);
+  //server.permitted[msg.user_id].speed = speed;
+  server.addUserSetting(msg.user_id,'speed',speed);
 
-    msg.response(server.lang('myspeed.okay', { speed: speed }));
-  } else {
-    msg.response(server.lang('myspeed.deny'));
-  }
+  msg.response(server.lang('myspeed.okay', { speed: speed }));
+
 };
 
 var command = new BotCommand({

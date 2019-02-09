@@ -7,6 +7,7 @@
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.3.0",
     "@google-cloud/translate": "^2.1.2",
+    "array-query": "^0.1.2",
     "child_process": "^1.0.2",
     "discord.io": "github:wootosmash/discord.io#master",
     "ffmpeg": "0.0.4",
@@ -14,8 +15,10 @@
     "lang.js": "^1.1.13",
     "minimist": "^1.2.0",
     "module-alias": "^2.1.0",
+    "query-objects": "0.0.6",
     "recursive-readdir": "^2.2.2",
     "request": "^2.88.0",
+    "tablr": "^1.0.2",
     "winston": "^2.4.4"
   },
   "devDependencies": {

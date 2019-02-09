@@ -1,0 +1,103 @@
+
+var langMap = require("@helpers/langmap");
+var Common = require('@helpers/common');
+
+// models
+var BotCommand = require('@models/BotCommand');
+
+/**
+ * Command: mylang
+ * sets language user config
+ *
+ * usage !mylang au
+ *
+ * US
+ * NL
+ * AU
+ * GB
+ * FR
+ * CA
+ * DE
+ * IT
+ * JP
+ * KR
+ * BR
+ * ES
+ * SE
+ * TR
+ *
+ * @param   {[MessageDetails]}  msg     [message releated helper functions]
+ * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
+ * @param   {[World]}  world   [Object related to the realm and general bot stuff]
+ *
+ * @return  {[undefined]}
+ */
+function myVoice(msg, server, world) {
+  if (server.isPermitted(msg.user_id)) {
+
+    if(!msg.args || !msg.args.length){
+      return;
+    }
+
+    if(msg.args[0] == 'auto'){
+      server.addUserSetting(msg.user_id,'name', 'auto');
+      msg.response( server.lang('myvoice.delete') );
+      return;
+    }
+
+    //get known language
+    var lang = server.getUserSetting(msg.user_id, 'language');
+    //dont know it ... quit;
+    if(!lang){
+      return;
+    }
+
+    //lookup lang object by ref.
+    var doc = langMap.getbyFullCode(lang);
+
+    if(!doc) {
+      //what dont know???? why? you should by now...
+      msg.response(server.lang('myvoice.nope', { lang: msg.args[0]}));
+      return;
+    }
+
+    //buildRegex for lookup voice
+    var find = Common.escapeRegExp(msg.args[0]);
+
+    var found = null;
+    for (var voice of doc.voices) {
+        if (new RegExp(find, 'ig').test(voice)) {
+          found = voice;
+          break;
+        }
+    }
+
+    if(!found) {
+      msg.response(server.lang('myvoice.nope', { lang: msg.args[0]}));
+      return;
+    } else {
+      server.addUserSetting(msg.user_id,'name', doc.code + '-' + found);
+    }
+
+    msg.response(server.lang('myvoice.okay', { lang: doc.code }));
+  } else {
+    msg.response(server.lang('myvoice.deny'));
+  }
+};
+
+var command = new BotCommand({
+  command_name: 'myvoice',
+  command_arg: 'l',
+  execute: myVoice,
+  short_help: 'mylang.shorthelp',
+  long_help: 'mylang.longhelp',
+});
+
+
+exports.register = function (commands) {
+  commands.add(command);
+};
+
+exports.unRegister = function (commands) {
+  commands.remove(command);
+};

@@ -62,9 +62,11 @@ bot.on('any', function (evt) {
   if (evt.t == 'GUILD_CREATE') {
     var server_id = evt.d.id;
 
+
+
     // when added to a server do this - need to wait a bit for the library to init
     var add_server = function () {
-      world.addServer(new Server(bot.servers[server_id], server_id));
+      world.addServer(new Server(bot.servers[server_id], server_id,  world.servers[server_id]));
     };
 
     setTimeout(add_server, 10000);
@@ -178,14 +180,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
     function speak(msg) {
       var message = new MessageSSML(msg, { server: server }).build();
-      server.talk(message, server.permitted[user_id]);
+      var settings = server.getUserSettings(user_id);
+      server.talk(message, settings);
     }
 
-
-    if (server.permitted[user_id].toLanguage) {
+    var tolang = server.getUserSetting(user_id, 'toLanguage');
+    if (tolang) {
 
       botStuff.translate_client
-        .translate(message, server.permitted[user_id].toLanguage)
+        .translate(message, tolang)
         .then( results => {
           speak(results[0]);
         })

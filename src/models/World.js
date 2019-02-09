@@ -140,14 +140,17 @@ class World {
   }
 
   save(_filename) {
-    function replacer(key, value) {
-      if (key == "neglect_timeout") return undefined; // this key is an internal that we dont want to save
-      if (key == "commandResponses") return undefined;
-      else return value;
-    };
+    var self  = this;
+    setTimeout(function(){
+      function replacer(key, value) {
+        if (key == "neglect_timeout") return undefined; // this key is an internal that we dont want to save
+        if (key == "commandResponses") return undefined;
+        else return value;
+      };
 
-    if (!_filename) _filename = paths.state;
-    fs.writeFileSync(_filename, JSON.stringify(this.servers, replacer), 'utf-8');
+      if (!_filename) _filename = paths.state;
+      fs.writeFileSync(_filename, JSON.stringify(self.servers, replacer), 'utf-8');
+    },10);
   }
 
   load() {

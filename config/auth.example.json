@@ -2,7 +2,7 @@
    "token": "yourdiscord.tokenhere",
    "command_char" : "!",
    "logging" : {
-     "err" : false,
-     "out" : false
+     "err" : true,
+     "out" : true
    }
 }

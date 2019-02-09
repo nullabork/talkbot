@@ -29,8 +29,19 @@ function mygender(msg, server, world) {
     }
 
     server.permitted[msg.user_id].gender = gender;
+    server.addUserSetting(msg.user_id,'gender',gender);
 
-    msg.response(server.lang('mygender.okay', { gender: gender }));
+
+    var response = server.lang('mygender.okay', { gender: gender });
+
+    var voiceName = server.getUserSetting(msg.user_id,'name');
+    if( voiceName && voiceName != "auto" ) {
+      response += "\n" + server.lang('myvoice.noped');
+    }
+
+    server.addUserSetting(msg.user_id, 'name', 'auto');
+    msg.response(response);
+
   } else {
     msg.response(server.lang('mygender.deny'));
   }

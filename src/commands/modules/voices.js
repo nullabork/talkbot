@@ -1,5 +1,8 @@
 
+var tablr = require("tablr");
 var langMap = require("@helpers/voiceMap");
+var Common = require('@helpers/common');
+var auth = require("@auth");
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -31,10 +34,11 @@ var BotCommand = require('@models/BotCommand');
  *
  * @return  {[undefined]}
  */
-function mylang(msg, server, world) {
+function listVoices(msg, server, world) {
+  // if (server.isPermitted(msg.user_id)) {
 
     if(!msg.args || !msg.args.length){
-      msg.response(server.lang('mylang.more'));
+      msg.response(server.lang('voices.more'));
       return;
     }
 
@@ -46,29 +50,31 @@ function mylang(msg, server, world) {
       return;
     }
 
-    var doc = docs[0];
+    var data = docs.map(function(lang){
+      return [
+        lang.voice,
+        lang.voice_alias,
+        lang.gender,
+        lang.type == "WaveNet"? "😎" : "🤢"
+      ]
+    });
 
-    //server.[msg.user_id].language = doc.code;
-    server.addUserSetting(msg.user_id,'language', doc.code);
+    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', "???"]);
+    table = table.replace(/--/g, '━━');
 
-
-    var response = server.lang('mylang.okay', { lang: doc.language });
-
-    var voiceName = server.getUserSetting(msg.user_id,'name');
-    if( voiceName && voiceName != "auto" ) {
-      response += "\n" + server.lang('myvoice.noped');
-    }
-    server.addUserSetting(msg.user_id,'name', 'auto');
-    msg.response(response);
+    msg.response(server.lang('voices.okay', {
+      table : table,
+      example : auth.command_arg + 'myvoice au'
+    }));
 
 };
 
 var command = new BotCommand({
-  command_name: 'mylang',
+  command_name: 'voices',
   command_arg: 'l',
-  execute: mylang,
-  short_help: 'mylang.shorthelp',
-  long_help: 'mylang.longhelp',
+  execute: listVoices,
+  short_help: 'voices.shorthelp',
+  long_help: 'voices.longhelp',
 });
 
 

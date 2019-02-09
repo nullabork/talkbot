@@ -13,7 +13,8 @@ var ADMIN_PERMISSION_FLAG = 8;
 
 class Server {
 
-  constructor(server_data, server_id) {
+  constructor(server_data, server_id, state_data) {
+    state_data = state_data || {};
     this.server_id = server_id;
     if (!this.server_id && server_data.id) {
       this.server_id = server_data.id;
@@ -26,19 +27,18 @@ class Server {
     this.users = bot.users[this.server_owner_user_id];
     this.server_owner_username = this.users[this.server_owner_user_id];
 
-    this.audioEmojis = {};
+    this.audioEmojis = state_data.audioEmojis || server_data.audioEmojis || {};
+    this.userSettings = state_data.userSettings || server_data.userSettings || {};
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
-    this.language = server_data.language || 'en-AU';
+    this.language = state_data.language || server_data.language || 'en-AU';
     this.fallbackLang = 'en';
     // this.messagesPerMinute = [];
-    this.created = new Date();
-    if (server_data.audioEmojis) this.audioEmojis = server_data.audioEmojis;
-    if (server_data.created) this.created = server_data.created;
+    this.created = state_data.created || server_data.created || new Date();
 
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
@@ -89,6 +89,32 @@ class Server {
     this.permit(user_id);
     this.resetNeglectTimeout();
   };
+
+  addUserSetting(user_id, name, value) {
+    if(!this.userSettings) this.userSettings = {};
+    if(!this.userSettings[user_id]) {
+      this.userSettings[user_id] = {};
+    }
+
+    this.userSettings[user_id][name] = value;
+    require('./World').save();
+    return value;
+  }
+
+  getUserSetting(user_id, name) {
+    if(!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return null;
+    return this.userSettings[user_id][name];
+  }
+
+  deleteUserSetting(user_id, name) {
+    if(!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return;
+    delete this.userSettings[user_id][name];
+  }
+
+  getUserSettings(user_id) {
+    if(!this.userSettings || !this.userSettings[user_id]) return {};
+    return this.userSettings[user_id];
+  }
 
   sendMessageToOwner(message) {
     if (this.server_owner_user_id) {
@@ -300,9 +326,15 @@ class Server {
 
   talk(message, options, callback) {
     this.resetNeglectTimeout();
+    if(!options) options = {};
     var server = this;
     var play_padding = (message.length < 20);
     if (!callback) callback = function () { };
+
+    var voiceName = options.name;
+    if(voiceName == "auto"){
+      voiceName = null;
+    }
 
     var request = {
       input: { text: message },
@@ -310,7 +342,7 @@ class Server {
       voice: {
         languageCode: options.language || server.language,
         ssmlGender: options.gender || 'NEUTRAL',
-        name: options.voice_name || '',
+        name: voiceName || '',
       },
       // Select the type of audio encoding
       audioConfig: {

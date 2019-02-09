@@ -105,6 +105,17 @@ function LangMap(config) {
 
   ];
 
+  this.getbyFullCode = function (lang) {
+    for (var i = 0; i < this.voices.length; i++) {
+      var voice = this.voices[i];
+      if (voice.code == lang) {
+        return voice;
+      }
+    }
+
+    return null;
+  }
+
   this.get = function (key) {
 
     var lang = key.split(/\s+/);
@@ -124,6 +135,8 @@ function LangMap(config) {
 
     return self.defaultLang;
   }
+
+
 }
 
 module.exports = new LangMap();

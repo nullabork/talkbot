@@ -53,8 +53,18 @@
   },
   "en.mylang": {
     "okay": "OK, your personal language is now :lang.",
+    "no": "Sorry, I cant find the language :lang.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc."
+    "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc.",
+    "more" : "You must specify a language code. You can find codes with `!mylangs`"
+  },
+  "en.myvoice": {
+    "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
+    "no": "Sorry, I cant find the voice :voice.",
+    "shorthelp": "Set your voice the bot will speak with. eg. Mason, en━US━Standard━D, Ava, en-AU-Wavenet-A, etc.\n Use the command `!voices lang_code` to get a list of useable voices",
+    "auto" : "Now the bot will choose the best voice and use your lang and gnder settings.",
+    "more" : "You must specify a voice code. eg `!myvoice lily`",
+    "noped" : "Your !myvoice setting has been overriden and you must use the command again to enable."
   },
   "en.tolang": {
     "okay": "OK, now translating to :lang.",
@@ -66,10 +76,6 @@
     "okay": "OK, your personal gender is now :gender.",
     "deny": "Sorry, you're not permitted",
     "shorthelp": "Set the gender the bot will speak with"
-  },
-  "en.myvoice": {
-    "okay": "OK, your personal voice is now :voice.",
-    "deny": "Sorry, you're not permitted"
   },
   "en.mypitch": {
     "okay": "OK, your personal pitch is now :pitch.",
@@ -105,5 +111,16 @@
   },
   "en.help": {
     "shorthelp": "Show all the available commands. Get detailed help information using !help [command]"
+  },
+  "en.langs" : {
+    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n!mylang au",
+    "shorthelp" : "List of languages",
+    "longhelp" : "List of languages"
+  },
+  "en.voices" : {
+    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n!myvoice sally",
+    "shorthelp" : "List of voices, `!voices au`",
+    "longhelp" : "List of voices, `!voices au`",
+    "more" : "You must specify a language code. eg `!voices au`.\nYou can find language codes with !langs"
   }
 }

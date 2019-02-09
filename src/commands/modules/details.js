@@ -13,11 +13,9 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function details(msg, server, world) {
-  if (server.isPermitted(msg.user_id)) {
     msg.response(
-      JSON.stringify(server.permitted[msg.user_id], null, 4)
+      JSON.stringify(server.getUserSettings(msg.user_id), null, 4)
     );
-  }
 };
 
 var command = new BotCommand({
