@@ -1,5 +1,6 @@
 # talkbot
 Discord bot for text-to-speech and language translation
+https://discord.gg/NxrPp8g
 
 # quick start
 
@@ -17,10 +18,15 @@ The bot requires a master to control it. Once you're its master it'll convert yo
 * !sidle - take control of the bot from someone else
 * !permit [username] - allow another user to use TTS
 * !unpermit [username] - disallow another user
+* !langs - list available langs.
+* !voices [lang_code] -list voices for a language
+* !unpermit [username] - disallow another user
+* !unpermit [username] - disallow another user
 * !who - find out who is the bot's current master
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
 * !mylang [lang] - set your personal language accent for the bot
 * !tolang [lang] - translate to this language
+* !myvoice [voice, alias] change voice to a specific voices, language and gender.
 * !sfx [sound_url] - play a sound in channel (this command has lots of other cool stuff as well!)
 * !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
 * !help [longer help] - writes out the help for all commands
@@ -42,7 +48,7 @@ Use this to setup your own bot on your own server. Note you will require a googl
 ## to run
 node bot.js
 
-# Troubleshooting
+# Troubleshooting  https://discord.gg/NxrPp8g
 ## getting the right node version
 
 install nvm
