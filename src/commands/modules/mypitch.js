@@ -20,6 +20,12 @@ var Common = require("@helpers/common");
 function mypitch(msg, server, world) {
   if (!msg.args.length) return;
 
+  if(msg.args[0] == 'default'){
+    server.addUserSetting(msg.user_id, 'pitch', 'default');
+    msg.response( server.lang('general.auto', {key: "mypitch"}) );
+    return;
+  }
+
   var pitch = parseFloat(msg.getMessage()),
     pitch = Common.numberClamp(pitch, -20, 20);
 

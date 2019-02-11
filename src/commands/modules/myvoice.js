@@ -38,9 +38,9 @@ function myVoice(msg, server, world) {
       return;
     }
 
-    if(msg.args[0] == 'auto'){
-      server.addUserSetting(msg.user_id, 'name', 'auto');
-      msg.response( server.lang('myvoice.auto') );
+    if(msg.args[0] == 'default'){
+      server.addUserSetting(msg.user_id, 'name', 'default');
+      msg.response( server.lang('general.auto', {key: "myvoice"}) );
       return;
     }
 

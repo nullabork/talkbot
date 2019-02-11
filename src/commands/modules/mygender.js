@@ -18,6 +18,12 @@ var BotCommand = require('@models/BotCommand');
 function mygender(msg, server, world) {
   if (msg.args.length == 0) return;
 
+  if(msg.args[0] == 'default'){
+    server.addUserSetting(msg.user_id, 'gender', 'default');
+    msg.response( server.lang('general.auto', {key: "mygender"}) );
+    return;
+  }
+
   if (server.isPermitted(msg.user_id)) {
     var gender = msg.getMessage().trim();
     if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {

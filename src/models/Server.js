@@ -101,6 +101,14 @@ class Server {
     return value;
   }
 
+
+  clearUserSettings(user_id) {
+    if(!this.userSettings) this.userSettings = {};
+    this.userSettings[user_id] = {};
+    require('./World').save();
+  }
+
+
   getUserSetting(user_id, name) {
     if(!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return null;
     return this.userSettings[user_id][name];
@@ -325,32 +333,42 @@ class Server {
   };
 
   talk(message, options, callback) {
+
+    var settings = {
+      gender : options.gender == 'default' ? 'NEUTRAL' : options.gender,
+      language : options.language == 'default' ? 'en-AU' : options.language || server.language,
+    }
+
+    if(options.name != 'default') settings.name = options.name;
+    if(options.pitch != 'default') settings.pitch = options.pitch;
+    if(options.speed != 'default') settings.speed = options.speed;
+
+
+    //if(settings.language == 'default') delete settings['name'];
+
     this.resetNeglectTimeout();
     if(!options) options = {};
     var server = this;
     var play_padding = (message.length < 20);
     if (!callback) callback = function () { };
 
-    var voiceName = options.name;
-    if(voiceName == "auto"){
-      voiceName = null;
-    }
-
     var request = {
       input: { text: message },
       // Select the language and SSML Voice Gender (optional)
       voice: {
-        languageCode: options.language || server.language,
-        ssmlGender: options.gender || 'NEUTRAL',
-        name: voiceName || '',
+        languageCode: settings.language || '',
+        ssmlGender: settings.gender || 'NEUTRAL',
+        name: settings.name || ''
       },
       // Select the type of audio encoding
       audioConfig: {
         audioEncoding: 'MP3',
-        pitch: options.pitch || 0.0,
-        speakingRate: options.speed || 1.0,
+        pitch: settings.pitch || 0.0,
+        speakingRate: settings.speed || 1.0
       },
     };
+
+    //if(settings.name) delete request.voice['languageCode'];
 
     //if ( options.use_ssml )
     request.input = { text: null, ssml: message };

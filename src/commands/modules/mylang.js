@@ -38,6 +38,13 @@ function mylang(msg, server, world) {
       return;
     }
 
+    if(msg.args[0] == 'default'){
+      server.addUserSetting(msg.user_id, 'language', 'default');
+      server.addUserSetting(msg.user_id, 'name', 'default');
+      msg.response( server.lang('general.auto', {key: "mylang"}) );
+      return;
+    }
+
     var docs = langMap.getLang(msg.args[0]);
 
     if(!docs || !docs.length) {

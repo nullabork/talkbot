@@ -185,7 +185,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
 
     var tolang = server.getUserSetting(user_id, 'toLanguage');
-    if (tolang) {
+    if (tolang && !tolang == "default") {
 
       botStuff.translate_client
         .translate(message, tolang)

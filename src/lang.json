@@ -1,4 +1,7 @@
 {
+  "en.general" : {
+    "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key."
+  },
   "en.set": {
     "okay": "Set message for :lang",
     "none": "no"
@@ -18,6 +21,9 @@
     "huh": "Yes, master?",
     "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",
     "shorthelp": "Take control of the bot so it reads out what you type, It'll join you in your current voice channel."
+  },
+  "en.defaults": {
+    "okay": "Your voice settings have been reset :D"
   },
   "en.unfollow": {
     "okay": "Goodbye master",
