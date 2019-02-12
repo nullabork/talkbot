@@ -167,7 +167,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     // message = ssml.build(message);
 
     if (message.length < 1) return;
-    commands.notify('message', [message, user_id, server, world]);
+    var ret = commands.notify('message', [message, user_id, server, world]);
+    if (ret) message = ret;
 
     if (!server.inChannel()) return;
     if (!server.isPermitted(user_id)) return;

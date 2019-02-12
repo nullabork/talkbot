@@ -3,10 +3,12 @@ var BotCommand = require('@models/BotCommand');
 
 
 /**
- * Command: mygender
- * sets your gender user config
+ * Command: textrule
+ * Adds regular expressions to replace text in messages with other text
  *
- * usage !mygender male
+ * usage !textrule add search text -> replace text
+ *       !textrule del search text 
+ *       !textrule list 
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
@@ -22,8 +24,8 @@ function textrule(msg, server, world) {
     return;
   }
   
-  var key = '';
-  var repl = '';
+  var key = null;
+  var repl = null;
  
   if (msg.args[0] == 'add' ) {
     var nextindex = -1;
@@ -39,21 +41,40 @@ function textrule(msg, server, world) {
     
     for ( var i=nextindex+1; i < msg.args.length; i++) repl += ' ' + msg.args[i];
     
-    server.addTextRule(key, repl);
-    msg.response(server.lang('textrule.addokay', {rule: key}));
+    if ( !key || !repl )
+      msg.response(server.lang('textrule.usage'));
+    else {
+      server.addTextRule(key, repl);
+      msg.response(server.lang('textrule.addokay', {rule: key}));
+    }
   }
-  else if ( msg[0] == 'del' ) {
+  else if ( msg.args[0] == 'del' ) {
     for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
-    server.removeTextRule(key);
-    msg.response(server.lang('textrule.delokay', {rule: key}));
+    if ( !key ) 
+      msg.response(server.lang('textrule.usage'));
+    else {
+      server.removeTextRule(key);
+      msg.response(server.lang('textrule.delokay', {rule: key}));
+    }
+  }
+  else if ( msg.args[0] == 'list') {
+    if ( server.textrules.length == 0 ) 
+      msg.response(server.lang('textrule.norules'));
+    else {
+      var r = '```';
+      for ( var textrule in server.textrules )
+        r = r + textrule + ' -> ' + server.textrules[textrule] + '\n';
+      r += '```';
+      msg.response(r);
+    }
   }
   else {
     msg.response(server.lang('textrule.usage'));
   }
 };
 
+// hook to do the search and replace
 function msgParser(message, user_id, server, world) {
-  console.log(message);
   for ( var textrule in server.textrules )
   {
     var re = new RegExp(textrule, 'gi');
@@ -65,11 +86,10 @@ function msgParser(message, user_id, server, world) {
 var command = new BotCommand({
   command_name: 'textrule',
   execute: textrule,
-  hidden: true,
+  hidden: true, // hidden while in testing
   short_help: 'textrule.shorthelp',
   long_help: 'textrule.longhelp',
   listeners: {
-    // 'sfx.msg.args': sfxPlaySoundListener
     message: msgParser
   },
   

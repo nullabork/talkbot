@@ -335,9 +335,18 @@ class Server {
 
   talk(message, options, callback) {
 
+    var server = this;
+    if(!options) options = {};
+
+    for (var key in options) {
+      if(options.hasOwnProperty(key) && options[key] == 'auto'){
+        options[key] = 'default';
+      }
+    }
+
     var settings = {
       gender : options.gender == 'default' ? 'NEUTRAL' : options.gender,
-      language : options.language == 'default' ? 'en-AU' : options.language || server.language,
+      language : options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
     if(options.name != 'default') settings.name = options.name;
@@ -348,8 +357,7 @@ class Server {
     //if(settings.language == 'default') delete settings['name'];
 
     this.resetNeglectTimeout();
-    if(!options) options = {};
-    var server = this;
+
     var play_padding = (message.length < 20);
     if (!callback) callback = function () { };
 
@@ -462,7 +470,7 @@ class Server {
   addTextRule(search_text, replace_text) {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
-    this.textrules[search_text] = replace_text;
+    this.textrules[search_text.trim()] = replace_text.trim();
   };
   
   removeTextRule(search_text) {

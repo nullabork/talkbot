@@ -33,40 +33,40 @@ var BotCommand = require('@models/BotCommand');
  */
 function mylang(msg, server, world) {
 
-    if(!msg.args || !msg.args.length){
-      msg.response(server.lang('mylang.more'));
-      return;
-    }
+  if(!msg.args || !msg.args.length){
+    msg.response(server.lang('mylang.more'));
+    return;
+  }
 
-    if(msg.args[0] == 'default'){
-      server.addUserSetting(msg.user_id, 'language', 'default');
-      server.addUserSetting(msg.user_id, 'name', 'default');
-      msg.response( server.lang('general.auto', {key: "mylang"}) );
-      return;
-    }
+  if(msg.args[0] == 'default'){
+    server.addUserSetting(msg.user_id, 'language', 'default');
+    server.addUserSetting(msg.user_id, 'name', 'default');
+    msg.response( server.lang('general.auto', {key: "mylang"}) );
+    return;
+  }
 
-    var docs = langMap.getLang(msg.args[0]);
+  var docs = langMap.getLang(msg.args[0]);
 
-    if(!docs || !docs.length) {
-      //what dont know???? why? you should by now...
-      msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
-      return;
-    }
+  if(!docs || !docs.length) {
+    //what dont know???? why? you should by now...
+    msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
+    return;
+  }
 
-    var doc = docs[0];
+  var doc = docs[0];
 
-    //server.[msg.user_id].language = doc.code;
-    server.addUserSetting(msg.user_id,'language', doc.code);
+  //server.[msg.user_id].language = doc.code;
+  server.addUserSetting(msg.user_id,'language', doc.code);
 
+  var response = server.lang('mylang.okay', { lang: doc.language });
 
-    var response = server.lang('mylang.okay', { lang: doc.language });
+  var voiceName = server.getUserSetting(msg.user_id,'name');
+  if( voiceName && voiceName != "default" ) {
+    response += "\n" + server.lang('myvoice.noped');
+  }
 
-    var voiceName = server.getUserSetting(msg.user_id,'name');
-    if( voiceName && voiceName != "auto" ) {
-      response += "\n" + server.lang('myvoice.noped');
-    }
-    server.addUserSetting(msg.user_id,'name', 'auto');
-    msg.response(response);
+  server.addUserSetting(msg.user_id,'name', 'default');
+  msg.response(response);
 
 };
 
