@@ -24,33 +24,28 @@ function mygender(msg, server, world) {
     return;
   }
 
-  if (server.isPermitted(msg.user_id)) {
-    var gender = msg.getMessage().trim();
-    if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
-      gender = "MALE";
-    } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
-      gender = "FEMALE";
-    } else {
-      gender = "FEMALE";
-    }
-
-    server.permitted[msg.user_id].gender = gender;
-    server.addUserSetting(msg.user_id,'gender',gender);
-
-
-    var response = server.lang('mygender.okay', { gender: gender });
-
-    var voiceName = server.getUserSetting(msg.user_id,'name');
-    if( voiceName && voiceName != "auto" ) {
-      response += "\n" + server.lang('myvoice.noped');
-    }
-
-    server.addUserSetting(msg.user_id, 'name', 'auto');
-    msg.response(response);
-
+  var gender = msg.getMessage().trim();
+  if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
+    gender = "MALE";
+  } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
+    gender = "FEMALE";
   } else {
-    msg.response(server.lang('mygender.deny'));
+    gender = "FEMALE";
   }
+
+  server.permitted[msg.user_id].gender = gender;
+  server.addUserSetting(msg.user_id,'gender',gender);
+
+
+  var response = server.lang('mygender.okay', { gender: gender });
+
+  var voiceName = server.getUserSetting(msg.user_id,'name');
+  if( voiceName && voiceName != "auto" ) {
+    response += "\n" + server.lang('myvoice.noped');
+  }
+
+  server.addUserSetting(msg.user_id, 'name', 'auto');
+  msg.response(response);
 };
 
 var command = new BotCommand({

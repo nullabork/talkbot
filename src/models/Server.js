@@ -29,6 +29,7 @@ class Server {
 
     this.audioEmojis = state_data.audioEmojis || server_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || server_data.userSettings || {};
+    this.textrules = state_data.textrules || server_data.textrules || {};
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;
@@ -376,6 +377,7 @@ class Server {
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
+        console.log(err);
         Common.error('ERROR:', err);
         callback();
         return;
@@ -456,7 +458,16 @@ class Server {
       }
     });
   };
-
+  
+  addTextRule(search_text, replace_text) {
+    if ( replace_text == '' ) return;
+    if ( search_text == '' ) return;
+    this.textrules[search_text] = replace_text;
+  };
+  
+  removeTextRule(search_text) {
+    delete this.textrules[search_text];
+  };
 }
 
 module.exports = Server;

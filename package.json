@@ -12,7 +12,7 @@
     "discord.io": "github:wootosmash/discord.io#master",
     "ffmpeg": "0.0.4",
     "google-tts-api": "0.0.3",
-    "lang.js": "^1.1.13",
+    "lang.js": "^1.1.14",
     "minimist": "^1.2.0",
     "module-alias": "^2.1.0",
     "query-objects": "0.0.6",
@@ -22,7 +22,7 @@
     "winston": "^2.4.4"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9",
+    "nodemon": "^1.18.10",
     "sprintf-js": "^1.1.2"
   },
   "_moduleAliases": {
