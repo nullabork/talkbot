@@ -46,11 +46,11 @@ function toLang(msg, server, world) {
 
 
   var voiceName = server.getUserSetting(msg.user_id,'name');
-  if( voiceName && voiceName != "auto" ) {
+  if( voiceName && voiceName != "default" ) {
     response += "\n" + server.lang('myvoice.noped');
   }
 
-  server.addUserSetting(msg.user_id,'name', 'auto');
+  server.addUserSetting(msg.user_id,'name', 'default');
   msg.response(response);
 
 

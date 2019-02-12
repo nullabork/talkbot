@@ -41,11 +41,11 @@ function mygender(msg, server, world) {
     var response = server.lang('mygender.okay', { gender: gender });
 
     var voiceName = server.getUserSetting(msg.user_id,'name');
-    if( voiceName && voiceName != "auto" ) {
+    if( voiceName && voiceName != "default" ) {
       response += "\n" + server.lang('myvoice.noped');
     }
 
-    server.addUserSetting(msg.user_id, 'name', 'auto');
+    server.addUserSetting(msg.user_id, 'name', 'default');
     msg.response(response);
 
   } else {
