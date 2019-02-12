@@ -473,10 +473,12 @@ class Server {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
     this.textrules[search_text.trim()] = replace_text.trim();
+    require('./World').save();
   };
   
   removeTextRule(search_text) {
     delete this.textrules[search_text];
+    require('./World').save();
   };
 }
 

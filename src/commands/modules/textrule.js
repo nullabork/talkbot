@@ -27,6 +27,7 @@ function textrule(msg, server, world) {
   var key = '';
   var repl = '';
  
+  // add a rule
   if (msg.args[0] == 'add' ) {
     var nextindex = -1;
     for ( var i=1; i < msg.args.length; i++ ) {
@@ -48,6 +49,8 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.addokay', {rule: key}));
     }
   }
+  
+  // delete a rule 
   else if ( msg.args[0] == 'del' ) {
     for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
     if ( key == '' ) 
@@ -57,6 +60,8 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.delokay', {rule: key}));
     }
   }
+  
+  // list all the rules 
   else if ( msg.args[0] == 'list') {
     if ( server.textrules.length == 0 ) 
       msg.response(server.lang('textrule.norules'));
