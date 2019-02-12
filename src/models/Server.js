@@ -6,6 +6,7 @@ var Lang = require("lang.js"),
   bot = botStuff.bot;
 
 var ADMIN_PERMISSION_FLAG = 8;
+var MANAGE_GUILD = 0x00000020;
   // MESSAGE_AVERAGE_TIMEFRAME_MS = 60000,
   // MESSAGE_TIMEFRAME_RETENTION_MS = MESSAGE_AVERAGE_TIMEFRAME_MS * 5,
   // MESSAGE_AVERAGE_THRESHOLD = 60;
@@ -232,10 +233,11 @@ class Server {
     return this.userHasAdminPermissions(user_id) || this.isServerOwner(user_id);
   }
 
-  // determine if the permissions of the role passed through is the biggest available ie. admin super user
+  // determine if the permissions of the role passed through is the biggest available ie. admin super user OR manage server
   isAdminRole(role_id) {
     if (bot.servers[this.server_id].roles[role_id] == null) return false;
     if (bot.servers[this.server_id].roles[role_id]._permissions & ADMIN_PERMISSION_FLAG) return true;
+    if (bot.servers[this.server_id].roles[role_id]._permissions & MANAGE_GUILD) return true;
     else return false;
   };
 

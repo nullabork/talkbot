@@ -24,8 +24,8 @@ function textrule(msg, server, world) {
     return;
   }
   
-  var key = null;
-  var repl = null;
+  var key = '';
+  var repl = '';
  
   if (msg.args[0] == 'add' ) {
     var nextindex = -1;
@@ -41,7 +41,7 @@ function textrule(msg, server, world) {
     
     for ( var i=nextindex+1; i < msg.args.length; i++) repl += ' ' + msg.args[i];
     
-    if ( !key || !repl )
+    if ( key == '' || repl == '' )
       msg.response(server.lang('textrule.usage'));
     else {
       server.addTextRule(key, repl);
@@ -50,7 +50,7 @@ function textrule(msg, server, world) {
   }
   else if ( msg.args[0] == 'del' ) {
     for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
-    if ( !key ) 
+    if ( key == '' ) 
       msg.response(server.lang('textrule.usage'));
     else {
       server.removeTextRule(key);
