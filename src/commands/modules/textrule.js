@@ -7,8 +7,8 @@ var BotCommand = require('@models/BotCommand');
  * Adds regular expressions to replace text in messages with other text
  *
  * usage !textrule add search text -> replace text
- *       !textrule del search text 
- *       !textrule list 
+ *       !textrule del search text
+ *       !textrule list
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
@@ -23,10 +23,10 @@ function textrule(msg, server, world) {
     msg.response(server.lang('textrule.nope'));
     return;
   }
-  
+
   var key = '';
   var repl = '';
- 
+
   // add a rule
   if (msg.args[0] == 'add' ) {
     var nextindex = -1;
@@ -39,9 +39,9 @@ function textrule(msg, server, world) {
         break;
       }
     }
-    
+
     for ( var i=nextindex+1; i < msg.args.length; i++) repl += ' ' + msg.args[i];
-    
+
     if ( key == '' || repl == '' )
       msg.response(server.lang('textrule.usage'));
     else {
@@ -49,21 +49,21 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.addokay', {rule: key}));
     }
   }
-  
-  // delete a rule 
+
+  // delete a rule
   else if ( msg.args[0] == 'del' ) {
     for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
-    if ( key == '' ) 
+    if ( key == '' )
       msg.response(server.lang('textrule.usage'));
     else {
       server.removeTextRule(key);
       msg.response(server.lang('textrule.delokay', {rule: key}));
     }
   }
-  
-  // list all the rules 
+
+  // list all the rules
   else if ( msg.args[0] == 'list') {
-    if ( server.textrules.length == 0 ) 
+    if ( server.textrules.length == 0 )
       msg.response(server.lang('textrule.norules'));
     else {
       var r = '```';
@@ -97,7 +97,7 @@ var command = new BotCommand({
   listeners: {
     message: msgParser
   },
-  
+
 });
 
 exports.register = function (commands) {
