@@ -33,7 +33,7 @@ function mygender(msg, server, world) {
     gender = "FEMALE";
   }
 
-  server.permitted[msg.user_id].gender = gender;
+  server.permitted[msg.user_id].gender = gender; // not sure if we still need this?
   server.addUserSetting(msg.user_id,'gender',gender);
 
   var response = server.lang('mygender.okay', { gender: gender });

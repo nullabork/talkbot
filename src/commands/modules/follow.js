@@ -77,7 +77,7 @@ function sidle(msg, server, world) {
     return;
   }
 
-  if (!server.isAdminUserOrServerOwner(msg.user_id)) {
+  if (!server.canManageTheServer(msg.user_id)) {
     msg.response(server.lang('sidle.nope'));
     return;
   }
@@ -106,7 +106,7 @@ function sidle(msg, server, world) {
  * * */
 function transfer(msg, server, world) {
 
-  if (!msg.ownerIsMaster() && !server.isAdminUserOrServerOwner(msg.user_id)) {
+  if (!msg.ownerIsMaster() && !server.canManageTheServer(msg.user_id)) {
     msg.response(server.lang('transfer.nopermissions'));
     return;
   }

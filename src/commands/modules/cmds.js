@@ -27,7 +27,7 @@ function cmds(msg, server, world) {
 
   // if (!msg.message) return;
 
-  // if (!server.isAdminUserOrServerOwner(msg.user_id)) {
+  // if (!server.canManageTheServer(msg.user_id)) {
   //   msg.response(server.lang('sfx.nope'));
   //   return;
   // }

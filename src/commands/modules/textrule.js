@@ -18,17 +18,17 @@ var BotCommand = require('@models/BotCommand');
  */
 
 function textrule(msg, server, world) {
-
-  if (!server.isAdminUserOrServerOwner(msg.user_id)) {
-    msg.response(server.lang('textrule.nope'));
-    return;
-  }
   
   var key = '';
   var repl = '';
  
   // add a rule
   if (msg.args[0] == 'add' ) {
+    if (!server.canManageTheServer(msg.user_id)) {
+      msg.response(server.lang('textrule.nope'));
+      return;
+    }
+    
     var nextindex = -1;
     for ( var i=1; i < msg.args.length; i++ ) {
       if ( msg.args[i] != '->' ) {
@@ -52,6 +52,11 @@ function textrule(msg, server, world) {
   
   // delete a rule 
   else if ( msg.args[0] == 'del' ) {
+    if (!server.canManageTheServer(msg.user_id)) {
+      msg.response(server.lang('textrule.nope'));
+      return;
+    }
+    
     for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
     if ( key == '' ) 
       msg.response(server.lang('textrule.usage'));
@@ -73,6 +78,17 @@ function textrule(msg, server, world) {
       msg.response(r);
     }
   }
+  
+  else if ( msg.args[0] == 'clearall' ) {
+    if (!server.canManageTheServer(msg.user_id)) {
+      msg.response(server.lang('textrule.nope'));
+      return;
+    }
+    
+    server.clearAllTextRules();
+    msg.response(server.lang('textrule.clearallokay'));
+  }
+  
   else {
     msg.response(server.lang('textrule.usage'));
   }
@@ -91,7 +107,6 @@ function msgParser(message, user_id, server, world) {
 var command = new BotCommand({
   command_name: 'textrule',
   execute: textrule,
-  hidden: true, // hidden while in testing
   short_help: 'textrule.shorthelp',
   long_help: 'textrule.longhelp',
   listeners: {

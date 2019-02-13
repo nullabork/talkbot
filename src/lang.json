@@ -99,7 +99,8 @@
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
     "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]",
-    "nodelete": "You need to specify an action to perform such as set or del"
+    "nodelete": "You need to specify an action to perform such as set or del",
+    "usage": "```Associate words or emojis with sound effect files\n\n\t!sfx set [word/emoji] [audio file url]\n\t!sfx list\n\t!sfx del [word/emoji]\n\t!sfx [url]\n```"
   },
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work",
@@ -128,5 +129,14 @@
     "shorthelp" : "List of voices, `!voices au`",
     "longhelp" : "List of voices, `!voices au`",
     "more" : "You must specify a language code. eg `!voices au`.\nYou can find language codes with !langs"
+  },
+  "en.textrule" : {
+    "nope" : "Sorry you don't have permission to manage this server",
+    "usage" : "```Text replacement rules\n\n\t!textrule add <search text> -> <replace text>\n\t!textrule del <search text>\n\t!textrule list\n\t!textrule clearall```",
+    "addokay" : "Rule for :rule added",
+    "delokay" : "Rule for :rule deleted",
+    "norules": "No text replacement rules have been setup",
+    "clearallokay": "All rules cleared",
+    "shorthelp": "Add text replacement rules"
   }
 }

@@ -5,8 +5,9 @@ var Lang = require("lang.js"),
   langmap = require('@helpers/langmap'),
   bot = botStuff.bot;
 
-var ADMIN_PERMISSION_FLAG = 8;
-var MANAGE_GUILD = 0x00000020;
+// https://discordapp.com/developers/docs/topics/permissions
+var P_ADMINISTRATOR  = 0x00000008;
+var P_MANAGE_GUILD   = 0x00000020;
   // MESSAGE_AVERAGE_TIMEFRAME_MS = 60000,
   // MESSAGE_TIMEFRAME_RETENTION_MS = MESSAGE_AVERAGE_TIMEFRAME_MS * 5,
   // MESSAGE_AVERAGE_THRESHOLD = 60;
@@ -229,15 +230,17 @@ class Server {
     return this.bound_to;
   };
 
-  isAdminUserOrServerOwner(user_id) {
-    return this.userHasAdminPermissions(user_id) || this.isServerOwner(user_id);
+  // determines if the user can manage this server 
+  canManageTheServer(user_id) {
+    return this.userHasPermissions(user_id, P_ADMINISTRATOR) ||
+           this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
+           this.isServerOwner(user_id);
   }
-
-  // determine if the permissions of the role passed through is the biggest available ie. admin super user OR manage server
-  isAdminRole(role_id) {
+  
+  // see the constants up top
+  roleHasPermission(role_id, permission_bit) {
     if (bot.servers[this.server_id].roles[role_id] == null) return false;
-    if (bot.servers[this.server_id].roles[role_id]._permissions & ADMIN_PERMISSION_FLAG) return true;
-    if (bot.servers[this.server_id].roles[role_id]._permissions & MANAGE_GUILD) return true;
+    if (bot.servers[this.server_id].roles[role_id]._permissions & permission_bit) return true;
     else return false;
   };
 
@@ -246,9 +249,9 @@ class Server {
   };
 
   // determine if user has the biggest permissions available
-  userHasAdminPermissions(user_id) {
+  userHasPermissions(user_id, permission_bit) {
     for (var r in bot.servers[this.server_id].members[user_id].roles) {
-      if (this.isAdminRole(bot.servers[this.server_id].members[user_id].roles[r])) {
+      if (this.roleHasPermission(bot.servers[this.server_id].members[user_id].roles[r], permission_bit )) {
         return true;
       }
     }
@@ -387,8 +390,7 @@ class Server {
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        console.log(err);
-        Common.error('ERROR:', err);
+        Common.error(err);
         callback();
         return;
       }
@@ -427,47 +429,6 @@ class Server {
     this.neglect_neglect = !this.neglect_neglect;
     return this.neglect_neglect;
   }
-
-  setNicks(channel_id, tokens) {
-
-    var i = 0;
-
-    if (bot.servers[this.server_id] == null) { Common.out('no server'); return; }
-    if (bot.servers[this.server_id].channels[channel_id] == null) {
-
-      for (var chan in bot.servers[this.server_id].channels)
-        Common.out(bot.servers[this.server_id].channels[chan]);
-      return;
-    }
-
-    for (var member in bot.servers[this.server_id].channels[channel_id].members) {
-      if (args.length - 3 <= i) return;
-      bot.editNickname({
-        serverID: this.server_id,
-        userID: member,
-        nick: tokens[i++] + ' ' + tokens[i++] + ' ' + tokens[i++],
-      });
-    }
-  };
-
-  playAudioFile(filename, callback) {
-    if (!callback) callback = function () { };
-    bot.getAudioContext(this.current_voice_channel_id, function (error, stream) {
-      if (error) return Common.error(error);
-
-      try {
-        fs.createReadStream(filename)
-          .on('end', callback)
-          .pipe(stream, { end: false })
-          .on('error', function (err) {
-            Common.error('Error writing to discord voice stream. ' + err);
-          });
-      }
-      catch (ex) {
-        Common.error(ex);
-      }
-    });
-  };
   
   addTextRule(search_text, replace_text) {
     if ( replace_text == '' ) return;
@@ -477,7 +438,12 @@ class Server {
   };
   
   removeTextRule(search_text) {
-    delete this.textrules[search_text];
+    delete this.textrules[search_text.trim()];
+    require('./World').save();
+  };
+  
+  clearAllTextRules() {
+    this.textrules = {};
     require('./World').save();
   };
 }

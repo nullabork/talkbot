@@ -23,17 +23,12 @@ var BotCommand = require('@models/BotCommand');
 
 function sfx(msg, server, world) {
 
-  if (!msg.message) return;
-
-  if (!server.isAdminUserOrServerOwner(msg.user_id)) {
-    msg.response(server.lang('sfx.nope'));
-    return;
-  }
+  //if (!msg.message) return;
 
   if (Common.isURL(msg.message)) {
     if (msg.message.length < 5) return;
     if (msg.message.substring(0, 5) != 'https') msg.response(server.lang('sfx.needshttps'));
-    else server.talk(Common.makeAudioSSML(msg.message), server.permitted[msg.user_id]);
+    else server.talk(Common.makeAudioSSML(msg.message), server.getUserSettings(msg.user_id));
   }
   else {
 
@@ -42,6 +37,10 @@ function sfx(msg, server, world) {
     // i cant even
     if (msg.args.length > 3) msg.response(server.lang('sfx.noper')); // why can't I set all the default lang in this file?
 
+    else if (msg.args.length == 0) {
+      msg.response(server.lang('sfx.usage'));
+    }
+    
     // multiple commands
     else if (msg.args.length == 1) {
 
@@ -65,11 +64,16 @@ function sfx(msg, server, world) {
 
       // play a specific SFX
       else if (server.audioEmojis[sfx_command])
-        server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.permitted[msg.user_id]);
+        server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.getUserSettings(msg.user_id));
     }
 
     // delete an emoji from this server
     else if (msg.args.length == 2) {
+      if (!server.canManageTheServer(msg.user_id)) {
+        msg.response(server.lang('sfx.nope'));
+        return;
+      }
+      
       if (msg.args[0] != 'del' || msg.args[0] != 'delete' || msg.args[0] != 'rm' || msg.args[0] != 'remove') msg.response(server.lang('sfx.nodelete'));
       var emoji_name = msg.args[1];
       delete server.audioEmojis[emoji_name];
@@ -78,6 +82,11 @@ function sfx(msg, server, world) {
 
     // set an emoji on this server
     else {
+      if (!server.canManageTheServer(msg.user_id)) {
+        msg.response(server.lang('sfx.nope'));
+        return;
+      }
+
       if (msg.args[0] != 'set') msg.response(server.lang('sfx.noset'));
       var emoji_name = msg.args[1];
       var emoji_url = msg.args[2];
@@ -94,23 +103,6 @@ function sfx(msg, server, world) {
   }
 };
 
-// // listen to the normal text flow, if an emoji we have a sound for pops up, play it
-// function sfxPlaySoundListener(message, user_id, server, world) {
-
-//   if (!server.isPermitted(user_id)) return;
-
-//   var parts = message.split(' ');
-
-//   for (var part in parts) {
-//     var emoji = parts[part];
-//     if (server.audioEmojis[emoji])
-//       server.talk(
-//         Common.makeAudioSSML(server.audioEmojis[emoji]),
-//         server.permitted[user_id]
-//       );
-//   }
-// };
-
 function sfxParser(token, server) {
   if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
     return Common.makeAudioSSML(server.audioEmojis[token]);
@@ -123,7 +115,6 @@ var command = new BotCommand({
   short_help: 'sfx.shorthelp',
   long_help: 'sfx.longhelp',
   listeners: {
-    // 'sfx.msg.args': sfxPlaySoundListener
     token: sfxParser
   },
 

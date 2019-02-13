@@ -57,6 +57,10 @@ install nvm
 
 cd to project root and run `nvm use`
 
+## Google TTS API Issues
+
+Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. See Google cloud docs here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+
 # Props to
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
