@@ -2,7 +2,7 @@
 var BotCommand = require('@models/BotCommand');
 
 function toggle_neglect(msg, server, world) {
-  if (!msg.ownerIsMaster()) {
+  if (!msg.ownerCanManageTheServer()) {
     msg.response(server.lang('toggle_neglect.nope'));
     return;
   }

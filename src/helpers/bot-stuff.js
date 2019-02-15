@@ -38,7 +38,9 @@ class BotStuff {
         if (chan.type == 2) {
           for (var member in chan.members) {
             var u = chan.members[member];
-            if (u.user_id == user_id) return channel;
+            if (u.user_id == user_id) {
+              return channel;
+            }
           }
         }
       }

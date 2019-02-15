@@ -58,20 +58,20 @@ bot.on('disconnect', function (evt) {
 });
 
 bot.on('any', function (evt) {
-
+  
   if (evt.t == 'GUILD_CREATE') {
     var server_id = evt.d.id;
-
-
 
     // when added to a server do this - need to wait a bit for the library to init
     var add_server = function () {
       world.addServer(new Server(bot.servers[server_id], server_id,  world.servers[server_id]));
+      Common.out("Server " + bot.servers[server_id].name + " started");
     };
 
-    setTimeout(add_server, 10000);
+    setTimeout(add_server, 2000);
   }
   else if (evt.t == 'VOICE_STATE_UPDATE') {
+
     // if my master's voice status changes
     var channel_id = null;
     if (evt.d)
@@ -112,7 +112,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   // is the message a command?
   if (message.substring(0, commands.command_char.length) == commands.command_char) {
-
+    
     server.resetNeglectTimeout();
 
     var parts = message.match(

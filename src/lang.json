@@ -67,7 +67,7 @@
   "en.myvoice": {
     "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
     "no": "Sorry, I cant find the voice :voice.",
-    "shorthelp": "Set your voice the bot will speak with. eg. Mason, en━US━Standard━D, Ava, en-AU-Wavenet-A, etc.\n Use the command `!voices lang_code` to get a list of useable voices",
+    "shorthelp": "Set your voice the bot will speak with. eg. Mason, en-US-Standard-D, Ava, en-AU-Wavenet-A, etc.\n Use the command `!voices lang_code` to get a list of useable voices",
     "auto" : "Now the bot will choose the best voice and use your lang and gnder settings.",
     "more" : "You must specify a voice code. eg `!myvoice lily`",
     "noped" : "Your !myvoice setting has been overriden and you must use the command again to enable."
@@ -138,5 +138,10 @@
     "norules": "No text replacement rules have been setup",
     "clearallokay": "All rules cleared",
     "shorthelp": "Add text replacement rules"
+  },
+  "en.toggle_neglect": {
+    "nope": "Sorry you don't have permission to manage this server.",
+    "none": "Neglect has now been switched off.",
+    "okay": "Neglect has now been turned on."
   }
 }

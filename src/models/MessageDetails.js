@@ -41,6 +41,10 @@ class MessageDetails {
   ownerIsMaster() {
     return this.server.isMaster(this.user_id);
   }
+  
+  ownerCanManageTheServer() {
+    return this.server.canManageTheServer(this.user_id);
+  }
 
   ownerIsDev() {
     if (!auth.dev_ids || !auth.dev_ids.length) {

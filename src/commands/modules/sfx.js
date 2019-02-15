@@ -2,7 +2,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
 /**
  * Command: sfx
  *
@@ -20,7 +19,6 @@ var BotCommand = require('@models/BotCommand');
  *
  * @return  {[undefined]}
  */
-
 function sfx(msg, server, world) {
 
   //if (!msg.message) return;
@@ -51,6 +49,8 @@ function sfx(msg, server, world) {
 
       // list all the SFX available
       else if (sfx_command == 'list') {
+        
+        if (Object.keys(server.audioEmojis).length == 0) msg.response(server.lang('sfx.listnone'));
 
         var rsp = "```";
 
@@ -69,7 +69,7 @@ function sfx(msg, server, world) {
 
     // delete an emoji from this server
     else if (msg.args.length == 2) {
-      if (!server.canManageTheServer(msg.user_id)) {
+      if (!msg.ownerCanManageTheServer()) {
         msg.response(server.lang('sfx.nope'));
         return;
       }
@@ -82,7 +82,7 @@ function sfx(msg, server, world) {
 
     // set an emoji on this server
     else {
-      if (!server.canManageTheServer(msg.user_id)) {
+      if (!msg.ownerCanManageTheServer()) {
         msg.response(server.lang('sfx.nope'));
         return;
       }

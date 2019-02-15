@@ -101,15 +101,37 @@ class World {
   }
 
   checkMastersVoiceChannels(user_id) {
+    
+    var world = this;
     if (!user_id) return;
-    var voiceChan = botStuff.getUserVoiceChannel(user_id);
-    for (var server in this.servers) {
-      var s = this.servers[server];
-      if (s.bound_to == user_id) {
-        if (voiceChan != s.current_voice_channel_id)
-          s.leaveVoiceChannel();
+    
+    // calling getUserVoiceChannel() during the VOICE_STATUS_UPDATE event 
+    // means that bot.servers[...] etc. arrays are not yet up to date. 
+    // The underlying framework is providing the events to us before processing
+    // itself.
+    // run delayed execution of the code to get the real answers
+    var delayed_execution = function() {
+      var voiceChan = botStuff.getUserVoiceChannel(user_id);
+      var leave_servers = [];
+      var delayed_leave = function() {
+        for ( var i=0;i<leave_servers.length;i++) {
+          leave_servers[i].leaveVoiceChannel();
+          leave_servers[i].startUnfollowTimer();
+        }
+      };
+      
+      for (var server in world.servers) {
+        var s = world.servers[server];
+        if (s.bound_to == user_id) {
+          if (voiceChan != s.current_voice_channel_id) {
+            leave_servers.push(s);
+            s.talk("Oh no my master left me!", null, delayed_leave);
+          }
+        }
       }
-    }
+    };
+    
+    setTimeout(delayed_execution, 100);
   }
 
   initServers() {
@@ -143,7 +165,7 @@ class World {
     var self  = this;
     setTimeout(function(){
       function replacer(key, value) {
-        if (key == "neglect_timeout") return undefined; // this key is an internal that we dont want to save
+        if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
         if (key == "commandResponses") return undefined;
         else return value;
       };

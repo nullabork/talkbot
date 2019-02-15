@@ -24,7 +24,7 @@ function textrule(msg, server, world) {
 
   // add a rule
   if (msg.args[0] == 'add' ) {
-    if (!server.canManageTheServer(msg.user_id)) {
+    if (!msg.ownerCanManageTheServer()) {
       msg.response(server.lang('textrule.nope'));
       return;
     }
@@ -46,13 +46,13 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.usage'));
     else {
       server.addTextRule(key, repl);
-      msg.response(server.lang('textrule.addokay', {rule: key}));
+      msg.response(server.lang('textrule.addokay', {rule: key.trim()}));
     }
   }
 
   // delete a rule
   else if ( msg.args[0] == 'del' ) {
-    if (!server.canManageTheServer(msg.user_id)) {
+    if (!msg.ownerCanManageTheServer()) {
       msg.response(server.lang('textrule.nope'));
       return;
     }
@@ -62,13 +62,13 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.usage'));
     else {
       server.removeTextRule(key);
-      msg.response(server.lang('textrule.delokay', {rule: key}));
+      msg.response(server.lang('textrule.delokay', {rule: key.trim()}));
     }
   }
 
   // list all the rules
   else if ( msg.args[0] == 'list') {
-    if ( server.textrules.length == 0 )
+    if (Object.keys(server.textrules).length == 0) 
       msg.response(server.lang('textrule.norules'));
     else {
       var r = '```';
@@ -80,7 +80,7 @@ function textrule(msg, server, world) {
   }
   
   else if ( msg.args[0] == 'clearall' ) {
-    if (!server.canManageTheServer(msg.user_id)) {
+    if (!msg.ownerCanManageTheServer()) {
       msg.response(server.lang('textrule.nope'));
       return;
     }

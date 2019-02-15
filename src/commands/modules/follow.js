@@ -72,6 +72,7 @@ function unfollow(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function sidle(msg, server, world) {
+  
   if (!server.isBound()) {
     msg.response(server.lang('sidle.none'));
     return;

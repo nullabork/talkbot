@@ -7,6 +7,7 @@ class Common {
   }
 
   //does string token contain the parts required to be an emoji
+  // BUG: this doesn't entirely work since emoji can be unicode chars
   static isEmoji(str) {
     if (str.length < 3) return false;
     return (str[0] == ':' && str[str.length - 1] == ':');
@@ -40,6 +41,7 @@ class Common {
   //console.log() if its turned on
   static out(message) {
 
+    if (!message) message = 'null'; 
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
@@ -55,7 +57,8 @@ class Common {
 
   //Common.error() is its turned out
   static error(message) {
-
+  
+    if (!message) message = 'null'; 
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
@@ -70,6 +73,7 @@ class Common {
   }
 
   //dont know.
+  // it stops messages with three thingos from being read out
   static isMessageExcluded(message) {
     return message.startsWith('```');
   }

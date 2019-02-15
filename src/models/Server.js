@@ -8,6 +8,10 @@ var Lang = require("lang.js"),
 // https://discordapp.com/developers/docs/topics/permissions
 var P_ADMINISTRATOR  = 0x00000008;
 var P_MANAGE_GUILD   = 0x00000020;
+
+var TIMEOUT_LEAVEVOICE = 30000; // 30 seconds
+var TIMEOUT_NEGLECT    = 120 * 60 * 1000; // 2 hours
+
   // MESSAGE_AVERAGE_TIMEFRAME_MS = 60000,
   // MESSAGE_TIMEFRAME_RETENTION_MS = MESSAGE_AVERAGE_TIMEFRAME_MS * 5,
   // MESSAGE_AVERAGE_THRESHOLD = 60;
@@ -83,8 +87,6 @@ class Server {
   //     }
   //   }
   // }
-
-
 
   setMaster(user_id, username) {
     this.bound_to = user_id;
@@ -274,6 +276,7 @@ class Server {
       return;
     }
 
+    server.cancelUnfollowTimer();
     if (!callback) callback = function () { };
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
@@ -292,6 +295,7 @@ class Server {
   };
 
   leaveVoiceChannel(callback) {
+    var server = this;
     if (!callback) callback = function () { };
 
     // HACK: delay the timeout as the callback sometimes runs before the state = left
@@ -299,11 +303,11 @@ class Server {
       setTimeout(callback, 2000);
     };
 
-    if (this.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(this.current_voice_channel_id, callback_timeout);
+    if (server.current_voice_channel_id != null) {
+      bot.leaveVoiceChannel(server.current_voice_channel_id, callback_timeout);
     }
 
-    this.current_voice_channel_id = null;
+    server.current_voice_channel_id = null;
     var w = require('./World');
     w.save();
     w.setPresence();
@@ -334,7 +338,7 @@ class Server {
       };
 
       clearTimeout(server.neglect_timeout);
-      server.neglect_timeout = setTimeout(neglected_timeout, 30 * 60 * 1000);
+      server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
     }
   };
 
@@ -419,14 +423,16 @@ class Server {
     };
 
     if (server.inChannel()) {
-      server.talk("I feel neglected, I'm leaving", server, neglectedrelease);
+      server.talk("I feel neglected, I'm leaving", null, neglectedrelease);
     } else {
       server.release();
     }
   }
 
   toggleNeglect() {
-    this.neglect_neglect = !this.neglect_neglect;
+    var server = this;
+    server.neglect_neglect = !server.neglect_neglect;
+    server.resetNeglectTimeout();
     return this.neglect_neglect;
   }
   
@@ -445,6 +451,25 @@ class Server {
   clearAllTextRules() {
     this.textrules = {};
     require('./World').save();
+  };
+  
+  startUnfollowTimer() {
+    var server = this;
+    var unfollow_timeout = function() {
+      server.release();
+      server.unfollow_timeout = null;
+      var w = require('./World');
+      w.save();
+      w.setPresence();
+    };
+    
+    server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);    
+  };
+  
+  cancelUnfollowTimer() {
+    if (this.unfollow_timeout) 
+      clearTimeout(this.unfollow_timeout);
+    this.unfollow_timeout = null;
   };
 }
 
