@@ -57,7 +57,7 @@ function textrule(msg, server, world) {
       return;
     }
     
-    for ( var i=0; i < msg.args.length; i++) key += ' ' + msg.args[i];
+    for ( var i=1; i < msg.args.length; i++) key += ' ' + msg.args[i];
     if ( key == '' )
       msg.response(server.lang('textrule.usage'));
     else {
