@@ -439,13 +439,20 @@ class Server {
   addTextRule(search_text, replace_text) {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
-    this.textrules[search_text.trim()] = replace_text.trim();
+    this.textrules[search_text.trim().toLowerCase()] = replace_text.trim();
     require('./World').save();
   };
   
   removeTextRule(search_text) {
-    delete this.textrules[search_text.trim()];
+    delete this.textrules[search_text.trim().toLowerCase()];
     require('./World').save();
+  };
+  
+  removeTextRuleByIndex(index) {
+    var i = 0;
+    for( var k in Object.keys(this.textrules))
+      if ( ++i == index )
+        this.removeTextRule(k);
   };
   
   clearAllTextRules() {
