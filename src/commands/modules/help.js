@@ -1,5 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
+var HelpBuilder = require('@models/HelpBuilder');
 
 
 /**
@@ -21,15 +22,20 @@ function help(msg, server, world) {
   var cmds = require("@commands");
   var response = "```Quickstart:\n\n\t1. join a voice channel\n\t2. type " + cmds.command_char + "follow\n\t3. Type some text and hear the bot speak\n\nThe full list of commands are:\n\n";
 
+  var data = {
+    "Commands" : { },
+    "Issues" : { }
+  };
   for (var command in cmds.commands) {
     var cmd = cmds.commands[command];
     if (cmd.hidden) continue;
-    response += '\t' + cmds.command_char + cmds.commands[command].command_name + ' - ' + server.lang(cmds.commands[command].short_help) + '\n'; // + ' ' + commands_local.commands[command].short_help;
+    data.Commands[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
-  response += '\nTo submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot```';
+  data.Issues = '\nTo submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot';
+  var help = new HelpBuilder(data);
 
-  msg.response(response);
+  msg.response(help.out());
 };
 
 var command = new BotCommand({
