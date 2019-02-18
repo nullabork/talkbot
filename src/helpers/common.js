@@ -41,7 +41,7 @@ class Common {
   //console.log() if its turned on
   static out(message) {
 
-    if (!message) message = 'null'; 
+    if (!message) message = 'null';
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
@@ -57,8 +57,8 @@ class Common {
 
   //Common.error() is its turned out
   static error(message) {
-  
-    if (!message) message = 'null'; 
+
+    if (!message) message = 'null';
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
@@ -173,7 +173,7 @@ class Common {
   //remove urls with notheing
   //used for cleaning
   static removeUrls(message, fn) {
-    return message.replace(/(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/g, fn ? fn : "");
+    return message.replace(/https*:\/\/\S*/g, fn ? fn : "");
   }
 
   //removes repeating character or character groups aaaaaaaaaaaaa or asdasdasdasdasd
