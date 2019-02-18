@@ -18,6 +18,7 @@ var world = require('@models/World'),
 
 // runtime testing
 testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
+testing.TestIfGoogleEnvironmentVarIsSet();
 
 
 // Creates a client
