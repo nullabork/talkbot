@@ -49,7 +49,7 @@ function testConfig()
     console.log('givemelink.endpoint is not configured in auth.json');
     process.exit(1);
   }
-  else 
+  else if (auth.givemelink)
   {
     console.log('givemelink endpoint configured to ' + auth.givemelink.endpoint);
   }
@@ -61,7 +61,7 @@ var command = new BotCommand({
   execute: givemelink,
   short_help: 'givemelink.shorthelp',
   long_help: 'givemelink.longhelp',
-//  hidden: true
+  hidden: !auth.givemelink
 });
 
 
