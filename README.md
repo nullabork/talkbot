@@ -63,5 +63,7 @@ Confirm you've put the path to your API credentials file in the env var GOOGLE_A
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
+* Kingk22 - bugfinder/shitposter
+* Kelinmiriel - bugfinder/shitposter
 
 Want to shitpost also? https://discord.gg/NxrPp8g
