@@ -38,23 +38,22 @@ Use this to setup your own bot on your own server. Note you will require a googl
 - ffmpeg
 
 ## install and setup
-1. Copy this respository to a folder on linux 
-2. Copy auth.example to ../auth.json and put in your discord app key. To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-3. Setup your google API credentials. To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
-4. To run: node bot.js 
+1. Clone this respository
+2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key. 
+    - To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+3. Setup your google API credentials. 
+    * To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+4. Install nvm and run `nvm use`
+    * windows - https://github.com/coreybutler/nvm-windows/releases
+    * mac/linux - https://github.com/creationix/nvm
+5. Install NPM dependencies
+    * `npm install` or `yarn install`
+5. To run: node `bot.js`
 
 ## to run
 node bot.js
 
 # Troubleshooting  https://discord.gg/NxrPp8g
-## getting the right node version
-
-install nvm
-* windows - https://github.com/coreybutler/nvm-windows/releases
-* mac/linux - https://github.com/creationix/nvm
-
-cd to project root and run `nvm use`
-
 ## Google TTS API Issues
 
 Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. See Google cloud docs here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
