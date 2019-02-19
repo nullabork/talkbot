@@ -64,11 +64,21 @@ var command = new BotCommand({
   hidden: !auth.givemelink
 });
 
+var commanda = new BotCommand({
+  command_name: 'g',
+  startup: testConfig,
+  execute: givemelink,
+  short_help: 'givemelink.shorthelp',
+  long_help: 'givemelink.longhelp',
+  hidden: true
+});
 
 exports.register = function (commands) {
   commands.add(command);
+  commands.add(commanda);
 };
 
 exports.unRegister = function (commands) {
   commands.remove(command);
+  commands.remove(commanda);
 };

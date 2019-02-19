@@ -146,6 +146,7 @@
     "okay": "Neglect has now been turned on."
   },
   "en.givemelink": {
+    "noconfig": "This command is not setup",
     "shorthelp": "Break off some truely random internet and give it to you. Break out of the filter bubble today!"
   }
 }
