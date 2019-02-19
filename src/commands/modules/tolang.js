@@ -62,8 +62,8 @@ var command = new BotCommand({
   command_name: 'tolang',
   command_arg: 't',
   execute: toLang,
-  short_help: 'mylang.shorthelp',
-  long_help: 'mylang.longhelp',
+  short_help: 'tolang.shorthelp',
+  long_help: 'tolang.longhelp',
 });
 
 

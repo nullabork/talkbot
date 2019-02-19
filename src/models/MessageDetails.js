@@ -80,6 +80,7 @@ class MessageDetails {
   getUserIds() {
     return Common.messageIDs(this.message);
   };
+  
 }
 
 module.exports = MessageDetails;

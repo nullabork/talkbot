@@ -5,6 +5,7 @@ class BotCommand {
   constructor(client_data) {
     this.command_name = null;
     this.command_arg = null;
+    this.startup = null;
     //this.execute = function () { }; // stub bogus function to prevent bogusness
     this.short_help = null;
     this.long_help = null;

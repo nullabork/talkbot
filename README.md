@@ -1,8 +1,10 @@
-# talkbot
-Discord bot for text-to-speech and language translation
+# Talkbot
+Discord bot for natural voice text-to-speech and language translation
+
+Try it out here.
 https://discord.gg/NxrPp8g
 
-# quick start
+# Quick start - Add Talkbot to your server
 
 1. Go here to add the bot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
 2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about your server
@@ -10,51 +12,50 @@ https://discord.gg/NxrPp8g
 4. Type !follow
 5. Type some text to hear it read out to you
 
-# commands in discord
+# Commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
-
-* !follow - bind the bot to you so only you can control it
+```yaml
+* !follow  bind the bot to you so only you can control it
 * !unfollow - release the bot so someone else can use it
 * !sidle - take control of the bot from someone else
 * !permit [username1] [username2]... - allow other users to use TTS
 * !unpermit [username1] - disallow another user
-* !langs - list available langs.
-* !voices [lang_code] -list voices for a language
 * !who - find out who is the bot's current master
 * !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
 * !mylang [lang] - set your personal language accent for the bot
+* !langs - list available langs.
 * !tolang [lang] - translate to this language
+* !voices [lang_code] -list voices for a language
 * !myvoice [voice, alias] change voice to a specific voices, language and gender.
 * !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
 * !textrule add [search_text] -> [replace_text]
 * !help [longer help] - writes out the help for all commands
-
-# setup your own bot
+```
+# Setup your own bot
 Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
 
-## software requirements
+## Software requirements
 - node js
 - npm
 - ffmpeg
 
-## install and setup
-1. Copy this respository to a folder on linux 
-2. Copy auth.example to ../auth.json and put in your discord app key. To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
-3. Setup your google API credentials. To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
-4. To run: node bot.js 
+## Install and setup
+1. Clone this respository
+2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key. 
+    - To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+3. Setup your google API credentials. 
+    * To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+4. Install nvm and run `nvm use`
+    * windows - https://github.com/coreybutler/nvm-windows/releases
+    * mac/linux - https://github.com/creationix/nvm
+5. Install NPM dependencies
+    * `npm install` or `yarn install`
+5. To run: node `bot.js`
 
-## to run
+## To run
 node bot.js
 
 # Troubleshooting  https://discord.gg/NxrPp8g
-## getting the right node version
-
-install nvm
-* windows - https://github.com/coreybutler/nvm-windows/releases
-* mac/linux - https://github.com/creationix/nvm
-
-cd to project root and run `nvm use`
-
 ## Google TTS API Issues
 
 Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. See Google cloud docs here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
@@ -63,5 +64,7 @@ Confirm you've put the path to your API credentials file in the env var GOOGLE_A
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
+* Kingk22 - bugfinder/shitposter
+* Kelinmiriel - bugfinder/shitposter
 
 Want to shitpost also? https://discord.gg/NxrPp8g

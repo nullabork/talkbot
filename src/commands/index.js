@@ -17,7 +17,6 @@ function Commands() {
   this.add = function (command, force) {
     var key = command.command_name.toLowerCase();
 
-
     if (!this.commands[key] || force) {
       this.commands[key] = command;
 
@@ -68,6 +67,13 @@ function Commands() {
     //   delete this.listeners[listener];
   }
 
+  // for commands that have startup tests
+  this.runAllStartupTests = function() {
+    for (var test in this.commands)
+      if (this.commands[test].startup)
+        this.commands[test].startup();
+  }
+  
   this.get = function (key) {
     key = key.toLowerCase();
 
@@ -120,5 +126,6 @@ function Commands() {
 
 commands = new Commands();
 commands.registerAllCommands();
+commands.runAllStartupTests();
 
 module.exports = commands;//commands;
