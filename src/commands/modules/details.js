@@ -24,6 +24,7 @@ var command = new BotCommand({
   short_help: 'details.shorthelp',
   long_help: 'details.longhelp',
   hidden: true,
+  group: "Info"
 });
 
 exports.register = function (commands) {

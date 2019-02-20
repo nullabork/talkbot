@@ -16,6 +16,7 @@ var command = new BotCommand({
   execute: who,
   short_help: 'who.shorthelp',
   long_help: 'who.longhelp',
+  group: "server"
 });
 
 
@@ -26,5 +27,3 @@ exports.register = function (commands) {
 exports.unRegister = function (commands) {
   commands.remove(command);
 };
-
-

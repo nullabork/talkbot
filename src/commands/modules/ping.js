@@ -12,6 +12,7 @@ var command = new BotCommand({
   execute: ping,
   short_help: 'ping.shorthelp',
   long_help: 'ping.longhelp',
+  group: "info"
 });
 
 

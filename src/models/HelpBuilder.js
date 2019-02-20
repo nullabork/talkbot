@@ -3,7 +3,7 @@ var pad = require('pad');
 class HelpBuilder {
 
   constructor(data){
-    this.padding = "  ";
+    this.padding = " ";
 
     this.data = data || {};
   }
@@ -23,11 +23,21 @@ class HelpBuilder {
       if (data.hasOwnProperty(key)) {
         const element = data[key];
 
-        if(typeof element == "object"){
+        if(typeof element == "object" || Array.isArray(element)){
           out += this.heading(padding, key);
         }
 
-        if (typeof element == 'string') {
+        if(Array.isArray(element)){
+          for (const item of element) {
+
+            if (typeof item == 'string') {
+              out += this.arrayRow(padding, item);
+            } else if (typeof item == 'object') {
+              out += this.recurse( padding + this.padding, item );
+            }
+
+          }
+        } else if (typeof element == 'string') {
           out += this.row(padding,max, key, element);
         } else {
           out += this.recurse(padding + this.padding, element);
@@ -42,12 +52,16 @@ class HelpBuilder {
     return padding + pad(key, rightPad) + " :: " + value + "";
   }
 
+  arrayRow(padding, value) {
+    return padding + value + "\n";
+  }
+
   heading(padding, value) {
-   return "\n\n" + padding + "==" + value + "==\n\n";
+   return "\n" + "= " + value + " =\n";
   }
 
   out() {
-    return '"```asciidoc \n' + this.recurse("", this.data) + "\n ```";
+    return '```asciidoc\n' + this.recurse("", this.data) + "\n ```";
   }
 }
 

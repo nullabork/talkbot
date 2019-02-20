@@ -38,7 +38,7 @@ function sfx(msg, server, world) {
     else if (msg.args.length == 0) {
       msg.response(server.lang('sfx.usage'));
     }
-    
+
     // multiple commands
     else if (msg.args.length == 1) {
 
@@ -49,7 +49,7 @@ function sfx(msg, server, world) {
 
       // list all the SFX available
       else if (sfx_command == 'list') {
-        
+
         if (Object.keys(server.audioEmojis).length == 0) msg.response(server.lang('sfx.listnone'));
 
         var rsp = "```";
@@ -73,7 +73,7 @@ function sfx(msg, server, world) {
         msg.response(server.lang('sfx.nope'));
         return;
       }
-      
+
       if (msg.args[0] != 'del' || msg.args[0] != 'delete' || msg.args[0] != 'rm' || msg.args[0] != 'remove') msg.response(server.lang('sfx.nodelete'));
       var emoji_name = msg.args[1];
       delete server.audioEmojis[emoji_name];
@@ -117,7 +117,7 @@ var command = new BotCommand({
   listeners: {
     token: sfxParser
   },
-
+  group: "server"
   // langs here?
 });
 

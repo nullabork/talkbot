@@ -20,6 +20,7 @@ var command = new BotCommand({
   short_help: 'toggle_neglect.shorthelp',
   long_help: 'toggle_neglect.longhelp',
   hidden: true,
+  group: "admin"
 });
 
 

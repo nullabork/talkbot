@@ -23,6 +23,7 @@ var command = new BotCommand({
   short_help: 'join.shorthelp',
   long_help: 'join.longhelp',
   hidden: true,
+  //group: "control"
 });
 
 

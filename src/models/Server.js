@@ -232,13 +232,13 @@ class Server {
     return this.bound_to;
   };
 
-  // determines if the user can manage this server 
+  // determines if the user can manage this server
   canManageTheServer(user_id) {
     return this.userHasPermissions(user_id, P_ADMINISTRATOR) ||
            this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
            this.isServerOwner(user_id);
   }
-  
+
   // see the constants up top
   roleHasPermission(role_id, permission_bit) {
     if (bot.servers[this.server_id].roles[role_id] == null) return false;
@@ -435,31 +435,31 @@ class Server {
     server.resetNeglectTimeout();
     return this.neglect_neglect;
   }
-  
+
   addTextRule(search_text, replace_text) {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
     this.textrules[search_text.trim().toLowerCase()] = replace_text.trim();
     require('./World').save();
   };
-  
+
   removeTextRule(search_text) {
     delete this.textrules[search_text.trim().toLowerCase()];
     require('./World').save();
   };
-  
+
   removeTextRuleByIndex(index) {
     var i = 0;
     for( var k in Object.keys(this.textrules))
       if ( ++i == index )
         this.removeTextRule(k);
   };
-  
+
   clearAllTextRules() {
     this.textrules = {};
     require('./World').save();
   };
-  
+
   startUnfollowTimer() {
     var server = this;
     var unfollow_timeout = function() {
@@ -469,12 +469,12 @@ class Server {
       w.save();
       w.setPresence();
     };
-    
-    server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);    
+
+    server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);
   };
-  
+
   cancelUnfollowTimer() {
-    if (this.unfollow_timeout) 
+    if (this.unfollow_timeout)
       clearTimeout(this.unfollow_timeout);
     this.unfollow_timeout = null;
   };

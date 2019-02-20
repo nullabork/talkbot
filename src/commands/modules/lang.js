@@ -30,6 +30,7 @@ var command = new BotCommand({
   execute: lang,
   short_help: 'lang.shorthelp',
   long_help: 'lang.longhelp',
+  group: "personalization"
 });
 
 

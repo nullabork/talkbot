@@ -75,6 +75,7 @@ var command = new BotCommand({
   execute: listVoices,
   short_help: 'voices.shorthelp',
   long_help: 'voices.longhelp',
+  group: "info"
 });
 
 

@@ -1,6 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
 var HelpBuilder = require('@models/HelpBuilder');
+var Common = require('@helpers/Common');
 
 
 /**
@@ -20,19 +21,44 @@ var HelpBuilder = require('@models/HelpBuilder');
 function help(msg, server, world) {
 
   var cmds = require("@commands");
-  var response = "```Quickstart:\n\n\t1. join a voice channel\n\t2. type " + cmds.command_char + "follow\n\t3. Type some text and hear the bot speak\n\nThe full list of commands are:\n\n";
 
   var data = {
-    "Commands" : { },
-    "Issues" : { }
+    "Quickstart" : [
+      "1. join a voice channel",
+      "2. type " + cmds.command_char + "follow",
+      "3. Type some text and hear the bot speak\n\nThe full list of commands are:"
+    ],
+
+    "Commands" : {
+
+    },
+    "Misc Commands" : {
+
+    },
+
+    "Issues" : [
+      'To submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot',
+      'To Talk to other humans join our discord https://discordapp.com/invite/NxrPp8g'
+    ]
   };
+
   for (var command in cmds.commands) {
     var cmd = cmds.commands[command];
     if (cmd.hidden) continue;
-    data.Commands[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
+    var group = cmd.group;
+    var groupName = "Other Commands";
+
+    if(!group){
+      group = data[groupName];
+    } else {
+      groupName = Common.camelize(group.toLowerCase());
+      if(!data.Commands[groupName]) data.Commands[groupName] = {};
+      group = data.Commands[groupName];
+    }
+
+    group[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
-  data.Issues = '\nTo submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot';
   var help = new HelpBuilder(data);
 
   msg.response(help.out());
@@ -43,6 +69,7 @@ var command = new BotCommand({
   execute: help,
   short_help: 'help.shorthelp',
   long_help: 'help.longhelp',
+  group: "info"
 });
 
 
