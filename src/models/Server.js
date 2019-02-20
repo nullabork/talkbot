@@ -27,6 +27,8 @@ class Server {
     }
 
     var inst = bot.servers[this.server_id];
+
+
     //this.owner_id = inst.owner_id;
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;

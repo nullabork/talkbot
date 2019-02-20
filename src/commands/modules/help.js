@@ -1,7 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
 var HelpBuilder = require('@models/HelpBuilder');
-var Common = require('@helpers/Common');
+var Common = require('@helpers/common');
 
 
 /**
