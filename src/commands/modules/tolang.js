@@ -52,18 +52,14 @@ function toLang(msg, server, world) {
 
   server.addUserSetting(msg.user_id,'name', 'default');
   msg.response(response);
-
-
-
-
 };
 
 var command = new BotCommand({
   command_name: 'tolang',
   command_arg: 't',
   execute: toLang,
-  short_help: 'mylang.shorthelp',
-  long_help: 'mylang.longhelp',
+  short_help: 'tolang.shorthelp',
+  long_help: 'tolang.longhelp',
   group: "personalization"
 });
 

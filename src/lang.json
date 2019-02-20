@@ -23,7 +23,8 @@
     "shorthelp": "The bot will join your voice channel and read what you write."
   },
   "en.defaults": {
-    "okay": "Your voice settings have been reset :D"
+    "okay": "Your voice settings have been reset :D",
+    "shorthelp": "Reset your default voice settings"
   },
   "en.unfollow": {
     "okay": "Goodbye master",
@@ -143,5 +144,9 @@
     "nope": "Sorry you don't have permission to manage this server.",
     "none": "Neglect has now been switched off.",
     "okay": "Neglect has now been turned on."
+  },
+  "en.givemelink": {
+    "noconfig": "This command is not setup",
+    "shorthelp": "Break off some truely random internet and give it to you. Break out of the filter bubble today!"
   }
 }
