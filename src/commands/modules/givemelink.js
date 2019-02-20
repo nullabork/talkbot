@@ -28,7 +28,7 @@ function givemelink(msg, server, world) {
     // when you want to define this per server or user, change this bit
     // and pull out the config testing or use that as a fall back
     var fetchoUri = auth.givemelink.endpoint;
-    
+
     var request = require('request');
     request(fetchoUri, function (error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -61,7 +61,8 @@ var command = new BotCommand({
   execute: givemelink,
   short_help: 'givemelink.shorthelp',
   long_help: 'givemelink.longhelp',
-  hidden: !auth.givemelink
+  hidden: !auth.givemelink,
+  group: 'Info'
 });
 
 var commanda = new BotCommand({
