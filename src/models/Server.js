@@ -30,8 +30,9 @@ class Server {
     //this.owner_id = inst.owner_id;
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
-    this.users = bot.users[this.server_owner_user_id];
-    this.server_owner_username = this.users[this.server_owner_user_id];
+    this.users = bot.users[this.server_owner_user_id] || {};
+    if ( this.users[this.server_owner_user_id])
+      this.server_owner_username = this.users[this.server_owner_user_id].username;
 
     this.audioEmojis = state_data.audioEmojis || server_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || server_data.userSettings || {};
