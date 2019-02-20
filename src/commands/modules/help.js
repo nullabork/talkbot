@@ -26,13 +26,10 @@ function help(msg, server, world) {
     "Quickstart" : [
       "1. join a voice channel",
       "2. type " + cmds.command_char + "follow",
-      "3. Type some text and hear the bot speak\n\nThe full list of commands are:"
+      "3. Type some text and hear the bot speak"
     ],
 
     "Commands" : {
-
-    },
-    "Misc Commands" : {
 
     },
 
@@ -51,6 +48,8 @@ function help(msg, server, world) {
 
     if(!group){
       group = data[groupName];
+      //hack
+      continue;
     } else {
       groupName = Common.camelize(group.toLowerCase());
       if(!data.Commands[groupName]) data.Commands[groupName] = {};
