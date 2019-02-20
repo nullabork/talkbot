@@ -60,7 +60,7 @@ function unpermit(msg, server) {
 
   var target_ids = msg.getUserIds();
   if (!target_ids || !target_ids.length) {
-    return;
+    target_ids = [msg.user_id];
   }
 
   //target_ids.forEach(function(target_id) {
