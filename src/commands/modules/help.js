@@ -45,8 +45,9 @@ function help(msg, server, world) {
   for (var command in cmds.commands) {
     var cmd = cmds.commands[command];
     if (cmd.hidden) continue;
+
     var group = cmd.group;
-    var groupName = "Other Commands";
+    var groupName = "Misc Commands";
 
     if(!group){
       group = data[groupName];
