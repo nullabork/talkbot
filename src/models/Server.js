@@ -152,11 +152,7 @@ class Server {
     this.permitted = {};
     clearTimeout(this.neglect_timeout);
 
-    if (this.inChannel()) {
-      this.leaveVoiceChannel();
-    }
-
-    this.save();
+    this.leaveVoiceChannel();
   };
 
   getChannelMembers(channel_id) {
@@ -247,6 +243,12 @@ class Server {
     
     if (!callback) callback = function () { };
 
+    // HACK: leave the voice channel if already in, ignore the error
+    try {
+      bot.leaveVoiceChannel(channel_id, null);
+    }
+    catch(e) { Common.err(e); }
+    
     // HACK: to get around error "Voice channel already active" and not working
     if (bot.servers[this.server_id].voiceSession) {
       server.setVoiceChannel(channel_id);
