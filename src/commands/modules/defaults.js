@@ -31,6 +31,7 @@ var command = new BotCommand({
   execute: defaults,
   short_help: 'defaults.shorthelp',
   long_help: 'defaults.longhelp',
+  group: "personalization"
 });
 
 

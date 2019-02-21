@@ -61,7 +61,8 @@ var command = new BotCommand({
   execute: givemelink,
   short_help: 'givemelink.shorthelp',
   long_help: 'givemelink.longhelp',
-  hidden: !auth.givemelink
+  hidden: !auth.givemelink,
+  group: 'Info'
 });
 
 var commanda = new BotCommand({

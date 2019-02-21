@@ -20,7 +20,7 @@
     "okay": "Yes, master!",
     "huh": "Yes, master?",
     "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",
-    "shorthelp": "Take control of the bot so it reads out what you type, It'll join you in your current voice channel."
+    "shorthelp": "The bot will join your voice channel and read what you write."
   },
   "en.defaults": {
     "okay": "Your voice settings have been reset :D",
@@ -30,7 +30,7 @@
     "okay": "Goodbye master",
     "nope": "Sorry, you're not my master.",
     "none": "I have no master... would you like to be my master?",
-    "shorthelp": "Release the bot so someone else can use it."
+    "shorthelp": "Release the bot."
   },
   "en.permit": {
     "okay": "I'll listen to :name now",
@@ -68,8 +68,8 @@
   "en.myvoice": {
     "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
     "no": "Sorry, I cant find the voice :voice.",
-    "shorthelp": "Set your voice the bot will speak with. eg. Mason, en-US-Standard-D, Ava, en-AU-Wavenet-A, etc.\n Use the command `!voices lang_code` to get a list of useable voices",
-    "auto" : "Now the bot will choose the best voice and use your lang and gnder settings.",
+    "shorthelp": "Change accent or style.",
+    "auto" : "Now the bot will choose the best voice and use your lang and gender settings.",
     "more" : "You must specify a voice code. eg `!myvoice lily`",
     "noped" : "Your !myvoice setting has been overriden and you must use the command again to enable."
   },
@@ -104,7 +104,7 @@
     "usage": "```Associate words or emojis with sound effect files\n\n\t!sfx set [word/emoji] [audio file url]\n\t!sfx list\n\t!sfx del [word/emoji]\n\t!sfx [url]\n```"
   },
   "en.sidle": {
-    "shorthelp": "Take control of the bot from someone else. You have to be a server admin for this to work",
+    "shorthelp": "Admin can take control of the bot.",
     "nope": "You have to be an admin on this server to use this",
     "okay": "Okay you're now the master",
     "broken": "Something went wrong getting the voice channel, you might still have been made the master"

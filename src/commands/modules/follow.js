@@ -72,7 +72,7 @@ function unfollow(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function sidle(msg, server, world) {
-  
+
   if (!server.isBound()) {
     msg.response(server.lang('sidle.none'));
     return;
@@ -148,6 +148,7 @@ var command_follow = new BotCommand({
   execute: follow,
   short_help: 'follow.shorthelp',
   long_help: 'follow.longhelp',
+  group: "control"
 });
 
 var command_unfollow = new BotCommand({
@@ -155,6 +156,7 @@ var command_unfollow = new BotCommand({
   execute: unfollow,
   short_help: 'unfollow.shorthelp',
   long_help: 'unfollow.longhelp',
+  group: "control"
 });
 
 var command_sidle = new BotCommand({
@@ -162,6 +164,7 @@ var command_sidle = new BotCommand({
   execute: sidle,
   short_help: 'sidle.shorthelp',
   long_help: 'sidle.longhelp',
+  group: "control"
 });
 
 var command_transfer = new BotCommand({
@@ -169,6 +172,7 @@ var command_transfer = new BotCommand({
   execute: transfer,
   short_help: 'transfer.shorthelp',
   long_help: 'transfer.longhelp',
+  group: "control"
 });
 
 exports.register = function (commands) {

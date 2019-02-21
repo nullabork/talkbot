@@ -1,5 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
+var HelpBuilder = require('@models/HelpBuilder');
+var Common = require('@helpers/common');
 
 
 /**
@@ -19,17 +21,47 @@ var BotCommand = require('@models/BotCommand');
 function help(msg, server, world) {
 
   var cmds = require("@commands");
-  var response = "```Quickstart:\n\n\t1. join a voice channel\n\t2. type " + cmds.command_char + "follow\n\t3. Type some text and hear the bot speak\n\nThe full list of commands are:\n\n";
+
+  var data = {
+    "Quickstart" : [
+      "1. join a voice channel",
+      "2. type " + cmds.command_char + "follow",
+      "3. Type some text and hear the bot speak"
+    ],
+
+    "Commands" : {
+
+    },
+
+    "Issues" : [
+      'To submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot',
+      'To Talk to other humans join our discord https://discordapp.com/invite/NxrPp8g'
+    ]
+  };
 
   for (var command in cmds.commands) {
     var cmd = cmds.commands[command];
     if (cmd.hidden) continue;
-    response += '\t' + cmds.command_char + cmds.commands[command].command_name + ' - ' + server.lang(cmds.commands[command].short_help) + '\n'; // + ' ' + commands_local.commands[command].short_help;
+
+    var group = cmd.group;
+    var groupName = "Misc Commands";
+
+    if(!group){
+      group = data[groupName];
+      //hack
+      continue;
+    } else {
+      groupName = Common.camelize(group.toLowerCase());
+      if(!data.Commands[groupName]) data.Commands[groupName] = {};
+      group = data.Commands[groupName];
+    }
+
+    group[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
-  response += '\nTo submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot```';
+  var help = new HelpBuilder(data);
 
-  msg.response(response);
+  msg.response(help.out());
 };
 
 var command = new BotCommand({
@@ -37,6 +69,7 @@ var command = new BotCommand({
   execute: help,
   short_help: 'help.shorthelp',
   long_help: 'help.longhelp',
+  group: "info"
 });
 
 

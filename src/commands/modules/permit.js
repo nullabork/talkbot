@@ -89,6 +89,7 @@ var command_permit = new BotCommand({
   execute: permit,
   short_help: 'permit.shorthelp',
   long_help: 'permit.longhelp',
+  group: "control"
 });
 
 var command_unpermit = new BotCommand({
@@ -96,6 +97,7 @@ var command_unpermit = new BotCommand({
   execute: unpermit,
   short_help: 'unpermit.shorthelp',
   long_help: 'unpermit.longhelp',
+  group: "control"
 });
 
 exports.register = function (commands) {

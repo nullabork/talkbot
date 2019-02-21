@@ -28,7 +28,7 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.nope'));
       return;
     }
-    
+
     var nextindex = -1;
     for ( var i=1; i < msg.args.length; i++ ) {
       if ( msg.args[i] != '->' ) {
@@ -56,7 +56,7 @@ function textrule(msg, server, world) {
       msg.response(server.lang('textrule.nope'));
       return;
     }
-    
+
     for ( var i=1; i < msg.args.length; i++) key += ' ' + msg.args[i];
     if ( key == '' )
       msg.response(server.lang('textrule.usage'));
@@ -68,7 +68,7 @@ function textrule(msg, server, world) {
 
   // list all the rules
   else if ( msg.args[0] == 'list') {
-    if (Object.keys(server.textrules).length == 0) 
+    if (Object.keys(server.textrules).length == 0)
       msg.response(server.lang('textrule.norules'));
     else {
       var r = '```';
@@ -78,17 +78,17 @@ function textrule(msg, server, world) {
       msg.response(r);
     }
   }
-  
+
   else if ( msg.args[0] == 'clearall' ) {
     if (!msg.ownerCanManageTheServer()) {
       msg.response(server.lang('textrule.nope'));
       return;
     }
-    
+
     server.clearAllTextRules();
     msg.response(server.lang('textrule.clearallokay'));
   }
-  
+
   else {
     msg.response(server.lang('textrule.usage'));
   }
@@ -112,6 +112,7 @@ var command = new BotCommand({
   listeners: {
     message: msgParser
   },
+  group: "server"
 
 });
 

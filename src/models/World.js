@@ -53,8 +53,6 @@ class World {
     }
 
     if (this.broadcastID == null) {
-
-
       this.broadcastID = (Math.floor(Math.random() * 90000) + 10000) + "";
       this.broadcastMessage = message;
       this.broadcaster = user_id;
@@ -100,12 +98,12 @@ class World {
   }
 
   checkMastersVoiceChannels(user_id) {
-    
+
     var world = this;
     if (!user_id) return;
-    
-    // calling getUserVoiceChannel() during the VOICE_STATUS_UPDATE event 
-    // means that bot.servers[...] etc. arrays are not yet up to date. 
+
+    // calling getUserVoiceChannel() during the VOICE_STATUS_UPDATE event
+    // means that bot.servers[...] etc. arrays are not yet up to date.
     // The underlying framework is providing the events to us before processing
     // itself.
     // run delayed execution of the code to get the real answers
@@ -129,7 +127,7 @@ class World {
         }
       }
     };
-    
+
     setTimeout(delayed_execution, 100);
   }
 

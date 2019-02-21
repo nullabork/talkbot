@@ -51,6 +51,7 @@ var command_ohshit = new BotCommand({
   short_help: 'ohshit.shorthelp',
   long_help: 'ohshit.longhelp',
   hidden: true,
+  group: "admin"
 });
 
 exports.register = function (commands) {

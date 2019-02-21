@@ -165,9 +165,17 @@ class Common {
     }
 
     args.push(command);
-    //command = Common.arg();
 
     return args;
+  }
+
+  static camelize (str) {
+    return str.replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/-|_/g, " ")
+        .toLowerCase()
+        .replace(/\b[a-z]/g, function(b,c){
+    		return b.toUpperCase();
+		});
   }
 
   //remove urls with notheing

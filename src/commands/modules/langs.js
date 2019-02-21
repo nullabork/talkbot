@@ -72,6 +72,7 @@ var command = new BotCommand({
   execute: langVoices,
   short_help: 'langs.shorthelp',
   long_help: 'langs.longhelp',
+  group: "info"
 });
 
 
