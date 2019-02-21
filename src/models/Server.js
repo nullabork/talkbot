@@ -1,9 +1,12 @@
 
 var Lang = require("lang.js"),
+  paths = require('@paths'),
   botStuff = require('@helpers/bot-stuff'),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   bot = botStuff.bot;
+
+var fs = require('fs');
 
 // https://discordapp.com/developers/docs/topics/permissions
 var P_ADMINISTRATOR  = 0x00000008;
@@ -19,35 +22,32 @@ var TIMEOUT_NEGLECT    = 120 * 60 * 1000; // 2 hours
 
 class Server {
 
-  constructor(server_data, server_id, state_data) {
-    state_data = state_data || {};
+  constructor(server_id) {
     this.server_id = server_id;
-    if (!this.server_id && server_data.id) {
-      this.server_id = server_data.id;
-    }
 
+    var state_data = this.loadState() || {};
     var inst = bot.servers[this.server_id];
     //this.owner_id = inst.owner_id;
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
     this.users = bot.users[this.server_owner_user_id] || {};
     if ( this.users[this.server_owner_user_id])
-      this.server_owner_username = this.users[this.server_owner_user_id].username;
+      this.server_owner_username = this.users[this.server_owner_user_id];
 
-    this.audioEmojis = state_data.audioEmojis || server_data.audioEmojis || {};
-    this.userSettings = state_data.userSettings || server_data.userSettings || {};
-    this.textrules = state_data.textrules || server_data.textrules || {};
+    this.audioEmojis = state_data.audioEmojis || {};
+    this.userSettings = state_data.userSettings || {};
+    this.textrules = state_data.textrules || {};
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
-    this.language = state_data.language || server_data.language || 'en-AU';
+    this.language = state_data.language || 'en-AU';
     this.fallbackLang = 'en';
-    // this.messagesPerMinute = [];
-    this.created = state_data.created || server_data.created || new Date();
-
+    this.created = state_data.created  || new Date();
+    this.updated = new Date();
+    
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
       locale: langmap.get(this.language).root,
@@ -56,38 +56,6 @@ class Server {
 
     this.messages = {};
   }
-
-  // setMessagesPerMinute () {
-  //   var msgTime = new Date().getTime(),
-  //     thresholdTime = msgTime - MESSAGE_TIMEFRAME_RETENTION_MS;
-  //   this.messagesPerMinute.unshift(msgTime);
-
-  //   let i = this.messagesPerMinute.length;
-  //   while(i--){
-  //     var time = array[i];
-  //     if(time <= thresholdTime) {
-  //       this.messagesPerMinute.splice(-1,1);
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  // }
-
-  // getMessageAverage() {
-  //   var totals = [],
-  //   msgTime = new Date().getTime(),
-  //   thresholdTime = msgTime - MESSAGE_AVERAGE_TIMEFRAME_MS;
-  //   var total = 0;
-  //   for (let msgTime of this.messagesPerMinute) {
-  //     if(msgTime > thresholdTime){
-  //       total++;
-  //     } else {
-  //       thresholdTime -= MESSAGE_AVERAGE_TIMEFRAME_MS;
-  //       totals.push(total);
-  //       total = 0;
-  //     }
-  //   }
-  // }
 
   setMaster(user_id, username) {
     this.bound_to = user_id;
@@ -103,7 +71,7 @@ class Server {
     }
 
     this.userSettings[user_id][name] = value;
-    require('./World').save();
+    this.save();
     return value;
   }
 
@@ -111,7 +79,7 @@ class Server {
   clearUserSettings(user_id) {
     if(!this.userSettings) this.userSettings = {};
     this.userSettings[user_id] = {};
-    require('./World').save();
+    this.save();
   }
 
 
@@ -167,7 +135,7 @@ class Server {
     this.bound_to_username = username;
     this.permit(user_id);
     this.resetNeglectTimeout();
-    require('./World').save();
+    this.save();
   }
 
   isServerChannel(channel_id) {
@@ -188,7 +156,7 @@ class Server {
       this.leaveVoiceChannel();
     }
 
-    require('./World').save();
+    this.save();
   };
 
   getChannelMembers(channel_id) {
@@ -201,7 +169,7 @@ class Server {
   }
 
   kill() {
-    require('./World').save();
+    this.save();
     bot.disconnect();
     process.exit();
   }
@@ -289,8 +257,8 @@ class Server {
         callback();
       }
 
-      var w = require('./World');
-      w.save();
+      server.save();
+      var w = require("./World");
       w.setPresence();
     });
   };
@@ -309,21 +277,20 @@ class Server {
     }
 
     server.current_voice_channel_id = null;
-    var w = require('./World');
-    w.save();
+    this.save();
     w.setPresence();
   }
 
   permit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = {};
-    require('./World').save();
+    this.save();
   }
 
   unpermit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = null;
-    require('./World').save();
+    this.save();
   }
 
   resetNeglectTimeout() {
@@ -441,12 +408,12 @@ class Server {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
     this.textrules[search_text.trim().toLowerCase()] = replace_text.trim();
-    require('./World').save();
+    this.save();
   };
   
   removeTextRule(search_text) {
     delete this.textrules[search_text.trim().toLowerCase()];
-    require('./World').save();
+    this.save();
   };
   
   removeTextRuleByIndex(index) {
@@ -458,7 +425,7 @@ class Server {
   
   clearAllTextRules() {
     this.textrules = {};
-    require('./World').save();
+    this.save();
   };
   
   startUnfollowTimer() {
@@ -466,8 +433,7 @@ class Server {
     var unfollow_timeout = function() {
       server.release();
       server.unfollow_timeout = null;
-      var w = require('./World');
-      w.save();
+      server.save();
       w.setPresence();
     };
     
@@ -479,6 +445,34 @@ class Server {
       clearTimeout(this.unfollow_timeout);
     this.unfollow_timeout = null;
   };
-}
+  
+  save(_filename) {
+    var self  = this;
+    this.updated = new Date();
+    setTimeout(function(){
+      function replacer(key, value) {
+        if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
+        if (key == "commandResponses") return undefined;
+        else return value;
+      };
+
+      if ( !_filename) _filename = paths.config + "/" + self.server_id + ".server";
+      fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
+    },10);
+  };    
+    
+  loadState() {
+
+    var self = this;
+    var _filename = paths.config + "/" + self.server_id + ".server";
+  
+    if (fs.existsSync(_filename)) {
+      return JSON.parse(fs.readFileSync(_filename));
+    }
+    
+    return null;
+  };    
+    
+};
 
 module.exports = Server;

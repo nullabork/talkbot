@@ -45,12 +45,8 @@ bot.on('ready', function (evt) {
       url: ''
     }
   });
-
-  // init all other servers
-  world.initServers();
-  // load the state
-  world.load();
-
+  
+  // servers will turn up on GUILD_CREATE
 });
 
 bot.on('disconnect', function (evt) {
@@ -65,7 +61,7 @@ bot.on('any', function (evt) {
 
     // when added to a server do this - need to wait a bit for the library to init
     var add_server = function () {
-      world.addServer(new Server(bot.servers[server_id], server_id,  world.servers[server_id]));
+      world.addServer(new Server(server_id));
       Common.out("Server " + bot.servers[server_id].name + " started");
     };
 
@@ -205,12 +201,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
 
 process.on('SIGINT', function () {
-  world.save();
+  world.saveAll();
   bot.disconnect();
   process.exit();
 });
 
 process.on('uncaughtException', function (err) {
+  world.saveAll();
   Common.error(err);
   bot.disconnect();
   process.exit();

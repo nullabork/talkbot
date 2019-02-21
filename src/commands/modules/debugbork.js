@@ -32,7 +32,7 @@ function kill(msg, server, world) {
 function ohshit(msg, server, world) {
   if (!msg.ownerIsMaster()) msg.response(server.lang('ohshit.nope'));
   else {
-    world.save('./ohshit' + (new Date().getTime()) + '.json');
+    server.save('./ohshit' + (new Date().getTime()) + '.json');
     msg.response(server.lang('ohshit.okay'));
   }
 };

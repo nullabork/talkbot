@@ -12,7 +12,7 @@ class World {
   }
 
 
-  constructor(server_id, server_data) {
+  constructor() {
     this.servers = {};
     this.broadcastTimout = null;
     this.broadcastID = null;
@@ -25,7 +25,6 @@ class World {
       return;
     }
     this.servers[server.server_id] = server;
-    this.save();
     this.setPresence();
   }
 
@@ -120,8 +119,8 @@ class World {
         }
       };
       
-      for (var server in world.servers) {
-        var s = world.servers[server];
+      for (var server_id in world.servers) {
+        var s = world.servers[server_id];
         if (s.bound_to == user_id) {
           if (voiceChan != s.current_voice_channel_id) {
             leave_servers.push(s);
@@ -132,16 +131,6 @@ class World {
     };
     
     setTimeout(delayed_execution, 100);
-  }
-
-  initServers() {
-    for (var server in bot.servers) {
-      if (!this.servers[server]) {
-        this.addServer(
-          new Server(bot.servers[server])
-        );
-      }
-    }
   }
 
   setPresence() {
@@ -160,35 +149,12 @@ class World {
       }
     });
   }
-
-  save(_filename) {
-    var self  = this;
-    setTimeout(function(){
-      function replacer(key, value) {
-        if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
-        if (key == "commandResponses") return undefined;
-        else return value;
-      };
-
-      if (!_filename) _filename = paths.state;
-      fs.writeFileSync(_filename, JSON.stringify(self.servers, replacer), 'utf-8');
-    },10);
-  }
-
-  load() {
-    try {
-      var file = require(paths.state);
-      for (var server_id in file) {
-        var server = new Server(file[server_id], server_id);
-        this.servers[server_id] = server;
-        server.init();
-      }
-      this.setPresence();
-    } catch (ex) {
-      Common.error(ex);
-      this.save();
+  
+  saveAll() {
+    for (var server_id in this.servers) {
+      this.servers[server_id].save();
     }
-  }
+  };
 }
 
 module.exports = new World();

@@ -77,7 +77,7 @@ function sfx(msg, server, world) {
       if (msg.args[0] != 'del' || msg.args[0] != 'delete' || msg.args[0] != 'rm' || msg.args[0] != 'remove') msg.response(server.lang('sfx.nodelete'));
       var emoji_name = msg.args[1];
       delete server.audioEmojis[emoji_name];
-      world.save();
+      server.save();
     }
 
     // set an emoji on this server
@@ -95,7 +95,7 @@ function sfx(msg, server, world) {
       if (emoji_url.substring(0, 5) != 'https') msg.response(server.lang('sfx.needshttps'));
       else {
         server.audioEmojis[emoji_name] = emoji_url;
-        world.save();
+        server.save();
         msg.response(server.lang('sfx.okay', { 'emoji' : emoji_name }));
       }
     }
