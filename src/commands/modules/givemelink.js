@@ -66,7 +66,7 @@ var command = new BotCommand({
 
 var commanda = new BotCommand({
   command_name: 'g',
-  startup: testConfig,
+  startup: null,
   execute: givemelink,
   short_help: 'givemelink.shorthelp',
   long_help: 'givemelink.longhelp',

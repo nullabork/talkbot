@@ -244,24 +244,37 @@ class Server {
       Common.out("joinVoiceChannel() on the wrong server");
       return;
     }
-
-    server.cancelUnfollowTimer();
+    
     if (!callback) callback = function () { };
-    bot.joinVoiceChannel(channel_id, function (error, events) {
-      if (error) {
-        Common.error(error);
-      }
-      else {
-        server.current_voice_channel_id = channel_id;
-        Common.out('joined channel: ' + channel_id);
-        callback();
-      }
 
-      server.save();
-      var w = require("./World");
-      w.setPresence();
-    });
+    // HACK: to get around error "Voice channel already active" and not working
+    if (bot.servers[this.server_id].voiceSession) {
+      server.setVoiceChannel(channel_id);
+      callback();
+    }
+    else 
+    {
+      bot.joinVoiceChannel(channel_id, function (error, events) {
+        if (error) {
+          Common.error(error);
+        }
+        else {
+          server.setVoiceChannel(channel_id);
+          Common.out('joined channel: ' + channel_id);
+          callback();
+        }
+      });
+    }
   };
+  
+  setVoiceChannel(channel_id) {
+    var server = this;
+    server.cancelUnfollowTimer();
+    server.current_voice_channel_id = channel_id;
+    server.save();
+    var w = require("./World");
+    w.setPresence();
+  }
 
   leaveVoiceChannel(callback) {
     var server = this;
@@ -278,6 +291,7 @@ class Server {
 
     server.current_voice_channel_id = null;
     this.save();
+    var w = require("./World");
     w.setPresence();
   }
 
@@ -404,15 +418,20 @@ class Server {
     return this.neglect_neglect;
   }
   
-  addTextRule(search_text, replace_text) {
+  addTextRule(search_text, replace_text, escape_regex) {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
-    this.textrules[search_text.trim().toLowerCase()] = replace_text.trim();
+    search_text = search_text.trim().toLowerCase();
+    replace_text = replace_text.trim();
+    if ( escape_regex ) search_text = Common.escapeRegExp(search_text);
+    this.textrules[search_text] = replace_text;
     this.save();
   };
   
-  removeTextRule(search_text) {
-    delete this.textrules[search_text.trim().toLowerCase()];
+  removeTextRule(search_text, escape_regex) {
+    search_text = search_text.trim().toLowerCase();
+    if ( escape_regex ) search_text = Common.escapeRegExp(search_text);
+    delete this.textrules[search_text];
     this.save();
   };
   
@@ -434,6 +453,7 @@ class Server {
       server.release();
       server.unfollow_timeout = null;
       server.save();
+      var w = require("./World");
       w.setPresence();
     };
     
