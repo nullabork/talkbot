@@ -251,6 +251,8 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
+        var w = require("./World");
+        w.incrementStatDailyActiveServers(server.server_id);
         callback();
       }
     });
