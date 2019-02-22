@@ -218,8 +218,8 @@ class Common {
   //truncate message to 200 characters should be used before all the other things
   //TODO: define length in config
   static truncateMessage(message) {
-    if (message.length > 200) {
-      message = message.substring(0, 200);
+    if (message.length > 1000) {
+      message = message.substring(0, 1000);
     }
     return message;
   }
