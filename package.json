@@ -1,7 +1,7 @@
 {
-  "name": "greeter-bot",
+  "name": "talkbot",
   "version": "0.0.1",
-  "description": "My own Discord bot",
+  "description": "Text to speech bot",
   "main": "bot.js",
   "author": "YOUR-NAME-HERE",
   "dependencies": {

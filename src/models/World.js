@@ -18,6 +18,7 @@ class World {
     this.broadcastID = null;
     this.broadcastMessage = null;
     this.broadcaster = null;
+    this.presence_timeout = null;
   }
 
   addServer(server) {
@@ -134,19 +135,29 @@ class World {
 
   setPresence() {
 
-    var c = 0;
-    for (var s in this.servers) {
-      if (this.servers[s].isBound()) c++;
-    }
-
-    bot.setPresence({
-      status: 'online',
-      game: {
-        name: Object.keys(bot.servers).length + " servers, " + c + " active",
-        type: 1,
-        url: 'https://github.com/wootosmash/talkbot'
+    var w = this;
+    var presence_timer = function() {
+      w.presence_timeout = null;
+      
+      var c = 0;
+      for (var s in w.servers) {
+        if (w.servers[s].isBound()) c++;
       }
-    });
+
+      bot.setPresence({
+        status: 'online',
+        game: {
+          name: Object.keys(bot.servers).length + " servers, " + c + " active",
+          type: 1,
+          url: 'https://github.com/wootosmash/talkbot'
+        }
+      });
+    };
+    
+    if ( this.presence_timeout )
+      clearTimeout(this.presence_timeout);
+    this.presence_timeout = setTimeout(presence_timer, 50);
+  
   }
   
   saveAll() {
