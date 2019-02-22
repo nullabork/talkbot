@@ -47,12 +47,17 @@ function debug(msg, server, world) {
   }
   
   var r = "Active: " + c + "\n";
-  r += "Servers: " + Object.keys(world.servers).length;
+  r += "Servers: " + Object.keys(world.servers).length + "\n";
+  
+  if ( world.dailyStats && world.dailyStats.activeServers )
+    r += "Daily Active Servers: " + Object.keys(world.dailyStats.activeServers).length; 
   
   r += "\n\nActive Servers:\n";
   for (var s in world.servers) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + world.servers[s].bound_to_username + "\n";
   }
+  
+  
   
   msg.response(r);
   

@@ -19,6 +19,8 @@ class World {
     this.broadcastMessage = null;
     this.broadcaster = null;
     this.presence_timeout = null;
+    
+    this.resetDailyStats();
   }
 
   addServer(server) {
@@ -165,6 +167,26 @@ class World {
       this.servers[server_id].save();
     }
   };
+  
+  incrementStatDailyActiveServers(server_id) {
+    this._dailyStats.activeServers[server_id] = 1;
+  };
+  
+  startDailyResetTimer() {
+    var world = this;
+    var daily_reset = function() {
+      world.resetDailyStats();
+    };
+    
+    setTimeout(daily_reset, 24 * 60 * 60 * 1000);
+  };
+  
+  resetDailyStats() {
+    this.dailyStats = this._dailyStats;
+    this._dailyStats = {};
+    this._dailyStats.activeServers = {};
+  };
+  
 }
 
 module.exports = new World();
