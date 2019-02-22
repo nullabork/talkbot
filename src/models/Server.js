@@ -38,7 +38,7 @@ class Server {
 
     this.audioEmojis = state_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || {};
-    this.textrules = state_data.textrules || {};
+    this.textrules = state_data.textrules || {"o/": "wave", "\\o": "wave ack", "\\o/": "hooray", "(y)": "thumbs up", "(n)": "thumbs down"};
     this.bound_to = null;
     this.bound_to_username = null;
     this.current_voice_channel_id = null;

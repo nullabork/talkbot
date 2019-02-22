@@ -224,35 +224,12 @@ class Common {
     return message;
   }
 
-  //replace thigns with words that can be spoken
-  static replaceWavyMen(message) {
-    message = message.replace(/\\o\//gi, "hooray");
-    message = message.replace(/\\o/gi, "wave");
-    message = message.replace(/o\//gi, "wave ack");
-    return message;
-  }
-
-  //replace thigns with words that can be spoken
-  static replaceYesNo(message) {
-    message = message.replace(/\(y\)/gi, "thumbs up");
-    message = message.replace(/\(n\)/gi, "thumbs down");
-    return message;
-  }
-
-  static replaceSheepEmojiWithWhateverAarySaid(message) {
-    message = message.replace(/🐑/gi, "sheep bar ram ewe");
-    return message;
-  }
-
   //cleant a message ready for speaking
   static cleanMessage(message) {
     message = message.trim();
     message = Common.removeUrls(message);
     message = Common.removeRepeatingChar(message);
     message = Common.removeNullsChars(message);
-    message = Common.replaceWavyMen(message);
-    message = Common.replaceYesNo(message);
-    message = Common.replaceSheepEmojiWithWhateverAarySaid(message);
     message = Common.truncateMessage(message);
     return message;
   }
