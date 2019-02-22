@@ -25,8 +25,8 @@ class Server {
   constructor(server_id) {
     this.server_id = server_id;
 
-    var state_data = this.loadState() || {};
     var inst = bot.servers[this.server_id];
+    var state_data = this.loadState() || {};
 
 
     //this.owner_id = inst.owner_id;
@@ -247,28 +247,20 @@ class Server {
 
     // HACK: leave the voice channel if already in, ignore the error
     try {
-      bot.leaveVoiceChannel(channel_id, null);
+      bot.leaveVoiceChannel(channel_id);
     }
     catch(e) { Common.err(e); }
-    
-    // HACK: to get around error "Voice channel already active" and not working
-    if (bot.servers[this.server_id].voiceSession) {
-      server.setVoiceChannel(channel_id);
-      callback();
-    }
-    else 
-    {
-      bot.joinVoiceChannel(channel_id, function (error, events) {
-        if (error) {
-          Common.error(error);
-        }
-        else {
-          server.setVoiceChannel(channel_id);
-          Common.out('joined channel: ' + channel_id);
-          callback();
-        }
-      });
-    }
+
+    bot.joinVoiceChannel(channel_id, function (error, events) {
+      if (error) {
+        Common.error(error);
+      }
+      else {
+        server.setVoiceChannel(channel_id);
+        Common.out('joined channel: ' + channel_id);
+        callback();
+      }
+    });
   };
   
   setVoiceChannel(channel_id) {
@@ -331,6 +323,7 @@ class Server {
   talk(message, options, callback) {
 
     var server = this;
+    if (!server.inChannel()) return;
     if(!options) options = {};
 
     for (var key in options) {
@@ -348,10 +341,7 @@ class Server {
     if(options.pitch != 'default') settings.pitch = options.pitch;
     if(options.speed != 'default') settings.speed = options.speed;
 
-
-    //if(settings.language == 'default') delete settings['name'];
-
-    this.resetNeglectTimeout();
+    server.resetNeglectTimeout();
 
     var play_padding = (message.length < 20);
     if (!callback) callback = function () { };

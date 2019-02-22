@@ -20,75 +20,50 @@ var world = require('@models/World'),
 testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
 testing.TestIfGoogleEnvironmentVarIsSet();
 
-
 // Creates a client
-
-
 var bot = botStuff.bot;
 
-// var ssml = new SSML({});
-
-// var bot = new Discord.Client({
-//   token: auth.token,
-//   autorun: true
-// });
-
+// when the server is ready to go
 bot.on('ready', function (evt) {
   Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
-
-  // cool status
-  bot.setPresence({
-    status: 'online',
-    game: {
-      name: "",
-      type: 1,
-      url: ''
-    }
-  });
-  
-  // servers will turn up on GUILD_CREATE
+  world.setPresence();
 });
 
+// if we get disconnected???
 bot.on('disconnect', function (evt) {
-  Common.out('Disconnected');
+  Common.out('Disconnected, reconnecting');
+  Common.out(evt);
   bot.connect();
 });
 
+// handle voice state updates
 bot.on('any', function (evt) {
+  var user_id = null;
+  var server_id = null;
+  var channel_id = null;
   
-  if (evt.t == 'GUILD_CREATE') {
-    var server_id = evt.d.id;
-
-    // when added to a server do this - need to wait a bit for the library to init
-    var add_server = function () {
-      world.addServer(new Server(server_id));
-      Common.out("Server " + bot.servers[server_id].name + " started");
-    };
-
-    setTimeout(add_server, 2000);
-  }
-  else if (evt.t == 'VOICE_STATE_UPDATE') {
-
+  if (evt.t == 'VOICE_STATE_UPDATE') {
+    
     // if my master's voice status changes
-    var channel_id = null;
-    if (evt.d)
-      var channel_id = evt.d.channel_id;
-    var server = world.getServerFromChannel(channel_id);
+    if (evt.d) {
+      channel_id = evt.d.channel_id;
+      server_id = evt.d.guild_id;
+      user_id = evt.d.user_id;
+    }
+    
+    var server = world.servers[server_id];
     if (server == null) {
       Common.out("What server?: " + channel_id);
-      world.checkMastersVoiceChannels(evt.d.user_id);
+      if ( user_id ) world.checkMastersVoiceChannels(user_id);
       return null;
     }
 
     //was this eventer the current
-    if (evt.d && server.isMaster(evt.d.user_id)) {
-
+    if (server.isMaster(user_id)) {
       if (!channel_id) {
         if (server.inChannel()) {
           server.leaveVoiceChannel();
         }
-      } else if (!botStuff.isVoiceChannel(channel_id)) {
-        Common.out('Not a voice channel');
       } else {
         server.joinVoiceChannel(channel_id);
       }
@@ -96,11 +71,27 @@ bot.on('any', function (evt) {
   }
 });
 
+// new servers arrive
+bot.on('guildCreate', function(server) {
+  var server_id = server.id;
+  world.addServer(new Server(server_id));
+  Common.out("Server " + bot.servers[server_id].name + " started");
+});
+
+// new servers get deleted
+bot.on('guildDelete', function(server) {
+  var world_server = world.servers[server.id];
+  var name = world_server.server_name;
+  world.removeServer(world_server);
+  Common.out("Server " + name + " removed");
+});
+
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
-  if (Common.isMessageExcluded(message)) return null;
+  if (!evt.d) return null;
 
-  var server = world.getServerFromChannel(channel_id);
+  var server_id = evt.d.guild_id;
+  var server = world.servers[server_id];
 
   if (server == null) {
     Common.error("Can't find server for " + channel_id);
@@ -146,35 +137,16 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   } else {
     if (message == null) return;
-
-    // tts bit
-
-
-    // if (!) {
-    //   botStuff.translate_client
-    //     .translate(text, target)
-    //     .then( results => {
-    //       var translation = results[0];
-    //     })
-    //     .catch(err => {
-    //       console.error('ERROR:', err);
-    //     });
-
-    // }
-    // message = ssml.build(message);
-
     if (message.length < 1) return;
-    var ret = commands.notify('message', [message, user_id, server, world]);
-    if (ret) message = ret;
-
+    if (Common.isMessageExcluded(message)) return null;
     if (!server.inChannel()) return;
     if (!server.isPermitted(user_id)) return;
 
-
+    var ret = commands.notify('message', [message, user_id, server, world]);
+    if (ret) message = ret;
 
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
     message = Common.cleanMessage(message);
-
 
     function speak(msg) {
       var message = new MessageSSML(msg, { server: server }).build();
@@ -199,14 +171,15 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
   }
 });
 
-
 process.on('SIGINT', function () {
+  Common.out('SIGINT');
   world.saveAll();
   bot.disconnect();
   process.exit();
 });
 
 process.on('uncaughtException', function (err) {
+  Common.out('uncaughtException');
   world.saveAll();
   Common.error(err);
   bot.disconnect();

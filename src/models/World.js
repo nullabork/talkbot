@@ -8,7 +8,7 @@ var fs = require('fs'),
 
 class World {
   static get NEGLECT_TIMEOUT_IN_MS() {
-    return 30 * 60 * 1000;
+    return 120 * 60 * 1000;
   }
 
 
@@ -21,15 +21,16 @@ class World {
   }
 
   addServer(server) {
-    if (!server.server_id) {
-      return;
-    }
+    if (!server.server_id) return;
     this.servers[server.server_id] = server;
     this.setPresence();
   }
 
   removeServer(server) {
-    this.servers[server.server_id] = null;
+    if ( !this.servers[server.server_id] ) return;
+    this.servers[server.server_id].save();
+    delete this.servers[server.server_id];
+    this.setPresence();
   }
 
   resetNeglectTimeouts() {
