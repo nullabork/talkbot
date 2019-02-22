@@ -245,19 +245,12 @@ class Server {
     
     if (!callback) callback = function () { };
 
-    // HACK: leave the voice channel if already in, ignore the error
-    try {
-      bot.leaveVoiceChannel(channel_id);
-    }
-    catch(e) { Common.err(e); }
-
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
         Common.error(error);
       }
       else {
         server.setVoiceChannel(channel_id);
-        Common.out('joined channel: ' + channel_id);
         callback();
       }
     });
