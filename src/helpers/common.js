@@ -218,29 +218,9 @@ class Common {
   //truncate message to 200 characters should be used before all the other things
   //TODO: define length in config
   static truncateMessage(message) {
-    if (message.length > 200) {
-      message = message.substring(0, 200);
+    if (message.length > 1000) {
+      message = message.substring(0, 1000);
     }
-    return message;
-  }
-
-  //replace thigns with words that can be spoken
-  static replaceWavyMen(message) {
-    message = message.replace(/\\o\//gi, "hooray");
-    message = message.replace(/\\o/gi, "wave");
-    message = message.replace(/o\//gi, "wave ack");
-    return message;
-  }
-
-  //replace thigns with words that can be spoken
-  static replaceYesNo(message) {
-    message = message.replace(/\(y\)/gi, "thumbs up");
-    message = message.replace(/\(n\)/gi, "thumbs down");
-    return message;
-  }
-
-  static replaceSheepEmojiWithWhateverAarySaid(message) {
-    message = message.replace(/🐑/gi, "sheep bar ram ewe");
     return message;
   }
 
@@ -250,9 +230,6 @@ class Common {
     message = Common.removeUrls(message);
     message = Common.removeRepeatingChar(message);
     message = Common.removeNullsChars(message);
-    message = Common.replaceWavyMen(message);
-    message = Common.replaceYesNo(message);
-    message = Common.replaceSheepEmojiWithWhateverAarySaid(message);
     message = Common.truncateMessage(message);
     return message;
   }

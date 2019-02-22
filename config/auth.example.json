@@ -1,8 +1,12 @@
 {
+   "dev_ids": ["279935071165743105"],
    "token": "yourdiscord.tokenhere",
    "command_char" : "!",
    "logging" : {
      "err" : true,
      "out" : true
-   }
+   },
+  "givemelink": {
+    "endpoint": ""
+  }
 }

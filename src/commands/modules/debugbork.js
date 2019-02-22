@@ -37,6 +37,32 @@ function ohshit(msg, server, world) {
   }
 };
 
+function debug(msg, server, world) {
+  
+  if (!msg.ownerIsDev()) return;
+  
+  var c = 0;
+  for (var s in world.servers) {
+    if (world.servers[s].isBound()) c++;
+  }
+  
+  var r = "Active: " + c + "\n";
+  r += "Servers: " + Object.keys(world.servers).length + "\n";
+  
+  if ( world.dailyStats && world.dailyStats.activeServers )
+    r += "Daily Active Servers: " + Object.keys(world.dailyStats.activeServers).length + "\n";
+  
+  r += "\nActive Servers:\n";
+  for (var s in world.servers) {
+    if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + world.servers[s].bound_to_username + "\n";
+  }
+  
+  
+  
+  msg.response(r);
+  
+};
+
 var command_kill = new BotCommand({
   command_name: 'debugbork',
   execute: kill,
@@ -54,12 +80,23 @@ var command_ohshit = new BotCommand({
   group: "admin"
 });
 
+var command_debug = new BotCommand({
+  command_name: 'debug',
+  execute: debug,
+  short_help: 'debug.shorthelp',
+  long_help: 'debug.longhelp',
+  hidden: true,
+  group: "admin"
+});
+
 exports.register = function (commands) {
   commands.add(command_kill);
   commands.add(command_ohshit);
+  commands.add(command_debug);
 };
 
 exports.unRegister = function (commands) {
   commands.remove(command_kill);
   commands.remove(command_ohshit);
+  commands.remove(command_debug);
 };
