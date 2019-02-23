@@ -42,13 +42,6 @@ class World {
     }
   }
 
-  permitAllMasters() {
-    for (var server in this.servers) {
-      if (server.isBound()) {
-        server.setMaster(server.bound_to, server.bound_to_username);
-      }
-    }
-  }
 
   broadcast(message, user_id) {
     var self = this;
