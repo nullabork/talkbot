@@ -57,7 +57,9 @@ Use this to setup your own bot on your own server. Note you will require a googl
 node bot.js
 
 # Troubleshooting 
-## Talk to us on discord https://discord.gg/NxrPp8g
+
+Talk to us on discord https://discord.gg/NxrPp8g
+
 ## Google TTS API Issues
 
 Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. See Google cloud docs here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
