@@ -26,6 +26,7 @@ var bot = botStuff.bot;
 // when the server is ready to go
 bot.on('ready', function (evt) {
   Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+  world.startDailyResetTimer();
   world.setPresence();
 });
 
@@ -80,6 +81,7 @@ bot.on('guildCreate', function(server) {
 
 // new servers get deleted
 bot.on('guildDelete', function(server) {
+  if (!server) return; // why would we lose a server?
   var world_server = world.servers[server.id];
   var name = world_server.server_name;
   world.removeServer(world_server);
