@@ -32,16 +32,16 @@ function kill(msg, server, world) {
 function ohshit(msg, server, world) {
   if (!msg.ownerIsDev()) msg.response(server.lang('ohshit.nope'));
   else {
-    
+
     var fs = require('fs');
     var paths = require('@paths');
     var botStuff = require("@helpers/bot-stuff");
     var bot = botStuff.bot;
     var util = require('util');
     var d = new Date();
-    
+
     server.save(paths.config + '/ohshit' + (d.getTime()) + '.json');
-    
+
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
       if (key == "commandResponses") return undefined;
@@ -53,7 +53,7 @@ function ohshit(msg, server, world) {
 
     _filename = paths.config + '/ohshit-bot-' + (d.getTime()) + '.json';
     fs.writeFileSync(_filename, util.inspect(bot), 'utf-8');
-    
+
     msg.response(server.lang('ohshit.okay'));
   }
 };
@@ -61,29 +61,29 @@ function ohshit(msg, server, world) {
 
 
 function debug(msg, server, world) {
-  
+
   if (!msg.ownerIsDev()) return;
-  
+
   var c = 0;
   for (var s in world.servers) {
     if (world.servers[s].isBound()) c++;
   }
-  
+
   var r = "Active: " + c + "\n";
   r += "Servers: " + Object.keys(world.servers).length + "\n";
-  
+
   if ( world.dailyStats && world.dailyStats.activeServers )
     r += "Daily Active Servers: " + Object.keys(world.dailyStats.activeServers).length + "\n";
-  
+
   r += "\nActive Servers:\n";
   for (var s in world.servers) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + world.servers[s].bound_to_username + "\n";
   }
-  
-  
-  
+
+
+
   msg.response(r);
-  
+
 };
 
 var command_kill = new BotCommand({

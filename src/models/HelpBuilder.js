@@ -1,18 +1,21 @@
 var pad = require('pad');
+var Common = require('@helpers/common');
 
 class HelpBuilder {
 
   constructor(data) {
-    this.padding = " ";
-    this.data = data || {};
+    this.padding = data.padding || " ";
+    this.formatKey = data.formatKey || false;
+    this.data = data.data || {};
   }
 
   recurse(padding, data) {
 
     var max = 0;
     if (!Array.isArray(data)) {
-      for (const key in data) {
-        if (typeof key == "string" && key.length > max) {
+      for (let key in data) {
+        if ( typeof key == "string" && key.length > max ) {
+          if(this.formatKey) key = Common.camelize(key);
           max = key.length;
         }
       }
@@ -58,8 +61,14 @@ class HelpBuilder {
   }
 
   row(padding, rightPad, key, value) {
+
+
+
     if (isNaN(parseInt(key))) {
+
+      if(this.formatKey) key = Common.camelize(key);
       return padding + pad(key, rightPad) + " :: " + value.trim() + "\n";
+
     } else {
       return padding + value + "\n";
     }
@@ -70,6 +79,7 @@ class HelpBuilder {
   }
 
   heading(padding, value) {
+    if(this.formatKey) value = Common.camelize(value);
     return "\n" + "= " + value + " =\n";
   }
 

@@ -98,11 +98,10 @@ function stats(msg, server, world) {
   initStats(server);
   var stats = getWorldStats(world, (a,b) => b._data.characterCount - a._data.characterCount, 5);
 
-  var help = new HelpBuilder(
-    {
-      stats  :  stats
-    }
-  );
+  var help = new HelpBuilder({
+    data : { stats  :  stats },
+    formatKey : true
+  });
 
   msg.response(help.out());
 

@@ -59,7 +59,9 @@ function help(msg, server, world) {
     group[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
-  var help = new HelpBuilder(data);
+  var help = new HelpBuilder({
+    data : data
+  });
 
   msg.response(help.out());
 };
