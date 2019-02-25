@@ -2,45 +2,54 @@ var pad = require('pad');
 
 class HelpBuilder {
 
-  constructor(data){
+  constructor(data) {
     this.padding = " ";
-
     this.data = data || {};
   }
 
-
-  recurse( padding, data) {
+  recurse(padding, data) {
 
     var max = 0;
-    for (const key in data) {
-      if(typeof key == "string" && key.length > max){
-        max = key.length;
+    if (!Array.isArray(data)) {
+      for (const key in data) {
+        if (typeof key == "string" && key.length > max) {
+          max = key.length;
+        }
       }
     }
 
     var out = "";
-    for (const key in data) {
+    for (let key in data) {
       if (data.hasOwnProperty(key)) {
-        const element = data[key];
+        let element = data[key];
 
-        if(typeof element == "object" || Array.isArray(element)){
-          out += this.heading(padding, key);
+        //is array ... recurse
+        if (Array.isArray(element)) {
+          if (isNaN(parseInt(key)))
+            out += this.heading(padding, key);
+          out += this.recurse(padding + this.padding, element);
+        }
+        //is object .... recurse
+        else if (typeof element == "object") {
+
+          if(element["_heading"]) {
+            key = element["_heading"];
+          }
+
+          if(element["_data"]) {
+            element = element["_data"];
+          }
+
+          if (isNaN(parseInt(key)))
+            out += this.heading(padding, key);
+
+          out += this.recurse(padding + this.padding, element);
         }
 
-        if(Array.isArray(element)){
-          for (const item of element) {
-
-            if (typeof item == 'string') {
-              out += this.arrayRow(padding, item);
-            } else if (typeof item == 'object') {
-              out += this.recurse( padding + this.padding, item );
-            }
-
-          }
-        } else if (typeof element == 'string') {
-          out += this.row(padding,max, key, element);
-        } else {
-          out += this.recurse(padding + this.padding, element);
+        //is not either of the above :D do some cool stuff:D
+        else {
+          element = "" + element;
+          out += this.row(padding, max, key, element);
         }
       }
     }
@@ -49,7 +58,11 @@ class HelpBuilder {
   }
 
   row(padding, rightPad, key, value) {
-    return padding + pad(key, rightPad) + " :: " + value + "";
+    if (isNaN(parseInt(key))) {
+      return padding + pad(key, rightPad) + " :: " + value.trim() + "\n";
+    } else {
+      return padding + value + "\n";
+    }
   }
 
   arrayRow(padding, value) {
@@ -57,7 +70,7 @@ class HelpBuilder {
   }
 
   heading(padding, value) {
-   return "\n" + "= " + value + " =\n";
+    return "\n" + "= " + value + " =\n";
   }
 
   out() {
