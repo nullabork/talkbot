@@ -30,12 +30,35 @@ function kill(msg, server, world) {
  * @return  {[undefined]}
  */
 function ohshit(msg, server, world) {
-  if (!msg.ownerIsMaster()) msg.response(server.lang('ohshit.nope'));
+  if (!msg.ownerIsDev()) msg.response(server.lang('ohshit.nope'));
   else {
-    server.save('./ohshit' + (new Date().getTime()) + '.json');
+    
+    var fs = require('fs');
+    var paths = require('@paths');
+    var botStuff = require("@helpers/bot-stuff");
+    var bot = botStuff.bot;
+    var util = require('util');
+    var d = new Date();
+    
+    server.save(paths.config + '/ohshit' + (d.getTime()) + '.json');
+    
+    function replacer(key, value) {
+      if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
+      if (key == "commandResponses") return undefined;
+      else return value;
+    };
+
+    _filename = paths.config + '/ohshit-world-' + (d.getTime()) + '.json';
+    fs.writeFileSync(_filename, JSON.stringify(world, replacer), 'utf-8');
+
+    _filename = paths.config + '/ohshit-bot-' + (d.getTime()) + '.json';
+    fs.writeFileSync(_filename, util.inspect(bot), 'utf-8');
+    
     msg.response(server.lang('ohshit.okay'));
   }
 };
+
+
 
 function debug(msg, server, world) {
   
