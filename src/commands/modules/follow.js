@@ -14,7 +14,6 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  * * */
 function follow(msg, server, world) {
-
   if (server.isBound()) {
     if (!server.isMaster(msg.user_id)) {
       msg.response(server.lang('follow.nope', { name: msg.boundNick() }));

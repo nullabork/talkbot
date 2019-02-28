@@ -16,7 +16,6 @@ function speed(msg, server, world) {
   var speed = parseFloat(msg.args[0]);
   speed = Common.numberClamp(speed, 0.25, 4.0);
   server.addUserSetting(msg.user_id,'speed',speed);
-
   msg.response(server.lang('myspeed.okay', { speed: speed }));
 
 };
