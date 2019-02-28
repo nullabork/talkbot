@@ -1,6 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
-var Common = require('@common');
+var Common = require('@helpers/common');
 
 /**
  * Command: debugbork

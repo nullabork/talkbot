@@ -11,6 +11,7 @@
     "child_process": "^1.0.2",
     "discord.io": "github:wootosmash/discord.io#master",
     "ffmpeg": "0.0.4",
+    "figlet": "^1.2.1",
     "google-tts-api": "0.0.3",
     "lang.js": "^1.1.14",
     "minimist": "^1.2.0",

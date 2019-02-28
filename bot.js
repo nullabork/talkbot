@@ -2,6 +2,7 @@
 
 //npm imports
 require('module-alias/register');
+var figlet = require('figlet');
 var path = require('path'),
   paths = require('@paths');
 //helpers
@@ -22,6 +23,11 @@ testing.TestIfGoogleEnvironmentVarIsSet();
 
 // Creates a client
 var bot = botStuff.bot;
+
+// FANCY SPLASH SCREEN
+figlet('TalkBot', function(err, data) {
+  console.log(data)
+});
 
 // when the server is ready to go
 bot.on('ready', function (evt) {
