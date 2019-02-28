@@ -34,6 +34,7 @@ bot.on('ready', function (evt) {
   Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
   world.startDailyResetTimer();
   world.setPresence();
+  world.startPresenceRotation();
 });
 
 // if we get disconnected???

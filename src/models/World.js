@@ -19,6 +19,8 @@ class World {
     this.broadcastMessage = null;
     this.broadcaster = null;
     this.presence_timeout = null;
+    this.presence_renderers = [this.renderPresenceCounts, this.renderPresenceHelp, this.renderPresenceFollow];
+    this.presence_renderers_index = 0;
     
     this.resetDailyStats();
   }
@@ -134,26 +136,22 @@ class World {
     var w = this;
     var presence_timer = function() {
       w.presence_timeout = null;
-      
-      var c = 0;
-      for (var s in w.servers) {
-        if (w.servers[s].isBound()) c++;
-      }
 
       bot.setPresence({
         status: 'online',
         game: {
-          name: Object.keys(bot.servers).length + " servers, " + c + " active",
+          name: w.renderPresence(),
           type: 1,
           url: 'https://github.com/wootosmash/talkbot'
         }
       });
     };
     
+    // this protects against spamming discord with presence updates
+    // and getting banned
     if ( this.presence_timeout )
       clearTimeout(this.presence_timeout);
     this.presence_timeout = setTimeout(presence_timer, 50);
-  
   }
   
   saveAll() {
@@ -185,6 +183,45 @@ class World {
     this.dailyStats = this._dailyStats;
     this._dailyStats = {};
     this._dailyStats.activeServers = {};
+  };
+  
+  startPresenceRotation() {
+    var world = this;
+    var rotatePresenceBanner = function() {
+      world.nextPresenceRenderer();
+      world.setPresence();
+      setTimeout(rotatePresenceBanner, 15000);
+    };
+    
+    rotatePresenceBanner();
+  };
+  
+  nextPresenceRenderer() {
+    this.presence_renderers_index++;
+  };
+  
+  renderPresence() {
+    return this.presence_renderers[this.presence_renderers_index % this.presence_renderers.length]();
+  };
+  
+  renderPresenceFollow() {
+    return Object.keys(bot.servers).length + " servers, !follow";
+  };
+  
+  renderPresenceHelp() {
+    return Object.keys(bot.servers).length + " servers, !help";
+  };
+  
+  renderPresenceCounts() {
+    var w = this;
+    var c = 0;
+    for (var s in w.servers) {
+      if (w.servers[s].isBound()) c++;
+    }
+    
+    var s = Object.keys(bot.servers).length + " servers, " + c + " active";
+    
+    return s;
   };
   
 }
