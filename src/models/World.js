@@ -23,6 +23,7 @@ class World {
     this.resetDailyStats();
   }
 
+  
   addServer(server) {
     if (!server.server_id) return;
     this.servers[server.server_id] = server;
@@ -160,6 +161,12 @@ class World {
       this.servers[server_id].save();
     }
   };
+  
+  kill() {
+    this.saveAll();
+    bot.disconnect();
+    process.exit();
+  }
   
   incrementStatDailyActiveServers(server_id) {
     this._dailyStats.activeServers[server_id] = 1;

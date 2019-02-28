@@ -1,5 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
+var Common = require('@common');
 
 /**
  * Command: debugbork
@@ -14,7 +15,8 @@ var BotCommand = require('@models/BotCommand');
  */
 function kill(msg, server, world) {
   if (msg.ownerIsDev()) {
-    server.kill();
+    Common.out("debugbork");
+    world.kill();
   }
 };
 

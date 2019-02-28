@@ -166,12 +166,6 @@ class Server {
     return null;
   }
 
-  kill() {
-    this.save();
-    bot.disconnect();
-    process.exit();
-  }
-
   isMaster(user_id) {
     if (!user_id) return false;
     return this.bound_to == user_id;
@@ -243,7 +237,7 @@ class Server {
     if (server.current_voice_channel_id == channel_id) return;
 
     if (!server.isServerChannel(channel_id)) {
-      Common.out("joinVoiceChannel() on the wrong server");
+      Common.error("joinVoiceChannel() on the wrong server");
       return;
     }
 
