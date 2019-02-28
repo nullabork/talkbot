@@ -7,7 +7,7 @@ var path = require('path'),
   paths = require('@paths');
 //helpers
 var commands = require('@commands'),
-  botStuff = require('@helpers/bot-stuff');
+  botStuff = require('@helpers/bot-stuff'),
   Common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
@@ -123,7 +123,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var cmdChar = parts[1];
     var cmdVerb = parts[2] || null;
     var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
-    var cmdMessage = (parts[3] || "").trim()
+    var cmdMessage = (parts[3] || "").trim();
 
     if (!cmdVerb || !cmdChar) {
       return;
