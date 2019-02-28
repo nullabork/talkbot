@@ -237,13 +237,15 @@ class Server {
   };
 
   joinVoiceChannel(channel_id, callback) {
+
+    if (!callback) callback = function () { };
     var server = this;
+    if (server.current_voice_channel_id == channel_id) return;
+
     if (!server.isServerChannel(channel_id)) {
       Common.out("joinVoiceChannel() on the wrong server");
       return;
     }
-
-    if (!callback) callback = function () { };
 
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
