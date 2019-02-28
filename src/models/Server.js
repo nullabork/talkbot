@@ -166,12 +166,6 @@ class Server {
     return null;
   }
 
-  kill() {
-    this.save();
-    bot.disconnect();
-    process.exit();
-  }
-
   isMaster(user_id) {
     if (!user_id) return false;
     return this.bound_to == user_id;
@@ -238,12 +232,13 @@ class Server {
 
   joinVoiceChannel(channel_id, callback) {
     var server = this;
+    if (server.current_voice_channel_id == channel_id) return;
     if (!server.isServerChannel(channel_id)) {
       Common.out("joinVoiceChannel() on the wrong server");
       return;
     }
     
-    if (!callback) callback = function () { };
+    if (!callback) callback = function () {};
 
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
