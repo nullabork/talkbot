@@ -49,11 +49,11 @@ class Server {
     this.fallbackLang = 'en';
     this.created = state_data.created  || new Date();
     this.updated = new Date();
-    
+
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
       locale: langmap.get(this.language).root,
-      fallback: this.fallbackLang //langmap.get(this.fallbackLang).root
+      fallback: this.fallbackLang
     });
 
     this.messages = {};
@@ -237,7 +237,7 @@ class Server {
       Common.out("joinVoiceChannel() on the wrong server");
       return;
     }
-    
+
     if (!callback) callback = function () {};
 
     bot.joinVoiceChannel(channel_id, function (error, events) {
@@ -252,7 +252,7 @@ class Server {
       }
     });
   };
-  
+
   setVoiceChannel(channel_id) {
     var server = this;
     server.cancelUnfollowTimer();
@@ -401,7 +401,7 @@ class Server {
     server.resetNeglectTimeout();
     return this.neglect_neglect;
   }
-  
+
   addTextRule(search_text, replace_text, escape_regex) {
     if ( replace_text == '' ) return;
     if ( search_text == '' ) return;
@@ -411,7 +411,7 @@ class Server {
     this.textrules[search_text] = replace_text;
     this.save();
   };
-  
+
   removeTextRule(search_text, escape_regex) {
     search_text = search_text.trim().toLowerCase();
     if ( escape_regex ) search_text = Common.escapeRegExp(search_text);
@@ -449,7 +449,7 @@ class Server {
       clearTimeout(this.unfollow_timeout);
     this.unfollow_timeout = null;
   };
-  
+
   save(_filename) {
     var self  = this;
     this.updated = new Date();
@@ -463,20 +463,20 @@ class Server {
       if ( !_filename) _filename = paths.config + "/" + self.server_id + ".server";
       fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
     },10);
-  };    
-    
+  };
+
   loadState() {
 
     var self = this;
     var _filename = paths.config + "/" + self.server_id + ".server";
-  
+
     if (fs.existsSync(_filename)) {
       return JSON.parse(fs.readFileSync(_filename));
     }
-    
+
     return null;
-  };    
-    
+  };
+
 };
 
 module.exports = Server;

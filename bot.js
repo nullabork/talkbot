@@ -42,16 +42,16 @@ bot.on('any', function (evt) {
   var user_id = null;
   var server_id = null;
   var channel_id = null;
-  
+
   if (evt.t == 'VOICE_STATE_UPDATE') {
-    
+
     // if my master's voice status changes
     if (evt.d) {
       channel_id = evt.d.channel_id;
       server_id = evt.d.guild_id;
       user_id = evt.d.user_id;
     }
-    
+
     var server = world.servers[server_id];
     if (server == null) {
       Common.out("What server?: " + channel_id);
@@ -102,7 +102,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   // is the message a command?
   if (message.substring(0, commands.command_char.length) == commands.command_char) {
-    
+
     server.resetNeglectTimeout();
 
     var parts = message.match(
@@ -138,11 +138,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     commands.run(msgDets.cmd, [msgDets, server, world]);
 
   } else {
-    if (message == null) return;
-    if (message.length < 1) return;
-    if (Common.isMessageExcluded(message)) return null;
-    if (!server.inChannel()) return;
-    if (!server.isPermitted(user_id)) return;
+
+    if (
+      message.length < 1 ||
+      Common.isMessageExcluded(message) ||
+      !server.inChannel() ||
+      !server.isPermitted(user_id)
+    ) return;
 
     var ret = commands.notify('message', [message, user_id, server, world]);
     if (ret) message = ret;
