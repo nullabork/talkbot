@@ -14,7 +14,7 @@ var BotCommand = require('@models/BotCommand');
  */
 function details(msg, server, world) {
   
-  var target_ids = [];
+  var target_ids = [msg.user_id];
   
   if (msg.args.length > 0 )
   {
