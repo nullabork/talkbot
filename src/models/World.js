@@ -39,13 +39,6 @@ class World {
     this.setPresence();
   }
 
-  resetNeglectTimeouts() {
-    for (var server in this.servers) {
-      server.resetNeglectTimeout();
-    }
-  }
-
-
   broadcast(message, user_id) {
     var self = this;
     if (!(auth.dev_ids.indexOf(user_id) >= 0)) {

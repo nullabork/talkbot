@@ -13,9 +13,25 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function details(msg, server, world) {
+  
+  var target_ids = [];
+  
+  if (msg.args.length > 0 )
+  {
+    target_ids = msg.getUserIds();
+    if (!target_ids || !target_ids.length) {
+      target_ids = [msg.user_id];
+    }
+  }
+  
+  // prevent people getting the bot booted for spamming
+  if ( target_ids.length > 1 ) return;
+  
+  for( var i=0;i<target_ids.length;i++) {
     msg.response(
-      JSON.stringify(server.getUserSettings(msg.user_id), null, 4)
+      JSON.stringify(server.getUserSettings(target_ids[i]), null, 4)
     );
+  }
 };
 
 var command = new BotCommand({

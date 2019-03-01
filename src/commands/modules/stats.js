@@ -118,6 +118,7 @@ var command = new BotCommand({
       return false;
     }
   },
+  hidden: true,
   group: "info"
 });
 

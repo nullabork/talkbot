@@ -9,18 +9,18 @@
   "en.who": {
     "okay": "My master is :name",
     "none": "I have no master :~(",
-    "shorthelp": "Tells you who the current master is"
+    "shorthelp": "Who is the current master"
   },
   "en.ping": {
     "okay": "pong",
-    "shorthelp": "test the bot is up"
+    "shorthelp": "Test the bot is up"
   },
   "en.follow": {
     "join": "You need to join a channel before I can follow you!",
     "okay": "Yes, master!",
     "huh": "Yes, master?",
     "nope": "Sorry, :name is my master today. Get them to release me from my bonds and I'll serve you.",
-    "shorthelp": "The bot will join your voice channel and read what you write."
+    "shorthelp": "The bot will join your voice channel and speak what you write"
   },
   "en.defaults": {
     "okay": "Your voice settings have been reset :D",
@@ -30,10 +30,10 @@
     "okay": "Goodbye master",
     "nope": "Sorry, you're not my master.",
     "none": "I have no master... would you like to be my master?",
-    "shorthelp": "Release the bot."
+    "shorthelp": "Release the bot"
   },
   "en.permit": {
-    "okay": "I'll listen to :name now",
+    "okay": "I'll listen to those nicks now",
     "nope": "Sorry I can't do that, you're not my master.",
     "none": "I don't see any legit names",
     "huh": "I don't know who :name is?",
@@ -77,7 +77,7 @@
     "okay": "OK, now translating to :lang.",
     "deny": "Sorry, you're not permitted",
     "nope": "Sorry, I dont have a voice for :lang",
-    "shorthelp": "Set the language the bot will translate to. eg. en-AU, gb, en-US, fr, jp etc."
+    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc."
   },
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
@@ -104,7 +104,7 @@
     "usage": "```Associate words or emojis with sound effect files\n\n\t!sfx set [word/emoji] [audio file url]\n\t!sfx list\n\t!sfx del [word/emoji]\n\t!sfx [url]\n```"
   },
   "en.sidle": {
-    "shorthelp": "Admin can take control of the bot.",
+    "shorthelp": "Take control of the bot from someone else",
     "nope": "You have to be an admin on this server to use this",
     "okay": "Okay you're now the master",
     "broken": "Something went wrong getting the voice channel, you might still have been made the master"
@@ -115,7 +115,7 @@
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
     "broken" : "Hmmm that didnt work on submit a bug on github",
-    "shorthelp": "Transfer control of the bot to a third party. You have to be a server admin for this to work"
+    "shorthelp": "Transfer control of the bot to another person"
   },
   "en.help": {
     "shorthelp": "Show all the available commands. Get detailed help information using !help [command]"
