@@ -55,16 +55,6 @@ function testConfig()
   }
 }
 
-var command = new BotCommand({
-  command_name: 'givemelink',
-  startup: testConfig,
-  execute: givemelink,
-  short_help: 'givemelink.shorthelp',
-  long_help: 'givemelink.longhelp',
-  hidden: !auth.givemelink,
-  group: 'Info'
-});
-
 var commanda = new BotCommand({
   command_name: 'g',
   startup: null,
@@ -75,11 +65,9 @@ var commanda = new BotCommand({
 });
 
 exports.register = function (commands) {
-  commands.add(command);
   commands.add(commanda);
 };
 
 exports.unRegister = function (commands) {
-  commands.remove(command);
   commands.remove(commanda);
 };
