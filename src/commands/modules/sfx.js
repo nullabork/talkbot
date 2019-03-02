@@ -1,6 +1,7 @@
 
 // models
 var BotCommand = require('@models/BotCommand');
+var Common = require('@helpers/common');
 
 /**
  * Command: sfx

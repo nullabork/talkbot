@@ -20,11 +20,6 @@ function Commands() {
     if (!this.commands[key] || force) {
       this.commands[key] = command;
 
-      //if (command.command_arg) {
-      //  var arg = command.command_arg.toLowerCase();
-      //  this.commands[arg] = command;
-      //}
-
       if (command.listeners) {
         for (var type in command.listeners) {
           if (command.listeners.hasOwnProperty(type)) {
@@ -35,15 +30,11 @@ function Commands() {
             this.listeners[type].push(func);
           }
         }
-
-        // for (var listener in command.listeners)
-        //   this.listeners[listener] = command.listeners[listener];
       }
     }
   };
 
   this.registerAllCommands = function () {
-    //Common.out(normalizedPath);
     require("fs").readdirSync("./src/commands/modules/").forEach(function (file) {
       var filename = path.join("modules/", file);
       var command = require("./" + filename.replace('.js', ''));
@@ -83,15 +74,6 @@ function Commands() {
     return this.commands[key];
   }
 
-  // this.getListener = function (key) {
-  //   key = key.toLowerCase();
-
-  //   if (!this.listeners[key]) {
-  //     return function () { };
-  //   }
-  //   return this.listeners[key];
-  // }
-
   this.run = function (key, args) {
     key = key.toLowerCase();
 
@@ -99,7 +81,15 @@ function Commands() {
       return function () { };
     }
 
-    return this.commands[key].execute.apply(this, args);
+    // eat exceptions so poorly written commands don't take down the bot
+    try {
+      return this.commands[key].execute.apply(this, args);
+    }
+    catch(ex)
+    {
+      Common.error(ex);
+      return null;
+    }
   }
 
   this.notify = function (type, args) {
@@ -110,22 +100,29 @@ function Commands() {
     }
 
     var ret = null;
-    for (let i = 0; i < funcs.length; i++) {
-      var func = funcs[i];
+    //eat exceptions so poorly written commands dont bork
+    try {
+      for (let i = 0; i < funcs.length; i++) {
+        var func = funcs[i];
 
-      if (typeof func == 'function') {
+        if (typeof func == 'function') {
 
-        args = {
-          ...args,
-          modified : ret
-        }
+          args = {
+            ...args,
+            modified : ret
+          }
 
-        var resp = func.apply(this, [args]);
+          var resp = func.apply(this, [args]);
 
-        if (resp) {
-          ret = resp;
+          if (resp) {
+            ret = resp;
+          }
         }
       }
+    }
+    catch(ex)
+    {
+      Common.error(ex);
     }
     return ret;
   };

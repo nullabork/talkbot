@@ -26,15 +26,19 @@ function permit(msg, server, world) {
     return;
   }
 
+  var nicks = '';
   target_ids.forEach(function (target_id) {
     server.permit(target_id);
     var nick = msg.getNick(target_id);
-    if (nick) {
-      msg.response(server.lang('permit.okay', { name: nick }));
-    } else {
-      msg.response(server.lang('permit.huh', { name: target_id }));
-    }
+    if ( nick )
+      nicks += nick + ',';
+    else 
+      nicks += target_id + ',';
   });
+  
+  nicks = nicks.substring(0, nicks.length-1);
+
+  msg.response(server.lang('permit.okay', { name: nicks }));
 };
 
 
@@ -63,7 +67,7 @@ function unpermit(msg, server) {
     target_ids = [msg.user_id];
   }
 
-  //target_ids.forEach(function(target_id) {
+  var nicks = '';
   for (let i = 0; i < target_ids.length; i++) {
     var target_id = target_ids[i];
 
@@ -76,12 +80,16 @@ function unpermit(msg, server) {
     server.unpermit(target_id);
 
     var nick = msg.getNick(target_id);
-    if (!nick) {
-      msg.response(server.lang('unpermit.none', { name: target_id }));
-    } else {
-      msg.response(server.lang('unpermit.okay', { name: nick }));
-    }
+    if ( nick )
+      nicks += nick + ',';
+    else 
+      nicks += target_id + ',';
   }
+  
+  nicks = nicks.substring(0, nicks.length-1);
+
+  msg.response(server.lang('unpermit.okay', { name: nicks }));
+  
 };
 
 var command_permit = new BotCommand({
