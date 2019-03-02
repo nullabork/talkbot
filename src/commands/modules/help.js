@@ -1,6 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
-var HelpBuilder = require('@models/HelpBuilder');
+var CommentBuilder = require('@models/CommentBuilder');
 var Common = require('@helpers/common');
 
 
@@ -59,7 +59,7 @@ function help(msg, server, world) {
     group[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
-  var help = new HelpBuilder({
+  var help = new CommentBuilder({
     data : data
   });
 

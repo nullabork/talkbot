@@ -19,7 +19,7 @@
     "join": "You need to join a channel before I can follow you!",
     "okay": "Yes, master!",
     "huh": "Yes, master?",
-    "nope": "Sorry, :name is my master today. Get them to !permit you",
+    "nope": "Sorry, :name is my master today. Get them to :command_charpermit you",
     "shorthelp": "The bot will join your voice channel and speak what you write"
   },
   "en.defaults": {
@@ -63,15 +63,15 @@
     "no": "Sorry, I cant find the language :lang.",
     "deny": "Sorry, you're not permitted",
     "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc.",
-    "more" : "You must specify a language code. You can find codes with `!mylangs`"
+    "more" : "You must specify a language code. You can find codes with `:command_charmylangs`"
   },
   "en.myvoice": {
     "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
     "no": "Sorry, I cant find the voice :voice.",
     "shorthelp": "Change accent or style.",
     "auto" : "Now the bot will choose the best voice and use your lang and gender settings.",
-    "more" : "You must specify a voice code. eg `!myvoice lily`",
-    "noped" : "Your !myvoice setting has been overriden and you must use the command again to enable."
+    "more" : "You must specify a voice code. eg `:command_charmyvoice lily`",
+    "noped" : "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
   },
   "en.tolang": {
     "okay": "OK, now translating to :lang.",
@@ -99,9 +99,9 @@
     "okay": "Added sound effect for `:emoji`",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
-    "shorthelp": "Associate words or emojis with sound effects. !sfx set [emoji] [audio file url]",
+    "shorthelp": "Associate words or emojis with sound effects. :command_charsfx set [emoji] [audio file url]",
     "nodelete": "You need to specify an action to perform such as set or del",
-    "usage": "```Associate words or emojis with sound effect files\n\n\t!sfx set [word/emoji] [audio file url]\n\t!sfx list\n\t!sfx del [word/emoji]\n\t!sfx [url]\n```"
+    "usage": "```Associate words or emojis with sound effect files\n\n\t:command_charsfx set [word/emoji] [audio file url]\n\t:command_charsfx list\n\t:command_charsfx del [word/emoji]\n\t:command_charsfx [url]\n```"
   },
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else",
@@ -118,22 +118,22 @@
     "shorthelp": "Transfer control of the bot to another person"
   },
   "en.help": {
-    "shorthelp": "Show all the available commands. Get detailed help information using !help [command]"
+    "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
   },
   "en.langs" : {
-    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n!mylang au",
+    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n:command_charmylang au",
     "shorthelp" : "List of languages",
     "longhelp" : "List of languages"
   },
   "en.voices" : {
-    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n!myvoice sally",
-    "shorthelp" : "List of voices, `!voices au`",
-    "longhelp" : "List of voices, `!voices au`",
-    "more" : "You must specify a language code. eg `!voices au`.\nYou can find language codes with !langs"
+    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n:command_charmyvoice sally",
+    "shorthelp" : "List of voices, `:command_charvoices au`",
+    "longhelp" : "List of voices, `:command_charvoices au`",
+    "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
   },
   "en.textrule" : {
     "nope" : "Sorry you don't have permission to manage this server",
-    "usage" : "```Text replacement rules\n\n\t!textrule add <search text> -> <replace text>\n\t!textrule del <search text>\n\t!textrule list\n\t!textrule clearall```",
+    "usage" : "```Text replacement rules\n\n\t:command_chartextrule add <search text> -> <replace text>\n\t:command_chartextrule del <search text>\n\t:command_chartextrule list\n\t:command_chartextrule clearall```",
     "addokay" : "Rule for :rule added",
     "delokay" : "Rule for :rule deleted",
     "norules": "No text replacement rules have been setup",
@@ -148,5 +148,10 @@
   "en.givemelink": {
     "noconfig": "This command is not setup",
     "shorthelp": "Break off some truely random internet and give it to you. Break out of the filter bubble today!"
+  },
+  "en.details": {
+    "for" :  "voice settings for :user",
+    "none" : "No voice settings for :user",
+    "shorthelp": "Get your's or others voice details"
   }
 }

@@ -146,6 +146,9 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     //commands.run(msgDets.cmd, [msgDets, server, world]);
 
     var command = commands.get(msgDets.cmd);
+    if(!command) return;
+
+    //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {
       command.execute({details : msgDets, server, world});
     } else {

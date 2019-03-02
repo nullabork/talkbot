@@ -1,7 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
 // help builder :D
-var HelpBuilder = require('@models/HelpBuilder');
+var CommentBuilder = require('@models/CommentBuilder');
 
 
 /**
@@ -98,7 +98,7 @@ function stats(msg, server, world) {
   initStats(server);
   var stats = getWorldStats(world, (a,b) => b._data.characterCount - a._data.characterCount, 5);
 
-  var help = new HelpBuilder({
+  var help = new CommentBuilder({
     data : { stats  :  stats },
     formatKey : true
   });

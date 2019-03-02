@@ -4,6 +4,7 @@ var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
+  auth = require('@auth'),
   bot = botStuff.bot;
 
 var fs = require('fs');
@@ -125,11 +126,22 @@ class Server {
     }
   }
 
-  lang(key) {
+  lang(key, params) {
     if (this.messages && this.messages[key]) {
       return this.messages[key];
     }
-    return this.commandResponses.get.apply(this.commandResponses, Array.from(arguments));
+
+    var command_char = auth.command_char;
+
+    params = {
+      ...(params||{}),
+      command_char
+    }
+
+    return this.commandResponses.get.apply(this.commandResponses, [
+      key,
+      params
+    ]);
   }
 
   setMaster(user_id, username) {
