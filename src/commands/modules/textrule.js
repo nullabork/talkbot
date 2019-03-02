@@ -95,7 +95,9 @@ function textrule(msg, server, world) {
 };
 
 // hook to do the search and replace
-function msgParser(message, user_id, server, world) {
+function msgParser({message, modified, server}) {
+  message = modified || message;
+
   for ( var textrule in server.textrules )
   {
     var re = new RegExp(textrule, 'gi');

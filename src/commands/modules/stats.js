@@ -113,7 +113,9 @@ var command = new BotCommand({
   short_help: 'stats.shorthelp',
   long_help: 'stats.longhelp',
   listeners: {
-    message: function (message, user_id, server, world) {
+    message: function ({modified, message, user_id, server}) {
+      //message = modified || message;
+
       addMessageStats(server, user_id, message);
       return false;
     }

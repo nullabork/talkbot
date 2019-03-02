@@ -103,7 +103,9 @@ function sfx(msg, server, world) {
   }
 };
 
-function sfxParser(token, server) {
+function sfxParser({token, modified, server}) {
+  token = modified || token;
+
   if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
     return Common.makeAudioSSML(server.audioEmojis[token]);
   }

@@ -15,7 +15,8 @@ var commands = require('@commands'),
 var world = require('@models/World'),
   Server = require('@models/Server'),
   MessageSSML = require('@models/MessageSSML'),
-  MessageDetails = require('@models/MessageDetails');
+  MessageDetails = require('@models/MessageDetails'),
+  Command = require('@models/Command');
 
 // runtime testing
 testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
@@ -142,7 +143,14 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       message: cmdMessage,
     });
 
-    commands.run(msgDets.cmd, [msgDets, server, world]);
+    //commands.run(msgDets.cmd, [msgDets, server, world]);
+
+    var command = commands.get(msgDets.cmd);
+    if (command instanceof Command) {
+      command.execute({details : msgDets, server, world});
+    } else {
+      command.execute.apply(this, [msgDets, server, world]);
+    }
 
   } else {
 
@@ -153,7 +161,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       !server.isPermitted(user_id)
     ) return;
 
-    var ret = commands.notify('message', [message, user_id, server, world]);
+    var ret = commands.notify('message', {message : message, user_id, server, world});
     if (ret) message = ret;
 
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);

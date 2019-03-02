@@ -13,6 +13,7 @@
     "ffmpeg": "0.0.4",
     "figlet": "^1.2.1",
     "google-tts-api": "0.0.3",
+    "ini-extra": "^1.0.0",
     "lang.js": "^1.1.14",
     "minimist": "^1.2.0",
     "module-alias": "^2.2.0",

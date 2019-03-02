@@ -73,7 +73,7 @@ function Commands() {
       if (this.commands[test].startup)
         this.commands[test].startup();
   }
-  
+
   this.get = function (key) {
     key = key.toLowerCase();
 
@@ -114,7 +114,14 @@ function Commands() {
       var func = funcs[i];
 
       if (typeof func == 'function') {
-        var resp = func.apply(this, args);
+
+        args = {
+          ...args,
+          modified : ret
+        }
+
+        var resp = func.apply(this, [args]);
+
         if (resp) {
           ret = resp;
         }

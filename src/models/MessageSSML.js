@@ -20,7 +20,7 @@ class MessageSSML extends MessageParser {
   compile(token) {
     token = token || "";
 
-    var alt = commands.notify('token', [token, this.server]);
+    var alt = commands.notify('token', {token, server: this.server});
     if (alt) {
       return alt;
     }
