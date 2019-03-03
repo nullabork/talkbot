@@ -150,7 +150,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
     //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {
-      command.execute({details : msgDets, server, world});
+      command.execute({details : msgDets, input : msgDets, server, world});
     } else {
       command.execute.apply(this, [msgDets, server, world]);
     }

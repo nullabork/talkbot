@@ -41,7 +41,7 @@ class MessageDetails {
   ownerIsMaster() {
     return this.server.isMaster(this.user_id);
   }
-  
+
   ownerCanManageTheServer() {
     return this.server.canManageTheServer(this.user_id);
   }
@@ -56,6 +56,10 @@ class MessageDetails {
   ownerIsPermitted() {
     return this.server.permitted[this.user_id] != null;
   };
+
+  il8nResponse(key, params) {
+    return this.response(this.server.lang(key, params));
+  }
 
   ownerIsServerOwner() {
     return this.server.server_owner_user_id == this.user_id;
@@ -80,7 +84,7 @@ class MessageDetails {
   getUserIds() {
     return Common.messageIDs(this.message);
   };
-  
+
 }
 
 module.exports = MessageDetails;

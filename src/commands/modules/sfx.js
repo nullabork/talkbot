@@ -1,8 +1,3 @@
-
-// models
-var BotCommand = require('@models/BotCommand');
-var Common = require('@helpers/common');
-
 /**
  * Command: sfx
  *
@@ -20,114 +15,151 @@ var Common = require('@helpers/common');
  *
  * @return  {[undefined]}
  */
-function sfx(msg, server, world) {
 
-  //if (!msg.message) return;
+var Command = require('@models/Command')
+  CommentBuilder = require('@models/CommentBuilder'),
+  Common = require('@helpers/common');
 
-  if (Common.isURL(msg.message)) {
-    if (msg.message.length < 5) return;
-    if (msg.message.substring(0, 5) != 'https') msg.response(server.lang('sfx.needshttps'));
-    else server.talk(Common.makeAudioSSML(msg.message), server.getUserSettings(msg.user_id));
+class SFX extends Command {
+
+  // core COMMAND getters
+  get group () {
+    return 'server';
   }
-  else {
 
-    if (!server.audioEmojis) server.audioEmojis = {};
+  get hidden () {
+    return false;
+  }
 
-    // i cant even
-    if (msg.args.length > 3) msg.response(server.lang('sfx.noper')); // why can't I set all the default lang in this file?
+  static addSFX(server, key, url){
+    if (!key || !url || url.length < 5 || url.substring(0, 5) != 'https') return;
+    server.audioEmojis[key] = url;
+    server.save();
+  }
 
-    else if (msg.args.length == 0) {
-      msg.response(server.lang('sfx.usage'));
-    }
+  static getSFX (server) {
+    return server.audioEmojis || {};
+  }
 
-    // multiple commands
-    else if (msg.args.length == 1) {
+  static getSFXArray(server){
+    let keys = Object.keys(SFX.getSFX(server)),
+      response = [];
 
-      var sfx_command = msg.args[0];
-
-      // wtf
-      if (!sfx_command) msg.response(server.lang('sfx.nosfx'));
-
-      // list all the SFX available
-      else if (sfx_command == 'list') {
-
-        if (Object.keys(server.audioEmojis).length == 0) msg.response(server.lang('sfx.listnone'));
-
-        var rsp = "```";
-
-        for (var e in server.audioEmojis)
-          rsp += e + "\t\t" + server.audioEmojis[e] + "\n";
-
-        rsp += "```";
-
-        msg.response(rsp);
+    if (keys.length) {
+      for (const sfx_word of keys) {
+        response.push({
+          sfx_word,
+          sfx_url : server.audioEmojis[sfx_word]
+        })
       }
-
-      // play a specific SFX
-      else if (server.audioEmojis[sfx_command])
-        server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.getUserSettings(msg.user_id));
     }
 
-    // delete an emoji from this server
-    else if (msg.args.length == 2) {
-      if (!msg.ownerCanManageTheServer()) {
-        msg.response(server.lang('sfx.nope'));
-        return;
-      }
+    return response;
+  }
 
-      if (msg.args[0] != 'del' || msg.args[0] != 'delete' || msg.args[0] != 'rm' || msg.args[0] != 'remove') msg.response(server.lang('sfx.nodelete'));
-      var emoji_name = msg.args[1];
-      delete server.audioEmojis[emoji_name];
-      server.save();
+  static deleteSFX(server, key){
+    if (!key) return;
+    delete server.audioEmojis[emoji_name];
+    server.save();
+  }
+
+  execute ({input, server, world}) {
+
+    var sfx_command = input.args[0],
+      sfx_word = input.args[1],
+      sfx_url = input.args[3];
+
+    let sfxs = SFX.getSFX(server);
+
+    /**
+     * ADD SFX
+     */
+    if(/^(set|add)/.test( sfx_command ))
+    {
+      if (!input.ownerCanManageTheServer())    return input.il8nResponse('sfx.nope');
+      if (!sfx_word || Common.isURL(sfx_word)) return input.il8nResponse('sfx.needsWord', { sfx_command });
+      if (!sfx_url || !Common.isURL(sfx_url))  return input.il8nResponse('sfx.needsURL', { sfx_word });
+      if (sfx_url.substring(0, 5) != 'https')  return input.il8nResponse('sfx.needshttps');
+
+      SFX.addSFX(server,sfx_word,sfx_url);
+      return input.il8nResponse('sfx.okay', { sfx_word });
     }
+    /**
+     * LIST SFX
+     */
+    else if(/^(list|ls)/.test( sfx_command ))
+    {
+      let sfx = SFX.getSFX(server);
+      let b = CommentBuilder.create({
+        data : {
+          "_header" : "Your server sound effects",
+          "_data"   : sfx
+        },
+        formatKey : false
+      });
 
-    // set an emoji on this server
+      input.response(b);
+    }
+    /**
+     * REMOVE SFX
+     */
+    else if(/^(del|delete|rm|remove)/.test( sfx_command ))
+    {
+      if (!input.ownerCanManageTheServer()) return input.il8nResponse('sfx.nope');
+      if (!sfxs[sfx_word])                return input.il8nResponse('sfx.none');
+
+      SFX.deleteSFX(server,sfx_word);
+      return input.il8nResponse('sfx.notnotokay', { sfx_word });
+
+    }
+    /**
+     * PLAY IF remaining arg is a url or a named sfx
+     */
+    else if(Common.isURL( sfx_command ))
+    {
+      server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.getUserSettings(input.user_id));
+    }
+    else if(sfxs[sfx_command])
+    {
+      server.talk(Common.makeAudioSSML(sfxs[sfx_command]), server.getUserSettings(input.user_id));
+    }
+    /**
+     * Somthing should have happened
+     */
     else {
-      if (!msg.ownerCanManageTheServer()) {
-        msg.response(server.lang('sfx.nope'));
-        return;
-      }
-
-      if (msg.args[0] != 'set') msg.response(server.lang('sfx.noset'));
-      var emoji_name = msg.args[1];
-      var emoji_url = msg.args[2];
-
-      if (emoji_url.length < 5) return;
-      if (emoji_url.substring(0, 5) != 'https') msg.response(server.lang('sfx.needshttps'));
-      else {
-        server.audioEmojis[emoji_name] = emoji_url;
-        server.save();
-        msg.response(server.lang('sfx.okay', { 'emoji' : emoji_name }));
-      }
+     // \n\n\t:command_charsfx set [word/emoji] [audio file url]\n\t:command_charsfx list\n\t:command_charsfx del [word/emoji]\n\t:command_charsfx [url]\n```
+      let usage = input.il8nResponse('sfx.usage');
+      return input.response(usage);
     }
 
   }
-};
 
-function sfxParser({token, modified, server}) {
-  token = modified || token;
+  /**
+   * [onToken event]
+   *
+   * @param   {[type]}  {token    [{token word]
+   * @param   {[type]}  modified  [modified word that get modified by each event in different commands]
+   * @param   {[type]}  server}   [server description]}
+   *
+   * @return  {[type]}            [return description]
+   */
+  onToken({token, modified, server}) {
+    //other onToken event can overwrite the token before speaking and before other onTokens
+    token = modified || token;
 
-  if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
-    return Common.makeAudioSSML(server.audioEmojis[token]);
+    if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
+      return Common.makeAudioSSML(server.audioEmojis[token]);
+    }
   }
+}
+
+//registration
+exports.register =  (commands) => {
+  commands.add(SFX.command)
 };
 
-var command = new BotCommand({
-  command_name: 'sfx',
-  execute: sfx,
-  short_help: 'sfx.shorthelp',
-  long_help: 'sfx.longhelp',
-  listeners: {
-    token: sfxParser
-  },
-  group: "server"
-  // langs here?
-});
-
-exports.register = function (commands) {
-  commands.add(command);
+exports.unRegister = (commands) => {
+  commands.remove(SFX.command)
 };
 
-exports.unRegister = function (commands) {
-  commands.remove(command);
-};
+exports.SFX = SFX;

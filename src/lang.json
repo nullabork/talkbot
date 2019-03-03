@@ -87,7 +87,7 @@
   "en.mypitch": {
     "okay": "OK, your personal pitch is now :pitch.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20"
+  "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20"
   },
   "en.myspeed": {
     "okay": "OK, your personal speed is now :speed.",
@@ -96,12 +96,16 @@
   },
   "en.sfx": {
     "nope": "Sorry, only a server admin can set emojis",
-    "okay": "Added sound effect for `:emoji`",
+    "okay": "Added sound effect for `:sfx_word`",
+    "notnotokay": "Removed sound effect for `:sfx_word`",
+    "none": "Cannot find sfx word: `:sfx_word`",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
+    "needsWord": "Requires a [word/emoji] after \":sfx_command\" action",
+    "needsURL": "Requires https url after the [word/emoji] \":sfx_word\"",
     "shorthelp": "Associate words or emojis with sound effects. :command_charsfx set [emoji] [audio file url]",
     "nodelete": "You need to specify an action to perform such as set or del",
-    "usage": "```Associate words or emojis with sound effect files\n\n\t:command_charsfx set [word/emoji] [audio file url]\n\t:command_charsfx list\n\t:command_charsfx del [word/emoji]\n\t:command_charsfx [url]\n```"
+    "usage": "Associate words or emojis with sound effect files\n\n\t:command_charsfx set [word/emoji] [audio file url]\n\t:command_charsfx list\n\t:command_charsfx del [word/emoji]\n\t:command_charsfx [url]\n```"
   },
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else",

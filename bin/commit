@@ -1,4 +1,6 @@
 #!/bin/bash
 
+
 git add --all
-git commit -m "$(curl -s 'http://subfusion.net/cgi-bin/quote.pl?quote=futurama&number=1' |awk '/<body><br><br><b><hr><br>/ {flag=1;next} /<br><br><hr><br>/{flag=0} flag {print}')"
+
+git commit -m "$(node bin/api.js)"
