@@ -46,7 +46,11 @@ Use this to setup your own bot on your own server. Note you will require a googl
     - To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 3. Setup your google API credentials. 
     * To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
-4. Install nvm and run `nvm use`
+4. Install nvm and run 
+    ```
+      nvm install
+      nvm use
+    ```
     * windows - https://github.com/coreybutler/nvm-windows/releases
     * mac/linux - https://github.com/creationix/nvm
 5. Install NPM dependencies
