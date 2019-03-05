@@ -1,7 +1,10 @@
 
 var Lang = require("lang.js"),
   paths = require('@paths'),
+  commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
+  MessageSSML = require('@models/MessageSSML'),
+  MessageDetails = require('@models/MessageDetails'),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   auth = require('@auth'),
@@ -488,6 +491,45 @@ class Server {
     }
 
     return null;
+  };
+  
+  speak(message, channel_id, user_id, world) {
+    
+    var server = this;
+    
+    if (
+      message.length < 1 ||
+      Common.isMessageExcluded(message) ||
+      !server.inChannel() ||
+      !server.isPermitted(user_id)
+    ) return;
+
+    var ret = commands.notify('message', {message : message, user_id, server, world});
+    if (ret) message = ret;
+
+    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
+    message = Common.cleanMessage(message);
+
+    function _speak(msg) {
+      var message = new MessageSSML(msg, { server: server }).build();
+      var settings = server.getUserSettings(user_id);
+      server.talk(message, settings);
+    }
+
+    var tolang = server.getUserSetting(user_id, 'toLanguage');
+    if (tolang && !tolang == "default") {
+
+      botStuff.translate_client
+        .translate(message, tolang)
+        .then( results => {
+          _speak(results[0]);
+        })
+        .catch(err => {
+          Common.error( err );
+        });
+    } else {
+      _speak(message);
+    };
   };
 
 };

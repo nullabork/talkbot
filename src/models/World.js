@@ -102,11 +102,13 @@ class World {
     // run delayed execution of the code to get the real answers
     var delayed_execution = function() {
       var voiceChan = botStuff.getUserVoiceChannel(user_id);
+      
       var leave_servers = [];
       var delayed_leave = function() {
         for ( var i=0;i<leave_servers.length;i++) {
           leave_servers[i].leaveVoiceChannel();
-          leave_servers[i].startUnfollowTimer();
+          if ( voiceChan) leave_servers[i].joinVoiceChannel(voiceChan);
+          else leave_servers[i].startUnfollowTimer();
         }
       };
       
