@@ -8,10 +8,9 @@ https://discord.gg/NxrPp8g
 # Quick start - Add Talkbot to your discord
 
 1. Go here to add the bot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
-2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about your server
-3. Join a voice channel
-4. Type !follow
-5. Type some text to hear it read out to you
+2. Join a voice channel
+3. Type !follow
+4. Type some text to hear it read out to you
 
 # Commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
