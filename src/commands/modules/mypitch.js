@@ -39,7 +39,8 @@ var command = new BotCommand({
   execute: mypitch,
   short_help: 'mypitch.shorthelp',
   long_help: 'mypitch.longhelp',
-  group: "personalization"
+  group: "personalization",
+  parameters: "<pitch>"
 });
 
 

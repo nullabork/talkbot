@@ -1,7 +1,3 @@
-// models
-var BotCommand = require('@models/BotCommand');
-
-
 /**
  * Command: textrule
  * Adds regular expressions to replace text in messages with other text
@@ -17,111 +13,211 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 
-function textrule(msg, server, world) {
+var Command = require('@models/Command')
+  CommentBuilder = require('@models/CommentBuilder'),
+  auth = require('@auth'),
+  Common = require('@helpers/common');
 
-  var key = '';
-  var repl = '';
+class TextRule extends Command {
 
-  // add a rule
-  if (msg.args[0] == 'add' || msg.args[0] == 'addregex' ) {
-    if (!msg.ownerCanManageTheServer()) {
-      msg.response(server.lang('textrule.nope'));
-      return;
-    }
+  // core COMMAND getters
+  get group () {
+    return 'server';
+  }
 
-    var nextindex = -1;
-    for ( var i=1; i < msg.args.length; i++ ) {
-      if ( msg.args[i] != '->' ) {
-        key += ' ' + msg.args[i];
+  get hidden () {
+    return false;
+  }
+
+  static addRule({server, find, replacement, regex}) {
+    if (!find) return;
+    server.addSettings('textrules', {
+      [find] : !regex?Common.escapeRegExp(replacement):replacement
+    });
+    server.save();
+  }
+
+  static addAllRules({server, rules}){
+    if(!rules) return;
+    server.addSettings('textrules', rules);
+    server.save();
+  }
+
+  static getCount(server) {
+    return Object.keys(server.textrules).length;
+  }
+
+  static getRules (server) {
+    return server.textrules || {};
+  }
+
+  static clearAll (server) {
+    server.textrules = {};
+    server.save();
+  }
+
+  static getRulesArray(server){
+    let keys = Object.keys(TextRule.getRules(server)),
+      response = [];
+
+    if (keys.length) {
+      for (const find of keys) {
+        response.push({
+          find,
+          replacement : server.textrules[find]
+        })
       }
-      else {
-        nextindex = i;
-        break;
+    }
+
+    return response;
+  }
+
+  static deleteRule(server, key) {
+    if (!key) return;
+    delete server.textrules[key];
+    server.save();
+  }
+
+  execute ({input, server, world}) {
+
+    var rule_command = input.args[0],
+      find = input.args[1],
+      replacement = input.args[3];
+
+
+
+    let rules = TextRule.getRules(server);
+
+    /**
+     * ADD TEXTRULE
+     */
+    if(/^(set|add)$/i.test( rule_command ))
+    {
+      if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
+      if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });
+      if (replacement === null || typeof replacement == 'undefined') return input.il8nResponse('textrule.needsReplacement', { find });
+
+      TextRule.addRule({
+        server,
+        find : find.toLowerCase(),
+        replacement
+      });
+
+      return input.il8nResponse('textrule.addokay', { find });
+    }
+     /**
+     * ADD TEXTRULE
+     */
+    if(/^(addRegex|setRegex)$/i.test( rule_command.trim() ))
+    {
+      if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
+      if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });
+      if (replacement === null || typeof replacement == 'undefined') return input.il8nResponse('textrule.needsReplacement', { find });
+
+      TextRule.addRule({
+        server,
+        find,
+        replacement,
+        regex : true
+      });
+
+      return input.il8nResponse('textrule.addokay', { find });
+    }
+    /**
+     * LIST TEXTRULE
+     */
+    else if(/^(list|ls|dir)/i.test( rule_command ))
+    {
+
+      if(!TextRule.getCount(server)){
+        return input.il8nResponse('textrule.norules');
       }
+
+
+      let b = CommentBuilder.create({
+        data : {
+          "_header" : "Your voice text replacements",
+          "_data"   : rules
+        },
+        formatKey : false
+      });
+
+      return input.response(b);
     }
+    /**
+     * REMOVE TEXTRULE
+     */
+    else if(/^(del|delete|rm|remove)/i.test( rule_command ))
+    {
+      if (!input.ownerCanManageTheServer()) return input.il8nResponse('textrule.nope');
+      if (!rules[find])                     return input.il8nResponse('textrule.none', { find });
 
-    for ( var i=nextindex+1; i < msg.args.length; i++) repl += ' ' + msg.args[i];
+      TextRule.deleteRule(server, find);
 
-    if ( key == '' || repl == '' )
-      msg.response(server.lang('textrule.usage'));
+      return input.il8nResponse('textrule.delokay', { find });
+    }
+    /**
+     * REMOVE ALL TEXTRULEs
+     */
+    else if(/^(clearall)/i.test( rule_command ))
+    {
+      if (!input.ownerCanManageTheServer()) return input.il8nResponse('textrule.nope');
+
+      TextRule.clearAll(server);
+      return input.il8nResponse('textrule.clearallokay', { find });
+
+    }
+    /**
+     * Somthing should have happened
+     */
     else {
-      server.addTextRule(key, repl, msg.args[0] != 'addregex');
-      msg.response(server.lang('textrule.addokay', {rule: key.trim()}));
+      let usage = server.lang('textruleusage.title');
+      var command = auth.command_char + this.command_name;
+
+      return input.response(
+        CommentBuilder.create({
+          data : {
+            _heading : usage,
+            _data : {
+                [command + " add <find> -> <replacement>"]      : server.lang('textruleusage.command'),
+                [command + " list"]                             : server.lang('textruleusage.list'),
+                [command + " del <word|emoji>"]                 : server.lang('textruleusage.del'),
+                [command + " clearall"]                         : server.lang('textruleusage.clearall')
+            }
+          }
+        })
+      );
     }
   }
 
-  // delete a rule
-  else if ( msg.args[0] == 'del' || msg.args[0] == 'delregex') {
-    if (!msg.ownerCanManageTheServer()) {
-      msg.response(server.lang('textrule.nope'));
-      return;
-    }
+  /**
+   * [onToken event]
+   *
+   * @param   {[type]}  {token    [{token word]
+   * @param   {[type]}  modified  [modified word that get modified by each event in different commands]
+   * @param   {[type]}  server}   [server description]}
+   *
+   * @return  {[type]}            [return description]
+   */
+  onMessage({message, modified, server}) {
+    message = modified || message;
 
-    for ( var i=1; i < msg.args.length; i++) key += ' ' + msg.args[i];
-    if ( key == '' )
-      msg.response(server.lang('textrule.usage'));
-    else {
-      server.removeTextRule(key, msg.args[0] != 'delregex');
-      msg.response(server.lang('textrule.delokay', {rule: key.trim()}));
+    for ( var textrule in server.textrules ) {
+      var re = new RegExp(textrule, 'gi');
+      message = message.replace(re, server.textrules[textrule]);
     }
+    return message;
   }
 
-  // list all the rules
-  else if ( msg.args[0] == 'list') {
-    if (Object.keys(server.textrules).length == 0)
-      msg.response(server.lang('textrule.norules'));
-    else {
-      var r = '```';
-      for ( var textrule in server.textrules )
-        r = r + textrule + ' -> ' + server.textrules[textrule] + '\n';
-      r += '```';
-      msg.response(r);
-    }
-  }
+}
 
-  else if ( msg.args[0] == 'clearall' ) {
-    if (!msg.ownerCanManageTheServer()) {
-      msg.response(server.lang('textrule.nope'));
-      return;
-    }
-
-    server.clearAllTextRules();
-    msg.response(server.lang('textrule.clearallokay'));
-  }
-
-  else {
-    msg.response(server.lang('textrule.usage'));
-  }
+//registration
+exports.register =  (commands) => {
+  commands.add(TextRule.command)
 };
 
-// hook to do the search and replace
-function msgParser({message, modified, server}) {
-  message = modified || message;
-
-  for ( var textrule in server.textrules )
-  {
-    var re = new RegExp(textrule, 'gi');
-    message = message.replace(re, server.textrules[textrule]);
-  }
-  return message;
+exports.unRegister = (commands) => {
+  commands.remove(TextRule.command)
 };
 
-var command = new BotCommand({
-  command_name: 'textrule',
-  execute: textrule,
-  short_help: 'textrule.shorthelp',
-  long_help: 'textrule.longhelp',
-  listeners: {
-    message: msgParser
-  },
-  group: "server"
-
-});
-
-exports.register = function (commands) {
-  commands.add(command);
-};
-
-exports.unRegister = function (commands) {
-  commands.remove(command);
-};
+exports.class = TextRule;

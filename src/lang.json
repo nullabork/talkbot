@@ -96,8 +96,10 @@
   },
   "en.sfx": {
     "nope": "Sorry, only a server admin can set emojis",
+    "nosfx": "No SFX have been setup",
     "okay": "Added sound effect for `:sfx_word`",
     "notnotokay": "Removed sound effect for `:sfx_word`",
+    "clearallokay" : "Removed all sound effects",
     "none": "Cannot find sfx word: `:sfx_word`",
     "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
     "needshttps": "Sound URLs can only be https urls",
@@ -105,7 +107,14 @@
     "needsURL": "Requires https url after the [word/emoji] \":sfx_word\"",
     "shorthelp": "Associate words or emojis with sound effects. :command_charsfx set [emoji] [audio file url]",
     "nodelete": "You need to specify an action to perform such as set or del",
-    "usage": "Associate words or emojis with sound effect files\n\n\t:command_charsfx set [word/emoji] [audio file url]\n\t:command_charsfx list\n\t:command_charsfx del [word/emoji]\n\t:command_charsfx [url]\n```"
+    "usage": "Associate words or emojis with sound effect files"
+  },
+  "en.sfxusage": {
+    "soundurl" : "Add https sound Url to a word",
+    "list" : "List all sounds on server",
+    "del" : "Delete sound assinged to <word|emoji>",
+    "sfx" : "Play Https Url without adding",
+    "clearall" : "Clear all SFX"
   },
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else",
@@ -136,13 +145,27 @@
     "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
   },
   "en.textrule" : {
+    "needsFind" : "You need to provide a word to find",
+    "none" : "Cannot find :find",
+    "needsReplacement" : "Your replacement value does not seem to be valid",
     "nope" : "Sorry you don't have permission to manage this server",
-    "usage" : "```Text replacement rules\n\n\t:command_chartextrule add <search text> -> <replace text>\n\t:command_chartextrule del <search text>\n\t:command_chartextrule list\n\t:command_chartextrule clearall```",
-    "addokay" : "Rule for :rule added",
-    "delokay" : "Rule for :rule deleted",
+    "addokay" : "Rule for :find added",
+    "delokay" : "Rule for :find deleted",
     "norules": "No text replacement rules have been setup",
     "clearallokay": "All rules cleared",
     "shorthelp": "Add text replacement rules"
+  },
+  "en.import": {
+    "imported" : "Import complete",
+    "error" : "Could not Import File. Try googling INI file fomat.",
+    "invalid" : "Cannot find any valid data. current supports, :supports"
+  },
+  "en.textruleusage": {
+    "title" : "Text replacement rules",
+    "command" : "Find <find> and replace it with <replacement>",
+    "list" : "List all rules",
+    "del" : "Delete a rule by key",
+    "clearall" : "Clear all rules"
   },
   "en.toggle_neglect": {
     "nope": "Sorry you don't have permission to manage this server.",

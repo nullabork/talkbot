@@ -63,7 +63,8 @@ var command = new BotCommand({
   execute: myVoice,
   short_help: 'myvoice.shorthelp',
   long_help: 'myvoice.longhelp',
-  group: "personalization"
+  group: "personalization",
+  parameters: "<voice|alias>"
 });
 
 
