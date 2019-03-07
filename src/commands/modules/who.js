@@ -3,7 +3,7 @@ var BotCommand = require('@models/BotCommand');
 
 
 function who(msg, server, world) {
-  var master_nick = server.getBoundToNick();
+  var master_nick = server.bound_to_username;
   if (!master_nick) {
     msg.response(server.lang('who.none'));
   } else {

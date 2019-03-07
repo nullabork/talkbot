@@ -8,14 +8,13 @@ var path = require('path'),
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
+  MessageDetails = require('@models/MessageDetails'),
   Common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
 //models
 var world = require('@models/World'),
   Server = require('@models/Server'),
-  MessageSSML = require('@models/MessageSSML'),
-  MessageDetails = require('@models/MessageDetails'),
   Command = require('@models/Command');
 
 // runtime testing
@@ -61,7 +60,7 @@ bot.on('any', function (evt) {
     }
 
     var server = world.servers[server_id];
-    if (server == null) {
+    if (server == null || server.isMaster(user_id)) {
       Common.out("What server?: " + channel_id);
       if ( user_id ) world.checkMastersVoiceChannels(user_id);
       return null;
@@ -156,40 +155,8 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
 
   } else {
-
-    if (
-      message.length < 1 ||
-      Common.isMessageExcluded(message) ||
-      !server.inChannel() ||
-      !server.isPermitted(user_id)
-    ) return;
-
-    var ret = commands.notify('message', {message : message, user_id, server, world});
-    if (ret) message = ret;
-
-    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
-    message = Common.cleanMessage(message);
-
-    function speak(msg) {
-      var message = new MessageSSML(msg, { server: server }).build();
-      var settings = server.getUserSettings(user_id);
-      server.talk(message, settings);
-    }
-
-    var tolang = server.getUserSetting(user_id, 'toLanguage');
-    if (tolang && !tolang == "default") {
-
-      botStuff.translate_client
-        .translate(message, tolang)
-        .then( results => {
-          speak(results[0]);
-        })
-        .catch(err => {
-          Common.error( err );
-        });
-    } else {
-      speak(message);
-    }
+    var settings = server.getUserSettings(user_id);
+    if ( !settings.muted ) server.speak(message, channel_id, user_id, world);
   }
 });
 

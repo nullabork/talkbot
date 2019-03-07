@@ -172,13 +172,24 @@
     "none": "Neglect has now been switched off.",
     "okay": "Neglect has now been turned on."
   },
-  "en.givemelink": {
-    "noconfig": "This command is not setup",
-    "shorthelp": "Break off some truely random internet and give it to you. Break out of the filter bubble today!"
-  },
   "en.details": {
     "for" :  "voice settings for :user",
     "none" : "No voice settings for :user",
     "shorthelp": "Get your's or others voice details"
+  },
+  "en.mute": {
+    "okay": "You're now muted",
+    "alreadymuted": "You're already muted",
+    "shorthelp": "Mute yourself so your text is not read out"
+  },
+  "en.unmute": {
+    "okay": "You're now unmuted",
+    "alreadyunmuted": "You're already unmuted",
+    "shorthelp": "Unmute yourself so all your text is read out"
+  },
+  "en.tts": {
+    "notpermitted": "You have to be permitted to use this command",
+    "notinchannel": "Get the bot to join a voice channel before using this command",
+    "shorthelp": "Speak using a command"
   }
 }

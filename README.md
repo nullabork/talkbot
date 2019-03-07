@@ -5,13 +5,12 @@ Discord bot for natural voice text-to-speech and language translation
 Try it out here.
 https://discord.gg/NxrPp8g
 
-# Quick start - Add Talkbot to your server
+# Quick start - Add Talkbot to your discord
 
 1. Go here to add the bot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
-2. Once the bot joins wait 60 seconds for the bot to retrieve the relevant information about your server
-3. Join a voice channel
-4. Type !follow
-5. Type some text to hear it read out to you
+2. Join a voice channel
+3. Type !follow
+4. Type some text to hear it read out to you
 
 # Commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
@@ -46,7 +45,11 @@ Use this to setup your own bot on your own server. Note you will require a googl
     - To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 3. Setup your google API credentials. 
     * To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
-4. Install nvm and run `nvm use`
+4. Install nvm and run 
+    ```
+      nvm install
+      nvm use
+    ```
     * windows - https://github.com/coreybutler/nvm-windows/releases
     * mac/linux - https://github.com/creationix/nvm
 5. Install NPM dependencies
