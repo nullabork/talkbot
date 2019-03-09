@@ -11,7 +11,8 @@ class BotCommand {
     this.long_help = null;
     this.hidden = false;
     this.listeners = {};
-    this.sequence = 0;
+    this.order = 99;
+
 
     this.sequence = {
       message : 0,

@@ -11,6 +11,10 @@ class Command {
     return true;
   }
 
+  get order() {
+    return 99;
+  }
+
   get command_name() {
     return this.constructor.name.toLowerCase();
   }

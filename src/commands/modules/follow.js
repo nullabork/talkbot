@@ -147,7 +147,8 @@ var command_follow = new BotCommand({
   execute: follow,
   short_help: 'follow.shorthelp',
   long_help: 'follow.longhelp',
-  group: "control"
+  group: "control",
+  order : 0
 });
 
 var command_unfollow = new BotCommand({
@@ -155,7 +156,8 @@ var command_unfollow = new BotCommand({
   execute: unfollow,
   short_help: 'unfollow.shorthelp',
   long_help: 'unfollow.longhelp',
-  group: "control"
+  group: "control",
+  order : 2
 });
 
 var command_sidle = new BotCommand({
@@ -171,7 +173,9 @@ var command_transfer = new BotCommand({
   execute: transfer,
   short_help: 'transfer.shorthelp',
   long_help: 'transfer.longhelp',
-  group: "control"
+  group: "control",
+  order : 3
+
 });
 
 exports.register = function (commands) {

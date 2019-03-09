@@ -4,6 +4,10 @@ var Command = require('@models/Command')
   CommentBuilder = require('@models/CommentBuilder');
 
 class TTS extends Command {
+
+  get group () {  return 'control'; }
+  get hidden () { return false; }
+
   execute ({input, server, world}) {
     if ( input.message.length < 1 ) return;
     if ( Common.isMessageExcluded(input.message) ) return;
@@ -19,6 +23,10 @@ class TTS extends Command {
 }
 
 class Mute extends Command {
+
+  get group () {  return 'personalization'; }
+  get hidden () { return false; }
+
   execute ({input, server, world}) {
     if (server.getUserSetting(input.user_id, 'muted'))
       return input.il8nResponse('mute.alreadymuted');
@@ -29,6 +37,10 @@ class Mute extends Command {
 }
 
 class UnMute extends Command {
+
+  get group () {  return 'personalization'; }
+  get hidden () { return false; }
+
   execute ({input, server, world}) {
     if (!server.getUserSetting(input.user_id, 'muted'))
       return input.il8nResponse('unmute.alreadyunmuted');
