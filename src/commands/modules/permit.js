@@ -32,10 +32,10 @@ function permit(msg, server, world) {
     var nick = msg.getNick(target_id);
     if ( nick )
       nicks += nick + ',';
-    else 
+    else
       nicks += target_id + ',';
   });
-  
+
   nicks = nicks.substring(0, nicks.length-1);
 
   msg.response(server.lang('permit.okay', { name: nicks }));
@@ -82,14 +82,14 @@ function unpermit(msg, server) {
     var nick = msg.getNick(target_id);
     if ( nick )
       nicks += nick + ',';
-    else 
+    else
       nicks += target_id + ',';
   }
-  
+
   nicks = nicks.substring(0, nicks.length-1);
 
   msg.response(server.lang('unpermit.okay', { name: nicks }));
-  
+
 };
 
 var command_permit = new BotCommand({
@@ -97,7 +97,8 @@ var command_permit = new BotCommand({
   execute: permit,
   short_help: 'permit.shorthelp',
   long_help: 'permit.longhelp',
-  group: "control"
+  group: "control",
+  parameters: "[<user>]"
 });
 
 var command_unpermit = new BotCommand({
@@ -105,7 +106,8 @@ var command_unpermit = new BotCommand({
   execute: unpermit,
   short_help: 'unpermit.shorthelp',
   long_help: 'unpermit.longhelp',
-  group: "control"
+  group: "control",
+  parameters: "[<user>]"
 });
 
 exports.register = function (commands) {

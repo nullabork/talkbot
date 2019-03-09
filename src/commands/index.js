@@ -24,15 +24,21 @@ function Commands() {
         for (var type in command.listeners) {
           if (command.listeners.hasOwnProperty(type)) {
             var func = command.listeners[type];
-            if (!this.listeners[type]) {
-              this.listeners[type] = [];
-            }
-            this.listeners[type].push(func);
+            this.on(type, func);
           }
         }
       }
     }
   };
+
+  this.on = function (type, cb) {
+
+      if (!this.listeners[type]) {
+        this.listeners[type] = [];
+      }
+      this.listeners[type].push(cb);
+
+  }
 
   this.registerAllCommands = function () {
     require("fs").readdirSync("./src/commands/modules/").forEach(function (file) {

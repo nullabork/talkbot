@@ -56,7 +56,10 @@ function help(msg, server, world) {
       group = data.Commands[groupName];
     }
 
-    group[cmds.command_char + cmds.commands[command].command_name] = server.lang(cmds.commands[command].short_help) + "\n";
+    let cmdParamenters = "";
+    if(cmd.parameters) cmdParamenters = ` ${cmd.parameters}`;
+
+    group[cmds.command_char + cmds.commands[command].command_name + cmdParamenters] = server.lang(cmds.commands[command].short_help) + "\n";
   }
 
   var help = new CommentBuilder({

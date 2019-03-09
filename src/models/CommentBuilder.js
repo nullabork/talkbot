@@ -17,15 +17,6 @@ class CommentBuilder {
 
   recurse(padding, data) {
 
-    var max = 0;
-    if (!Array.isArray(data)) {
-      for (let key in data) {
-        if ( typeof key == "string" && key.length > max ) {
-          if(this.formatKey) key = Common.camelize(key);
-          max = key.length;
-        }
-      }
-    }
 
     var out = "";
     if(typeof data["_heading"] != 'undefined') {
@@ -35,6 +26,19 @@ class CommentBuilder {
     if(typeof data["_data"] != 'undefined') {
       data = data["_data"];
     }
+
+
+    var max = 0;
+    if (!Array.isArray(data)) {
+      for (let key in data) {
+        if ( typeof key == "string" && key.length > max ) {
+          // /if(this.formatKey) key = Common.camelize(key);
+          max = key.length;
+        }
+      }
+    }
+
+
 
     for (let key in data) {
       if (data.hasOwnProperty(key)) {
@@ -70,7 +74,7 @@ class CommentBuilder {
   row(padding, rightPad, key, value) {
     if (isNaN(parseInt(key))) {
       if(this.keyMap && this.keyMap[key]) key = this.keyMap[key];
-      if(this.formatKey) key = Common.camelize(key);
+      //if(this.formatKey) key = Common.camelize(key);
 
       return padding + pad(key, rightPad) + " :: " + value.trim() + "\n";
 

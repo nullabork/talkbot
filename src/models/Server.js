@@ -70,6 +70,16 @@ class Server {
     this.resetNeglectTimeout();
   };
 
+  addSettings(key, add){
+    if(typeof add == 'object' && !this[key]) this[key] = {};
+    if(this[key]) {
+      this[key] = {
+        ...this[key],
+        ...add
+      }
+    }
+  }
+
   addUserSetting(user_id, name, value) {
     if(!this.userSettings) this.userSettings = {};
     if(!this.userSettings[user_id]) {

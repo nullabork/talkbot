@@ -1,25 +1,50 @@
 var Command = require('@models/Command')
   Common = require('@helpers/common'),
+  CommentBuilder = require('@models/CommentBuilder'),
+  fetch = require('fetch'),
+  SFX = require('./sfx').class,
+  TextRule = require('./textrule').class,
   ini = require('ini-extra');
 
 
 class Import extends Command {
-  execute ({details, server, world}) {
+  execute ({input, server, world}) {
     var comment = "```";
 
-    let out = {
-      sfx : server.audioEmojis,
-      textrules : server.textrules
+
+    let import_url = input.args[0];
+
+    if(import_url && Common.isURL(import_url)){
+      fetch.fetchUrl(import_url, function(error, meta, body){
+
+        var json = ini.parse(body.toString());
+
+        if(error){
+          return input.il8nResponse('import.error');
+        }
+
+        if(!json || !json.sfx && !json.textrules) {
+          return input.il8nResponse('import.invalid', { "supports" : "[textrules] and [sfx]"});
+        }
+
+        if(json.sfx) {
+          SFX.addAllSFX({
+            server,
+            sfx : json.sfx
+          });
+        }
+
+        if(json.textrules) {
+          TextRule.addAllRules({
+            server,
+            rules : json.textrules
+          });
+        }
+
+        return input.il8nResponse('import.imported');
+
+      });
     }
-
-    var configString = ini.stringify(out);
-    Common.out(configString);
-
-details.response(`
-${comment}ini
-${configString}
-${comment}
-`);
   }
 }
 
@@ -32,4 +57,4 @@ exports.unRegister = (commands) => {
   commands.remove(Import.command)
 };
 
-exports.Import = Import;
+exports.class = Import;

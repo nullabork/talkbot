@@ -26,7 +26,8 @@ var command = new BotCommand({
   execute: speed,
   short_help: 'myspeed.shorthelp',
   long_help: 'myspeed.longhelp',
-  group: "personalization"
+  group: "personalization",
+  parameters: "<speed>"
 });
 
 
