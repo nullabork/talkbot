@@ -80,11 +80,16 @@ class TextRule extends Command {
 
   execute ({input, server, world}) {
 
-    var rule_command = input.args[0],
-      find = input.args[1],
-      replacement = input.args[3];
+    var args = [
+        ...input.args
+      ],
+      rule_command = args.shift(),
+      message = args.join(' '),
+      opts = message.split('->'),
 
 
+      find = opts.length > 1 ? opts[0].trim() : null,
+      replacement = opts.length > 1 ? opts[1].trim() : null;
 
     let rules = TextRule.getRules(server);
 
@@ -108,7 +113,7 @@ class TextRule extends Command {
      /**
      * ADD TEXTRULE
      */
-    if(/^(addRegex|setRegex)$/i.test( rule_command.trim() ))
+    if(/^(addRegex|setRegex)$/i.test( rule_command ))
     {
       if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
       if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });

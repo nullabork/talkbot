@@ -27,6 +27,13 @@ class Command {
     return `${this.command_name}.longhelp`;
   }
 
+  get sequence() {
+    return {
+      message : 0,
+      token : 0,
+    };
+  }
+
 
   /**
    * [execute main command execute function]
@@ -48,9 +55,10 @@ class Command {
    * @return  {[type]}  [return description]
    */
   get listeners() {
+    var self = this;
     return {
       message : this.onMessage || null,
-      token : this.onToken || null,
+      token : this.onToken || null
     }
   }
 }

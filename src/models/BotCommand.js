@@ -11,6 +11,12 @@ class BotCommand {
     this.long_help = null;
     this.hidden = false;
     this.listeners = {};
+    this.sequence = 0;
+
+    this.sequence = {
+      message : 0,
+      token : 0
+    };
 
     if (client_data) {
       Object.assign(this, client_data);
