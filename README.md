@@ -1,9 +1,11 @@
+[logo]: https://github.com/nullabork/artwork/raw/master/nullabork/png/nullbork_icon_200.png "Nullabork"
+![alt text](https://github.com/nullabork/artwork/raw/master/nullabork/png/nullbork_icon_200.png "Nullabork")
 # Talkbot
 Discord bot for natural voice text-to-speech and language translation
 
 
-Try it out here.
-https://discord.gg/NxrPp8g
+[Try it out here.](https://discord.gg/NxrPp8g)
+
 
 # Quick start - [Add Talkbot to your discord](https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0)
 
