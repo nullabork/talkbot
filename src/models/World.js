@@ -200,11 +200,13 @@ class World {
   };
   
   renderPresenceFollow() {
-    return Object.keys(bot.servers).length + " servers, !follow";
+    var cmds = require("@commands");
+    return Object.keys(bot.servers).length + " servers, " + cmds.command_char + "follow";
   };
   
   renderPresenceHelp() {
-    return Object.keys(bot.servers).length + " servers, !help";
+    var cmds = require("@commands");
+    return Object.keys(bot.servers).length + " servers, " + cmds.command_char + "help";
   };
   
   renderPresenceCounts() {
