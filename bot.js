@@ -83,7 +83,6 @@ bot.on('any', function (evt) {
 bot.on('guildCreate', function(server) {
   var server_id = server.id;
   world.addServer(new Server(server_id));
-  Common.out("Server " + bot.servers[server_id].name + " started");
 });
 
 // new servers get deleted

@@ -382,7 +382,7 @@ class Server {
 
     //if ( options.use_ssml )
     request.input = { text: null, ssml: message };
-
+  
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
@@ -390,17 +390,28 @@ class Server {
         callback();
         return;
       }
-      bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
-        if (error) {
-          callback();
-          return Common.error(error);
-        } try {
-          stream.write(response.audioContent);
-          callback();
-        } catch (ex) {
-          Common.error(ex);
+      try {
+        bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
+          if (error) {
+            callback();
+            return Common.error(error);
+          } try {
+            stream.write(response.audioContent);
+            callback();
+          } catch (ex) {
+            Common.error(ex);
+          }
+        });
+      }
+      catch(e)
+      {
+        if ( e.message.startsWith('You have not joined the voice channel'))
+        {
+          Common.error("Caught a bad voice channel");
+          var chan_id = server.current_voice_channel_id;
+          server.leaveVoiceChannel(function() { server.joinVoiceChannel(chan_id); });
         }
-      });
+      }
     });
   }
 
