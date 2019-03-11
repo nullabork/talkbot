@@ -44,16 +44,16 @@ Use this to setup your own bot on your own server. Note you will require a googl
 ## Install and setup
 1. Clone this respository
 2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key. 
-    - To learn how to setup a discord app and get this token go here https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
+    - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 3. Setup your google API credentials. 
-    * To learn how to do this go here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+    * To learn how to do this [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
 4. Install nvm and run 
     ```
       nvm install
       nvm use
     ```
-    * windows - https://github.com/coreybutler/nvm-windows/releases
-    * mac/linux - https://github.com/creationix/nvm
+    * [windows](https://github.com/coreybutler/nvm-windows/releases)
+    * [mac/linux](https://github.com/creationix/nvm)
 5. Install NPM dependencies
     * `npm install` or `yarn install`
 5. To run: node `bot.js`
@@ -63,11 +63,11 @@ node bot.js
 
 # Troubleshooting 
 
-Talk to us on discord https://discord.gg/NxrPp8g
+[Talk to us on discord](https://discord.gg/NxrPp8g)
 
 ## Google TTS API Issues
 
-Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. See Google cloud docs here https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries
+Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. [See Google cloud docs here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries) 
 
 # Props to
 * WootoSmash - coder/bugmaker/shitposter
@@ -76,4 +76,4 @@ Confirm you've put the path to your API credentials file in the env var GOOGLE_A
 * Kingk22 - bugfinder/shitposter
 * Kelinmiriel - bugfinder/shitposter
 
-Want to shitpost also? https://discord.gg/NxrPp8g
+[Want to shitpost also?](https://discord.gg/NxrPp8g)
