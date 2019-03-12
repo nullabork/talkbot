@@ -264,6 +264,15 @@ class Server {
     return this.permitted[user_id] != null;
   };
 
+  setVoiceChannel(channel_id) {
+    var server = this;
+    server.cancelUnfollowTimer();
+    server.current_voice_channel_id = channel_id;
+    server.save();
+    var w = require("./World");
+    w.setPresence();
+  }
+
   joinVoiceChannel(channel_id, callback) {
 
     if (!callback) callback = function () { };
@@ -288,22 +297,13 @@ class Server {
     });
   };
 
-  setVoiceChannel(channel_id) {
-    var server = this;
-    server.cancelUnfollowTimer();
-    server.current_voice_channel_id = channel_id;
-    server.save();
-    var w = require("./World");
-    w.setPresence();
-  }
-
   leaveVoiceChannel(callback) {
     var server = this;
     if (!callback) callback = function () { };
 
     // HACK: delay the timeout as the callback sometimes runs before the state = left
     var callback_timeout = function () {
-      setTimeout(callback, 2000);
+      setTimeout(callback, 100);
     };
 
     if (server.current_voice_channel_id != null) {
@@ -314,7 +314,18 @@ class Server {
     this.save();
     var w = require("./World");
     w.setPresence();
-  }
+  };
+  
+  // leave the current voice channel and join another
+  switchVoiceChannel(channel_id, callback) {
+    var server = this;
+        
+    server.leaveVoiceChannel(function() {
+      server.joinVoiceChannel(channel_id, callback);
+    });
+  };
+  
+  
 
   permit(user_id) {
     this.resetNeglectTimeout();
@@ -495,20 +506,22 @@ class Server {
       clearTimeout(this.unfollow_timeout);
     this.unfollow_timeout = null;
   };
+  
+  dispose() {
+    clearTimeout(this.neglect_timeout);
+  };
 
   save(_filename) {
     var self  = this;
     this.updated = new Date();
-    setTimeout(function(){
-      function replacer(key, value) {
-        if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
-        if (key == "commandResponses") return undefined;
-        else return value;
-      };
+    function replacer(key, value) {
+      if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
+      if (key == "commandResponses") return undefined;
+      else return value;
+    };
 
-      if ( !_filename) _filename = paths.config + "/" + self.server_id + ".server";
-      fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
-    },10);
+    if ( !_filename) _filename = paths.config + "/" + self.server_id + ".server";
+    fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
   };
 
   loadState() {

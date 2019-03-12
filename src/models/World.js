@@ -18,10 +18,10 @@ class World {
     this.broadcastID = null;
     this.broadcastMessage = null;
     this.broadcaster = null;
-    this.presence_timeout = null;
     this.presence_renderers = [this.renderPresenceCounts, this.renderPresenceHelp, this.renderPresenceFollow];
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
+    this.presence_timeout = null;
     
     this.resetDailyStats();
   }
@@ -106,10 +106,11 @@ class World {
       var leave_servers = [];
       var delayed_leave = function() {
         for ( var i=0;i<leave_servers.length;i++) {
-          leave_servers[i].leaveVoiceChannel(function() {
-            if ( chan_id) leave_servers[i].joinVoiceChannel(chan_id);
-            else leave_servers[i].startUnfollowTimer();
-          });
+          if ( chan_id) leave_servers[i].switchVoiceChannel(chan_id);
+          else {
+            leave_servers[i].startUnfollowTimer();
+            leave_servers[i].leaveVoiceChannel();
+          }
         }
       };
       
@@ -225,6 +226,15 @@ class World {
     var s = Object.keys(bot.servers).length + " servers, " + c + " active";
     
     return s;
+  };
+  
+  dispose() {
+    for ( var s in this.servers ) {
+      this.servers[s].dispose();
+    }
+    
+    clearTimeout(this.presence_timeout);
+    clearTimeout(this.presence_rotation_timeout);
   };
   
 }
