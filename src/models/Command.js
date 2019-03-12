@@ -11,6 +11,10 @@ class Command {
     return true;
   }
 
+  get order() {
+    return 99;
+  }
+
   get command_name() {
     return this.constructor.name.toLowerCase();
   }
@@ -25,6 +29,13 @@ class Command {
 
   get long_help() {
     return `${this.command_name}.longhelp`;
+  }
+
+  get sequence() {
+    return {
+      message : 0,
+      token : 0,
+    };
   }
 
 
@@ -48,9 +59,10 @@ class Command {
    * @return  {[type]}  [return description]
    */
   get listeners() {
+    var self = this;
     return {
       message : this.onMessage || null,
-      token : this.onToken || null,
+      token : this.onToken || null
     }
   }
 }

@@ -27,9 +27,8 @@ class CommentBuilder {
       data = data["_data"];
     }
 
-
     var max = 0;
-    if (!Array.isArray(data)) {
+    if (!Array.isArray(data) && typeof data != 'string' ) {
       for (let key in data) {
         if ( typeof key == "string" && key.length > max ) {
           // /if(this.formatKey) key = Common.camelize(key);

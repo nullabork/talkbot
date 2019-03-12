@@ -1,6 +1,7 @@
 {
   "en.general" : {
-    "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key."
+    "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
+    "nope" : "Sorry, only a server admin or manager can do this."
   },
   "en.set": {
     "okay": "Set message for :lang",

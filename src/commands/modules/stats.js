@@ -95,6 +95,8 @@ function getWorldStats(world, sort, limit) {
 
 //command stuff
 function stats(msg, server, world) {
+  if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
+
   initStats(server);
   var stats = getWorldStats(world, (a,b) => b._data.characterCount - a._data.characterCount, 5);
 
@@ -104,7 +106,6 @@ function stats(msg, server, world) {
   });
 
   msg.response(help.out());
-
 };;
 
 var command = new BotCommand({

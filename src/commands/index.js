@@ -14,30 +14,34 @@ function Commands() {
 
   this.command_char = auth.command_char || '!';
 
+
+
   this.add = function (command, force) {
     var key = command.command_name.toLowerCase();
+    //if is there and the force argument is false
+    if (this.commands[key] && !force) return;
+    //add the command to the the map
+    this.commands[key] = command;
 
-    if (!this.commands[key] || force) {
-      this.commands[key] = command;
+    //no listeners, then stop/
+    if (!command.listeners) return;
 
-      if (command.listeners) {
-        for (var type in command.listeners) {
-          if (command.listeners.hasOwnProperty(type)) {
-            var func = command.listeners[type];
-            this.on(type, func);
-          }
-        }
-      }
+    //add the listerners
+    for (var type in command.listeners) {
+      //check if listener is good
+      if (!command.listeners.hasOwnProperty(type) || !command.listeners[type]) continue;
+
+      var sequence = command.sequence && command.sequence[type] || 0;
+
+      var func = command.listeners[type];
+      this.on(type, func, sequence);
     }
   };
 
-  this.on = function (type, cb) {
-
-      if (!this.listeners[type]) {
-        this.listeners[type] = [];
-      }
-      this.listeners[type].push(cb);
-
+  this.addAll = function(commands){
+    for (const command of commands) {
+      this.add(command);
+    }
   }
 
   this.registerAllCommands = function () {
@@ -47,6 +51,8 @@ function Commands() {
       command.register(self);
     });
   }
+
+
 
   this.remove = function (command) {
     key = command.command_name.toLowerCase();
@@ -58,10 +64,12 @@ function Commands() {
       arg = command.command_arg.toLowerCase();
       delete this.commands[arg];
     }
+  }
 
-
-    // for (var listener in command.listeners)
-    //   delete this.listeners[listener];
+  this.removeAll = function (commands) {
+    for (const command of commands) {
+      this.remove(command);
+    }
   }
 
   // for commands that have startup tests
@@ -98,6 +106,17 @@ function Commands() {
     }
   }
 
+    //add
+  this.on = function (type, cb, sequence) {
+    if (!this.listeners[type]) {
+      this.listeners[type] = [];
+    }
+    this.listeners[type].push({
+      cb,
+      sequence : sequence || 0
+    });
+  }
+
   this.notify = function (type, args) {
 
     var funcs = this.listeners[type];
@@ -105,14 +124,18 @@ function Commands() {
       return;
     }
 
+    funcs.sort((a, b) => {
+      return a.sequence - b.sequence;
+    })
+
     var ret = null;
     //eat exceptions so poorly written commands dont bork
     try {
       for (let i = 0; i < funcs.length; i++) {
-        var func = funcs[i];
+        var func = funcs[i].cb;
+
 
         if (typeof func == 'function') {
-
           args = {
             ...args,
             modified : ret
