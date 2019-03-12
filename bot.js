@@ -1,4 +1,12 @@
-
+/*
+ *  _____     _ _    ____        _
+ * |_   _|_ _| | | _| __ )  ___ | |_
+ *   | |/ _` | | |/ /  _ \ / _ \| __|
+ *   | | (_| | |   <| |_) | (_) | |_
+ *   |_|\__,_|_|_|\_\____/ \___/ \__|
+ *
+ * http://github.com/nullabork/talkbot
+ */
 
 //npm imports
 require('module-alias/register');
@@ -64,17 +72,6 @@ bot.on('any', function (evt) {
       if ( user_id ) world.checkMastersVoiceChannels(user_id);
       return null;
     }
-
-    //was this eventer the current
-    if (server.isMaster(user_id)) {
-      if (!channel_id) {
-        if (server.inChannel()) {
-          server.leaveVoiceChannel();
-        }
-      } else {
-        server.joinVoiceChannel(channel_id);
-      }
-    }
   }
 });
 
@@ -84,15 +81,17 @@ bot.on('guildCreate', function(server) {
   world.addServer(new Server(server_id));
 });
 
-// new servers get deleted
+// servers get deleted
 bot.on('guildDelete', function(server) {
   if (!server) return; // why would we lose a server?
+                       // because the world isn't a marshmallow
   var world_server = world.servers[server.id];
   var name = world_server.server_name;
   world.removeServer(world_server);
   Common.out("Server " + name + " removed");
 });
 
+// when messages come in
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
   if (!evt.d) return null;
@@ -140,8 +139,6 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
       message: cmdMessage,
     });
 
-    //commands.run(msgDets.cmd, [msgDets, server, world]);
-
     var command = commands.get(msgDets.cmd);
     if(!command) return;
 
@@ -153,11 +150,13 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     }
 
   } else {
+    // if its not a command speak it
     var settings = server.getUserSettings(user_id);
     if ( !settings.muted ) server.speak(message, channel_id, user_id, world);
   }
 });
 
+// ctrl-c
 process.on('SIGINT', function () {
   Common.out('SIGINT');
   world.saveAll();
@@ -165,6 +164,7 @@ process.on('SIGINT', function () {
   process.exit();
 });
 
+// something goes wrong we didnt think of or having got around to putting a band-aid fix on
 process.on('uncaughtException', function (err) {
   Common.out('uncaughtException');
   world.saveAll();

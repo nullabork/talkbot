@@ -8,9 +8,8 @@ var Lang = require("lang.js"),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   auth = require('@auth'),
-  bot = botStuff.bot;
-
-var fs = require('fs');
+  bot = botStuff.bot,
+  fs = require('fs');
 
 // https://discordapp.com/developers/docs/topics/permissions
 var P_ADMINISTRATOR  = 0x00000008;
@@ -27,8 +26,6 @@ class Server {
     var inst = bot.servers[this.server_id];
     var state_data = this.loadState() || {};
 
-
-    //this.owner_id = inst.owner_id;
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
     this.users = bot.users[this.server_owner_user_id] || {};
@@ -43,7 +40,6 @@ class Server {
     this.current_voice_channel_id = state_data.current_voice_channel_id;
     this.permitted = {};
     this.neglect_timeout = null;
-    this.neglect_neglect = null;
     this.language = state_data.language || 'en-AU';
     this.fallbackLang = 'en';
     this.created = state_data.created  || new Date();
@@ -221,15 +217,18 @@ class Server {
     return false;
   };
 
+  // does this server think it's in a voice channel
   inChannel() {
     return this.current_voice_channel_id != null;
   };
 
+  // is this user permitted to speak
   isPermitted(user_id) {
     if (!user_id) return false;
     return this.permitted[user_id] != null;
   };
 
+  // set the server properties to indicate this is the current voice channel
   setVoiceChannel(channel_id) {
     var server = this;
     server.cancelUnfollowTimer();
@@ -239,6 +238,8 @@ class Server {
     w.setPresence();
   }
 
+  // get the server to join a voice channel
+  // NOTE: this is async, so if you want to run a continuation use the callback.
   joinVoiceChannel(channel_id, callback) {
 
     if (!callback) callback = function () { };
@@ -263,6 +264,8 @@ class Server {
     });
   };
 
+  // get the server to leave a voice channel
+  // NOTE: this is async, so if you want to run a continuation use the callback.
   leaveVoiceChannel(callback) {
     var server = this;
     if (!callback) callback = function () { };
@@ -283,6 +286,7 @@ class Server {
   };
   
   // leave the current voice channel and join another
+  // NOTE: this is async, so if you want to run a continuation use the callback.
   switchVoiceChannel(channel_id, callback) {
     var server = this;
         
@@ -290,21 +294,22 @@ class Server {
       server.joinVoiceChannel(channel_id, callback);
     });
   };
-  
-  
 
+  // permit another user to speak
   permit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = {};
     this.save();
-  }
+  };
 
+  // unpermit another user to speak
   unpermit(user_id) {
     this.resetNeglectTimeout();
     this.permitted[user_id] = null;
     this.save();
-  }
+  };
 
+  // reset the timer that unfollows a user if they dont use the bot
   resetNeglectTimeout() {
     var server = this;
 
@@ -316,6 +321,25 @@ class Server {
     server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
   };
 
+  // called when the neglect timeout expires
+  neglected() {
+    var server = this;
+
+    // delay for 3 seconds to allow the bot to talk
+    var neglectedrelease = function () {
+      var timeout_neglectedrelease = function () { server.release(); };
+      setTimeout(timeout_neglectedrelease, 3000);
+    };
+
+    if (server.inChannel()) {
+      server.talk("I feel neglected, I'm leaving", null, neglectedrelease);
+    } else {
+      server.release();
+    }
+  }
+
+
+  // speak a message in a voice channel
   talk(message, options, callback) {
 
     var server = this;
@@ -358,9 +382,6 @@ class Server {
       },
     };
 
-    //if(settings.name) delete request.voice['languageCode'];
-
-    //if ( options.use_ssml )
     request.input = { text: null, ssml: message };
   
     // Performs the Text-to-Speech request
@@ -393,22 +414,6 @@ class Server {
         }
       }
     });
-  }
-
-  neglected() {
-    var server = this;
-
-    // delay for 3 seconds to allow the bot to talk
-    var neglectedrelease = function () {
-      var timeout_neglectedrelease = function () { server.release(); };
-      setTimeout(timeout_neglectedrelease, 3000);
-    };
-
-    if (server.inChannel()) {
-      server.talk("I feel neglected, I'm leaving", null, neglectedrelease);
-    } else {
-      server.release();
-    }
   }
 
   addTextRule(search_text, replace_text, escape_regex) {
@@ -459,10 +464,29 @@ class Server {
     this.unfollow_timeout = null;
   };
   
+  // run this to cleanup resources before shutting down
+  shutdown() {
+    
+    var server = this;
+    
+    if ( server.inChannel()) 
+    {
+      server.talk("The server is shutting down", null, function() {
+        server.leaveVoiceChannel();
+      });
+    }
+    else {
+      server.release();
+    }
+  }
+  
+  // when the server is deleted or shutdown or disconnected run this to cleanup things
   dispose() {
+    this.shutdown();
     clearTimeout(this.neglect_timeout);
   };
 
+  // save the state file
   save(_filename) {
     var self  = this;
     this.updated = new Date();
@@ -476,6 +500,7 @@ class Server {
     fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
   };
 
+  // load the state file
   loadState() {
 
     var self = this;
@@ -488,6 +513,7 @@ class Server {
     return null;
   };
   
+  // call this if you want to check a message is valid and run it through translation
   speak(message, channel_id, user_id, world) {
     
     var server = this;
