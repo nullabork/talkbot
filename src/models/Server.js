@@ -43,9 +43,9 @@ class Server {
     this.audioEmojis = state_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || {};
     this.textrules = state_data.textrules || {"o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down"};
-    this.bound_to = null;
-    this.bound_to_username = null;
-    this.current_voice_channel_id = null;
+    this.bound_to = state_data.bound_to;
+    this.bound_to_username = state_data.bound_to_username;
+    this.current_voice_channel_id = state_data.current_voice_channel_id;
     this.permitted = {};
     this.neglect_timeout = null;
     this.neglect_neglect = null;
@@ -62,6 +62,15 @@ class Server {
 
     this.messages = {};
   }
+  
+  rejoinVoiceChannel() {
+    if (!this.bound_to) return;
+    this.setMaster(this.bound_to, this.bound_to_username);
+    var chan_id = this.current_voice_channel_id; // to get around the guard condition
+    this.current_voice_channel_id = null;
+    if (botStuff.getUserVoiceChannel(this.bound_to) == chan_id)
+      this.joinVoiceChannel(chan_id);
+  };
 
   setMaster(user_id, username) {
     this.bound_to = user_id;

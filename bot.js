@@ -39,6 +39,7 @@ bot.on('ready', function (evt) {
 
 // if we get disconnected???
 bot.on('disconnect', function (evt) {
+  world.saveAll();
   Common.out('Disconnected, reconnecting');
   Common.out(evt);
   bot.connect();

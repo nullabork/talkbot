@@ -21,6 +21,7 @@ class World {
     this.presence_timeout = null;
     this.presence_renderers = [this.renderPresenceCounts, this.renderPresenceHelp, this.renderPresenceFollow];
     this.presence_renderers_index = 0;
+    this.presence_rotation_timeout = null;
     
     this.resetDailyStats();
   }
@@ -29,14 +30,13 @@ class World {
   addServer(server) {
     if (!server.server_id) return;
     this.servers[server.server_id] = server;
-    this.setPresence();
+    server.rejoinVoiceChannel();
   }
 
   removeServer(server) {
     if ( !this.servers[server.server_id] ) return;
     this.servers[server.server_id].save();
     delete this.servers[server.server_id];
-    this.setPresence();
   }
 
   broadcast(message, user_id) {
@@ -137,7 +137,7 @@ class World {
         game: {
           name: w.renderPresence(),
           type: 1,
-          url: 'https://github.com/wootosmash/talkbot'
+          url: 'https://github.com/nullabork/talkbot'
         }
       });
     };
@@ -183,9 +183,12 @@ class World {
   startPresenceRotation() {
     var world = this;
     var rotatePresenceBanner = function() {
-      world.nextPresenceRenderer();
-      world.setPresence();
-      setTimeout(rotatePresenceBanner, 15000);
+      var w = world;
+      w.nextPresenceRenderer();
+      w.setPresence();
+      if ( w.presence_rotation_timeout )
+        clearTimeout(w.presence_rotation_timeout);
+      w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 15000);
     };
     
     rotatePresenceBanner();
@@ -196,7 +199,8 @@ class World {
   };
   
   renderPresence() {
-    return this.presence_renderers[this.presence_renderers_index % this.presence_renderers.length]();
+    var renderer = this.presence_renderers[this.presence_renderers_index % this.presence_renderers.length];
+    return renderer.call(this); //HACKSSSS
   };
   
   renderPresenceFollow() {
@@ -211,6 +215,7 @@ class World {
   
   renderPresenceCounts() {
     var w = this;
+        
     var c = 0;
     for (var s in w.servers) {
       if (w.servers[s].isBound()) c++;
