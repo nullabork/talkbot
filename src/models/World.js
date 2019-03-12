@@ -101,21 +101,22 @@ class World {
     // itself.
     // run delayed execution of the code to get the real answers
     var delayed_execution = function() {
-      var voiceChan = botStuff.getUserVoiceChannel(user_id);
+      var chan_id = botStuff.getUserVoiceChannel(user_id);
       
       var leave_servers = [];
       var delayed_leave = function() {
         for ( var i=0;i<leave_servers.length;i++) {
-          leave_servers[i].leaveVoiceChannel();
-          if ( voiceChan) leave_servers[i].joinVoiceChannel(voiceChan);
-          else leave_servers[i].startUnfollowTimer();
+          leave_servers[i].leaveVoiceChannel(function() {
+            if ( chan_id) leave_servers[i].joinVoiceChannel(chan_id);
+            else leave_servers[i].startUnfollowTimer();
+          });
         }
       };
       
       for (var server_id in world.servers) {
         var s = world.servers[server_id];
         if (s.bound_to == user_id) {
-          if (voiceChan != s.current_voice_channel_id) {
+          if (chan_id != s.current_voice_channel_id) {
             leave_servers.push(s);
             s.talk("Oh no my master left me!", null, delayed_leave);
           }

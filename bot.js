@@ -62,7 +62,6 @@ bot.on('any', function (evt) {
 
     var server = world.servers[server_id];
     if (server == null || server.isMaster(user_id)) {
-      Common.out("What server?: " + channel_id);
       if ( user_id ) world.checkMastersVoiceChannels(user_id);
       return null;
     }
