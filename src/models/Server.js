@@ -19,11 +19,6 @@ var P_MANAGE_GUILD   = 0x00000020;
 var TIMEOUT_LEAVEVOICE = 30000; // 30 seconds
 var TIMEOUT_NEGLECT    = 120 * 60 * 1000; // 2 hours
 
-  // MESSAGE_AVERAGE_TIMEFRAME_MS = 60000,
-  // MESSAGE_TIMEFRAME_RETENTION_MS = MESSAGE_AVERAGE_TIMEFRAME_MS * 5,
-  // MESSAGE_AVERAGE_THRESHOLD = 60;
-
-
 class Server {
 
   constructor(server_id) {
@@ -63,13 +58,18 @@ class Server {
     this.messages = {};
   }
   
-  rejoinVoiceChannel() {
+  rejoinVoiceChannelOnStartup() {
     if (!this.bound_to) return;
     this.setMaster(this.bound_to, this.bound_to_username);
     var chan_id = this.current_voice_channel_id; // to get around the guard condition
     this.current_voice_channel_id = null;
-    if (botStuff.getUserVoiceChannel(this.bound_to) == chan_id)
+    var master_voice_chan_id = botStuff.getUserVoiceChannel(this.bound_to);
+    if (!master_voice_chan_id)
+      this.release();
+    else if (master_voice_chan_id == chan_id)
       this.joinVoiceChannel(chan_id);
+      
+      
   };
 
   setMaster(user_id, username) {
@@ -123,31 +123,6 @@ class Server {
     return this.userSettings[user_id];
   }
 
-  sendMessageToOwner(message) {
-    if (this.server_owner_user_id) {
-      bot.sendMessage({
-        to: this.server_owner_user_id,
-        message: message
-      });
-    }
-  }
-
-  init() {
-    if (this.isBound()) {
-      this.setMaster(this.bound_to, this.bound_to_username);
-    } else {
-      this.release();
-    }
-
-    var voiceChan = botStuff.getUserVoiceChannel(this.bound_to);
-    if (voiceChan) {
-      if (!this.isServerChannel(voiceChan))
-        this.leaveVoiceChannel();
-      else
-        this.joinVoiceChannel(voiceChan);
-    }
-  }
-
   lang(key, params) {
     if (this.messages && this.messages[key]) {
       return this.messages[key];
@@ -190,15 +165,6 @@ class Server {
 
     this.leaveVoiceChannel();
   };
-
-  getChannelMembers(channel_id) {
-    if (!bot.channels[channel_id]
-      && !bot.servers[bot.channels[channel_id].guild_id]
-      && bot.servers[bot.channels[channel_id].guild_id].members) {
-      return bot.servers[bot.channels[channel_id].guild_id].members;
-    }
-    return null;
-  }
 
   isMaster(user_id) {
     if (!user_id) return false;
@@ -342,18 +308,12 @@ class Server {
   resetNeglectTimeout() {
     var server = this;
 
-    if (server.neglect_neglect) {
-      clearTimeout(server.neglect_timeout);
-      server.neglect_timeout = null;
-    }
-    else {
-      var neglected_timeout = function () {
-        server.neglected();
-      };
+    var neglected_timeout = function () {
+      server.neglected();
+    };
 
-      clearTimeout(server.neglect_timeout);
-      server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
-    }
+    clearTimeout(server.neglect_timeout);
+    server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
   };
 
   talk(message, options, callback) {
@@ -438,7 +398,6 @@ class Server {
   neglected() {
     var server = this;
 
-    if (server.neglect_neglect) return;
     // delay for 3 seconds to allow the bot to talk
     var neglectedrelease = function () {
       var timeout_neglectedrelease = function () { server.release(); };
@@ -450,13 +409,6 @@ class Server {
     } else {
       server.release();
     }
-  }
-
-  toggleNeglect() {
-    var server = this;
-    server.neglect_neglect = !server.neglect_neglect;
-    server.resetNeglectTimeout();
-    return this.neglect_neglect;
   }
 
   addTextRule(search_text, replace_text, escape_regex) {

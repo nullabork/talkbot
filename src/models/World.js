@@ -7,10 +7,6 @@ var fs = require('fs'),
   bot = botStuff.bot;
 
 class World {
-  static get NEGLECT_TIMEOUT_IN_MS() {
-    return 120 * 60 * 1000;
-  }
-
 
   constructor() {
     this.servers = {};
@@ -23,71 +19,27 @@ class World {
     this.presence_rotation_timeout = null;
     this.presence_timeout = null;
     
-    this.resetDailyStats();
   }
 
+  startup() {
+    var world = this;
+    world.resetDailyStats();
+    world.startDailyResetTimer();
+    world.setPresence();
+    world.startPresenceRotation();
+  };  
   
   addServer(server) {
     if (!server.server_id) return;
     this.servers[server.server_id] = server;
-    server.rejoinVoiceChannel();
+    server.rejoinVoiceChannelOnStartup();
   }
 
   removeServer(server) {
     if ( !this.servers[server.server_id] ) return;
-    this.servers[server.server_id].save();
     delete this.servers[server.server_id];
-  }
-
-  broadcast(message, user_id) {
-    var self = this;
-    if (!(auth.dev_ids.indexOf(user_id) >= 0)) {
-      return;
-    }
-
-    if (this.broadcastID == null) {
-      this.broadcastID = (Math.floor(Math.random() * 90000) + 10000) + "";
-      this.broadcastMessage = message;
-      this.broadcaster = user_id;
-
-      setTimeout(function () {
-        self.broadcastID = null;
-        self.broadcastMessage = null;
-        self.broadcaster = null;
-      }, 20000);
-
-      return this.broadcastID;
-
-    } else if (this.broadcaster != user_id) {
-      for (var key in bot.servers) {
-        var server = bot.servers[key];
-        bot.sendMessage({
-          to: server.owner_id,
-          message: self.broadcastMessage
-        });
-      }
-
-      self.broadcastID = null;
-      self.broadcastMessage = null;
-      self.broadcaster = null;
-    }
-
-    return null;
-  }
-
-  unpermitAll() {
-    for (var server in this.servers) {
-      server.release();
-    }
-  }
-
-  getServerFromChannel(channel_id) {
-    var chan = bot.channels[channel_id];
-    if (chan) {
-      var server = this.servers[bot.channels[channel_id].guild_id];
-      return server;
-    }
-    return null;
+    server.save();
+    server.dispose();
   }
 
   checkMastersVoiceChannels(user_id) {
@@ -163,6 +115,15 @@ class World {
     process.exit();
   }
   
+  getActiveServersCount() {
+    var w = this;
+    var c = 0;
+    for (var s in w.servers) {
+      if (w.servers[s].isBound()) c++;
+    }
+    return c;
+  };
+  
   incrementStatDailyActiveServers(server_id) {
     this._dailyStats.activeServers[server_id] = 1;
   };
@@ -217,14 +178,7 @@ class World {
   
   renderPresenceCounts() {
     var w = this;
-        
-    var c = 0;
-    for (var s in w.servers) {
-      if (w.servers[s].isBound()) c++;
-    }
-    
-    var s = Object.keys(bot.servers).length + " servers, " + c + " active";
-    
+    var s = Object.keys(bot.servers).length + " servers, " + w.getActiveServersCount() + " active";
     return s;
   };
   

@@ -32,9 +32,7 @@ figlet('TalkBot', function(err, data) {
 // when the server is ready to go
 bot.on('ready', function (evt) {
   Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
-  world.startDailyResetTimer();
-  world.setPresence();
-  world.startPresenceRotation();
+  world.startup();
 });
 
 // if we get disconnected???
