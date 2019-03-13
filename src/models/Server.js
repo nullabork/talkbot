@@ -44,6 +44,7 @@ class Server {
     this.fallbackLang = 'en';
     this.created = state_data.created  || new Date();
     this.updated = new Date();
+    this.world = null;
 
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
@@ -53,7 +54,11 @@ class Server {
 
     this.messages = {};
   }
-  
+
+  addWorld(world) {
+    this.world = world;
+  }
+
   rejoinVoiceChannelOnStartup() {
     if (!this.bound_to) return;
     this.setMaster(this.bound_to, this.bound_to_username);
@@ -64,8 +69,8 @@ class Server {
       this.release();
     else if (master_voice_chan_id == chan_id)
       this.joinVoiceChannel(chan_id);
-      
-      
+
+
   };
 
   setMaster(user_id, username) {
@@ -234,8 +239,7 @@ class Server {
     server.cancelUnfollowTimer();
     server.current_voice_channel_id = channel_id;
     server.save();
-    var w = require("./World");
-    w.setPresence();
+    this.world.setPresence();
   }
 
   // get the server to join a voice channel
@@ -257,8 +261,7 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
-        var w = require("./World");
-        w.incrementStatDailyActiveServers(server.server_id);
+        this.world.incrementStatDailyActiveServers(server.server_id);
         callback();
       }
     });
@@ -281,15 +284,14 @@ class Server {
 
     server.current_voice_channel_id = null;
     this.save();
-    var w = require("./World");
-    w.setPresence();
+    this.world.setPresence();
   };
-  
+
   // leave the current voice channel and join another
   // NOTE: this is async, so if you want to run a continuation use the callback.
   switchVoiceChannel(channel_id, callback) {
     var server = this;
-        
+
     server.leaveVoiceChannel(function() {
       server.joinVoiceChannel(channel_id, callback);
     });
@@ -383,7 +385,7 @@ class Server {
     };
 
     request.input = { text: null, ssml: message };
-  
+
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
@@ -451,8 +453,7 @@ class Server {
       server.release();
       server.unfollow_timeout = null;
       server.save();
-      var w = require("./World");
-      w.setPresence();
+      this.world.setPresence();
     };
 
     server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);
@@ -463,13 +464,13 @@ class Server {
       clearTimeout(this.unfollow_timeout);
     this.unfollow_timeout = null;
   };
-  
+
   // run this to cleanup resources before shutting down
   shutdown() {
-    
+
     var server = this;
-    
-    if ( server.inChannel()) 
+
+    if ( server.inChannel())
     {
       server.talk("The server is shutting down", null, function() {
         server.leaveVoiceChannel();
@@ -479,7 +480,7 @@ class Server {
       server.release();
     }
   }
-  
+
   // when the server is deleted or shutdown or disconnected run this to cleanup things
   dispose() {
     this.shutdown();
@@ -493,6 +494,7 @@ class Server {
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
       if (key == "commandResponses") return undefined;
+      if (key == "world") return undefined;
       else return value;
     };
 
@@ -502,7 +504,6 @@ class Server {
 
   // load the state file
   loadState() {
-
     var self = this;
     var _filename = paths.config + "/" + self.server_id + ".server";
 
@@ -512,12 +513,12 @@ class Server {
 
     return null;
   };
-  
+
   // call this if you want to check a message is valid and run it through translation
-  speak(message, channel_id, user_id, world) {
-    
+  speak(message, channel_id, user_id) {
+
     var server = this;
-    
+
     if (
       message.length < 1 ||
       Common.isMessageExcluded(message) ||
@@ -525,7 +526,7 @@ class Server {
       !server.isPermitted(user_id)
     ) return;
 
-    var ret = commands.notify('message', {message : message, user_id, server, world});
+    var ret = commands.notify('message', {message : message, user_id, server, world : this.world});
     if (ret) message = ret;
 
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);

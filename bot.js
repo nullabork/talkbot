@@ -11,8 +11,10 @@
 //npm imports
 require('module-alias/register');
 var figlet = require('figlet');
+
 var path = require('path'),
   paths = require('@paths');
+
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
@@ -78,7 +80,13 @@ bot.on('any', function (evt) {
 // new servers arrive
 bot.on('guildCreate', function(server) {
   var server_id = server.id;
-  world.addServer(new Server(server_id));
+
+  //create server instance
+  let s = new Server(server_id, world);
+
+  //add the relationships
+  world.addServer(s);
+  s.addWorld(world);
 });
 
 // servers get deleted
