@@ -57,7 +57,7 @@ Use this to setup your own bot on your own server. Note you will require a googl
 5. Install NPM dependencies
     * `npm install` or `yarn install`
 6. Install ffmpeg 
-    * To learn how to do this [go here]https://www.ffmpeg.org/download.html
+    * To learn how to do this [go here](https://www.ffmpeg.org/download.html)
 7. To run: `node bot.js`
 
 ## To run
