@@ -47,6 +47,7 @@ function ohshit(msg, server, world) {
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
       if (key == "commandResponses") return undefined;
+      if (key == "world") return undefined;
       else return value;
     };
 
