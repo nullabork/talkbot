@@ -2,3 +2,4 @@
 auth.json
 state.json
 /config/*.server
+/config/ohshit*
