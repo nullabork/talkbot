@@ -4,5 +4,4 @@ var res = request('GET', "http://api.chrisvalleskey.com/fillerama/get.php?count=
 });
 
 var json = JSON.parse(res.getBody('utf8'));
-
 console.log(json.db[0].source + ": " + json.db[0].quote);
