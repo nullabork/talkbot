@@ -12,11 +12,11 @@ var Lang = require("lang.js"),
   fs = require('fs');
 
 // https://discordapp.com/developers/docs/topics/permissions
-var P_ADMINISTRATOR  = 0x00000008;
-var P_MANAGE_GUILD   = 0x00000020;
+var P_ADMINISTRATOR = 0x00000008;
+var P_MANAGE_GUILD = 0x00000020;
 
 var TIMEOUT_LEAVEVOICE = 30000; // 30 seconds
-var TIMEOUT_NEGLECT    = 120 * 60 * 1000; // 2 hours
+var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
 
@@ -29,12 +29,12 @@ class Server {
     this.server_name = inst.name;
     this.server_owner_user_id = inst.owner_id;
     this.users = bot.users[this.server_owner_user_id] || {};
-    if ( this.users[this.server_owner_user_id])
+    if (this.users[this.server_owner_user_id])
       this.server_owner_username = this.users[this.server_owner_user_id];
 
     this.audioEmojis = state_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || {};
-    this.textrules = state_data.textrules || {"o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down"};
+    this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
     this.bound_to = state_data.bound_to;
     this.bound_to_username = state_data.bound_to_username;
     this.current_voice_channel_id = state_data.current_voice_channel_id;
@@ -42,7 +42,7 @@ class Server {
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
     this.fallbackLang = 'en';
-    this.created = state_data.created  || new Date();
+    this.created = state_data.created || new Date();
     this.updated = new Date();
     this.world = null;
 
@@ -69,8 +69,6 @@ class Server {
       this.release();
     else if (master_voice_chan_id == chan_id)
       this.joinVoiceChannel(chan_id);
-
-
   };
 
   setMaster(user_id, username) {
@@ -80,9 +78,9 @@ class Server {
     this.resetNeglectTimeout();
   };
 
-  addSettings(key, add){
-    if(typeof add == 'object' && !this[key]) this[key] = {};
-    if(this[key]) {
+  addSettings(key, add) {
+    if (typeof add == 'object' && !this[key]) this[key] = {};
+    if (this[key]) {
       this[key] = {
         ...this[key],
         ...add
@@ -91,8 +89,8 @@ class Server {
   }
 
   addUserSetting(user_id, name, value) {
-    if(!this.userSettings) this.userSettings = {};
-    if(!this.userSettings[user_id]) {
+    if (!this.userSettings) this.userSettings = {};
+    if (!this.userSettings[user_id]) {
       this.userSettings[user_id] = {};
     }
 
@@ -103,24 +101,23 @@ class Server {
 
 
   clearUserSettings(user_id) {
-    if(!this.userSettings) this.userSettings = {};
+    if (!this.userSettings) this.userSettings = {};
     this.userSettings[user_id] = {};
     this.save();
   }
 
-
   getUserSetting(user_id, name) {
-    if(!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return null;
+    if (!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return null;
     return this.userSettings[user_id][name];
   }
 
   deleteUserSetting(user_id, name) {
-    if(!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return;
+    if (!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return;
     delete this.userSettings[user_id][name];
   }
 
   getUserSettings(user_id) {
-    if(!this.userSettings || !this.userSettings[user_id]) return {};
+    if (!this.userSettings || !this.userSettings[user_id]) return {};
     return this.userSettings[user_id];
   }
 
@@ -132,7 +129,7 @@ class Server {
     var command_char = auth.command_char;
 
     params = {
-      ...(params||{}),
+      ...(params || {}),
       command_char
     }
 
@@ -197,8 +194,8 @@ class Server {
   // determines if the user can manage this server
   canManageTheServer(user_id) {
     return this.userHasPermissions(user_id, P_ADMINISTRATOR) ||
-           this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
-           this.isServerOwner(user_id);
+      this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
+      this.isServerOwner(user_id);
   }
 
   // see the constants up top
@@ -215,7 +212,7 @@ class Server {
   // determine if user has the biggest permissions available
   userHasPermissions(user_id, permission_bit) {
     for (var r in bot.servers[this.server_id].members[user_id].roles) {
-      if (this.roleHasPermission(bot.servers[this.server_id].members[user_id].roles[r], permission_bit )) {
+      if (this.roleHasPermission(bot.servers[this.server_id].members[user_id].roles[r], permission_bit)) {
         return true;
       }
     }
@@ -239,7 +236,7 @@ class Server {
     server.cancelUnfollowTimer();
     server.current_voice_channel_id = channel_id;
     server.save();
-    this.world.setPresence();
+    server.world.setPresence();
   }
 
   // get the server to join a voice channel
@@ -261,7 +258,7 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
-        this.world.incrementStatDailyActiveServers(server.server_id);
+        server.world.incrementStatDailyActiveServers(server.server_id);
         callback();
       }
     });
@@ -270,21 +267,21 @@ class Server {
   // get the server to leave a voice channel
   // NOTE: this is async, so if you want to run a continuation use the callback.
   leaveVoiceChannel(callback) {
+
     var server = this;
     if (!callback) callback = function () { };
 
-    // HACK: delay the timeout as the callback sometimes runs before the state = left
-    var callback_timeout = function () {
-      setTimeout(callback, 100);
-    };
-
     if (server.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(server.current_voice_channel_id, callback_timeout);
+      bot.leaveVoiceChannel(server.current_voice_channel_id, function () {
+        server.current_voice_channel_id = null;
+        server.world.setPresence();
+        callback();
+      });
     }
-
-    server.current_voice_channel_id = null;
-    this.save();
-    this.world.setPresence();
+    else {
+      server.current_voice_channel_id = null;
+      server.world.setPresence();
+    }
   };
 
   // leave the current voice channel and join another
@@ -292,7 +289,7 @@ class Server {
   switchVoiceChannel(channel_id, callback) {
     var server = this;
 
-    server.leaveVoiceChannel(function() {
+    server.leaveVoiceChannel(function () {
       server.joinVoiceChannel(channel_id, callback);
     });
   };
@@ -346,22 +343,22 @@ class Server {
 
     var server = this;
     if (!server.inChannel()) return;
-    if(!options) options = {};
+    if (!options) options = {};
 
     for (var key in options) {
-      if(options.hasOwnProperty(key) && options[key] == 'auto'){
+      if (options.hasOwnProperty(key) && options[key] == 'auto') {
         options[key] = 'default';
       }
     }
 
     var settings = {
-      gender : options.gender == 'default' ? 'NEUTRAL' : options.gender,
-      language : options.language == 'default' ? 'en-AU' : options.language || server.language
+      gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
+      language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
-    if(options.name != 'default') settings.name = options.name;
-    if(options.pitch != 'default') settings.pitch = options.pitch;
-    if(options.speed != 'default') settings.speed = options.speed;
+    if (options.name != 'default') settings.name = options.name;
+    if (options.pitch != 'default') settings.pitch = options.pitch;
+    if (options.speed != 'default') settings.speed = options.speed;
 
     server.resetNeglectTimeout();
 
@@ -406,39 +403,37 @@ class Server {
           }
         });
       }
-      catch(e)
-      {
-        if ( e.message.startsWith('You have not joined the voice channel'))
-        {
+      catch (e) {
+        if (e.message.startsWith('You have not joined the voice channel')) {
           Common.error("Caught a bad voice channel");
           var chan_id = server.current_voice_channel_id;
-          server.leaveVoiceChannel(function() { server.joinVoiceChannel(chan_id); });
+          server.leaveVoiceChannel(function () { server.joinVoiceChannel(chan_id); });
         }
       }
     });
   }
 
   addTextRule(search_text, replace_text, escape_regex) {
-    if ( replace_text == '' ) return;
-    if ( search_text == '' ) return;
+    if (replace_text == '') return;
+    if (search_text == '') return;
     search_text = search_text.trim().toLowerCase();
     replace_text = replace_text.trim();
-    if ( escape_regex ) search_text = Common.escapeRegExp(search_text);
+    if (escape_regex) search_text = Common.escapeRegExp(search_text);
     this.textrules[search_text] = replace_text;
     this.save();
   };
 
   removeTextRule(search_text, escape_regex) {
     search_text = search_text.trim().toLowerCase();
-    if ( escape_regex ) search_text = Common.escapeRegExp(search_text);
+    if (escape_regex) search_text = Common.escapeRegExp(search_text);
     delete this.textrules[search_text];
     this.save();
   };
 
   removeTextRuleByIndex(index) {
     var i = 0;
-    for( var k in Object.keys(this.textrules))
-      if ( ++i == index )
+    for (var k in Object.keys(this.textrules))
+      if (++i == index)
         this.removeTextRule(k);
   };
 
@@ -449,11 +444,11 @@ class Server {
 
   startUnfollowTimer() {
     var server = this;
-    var unfollow_timeout = function() {
+    var unfollow_timeout = function () {
       server.release();
       server.unfollow_timeout = null;
       server.save();
-      this.world.setPresence();
+      server.world.setPresence();
     };
 
     server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);
@@ -470,9 +465,8 @@ class Server {
 
     var server = this;
 
-    if ( server.inChannel())
-    {
-      server.talk("The server is shutting down", null, function() {
+    if (server.inChannel()) {
+      server.talk("The server is shutting down", null, function () {
         server.leaveVoiceChannel();
       });
     }
@@ -489,7 +483,7 @@ class Server {
 
   // save the state file
   save(_filename) {
-    var self  = this;
+    var self = this;
     this.updated = new Date();
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
@@ -498,7 +492,7 @@ class Server {
       else return value;
     };
 
-    if ( !_filename) _filename = paths.config + "/" + self.server_id + ".server";
+    if (!_filename) _filename = paths.config + "/" + self.server_id + ".server";
     fs.writeFileSync(_filename, JSON.stringify(self, replacer), 'utf-8');
   };
 
@@ -526,7 +520,7 @@ class Server {
       !server.isPermitted(user_id)
     ) return;
 
-    var ret = commands.notify('message', {message : message, user_id, server, world : this.world});
+    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
     if (ret) message = ret;
 
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
@@ -543,11 +537,11 @@ class Server {
 
       botStuff.translate_client
         .translate(message, tolang)
-        .then( results => {
+        .then(results => {
           _speak(results[0]);
         })
         .catch(err => {
-          Common.error( err );
+          Common.error(err);
         });
     } else {
       _speak(message);

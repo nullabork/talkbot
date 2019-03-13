@@ -36,7 +36,7 @@ var bot = botStuff.bot;
 
 // FANCY SPLASH SCREEN
 figlet('TalkBot', function(err, data) {
-  console.log(data)
+  console.log(data);
 });
 
 // when the server is ready to go
