@@ -64,8 +64,6 @@ class Server {
       this.release();
     else if (master_voice_chan_id == chan_id)
       this.joinVoiceChannel(chan_id);
-      
-      
   };
 
   setMaster(user_id, username) {
@@ -267,22 +265,22 @@ class Server {
   // get the server to leave a voice channel
   // NOTE: this is async, so if you want to run a continuation use the callback.
   leaveVoiceChannel(callback) {
+    var w = require("./World");
     var server = this;
     if (!callback) callback = function () { };
 
-    // HACK: delay the timeout as the callback sometimes runs before the state = left
-    var callback_timeout = function () {
-      setTimeout(callback, 100);
-    };
-
     if (server.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(server.current_voice_channel_id, callback_timeout);
+      bot.leaveVoiceChannel(server.current_voice_channel_id, function() {
+        server.current_voice_channel_id = null;
+        w.setPresence();
+        callback();
+      });
     }
-
-    server.current_voice_channel_id = null;
-    this.save();
-    var w = require("./World");
-    w.setPresence();
+    else 
+    {
+      server.current_voice_channel_id = null;
+      w.setPresence();
+    }
   };
   
   // leave the current voice channel and join another
