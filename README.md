@@ -17,21 +17,29 @@ Discord bot for natural voice text-to-speech and language translation
 # Commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
 ```yaml
-- !follow  bind the bot to you so only you can control it
-- !unfollow - release the bot so someone else can use it
-- !sidle - take control of the bot from someone else
-- !permit [username1] [username2]... - allow other users to use TTS
-- !unpermit [username1] - disallow another user
-- !who - find out who is the bot's current master
-- !lang [lang] - set the global lang of the bot eg. en-UK, en-us, fr-fr, it
-- !mylang [lang] - set your personal language accent for the bot
-- !langs - list available langs.
-- !tolang [lang] - translate to this language
-- !voices [lang_code] -list voices for a language
-- !myvoice [voice, alias] change voice to a specific voices, language and gender.
-- !sfx set [emoji] [sound_url] - associate a URL with an emoji to have it play when someone says the emoji 
-- !textrule add [search_text] -> [replace_text]
-- !help [longer help] - writes out the help for all commands
+= Control =
+ !follow            :: The bot will join your voice channel and speak what you write
+ !unfollow          :: Release the bot
+ !sidle             :: Take control of the bot from someone else
+ !transfer          :: Transfer control of the bot to another person
+ !permit [<user>]   :: Permit someone else to use the bot whilst it's following you
+ !unpermit [<user>] :: Unpermit someone else from using the bot
+ !tts               :: Speak when you're muted 
+
+= Personalization =
+ !defaults              :: Reset your default voice settings
+ !mygender <gender>     :: Set the gender the bot will speak with
+ !mylang <lang>         :: Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc.
+ !mypitch <pitch>       :: Alter the pitch of the bot's voice. Valid values are -20 to 20
+ !myspeed <speed>       :: Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0
+ !myvoice <voice|alias> :: Change accent or style.
+ !tolang <lang>         :: Translate your text to a different language eg. en, fr, jp, de etc.
+ !mute                  :: Mute yourself so your text is not read out
+ !unmute                :: Unmute yourself so all your text is read out
+
+= More =
+ !help info   :: info help commands
+ !help server :: server help commands
 ```
 # Setup your own bot
 Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
