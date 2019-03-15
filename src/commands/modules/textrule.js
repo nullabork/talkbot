@@ -32,7 +32,7 @@ class TextRule extends Command {
   static addRule({server, find, replacement, regex}) {
     if (!find) return;
     server.addSettings('textrules', {
-      [find] : !regex?Common.escapeRegExp(replacement):replacement
+      [!regex?Common.escapeRegExp(find):find] : replacement
     });
     server.save();
   }
