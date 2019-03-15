@@ -23,6 +23,9 @@ function Commands() {
     //add the command to the the map
     this.commands[key] = command;
 
+
+
+
     //no listeners, then stop/
     if (!command.listeners) return;
 

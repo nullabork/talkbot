@@ -147,7 +147,7 @@
   },
   "en.textrule" : {
     "needsFind" : "You need to provide a word to find",
-    "none" : "Cannot find :find",
+    "none" : "Cannot find :find,\nTry copying the rule name from `:command_chartextrule list`, even the `\\` characters if there are any.",
     "needsReplacement" : "Your replacement value does not seem to be valid",
     "nope" : "Sorry you don't have permission to manage this server",
     "addokay" : "Rule for :find added",

@@ -29,6 +29,10 @@ class TextRule extends Command {
     return false;
   }
 
+  static testRule(rule) {
+    return (new RegExp(textrule, 'gi')).test(rule);
+  }
+
   static addRule({server, find, replacement, regex}) {
     if (!find) return;
     server.addSettings('textrules', {
@@ -88,8 +92,10 @@ class TextRule extends Command {
       opts = message.split('->'),
 
 
-      find = opts.length > 1 ? opts[0].trim() : null,
+      find = opts.length > 0 ? opts[0].trim() : null,
       replacement = opts.length > 1 ? opts[1].trim() : null;
+
+
 
     let rules = TextRule.getRules(server);
 
@@ -113,7 +119,7 @@ class TextRule extends Command {
      /**
      * ADD TEXTRULE
      */
-    if(/^(addRegex|setRegex)$/i.test( rule_command ))
+    if(/^(addRegex|setRegex|setPattern)$/i.test( rule_command ))
     {
       if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
       if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });
@@ -157,7 +163,7 @@ class TextRule extends Command {
       if (!input.ownerCanManageTheServer()) return input.il8nResponse('textrule.nope');
       if (!rules[find])                     return input.il8nResponse('textrule.none', { find });
 
-      TextRule.deleteRule(server, find);
+      TextRule.deleteRule({server, find});
 
       return input.il8nResponse('textrule.delokay', { find });
     }
@@ -208,6 +214,8 @@ class TextRule extends Command {
     message = modified || message;
 
     for ( var textrule in server.textrules ) {
+
+
       var re = new RegExp(textrule, 'gi');
       message = message.replace(re, server.textrules[textrule]);
     }
