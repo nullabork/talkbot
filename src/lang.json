@@ -148,7 +148,7 @@
   },
   "en.textrule" : {
     "needsFind" : "You need to provide a word to find",
-    "none" : "Cannot find :find",
+    "none" : "Cannot find :find,\nTry copying the rule name from `:command_chartextrule list`, even the `\\` characters if there are any.",
     "needsReplacement" : "Your replacement value does not seem to be valid",
     "nope" : "Sorry you don't have permission to manage this server",
     "addokay" : "Rule for :find added",
@@ -175,11 +175,13 @@
     "shorthelp": "Get your's or others voice details"
   },
   "en.mute": {
+    "unmuted": "Looks like you were muted, you have been unmuted.",
     "okay": "You're now muted",
     "alreadymuted": "You're already muted",
     "shorthelp": "Mute yourself so your text is not read out"
   },
   "en.unmute": {
+    "unmuted": "Looks like you were muted, you have been unmuted.",
     "okay": "You're now unmuted",
     "alreadyunmuted": "You're already unmuted",
     "shorthelp": "Unmute yourself so all your text is read out"

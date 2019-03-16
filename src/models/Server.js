@@ -20,7 +20,7 @@ var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
 
-  constructor(server_id) {
+  constructor(server_id, world) {
     this.server_id = server_id;
 
     var inst = bot.servers[this.server_id];
@@ -44,7 +44,7 @@ class Server {
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
-    this.world = null;
+    this.world = world;
 
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
