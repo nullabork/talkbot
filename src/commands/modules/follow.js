@@ -174,8 +174,8 @@ var command_transfer = new BotCommand({
   short_help: 'transfer.shorthelp',
   long_help: 'transfer.longhelp',
   group: "control",
-  order : 3
-
+  order : 3,
+  parameters: "user"
 });
 
 exports.register = function (commands) {

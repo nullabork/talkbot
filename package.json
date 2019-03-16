@@ -6,10 +6,10 @@
   "author": "YOUR-NAME-HERE",
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.3.0",
-    "@google-cloud/translate": "^2.1.2",
+    "@google-cloud/translate": "^2.1.4",
     "array-query": "^0.1.2",
     "child_process": "^1.0.2",
-    "discord.io": "github:wootosmash/discord.io#master",
+    "discord.io": "^2.5.3",
     "fetch": "^1.1.0",
     "ffmpeg": "0.0.4",
     "figlet": "^1.2.1",

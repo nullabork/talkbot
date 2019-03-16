@@ -121,6 +121,7 @@
     "shorthelp": "Take control of the bot from someone else",
     "nope": "You have to be an admin on this server to use this",
     "okay": "Okay you're now the master",
+    "none": "I have no master",
     "broken": "Something went wrong getting the voice channel, you might still have been made the master"
   },
   "en.transfer": {
@@ -168,11 +169,6 @@
     "del" : "Delete a rule by key",
     "clearall" : "Clear all rules"
   },
-  "en.toggle_neglect": {
-    "nope": "Sorry you don't have permission to manage this server.",
-    "none": "Neglect has now been switched off.",
-    "okay": "Neglect has now been turned on."
-  },
   "en.details": {
     "for" :  "voice settings for :user",
     "none" : "No voice settings for :user",
@@ -191,6 +187,6 @@
   "en.tts": {
     "notpermitted": "You have to be permitted to use this command",
     "notinchannel": "Get the bot to join a voice channel before using this command",
-    "shorthelp": "Speak using a command"
+    "shorthelp": "Speak when you're muted"
   }
 }
