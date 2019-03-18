@@ -23,7 +23,7 @@
     "query-objects": "0.0.6",
     "recursive-readdir": "^2.2.2",
     "request": "^2.88.0",
-    "sync-request": "^6.0.0",
+    "sync-request": "^6.1.0",
     "tablr": "^1.0.2",
     "winston": "^2.4.4"
   },
