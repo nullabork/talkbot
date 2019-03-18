@@ -76,14 +76,13 @@ class TextRule extends Command {
     return response;
   }
 
-  static deleteRule(server, key) {
-    if (!key) return;
-    delete server.textrules[key];
+  static deleteRule({server, find}) {
+    if (!find) return;
+    delete server.textrules[find];
     server.save();
   }
 
   execute ({input, server, world}) {
-
     var args = [
         ...input.args
       ],
