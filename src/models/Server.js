@@ -290,6 +290,7 @@ class Server {
     var server = this;
 
     server.leaveVoiceChannel(function () {
+      if ( !server.isServerChannel(channel_id)) return;
       setTimeout(function() { server.joinVoiceChannel(channel_id, callback); }, 100);
     });
   };
