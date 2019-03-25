@@ -35,9 +35,9 @@ class Server {
     this.audioEmojis = state_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || {};
     this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
-    this.bound_to = state_data.bound_to;
-    this.bound_to_username = state_data.bound_to_username;
-    this.current_voice_channel_id = state_data.current_voice_channel_id;
+    this.bound_to = null;
+    this.bound_to_username = null;
+    this.current_voice_channel_id = null;
     this.permitted = {};
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
@@ -407,7 +407,11 @@ class Server {
         if (e.message.startsWith('You have not joined the voice channel')) {
           Common.error("Caught a bad voice channel");
           var chan_id = server.current_voice_channel_id;
-          server.leaveVoiceChannel(function () { server.joinVoiceChannel(chan_id); });
+          server.leaveVoiceChannel(function() {setTimeout(function () { server.joinVoiceChannel(chan_id); },100);});
+        }
+        else
+        {
+          Common.error(e);
         }
       }
     });
