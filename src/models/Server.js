@@ -524,11 +524,11 @@ class Server {
       !server.isPermitted(user_id)
     ) return;
 
-    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
-    if (ret) message = ret;
-
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
     message = Common.cleanMessage(message);
+    
+    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
+    if (ret) message = ret;
 
     function _speak(msg) {
       var message = new MessageSSML(msg, { server: server }).build();
