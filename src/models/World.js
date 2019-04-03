@@ -14,7 +14,7 @@ class World {
     this.broadcastID = null;
     this.broadcastMessage = null;
     this.broadcaster = null;
-    this.presence_renderers = [this.renderPresenceCounts, this.renderPresenceHelp, this.renderPresenceFollow];
+    this.presence_renderers = [this.renderPresenceHelp]; // , this.renderPresenceCounts, this.renderPresenceFollow];
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
     this.presence_timeout = null;
@@ -149,9 +149,9 @@ class World {
       var w = world;
       w.nextPresenceRenderer();
       w.setPresence();
-      if ( w.presence_rotation_timeout )
-        clearTimeout(w.presence_rotation_timeout);
-      w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 15000);
+      //if ( w.presence_rotation_timeout )
+      //  clearTimeout(w.presence_rotation_timeout);
+      //w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 120000);
     };
     
     rotatePresenceBanner();

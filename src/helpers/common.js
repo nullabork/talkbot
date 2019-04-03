@@ -91,6 +91,7 @@ class Common {
 
   //make cased names become human readable
   static caseToSpace(nick_name) {
+    if (!nick_name) return "";
     return nick_name.replace(/([a-z])([A-Z])/g, function (a, b, c) {
       return b + " " + c;
     });
