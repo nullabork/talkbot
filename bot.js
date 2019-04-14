@@ -70,9 +70,8 @@ bot.on('any', function (evt) {
     }
 
     var server = world.servers[server_id];
-    if (server == null || server.isMaster(user_id)) {
-      if ( user_id ) world.checkMastersVoiceChannels(user_id);
-      return null;
+    if (server && server.isMaster(user_id)) {
+      world.checkMastersVoiceChannels(user_id);
     }
   }
 });

@@ -58,28 +58,26 @@ class World {
       var chan_id = botStuff.getUserVoiceChannel(user_id);
       
       var leave_servers = [];
-      var delayed_leave = function() {
-        for ( var i=0;i<leave_servers.length;i++) {
-          if ( chan_id) leave_servers[i].switchVoiceChannel(chan_id);
-          else {
-            leave_servers[i].startUnfollowTimer();
-            leave_servers[i].leaveVoiceChannel();
-          }
-        }
-      };
       
       for (var server_id in world.servers) {
         var s = world.servers[server_id];
         if (s.bound_to == user_id) {
           if (chan_id != s.current_voice_channel_id) {
             leave_servers.push(s);
-            s.talk("Oh no my master left me!", null, delayed_leave);
           }
         }
       }
+      
+      for ( var i=0;i<leave_servers.length;i++) {
+        if ( chan_id) leave_servers[i].switchVoiceChannel(chan_id);
+        else {
+          leave_servers[i].startUnfollowTimer();
+          leave_servers[i].leaveVoiceChannel();
+        }
+      }      
     };
 
-    setTimeout(delayed_execution, 100);
+    setTimeout(delayed_execution, 250);
   }
 
   setPresence() {
