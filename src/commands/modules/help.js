@@ -42,7 +42,7 @@ class Help extends Command {
       },
 
       "Issues" : [
-        'To submit bugs (and shitpost) go to https://github.com/wootosmash/talkbot',
+        'To submit bugs (and shitpost) go to https://github.com/nullabork/talkbot',
         'To Talk to other humans join our discord https://discordapp.com/invite/NxrPp8g'
       ]
     };
