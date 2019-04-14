@@ -84,6 +84,25 @@ class MessageDetails {
   getUserIds() {
     return Common.messageIDs(this.message);
   };
+  
+  // gets all the IDs as nicks
+  getUserNicksAsCSV() {
+    
+    var msg = this;
+    var target_ids = msg.getUserIds();
+    var nicks = '';
+    target_ids.forEach(function (target_id) {
+      var nick = msg.getNick(target_id);
+      if ( nick )
+        nicks += nick + ', ';
+      else
+        nicks += target_id + ', ';
+    });
+    nicks = nicks.substring(0, nicks.length-2);
+    
+    return nicks;
+  };
+
 
 }
 

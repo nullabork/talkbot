@@ -104,6 +104,12 @@ class Common {
     });
   };
 
+  // replaces the last instance of strToReplace with replacement
+  static replaceLast(str, strToReplace, replacement) {
+    var pos = str.lastIndexOf(strToReplace);
+    if ( pos < 0 ) return str;
+    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);    
+  };
 
   //const element = string[char];
   //   if(element != "-"){
