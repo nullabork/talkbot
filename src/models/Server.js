@@ -396,15 +396,7 @@ class Server {
         });
       }
       catch (e) {
-        if (e.message.startsWith('You have not joined the voice channel')) {
-          Common.error("Caught a bad voice channel");
-          var chan_id = server.current_voice_channel_id;
-          server.leaveVoiceChannel(function() {setTimeout(function () { server.joinVoiceChannel(chan_id); },100);});
-        }
-        else
-        {
-          Common.error(e);
-        }
+        Common.error(e);
       }
     });
   }
