@@ -15,8 +15,7 @@ var Common = require('@helpers/common');
  */
 function kill(msg, server, world) {
   if (msg.ownerIsDev()) {
-    Common.out("debugbork");
-    world.kill();
+    world.kill('debugbork');
   }
 };
 
@@ -83,10 +82,7 @@ function debug(msg, server, world) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + world.servers[s].bound_to_username + "\n";
   }
 
-
-
   msg.response(r);
-
 };
 
 var command_kill = new BotCommand({

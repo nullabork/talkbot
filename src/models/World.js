@@ -4,6 +4,7 @@ var fs = require('fs'),
   botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
   auth = require("@auth"),
+  Common = require("@helpers/common"),
   bot = botStuff.bot;
 
 class World {
@@ -27,6 +28,7 @@ class World {
     world.startDailyResetTimer();
     world.setPresence();
     world.startPresenceRotation();
+    world.startRebootTimer();
   };  
   
   addServer(server) {
@@ -109,7 +111,8 @@ class World {
     }
   };
   
-  kill() {
+  kill(reason) {
+    if (reason) Common.out('kill(): ' + reason);
     this.saveAll();
     bot.disconnect();
     process.exit();
@@ -155,6 +158,28 @@ class World {
     };
     
     rotatePresenceBanner();
+  };
+  
+/* * *
+ * startRebootTimer
+ *
+ * When called sets the bot to automatically reboot when no one is using it
+ * Its a hack to work around network bugs and so forth 
+ * * */
+  startRebootTimer() {
+    var world = this;
+    
+    var reboot_timer = function() {
+      
+      if ( world.getActiveServersCount() == 0 )
+      {
+        world.kill('Inactivity reboot');
+      }
+      
+      setTimeout(reboot_timer, 60 * 60 * 1000); // every hour check if no one is using
+    };
+    
+    setTimeout(reboot_timer, 12 * 60 * 60 * 1000); // kick off in 12 hours
   };
   
   nextPresenceRenderer() {

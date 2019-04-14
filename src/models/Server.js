@@ -76,7 +76,10 @@ class Server {
     this.bound_to_username = username;
     this.permit(user_id);
     this.resetNeglectTimeout();
-  };
+    this.save();
+  }
+
+  
 
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
@@ -137,14 +140,6 @@ class Server {
       key,
       params
     ]);
-  }
-
-  setMaster(user_id, username) {
-    this.bound_to = user_id;
-    this.bound_to_username = username;
-    this.permit(user_id);
-    this.resetNeglectTimeout();
-    this.save();
   }
 
   isServerChannel(channel_id) {
@@ -386,14 +381,11 @@ class Server {
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        Common.error(err);
-        callback();
-        return;
+        return Common.error(err);
       }
       try {
         bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
           if (error) {
-            callback();
             return Common.error(error);
           } try {
             stream.write(response.audioContent);
