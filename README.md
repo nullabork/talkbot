@@ -4,10 +4,10 @@
 Discord bot for natural voice text-to-speech and language translation
 
 
-[Try it out here.](https://discord.gg/NxrPp8g)
+Try it out here: https://discord.gg/NxrPp8g
 
 
-# Quick start - [Add Talkbot to your discord](https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0)
+# Quick start 
 
 1. [Click here to add the bot to your discord](https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0): https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
 2. Join a voice channel
