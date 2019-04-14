@@ -68,16 +68,13 @@ class World {
         }
       }
       
-      for ( var i=0;i<leave_servers.length;i++) {
-        if ( chan_id) leave_servers[i].switchVoiceChannel(chan_id);
-        else {
-          leave_servers[i].startUnfollowTimer();
-          leave_servers[i].leaveVoiceChannel();
-        }
+      for ( var i=0;i<leave_servers.length;i++) {     
+        var s = leave_servers[i];
+        s.talk('My master left, bye everyone', null, function() { s.release(); });
       }      
     };
 
-    setTimeout(delayed_execution, 250);
+    setTimeout(delayed_execution, 1000);
   }
 
   setPresence() {

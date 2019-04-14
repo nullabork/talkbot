@@ -15,7 +15,6 @@ var Lang = require("lang.js"),
 var P_ADMINISTRATOR = 0x00000008;
 var P_MANAGE_GUILD = 0x00000020;
 
-var TIMEOUT_LEAVEVOICE = 30000; // 30 seconds
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -78,8 +77,6 @@ class Server {
     this.resetNeglectTimeout();
     this.save();
   }
-
-  
 
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
@@ -228,7 +225,6 @@ class Server {
   // set the server properties to indicate this is the current voice channel
   setVoiceChannel(channel_id) {
     var server = this;
-    server.cancelUnfollowTimer();
     server.current_voice_channel_id = channel_id;
     server.save();
     server.world.setPresence();
@@ -279,27 +275,17 @@ class Server {
     }
   };
 
-  // leave the current voice channel and join another
-  // NOTE: this is async, so if you want to run a continuation use the callback.
-  switchVoiceChannel(channel_id, callback) {
-    var server = this;
-
-    server.leaveVoiceChannel(function () {
-      setTimeout(function() { server.joinVoiceChannel(channel_id, callback); }, 100);
-    });
-  };
-
   // permit another user to speak
-  permit(user_id) {
+  permit(snowflake_id) {    
     this.resetNeglectTimeout();
-    this.permitted[user_id] = {};
+    this.permitted[snowflake_id] = {};
     this.save();
   };
 
   // unpermit another user to speak
-  unpermit(user_id) {
+  unpermit(snowflake_id) {
     this.resetNeglectTimeout();
-    this.permitted[user_id] = null;
+    this.permitted[snowflake_id] = null;
     this.save();
   };
 
@@ -428,24 +414,6 @@ class Server {
   clearAllTextRules() {
     this.textrules = {};
     this.save();
-  };
-
-  startUnfollowTimer() {
-    var server = this;
-    var unfollow_timeout = function () {
-      server.release();
-      server.unfollow_timeout = null;
-      server.save();
-      server.world.setPresence();
-    };
-
-    server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);
-  };
-
-  cancelUnfollowTimer() {
-    if (this.unfollow_timeout)
-      clearTimeout(this.unfollow_timeout);
-    this.unfollow_timeout = null;
   };
 
   // run this to cleanup resources before shutting down
