@@ -22,7 +22,7 @@ function follow(msg, server, world) {
     }
   } else {
     var voiceChan = msg.getOwnersVoiceChannel();
-    if (voiceChan) {
+    if (server.isServerChannel(voiceChan)) {
       server.setMaster(msg.user_id, msg.username);
       server.joinVoiceChannel(voiceChan);
 
