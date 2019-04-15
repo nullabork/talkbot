@@ -4,6 +4,7 @@ var fs = require('fs'),
   botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
   auth = require("@auth"),
+  Common = require("@helpers/common"),
   bot = botStuff.bot;
 
 class World {
@@ -14,7 +15,7 @@ class World {
     this.broadcastID = null;
     this.broadcastMessage = null;
     this.broadcaster = null;
-    this.presence_renderers = [this.renderPresenceCounts, this.renderPresenceHelp, this.renderPresenceFollow];
+    this.presence_renderers = [this.renderPresenceHelp]; // , this.renderPresenceCounts, this.renderPresenceFollow];
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
     this.presence_timeout = null;
@@ -27,6 +28,7 @@ class World {
     world.startDailyResetTimer();
     world.setPresence();
     world.startPresenceRotation();
+    world.startRebootTimer();
   };  
   
   addServer(server) {
@@ -56,28 +58,23 @@ class World {
       var chan_id = botStuff.getUserVoiceChannel(user_id);
       
       var leave_servers = [];
-      var delayed_leave = function() {
-        for ( var i=0;i<leave_servers.length;i++) {
-          if ( chan_id) leave_servers[i].switchVoiceChannel(chan_id);
-          else {
-            leave_servers[i].startUnfollowTimer();
-            leave_servers[i].leaveVoiceChannel();
-          }
-        }
-      };
       
       for (var server_id in world.servers) {
         var s = world.servers[server_id];
         if (s.bound_to == user_id) {
           if (chan_id != s.current_voice_channel_id) {
             leave_servers.push(s);
-            s.talk("Oh no my master left me!", null, delayed_leave);
           }
         }
       }
+      
+      for ( var i=0;i<leave_servers.length;i++) {     
+        var s = leave_servers[i];
+        s.talk('My master left, bye everyone', null, function() { s.release(); });
+      }      
     };
 
-    setTimeout(delayed_execution, 100);
+    setTimeout(delayed_execution, 1000);
   }
 
   setPresence() {
@@ -109,7 +106,8 @@ class World {
     }
   };
   
-  kill() {
+  kill(reason) {
+    if (reason) Common.out('kill(): ' + reason);
     this.saveAll();
     bot.disconnect();
     process.exit();
@@ -149,12 +147,34 @@ class World {
       var w = world;
       w.nextPresenceRenderer();
       w.setPresence();
-      if ( w.presence_rotation_timeout )
-        clearTimeout(w.presence_rotation_timeout);
-      w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 15000);
+      //if ( w.presence_rotation_timeout )
+      //  clearTimeout(w.presence_rotation_timeout);
+      //w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 120000);
     };
     
     rotatePresenceBanner();
+  };
+  
+/* * *
+ * startRebootTimer
+ *
+ * When called sets the bot to automatically reboot when no one is using it
+ * Its a hack to work around network bugs and so forth 
+ * * */
+  startRebootTimer() {
+    var world = this;
+    
+    var reboot_timer = function() {
+      
+      if ( world.getActiveServersCount() == 0 )
+      {
+        world.kill('Inactivity reboot');
+      }
+      
+      setTimeout(reboot_timer, 60 * 60 * 1000); // every hour check if no one is using
+    };
+    
+    setTimeout(reboot_timer, 12 * 60 * 60 * 1000); // kick off in 12 hours
   };
   
   nextPresenceRenderer() {

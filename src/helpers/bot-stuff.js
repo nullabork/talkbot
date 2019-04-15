@@ -1,3 +1,5 @@
+'use strict';
+
 var Discord = require('discord.io'),
   auth = require("@auth"),
   Common = require("@helpers/common"),
@@ -7,11 +9,18 @@ var Discord = require('discord.io'),
 
 class BotStuff {
 
-  constructor() {
+  constructor(shard_number, total_shards) {
+    
+    if (!shard_number) shard_number = 0;
+    if (!total_shards) total_shards = 1;
+    
+    Common.out('Setting up client for shard ID#' + shard_number + '. Total count of shards is ' + total_shards);
+        
     this.auth = auth;
     this.bot = new Discord.Client({
       token: auth.token,
-      autorun: true
+      autorun: true,
+      shard: [shard_number,total_shards] 
     });
 
     this.tts_client = new textToSpeech.TextToSpeechClient();
@@ -108,4 +117,6 @@ class BotStuff {
 
 }
 
-module.exports = new BotStuff();
+const args = require('yargs').argv;
+
+module.exports = new BotStuff(args.shard_number, args.total_shards);

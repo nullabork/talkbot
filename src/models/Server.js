@@ -15,7 +15,6 @@ var Lang = require("lang.js"),
 var P_ADMINISTRATOR = 0x00000008;
 var P_MANAGE_GUILD = 0x00000020;
 
-var TIMEOUT_LEAVEVOICE = 30000; // 30 seconds
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -35,9 +34,9 @@ class Server {
     this.audioEmojis = state_data.audioEmojis || {};
     this.userSettings = state_data.userSettings || {};
     this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
-    this.bound_to = state_data.bound_to;
-    this.bound_to_username = state_data.bound_to_username;
-    this.current_voice_channel_id = state_data.current_voice_channel_id;
+    this.bound_to = null;
+    this.bound_to_username = null;
+    this.current_voice_channel_id = null;
     this.permitted = {};
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
@@ -76,7 +75,8 @@ class Server {
     this.bound_to_username = username;
     this.permit(user_id);
     this.resetNeglectTimeout();
-  };
+    this.save();
+  }
 
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
@@ -137,14 +137,6 @@ class Server {
       key,
       params
     ]);
-  }
-
-  setMaster(user_id, username) {
-    this.bound_to = user_id;
-    this.bound_to_username = username;
-    this.permit(user_id);
-    this.resetNeglectTimeout();
-    this.save();
   }
 
   isServerChannel(channel_id) {
@@ -233,7 +225,6 @@ class Server {
   // set the server properties to indicate this is the current voice channel
   setVoiceChannel(channel_id) {
     var server = this;
-    server.cancelUnfollowTimer();
     server.current_voice_channel_id = channel_id;
     server.save();
     server.world.setPresence();
@@ -284,28 +275,17 @@ class Server {
     }
   };
 
-  // leave the current voice channel and join another
-  // NOTE: this is async, so if you want to run a continuation use the callback.
-  switchVoiceChannel(channel_id, callback) {
-    var server = this;
-
-    server.leaveVoiceChannel(function () {
-      if ( !server.isServerChannel(channel_id)) return;
-      setTimeout(function() { server.joinVoiceChannel(channel_id, callback); }, 100);
-    });
-  };
-
   // permit another user to speak
-  permit(user_id) {
+  permit(snowflake_id) {    
     this.resetNeglectTimeout();
-    this.permitted[user_id] = {};
+    this.permitted[snowflake_id] = {};
     this.save();
   };
 
   // unpermit another user to speak
-  unpermit(user_id) {
+  unpermit(snowflake_id) {
     this.resetNeglectTimeout();
-    this.permitted[user_id] = null;
+    this.permitted[snowflake_id] = null;
     this.save();
   };
 
@@ -387,14 +367,11 @@ class Server {
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        Common.error(err);
-        callback();
-        return;
+        return Common.error(err);
       }
       try {
         bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
           if (error) {
-            callback();
             return Common.error(error);
           } try {
             stream.write(response.audioContent);
@@ -405,11 +382,7 @@ class Server {
         });
       }
       catch (e) {
-        if (e.message.startsWith('You have not joined the voice channel')) {
-          Common.error("Caught a bad voice channel");
-          var chan_id = server.current_voice_channel_id;
-          server.leaveVoiceChannel(function () { server.joinVoiceChannel(chan_id); });
-        }
+        Common.error(e);
       }
     });
   }
@@ -441,24 +414,6 @@ class Server {
   clearAllTextRules() {
     this.textrules = {};
     this.save();
-  };
-
-  startUnfollowTimer() {
-    var server = this;
-    var unfollow_timeout = function () {
-      server.release();
-      server.unfollow_timeout = null;
-      server.save();
-      server.world.setPresence();
-    };
-
-    server.unfollow_timeout = setTimeout(unfollow_timeout, TIMEOUT_LEAVEVOICE);
-  };
-
-  cancelUnfollowTimer() {
-    if (this.unfollow_timeout)
-      clearTimeout(this.unfollow_timeout);
-    this.unfollow_timeout = null;
   };
 
   // run this to cleanup resources before shutting down
@@ -521,11 +476,11 @@ class Server {
       !server.isPermitted(user_id)
     ) return;
 
-    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
-    if (ret) message = ret;
-
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
     message = Common.cleanMessage(message);
+    
+    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
+    if (ret) message = ret;
 
     function _speak(msg) {
       var message = new MessageSSML(msg, { server: server }).build();
