@@ -19,8 +19,14 @@ class MessageDetails {
     }
   }
 
-  response(message) {
+  response(message, params) {
     var _this = this;
+    
+    if (server.isLangKey(message))
+    {
+      message = server.lang(message, params);
+    }
+    
     _this.bot.simulateTyping(_this.channel_id, function () {
       _this.bot.sendMessage({
         to: _this.channel_id,

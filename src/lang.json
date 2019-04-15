@@ -1,16 +1,16 @@
 {
   "en.general" : {
     "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
-    "nope" : "Sorry, only a server admin or manager can do this."
+    "nope" : "Sorry, only a server admin or server manager can do this."
   },
   "en.set": {
     "okay": "Set message for :lang",
     "none": "no"
   },
   "en.who": {
-    "okay": "My master is :name",
-    "none": "I have no master :~(",
-    "shorthelp": "Who is the current master"
+    "okay": "My :title is :name",
+    "none": "I have no :title :~(",
+    "shorthelp": "Who is the current :title"
   },
   "en.ping": {
     "okay": "pong",
@@ -18,9 +18,9 @@
   },
   "en.follow": {
     "join": "You need to join a channel before I can follow you!",
-    "okay": "Yes, master!",
-    "huh": "Yes, master?",
-    "nope": "Sorry, :name is my master today. Get them to :command_charpermit you",
+    "okay": "Yes, :title!",
+    "huh": "Yes, :title?",
+    "nope": "Sorry, :name is my :title today. Get them to :command_charpermit you",
     "shorthelp": "The bot will join your voice channel and speak what you write"
   },
   "en.defaults": {
@@ -28,35 +28,35 @@
     "shorthelp": "Reset your default voice settings"
   },
   "en.unfollow": {
-    "okay": "Goodbye master",
-    "nope": "Sorry, you're not my master.",
-    "none": "I have no master... would you like to be my master?",
+    "okay": "Goodbye :title",
+    "nope": "Sorry, you're not my :title.",
+    "none": "I have no :title... would you like to be my :title?",
     "shorthelp": "Release the bot"
   },
   "en.permit": {
     "okay": "I'll listen to :name now",
-    "nope": "Sorry I can't do that, you're not my master.",
+    "nope": "Sorry I can't do that, you're not my :title.",
     "none": "I don't see any legit names",
     "huh": "I don't know who :name is?",
     "shorthelp": "Permit someone else to use the bot whilst it's following you"
   },
   "en.unpermit": {
     "okay": ":name talk to the hand",
-    "nope": "Sorry I can't do that, you're not my master.",
+    "nope": "Sorry I can't do that, you're not my :title.",
     "none": "I don't know who :name is?",
     "deny": "Sorry I can't do that, you're not permitted.",
     "shorthelp": "Unpermit someone else from using the bot"
   },
   "en.leave": {
-    "nope": "Sorry I can't do that, you're not my master."
+    "nope": "Sorry I can't do that, you're not my :title."
   },
   "en.join": {
-    "nope": "Sorry I can't do that, you're not my master.",
+    "nope": "Sorry I can't do that, you're not my :title.",
     "none": "You're not in a voice channel?"
   },
   "en.lang": {
     "okay": "OK, The server default is :lang. You can override it with mylang",
-    "nope": "Sorry, you're not my master",
+    "nope": "Sorry, you're not my :title",
     "shorthelp": "Set the global server language. Use mylang for your personal language."
   },
   "en.mylang": {
@@ -120,12 +120,12 @@
   "en.sidle": {
     "shorthelp": "Take control of the bot from someone else",
     "nope": "You have to be an admin on this server to use this",
-    "okay": "Okay you're now the master",
-    "none": "I have no master",
-    "broken": "Something went wrong getting the voice channel, you might still have been made the master"
+    "okay": "Okay you're now the :title",
+    "none": "I have no :title",
+    "broken": "Something went wrong getting the voice channel, you might still have been made the :title"
   },
   "en.transfer": {
-    "okay": "Okay :name is now the master",
+    "okay": "Okay :name is now the :title",
     "nopermissions" : "You cannot do this.",
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
