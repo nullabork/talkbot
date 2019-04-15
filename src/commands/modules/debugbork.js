@@ -91,6 +91,10 @@ function build_permitted_string(server) {
     prefix = id == server.bound_to ? '(master)' : '';
     var member = bot.servers[server.server_id].members[id];
     if ( member ) users += ' ' + prefix + member.nick || member.username;
+    else {
+      var role = bot.servers[server.server_id].roles[id];
+      if ( role ) users += ' ' + role.name;
+    }
     else users += ' ' + id;
   }
   return users.trim();

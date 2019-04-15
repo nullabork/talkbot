@@ -295,8 +295,8 @@ class Server {
   isPermitted(user_id) {
     if (!user_id) return false;
     for(var permitted in this.permitted) {
-      if ( permitted == user_id ) return this.permitted != null;
-      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted != null;
+      if ( permitted == user_id ) return this.permitted[permitted] != null;
+      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted[permitted] != null;
     }
     return false;
   };
