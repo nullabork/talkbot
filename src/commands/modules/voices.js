@@ -38,7 +38,7 @@ function listVoices(msg, server, world) {
   // if (server.isPermitted(msg.user_id)) {
 
     if(!msg.args || !msg.args.length){
-      msg.response(server.lang('voices.more'));
+      msg.il8nResponse('voices.more');
       return;
     }
 
@@ -46,7 +46,7 @@ function listVoices(msg, server, world) {
 
     if(!docs || !docs.length) {
       //what dont know???? why? you should by now...
-      msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
+      msg.il8nResponse('mylang.no', { lang: msg.args[0]});
       return;
     }
 
@@ -62,10 +62,10 @@ function listVoices(msg, server, world) {
     var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', "???"]);
     table = table.replace(/--/g, '━━');
 
-    msg.response(server.lang('voices.okay', {
+    msg.il8nResponse('voices.okay', {
       table : table,
       example : auth.command_arg + 'myvoice au'
-    }));
+    });
 
 };
 

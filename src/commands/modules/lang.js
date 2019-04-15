@@ -1,14 +1,13 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
 var langMap = require("@helpers/langmap");
 
 var lang = function (msg, server, world) {
   if (!msg.args.length) return;
 
   if (!msg.ownerIsMaster()) {
-    msg.response(server.lang('lang.nope'));
+    msg.il8nResponse('lang.nope');
     return;
   }
   var doc = langMap.get(msg.getMessage());
@@ -19,7 +18,7 @@ var lang = function (msg, server, world) {
     server.language = lang;
   }
 
-  msg.response(server.lang('lang.okay', { lang: server.language }));
+  msg.il8nResponse('lang.okay', { lang: server.language });
   server.save();
 };
 

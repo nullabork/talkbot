@@ -33,7 +33,7 @@ function kill(msg, server, world) {
  * @return  {[undefined]}
  */
 function ohshit(msg, server, world) {
-  if (!msg.ownerIsDev()) msg.response(server.lang('ohshit.nope'));
+  if (!msg.ownerIsDev()) msg.il8nResponse('ohshit.nope');
   else {
 
     var fs = require('fs');
@@ -58,11 +58,9 @@ function ohshit(msg, server, world) {
     _filename = paths.config + '/ohshit-bot-' + (d.getTime()) + '.json';
     fs.writeFileSync(_filename, util.inspect(bot), 'utf-8');
 
-    msg.response(server.lang('ohshit.okay'));
+    msg.il8nResponse('ohshit.okay');
   }
 };
-
-
 
 function debug(msg, server, world) {
 

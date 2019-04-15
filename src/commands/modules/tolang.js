@@ -20,13 +20,13 @@ var BotCommand = require('@models/BotCommand');
 function toLang(msg, server, world) {
 
   if(!msg.args || !msg.args.length){
-    msg.response(server.lang('mylang.more'));
+    msg.il8nResponse('mylang.more');
     return;
   }
 
   if(msg.args[0] == 'default'){
     server.addUserSetting(msg.user_id, 'toLanguage', 'default');
-    msg.response( server.lang('general.auto', {key: "tolang"}) );
+    msg.il8nResponse('general.auto', {key: "tolang"});
     return;
   }
 
@@ -34,7 +34,7 @@ function toLang(msg, server, world) {
 
   if(!docs || !docs.length) {
     //what dont know???? why? you should by now...
-    msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
+    msg.il8nResponse('mylang.no', { lang: msg.args[0]});
     return;
   }
 

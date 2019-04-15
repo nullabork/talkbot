@@ -4,7 +4,7 @@ var BotCommand = require('@models/BotCommand');
 
 
 function ping(msg, server, world) {
-  msg.response(server.lang('ping.okay'));
+  msg.il8nResponse('ping.okay');
 };
 
 var command = new BotCommand({

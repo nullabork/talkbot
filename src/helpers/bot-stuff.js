@@ -114,6 +114,17 @@ class BotStuff {
 
     return null;
   }
+  
+  userHasRole(server_id, user_id, role_id){
+    let bot = this.bot;
+    var server = bot.servers[server_id];
+    if (!server) return false;
+    if (!server.roles[role_id]) return false;
+    var member = server.members[user_id];
+    if (!member) return false;    
+    return member.roles.indexOf(role_id) > -1;
+  };
+  
 
 }
 

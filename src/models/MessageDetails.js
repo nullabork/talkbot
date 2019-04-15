@@ -22,11 +22,6 @@ class MessageDetails {
   response(message, params) {
     var _this = this;
     
-    if (server.isLangKey(message))
-    {
-      message = server.lang(message, params);
-    }
-    
     _this.bot.simulateTyping(_this.channel_id, function () {
       _this.bot.sendMessage({
         to: _this.channel_id,
@@ -64,7 +59,13 @@ class MessageDetails {
   };
 
   il8nResponse(key, params) {
-    return this.response(this.server.lang(key, params));
+    var _this = this;
+    var server = this.server;
+    if ( !params ) params = {};
+    params.title = params.title || server.getUserSetting(_this.user_id, 'mytitle');
+    var message = server.lang(key, params);
+    
+    return this.response(message);
   }
 
   ownerIsServerOwner() {
@@ -88,25 +89,29 @@ class MessageDetails {
   };
 
   getUserIds() {
-    return Common.messageIDs(this.message);
+    return Common.userIDs(this.message);
   };
   
-  // gets all the IDs as nicks
+  getUserAndRoleIds() {
+    return Common.userAndRoleIDs(this.message);
+  };
+  
+  // gets all the IDs as names
   getUserNicksAsCSV() {
     
     var msg = this;
-    var target_ids = msg.getUserIds();
-    var nicks = '';
+    var target_ids = msg.getUserAndRoleIds();
+    var names = '';
     target_ids.forEach(function (target_id) {
-      var nick = msg.getNick(target_id);
-      if ( nick )
-        nicks += nick + ', ';
+      var name = botStuff.findThingsName(msg.channel_id, target_id);
+      if ( name )
+        names += name + ', ';
       else
-        nicks += target_id + ', ';
+        names += target_id + ', ';
     });
-    nicks = nicks.substring(0, nicks.length-2);
+    names = names.substring(0, names.length-2);
     
-    return nicks;
+    return names;
   };
 
 

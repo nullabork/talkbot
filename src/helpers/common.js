@@ -22,8 +22,8 @@ class Common {
   }
 
   //fetches all forms of message Ids from a string and returns an array
-  static messageIDs(message) {
-    var user_ids = message.match(/<@!{0,1}(\d{12,19})>/g);
+  static userAndRoleIDs(message) {
+    var user_ids = message.match(/<@[!&]{0,1}(\d{12,19})>/g);
 
     if (!user_ids) return [];
 
@@ -37,6 +37,23 @@ class Common {
 
     return map;
   }
+  
+  //fetches all forms of message Ids from a string and returns an array
+  static userIDs(message) {
+    var user_ids = message.match(/<@!{0,1}(\d{12,19})>/g);
+
+    if (!user_ids) return [];
+
+    var map = user_ids.map(function (element) {
+      var ids = element.replace(/<[@#]{0,1}[!&]{0,1}(\d{12,19})>/g, function (a, b) {
+        return b;
+      });
+
+      return ids;
+    });
+
+    return map;
+  }  
 
   //console.log() if its turned on
   static out(message) {
@@ -246,7 +263,7 @@ class Common {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
-
+  
 }
 
 module.exports = Common;

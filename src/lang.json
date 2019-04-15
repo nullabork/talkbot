@@ -190,5 +190,9 @@
     "notpermitted": "You have to be permitted to use this command",
     "notinchannel": "Get the bot to join a voice channel before using this command",
     "shorthelp": "Speak when you're muted"
+  },
+  "en.mytitle": {
+    "read": "I call you :title",
+    "set": "I'll now call you :title"
   }
 }

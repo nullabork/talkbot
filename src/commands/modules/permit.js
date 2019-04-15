@@ -16,13 +16,13 @@ var BotCommand = require('@models/BotCommand');
  */
 function permit(msg, server, world) {
   if (!msg.ownerIsMaster()) {
-    msg.response(server.lang('permit.nope'));
+    msg.il8nResponse('permit.nope');
     return;
   }
 
-  var target_ids = msg.getUserIds();
+  var target_ids = msg.getUserAndRoleIds();
   if (!target_ids || !target_ids.length) {
-    msg.response(server.lang('permit.none'));
+    msg.il8nResponse('permit.none');
     return;
   }
 
@@ -32,7 +32,7 @@ function permit(msg, server, world) {
 
   var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
 
-  msg.response(server.lang('permit.okay', { name: nicks }));
+  msg.il8nResponse('permit.okay', { name: nicks });
 };
 
 
@@ -52,7 +52,7 @@ function permit(msg, server, world) {
 function unpermit(msg, server) {
 
   if (!server.isPermitted(msg.user_id)) {
-    msg.response(server.lang('unpermit.deny'));
+    msg.il8nResponse('unpermit.deny');
     return;
   }
 
@@ -65,7 +65,7 @@ function unpermit(msg, server) {
     var target_id = target_ids[i];
 
     if (target_id != msg.user_id && !msg.ownerIsMaster()) {
-      msg.response(server.lang('unpermit.deny'));
+      msg.il8nResponse('unpermit.deny');
       continue;
     }
 
@@ -73,7 +73,7 @@ function unpermit(msg, server) {
   }
 
   var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
-  msg.response(server.lang('unpermit.okay', { name: nicks }));
+  msg.il8nResponse('unpermit.okay', { name: nicks });
 
 };
 

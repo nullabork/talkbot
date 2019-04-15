@@ -17,13 +17,13 @@ var BotCommand = require('@models/BotCommand');
 
 function mygender(msg, server, world) {
   if (msg.args.length == 0) {
-    msg.response(server.lang('mygender.noargs'));
+    msg.il8nResponse('mygender.noargs');
     return;
   }
 
   if(msg.args[0] == 'default'){
     server.addUserSetting(msg.user_id, 'gender', 'default');
-    msg.response( server.lang('general.auto', {key: "mygender"}) );
+    msg.il8nResponse('general.auto', {key: "mygender"});
     return;
   }
 

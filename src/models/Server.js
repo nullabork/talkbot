@@ -125,12 +125,16 @@ class Server {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
+    
+    if ( !params ) params = {};
 
     var command_char = auth.command_char;
-
+    var title = params.title || this.world.default_title;
+    
     params = {
-      ...(params || {}),
-      command_char
+      ...(params),
+      command_char,
+      title 
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
@@ -220,12 +224,6 @@ class Server {
     return this.current_voice_channel_id != null;
   };
 
-  // is this user permitted to speak
-  isPermitted(user_id) {
-    if (!user_id) return false;
-    return this.permitted[user_id] != null;
-  };
-
   // set the server properties to indicate this is the current voice channel
   setVoiceChannel(channel_id) {
     var server = this;
@@ -291,6 +289,16 @@ class Server {
     this.resetNeglectTimeout();
     this.permitted[snowflake_id] = null;
     this.save();
+  };
+
+  // is this user permitted to speak
+  isPermitted(user_id) {
+    if (!user_id) return false;
+    for(var permitted in this.permitted) {
+      if ( permitted == user_id ) return this.permitted != null;
+      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted != null;
+    }
+    return false;
   };
 
   // reset the timer that unfollows a user if they dont use the bot

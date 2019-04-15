@@ -109,7 +109,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     Common.error("Can't find server for " + channel_id);
     return null;
   }
-
+  
   // is the message a command?
   if (message.substring(0, commands.command_char.length) == commands.command_char) {
 
@@ -118,7 +118,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var parts = message.match(
       new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
     );
-
+    
     if (!parts || parts.length < 2) {
       return;
     }

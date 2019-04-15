@@ -34,13 +34,13 @@ var BotCommand = require('@models/BotCommand');
  */
 function myVoice(msg, server, world) {
     if(!msg.args || !msg.args.length){
-      msg.response(server.lang('myvoice.more'));
+      msg.il8nResponse('myvoice.more');
       return;
     }
 
     if(msg.args[0] == 'default'){
       server.addUserSetting(msg.user_id, 'name', 'default');
-      msg.response( server.lang('general.auto', {key: "myvoice"}) );
+      msg.il8nResponse('general.auto', {key: "myvoice"});
       return;
     }
 
@@ -50,9 +50,9 @@ function myVoice(msg, server, world) {
       server.addUserSetting(msg.user_id,'name', doc.voice);
       server.addUserSetting(msg.user_id,'language', doc.code);
       server.deleteUserSetting(msg.user_id,'toLanguage');
-      msg.response(server.lang('myvoice.okay', { voice: msg.args[0] }));
+      msg.il8nResponse('myvoice.okay', { voice: msg.args[0] });
     } else {
-      msg.response(server.lang('myvoice.no', { voice: msg.args[0] }));
+      msg.il8nResponse('myvoice.no', { voice: msg.args[0] });
       return;
     }
 };
