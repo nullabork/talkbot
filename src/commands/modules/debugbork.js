@@ -1,6 +1,8 @@
 // models
 var BotCommand = require('@models/BotCommand');
 var Common = require('@helpers/common');
+var botStuff = require('@helpers/bot-stuff');
+var bot = botStuff.bot;
 
 /**
  * Command: debugbork
@@ -15,8 +17,7 @@ var Common = require('@helpers/common');
  */
 function kill(msg, server, world) {
   if (msg.ownerIsDev()) {
-    Common.out("debugbork");
-    world.kill();
+    world.kill('debugbork');
   }
 };
 
@@ -80,13 +81,21 @@ function debug(msg, server, world) {
 
   r += "\nActive Servers:\n";
   for (var s in world.servers) {
-    if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + world.servers[s].bound_to_username + "\n";
+    if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + build_permitted_string(world.servers[s]) + "\n";
   }
 
-
-
   msg.response(r);
+};
 
+function build_permitted_string(server) {
+  var users = '';
+  for( var id in server.permitted ) {
+    prefix = id == server.bound_to ? '(master)' : '';
+    var member = bot.servers[server.server_id].members[id];
+    if ( member ) users += ' ' + prefix + member.nick || member.username;
+    else users += ' ' + id;
+  }
+  return users.trim();
 };
 
 var command_kill = new BotCommand({

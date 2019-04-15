@@ -91,6 +91,7 @@ class Common {
 
   //make cased names become human readable
   static caseToSpace(nick_name) {
+    if (!nick_name) return "";
     return nick_name.replace(/([a-z])([A-Z])/g, function (a, b, c) {
       return b + " " + c;
     });
@@ -103,6 +104,12 @@ class Common {
     });
   };
 
+  // replaces the last instance of strToReplace with replacement
+  static replaceLast(str, strToReplace, replacement) {
+    var pos = str.lastIndexOf(strToReplace);
+    if ( pos < 0 ) return str;
+    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);    
+  };
 
   //const element = string[char];
   //   if(element != "-"){

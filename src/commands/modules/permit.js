@@ -26,17 +26,11 @@ function permit(msg, server, world) {
     return;
   }
 
-  var nicks = '';
   target_ids.forEach(function (target_id) {
     server.permit(target_id);
-    var nick = msg.getNick(target_id);
-    if ( nick )
-      nicks += nick + ',';
-    else
-      nicks += target_id + ',';
   });
 
-  nicks = nicks.substring(0, nicks.length-1);
+  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
 
   msg.response(server.lang('permit.okay', { name: nicks }));
 };
@@ -67,27 +61,18 @@ function unpermit(msg, server) {
     target_ids = [msg.user_id];
   }
 
-  var nicks = '';
   for (let i = 0; i < target_ids.length; i++) {
     var target_id = target_ids[i];
 
     if (target_id != msg.user_id && !msg.ownerIsMaster()) {
       msg.response(server.lang('unpermit.deny'));
-
       continue;
     }
 
     server.unpermit(target_id);
-
-    var nick = msg.getNick(target_id);
-    if ( nick )
-      nicks += nick + ',';
-    else
-      nicks += target_id + ',';
   }
 
-  nicks = nicks.substring(0, nicks.length-1);
-
+  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
   msg.response(server.lang('unpermit.okay', { name: nicks }));
 
 };
