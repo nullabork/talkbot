@@ -19,18 +19,19 @@ var Common = require("@helpers/common");
  */
 function mypitch(msg, server, world) {
   if (!msg.args.length) return;
+  var title = server.getUserSetting(msg.user_id,'title') || world.default_title;
 
   if(msg.args[0] == 'default'){
     server.addUserSetting(msg.user_id, 'pitch', 'default');
-    msg.response( server.lang('general.auto', {key: "mypitch"}) );
+    msg.response( server.lang('general.auto', {title: title, key: "mypitch"}) );
     return;
   }
 
   var pitch = parseFloat(msg.getMessage()),
-    pitch = Common.numberClamp(pitch, -20, 20);
+      pitch = Common.numberClamp(pitch, -20, 20);
 
   server.addUserSetting(msg.user_id,'pitch',pitch);
-  msg.response(server.lang('mypitch.okay', { pitch: pitch }));
+  msg.response(server.lang('mypitch.okay', { title: title, pitch: pitch }));
 };
 
 var command = new BotCommand({

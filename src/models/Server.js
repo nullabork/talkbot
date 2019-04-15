@@ -122,7 +122,7 @@ class Server {
   }
 
   lang(key, params) {
-    if (this.messages && this.messages[key]) {
+    if (this.isLangKey(key)) {
       return this.messages[key];
     }
 
@@ -138,6 +138,10 @@ class Server {
       params
     ]);
   }
+  
+  isLangKey(possible_key) {
+    return this.messages && this.messages[possible_key];
+  };
 
   isServerChannel(channel_id) {
     return bot.channels[channel_id].guild_id == this.server_id;

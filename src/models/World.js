@@ -19,6 +19,7 @@ class World {
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
     this.presence_timeout = null;
+    this.default_title = 'master';
     
   }
 
