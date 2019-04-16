@@ -74,9 +74,6 @@ function debug(msg, server, world) {
   var r = "Active: " + c + "\n";
   r += "Servers: " + Object.keys(world.servers).length + "\n";
 
-  if ( world.dailyStats && world.dailyStats.activeServers )
-    r += "Daily Active Servers: " + Object.keys(world.dailyStats.activeServers).length + "\n";
-
   r += "\nActive Servers:\n";
   for (var s in world.servers) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + build_permitted_string(world.servers[s]) + "\n";

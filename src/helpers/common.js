@@ -83,7 +83,7 @@ class Common {
     if (config.logging && config.logging.err) {
       console.error(
         "\n" +
-        new Date() + "\n" +
+        new Date() + " " +
         message
       );
     }

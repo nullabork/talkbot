@@ -19,14 +19,11 @@ class World {
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
     this.presence_timeout = null;
-    this.default_title = 'master';
-    
+    this.default_title = 'master';    
   }
 
   startup() {
     var world = this;
-    world.resetDailyStats();
-    world.startDailyResetTimer();
     world.setPresence();
     world.startPresenceRotation();
     world.startRebootTimer();
@@ -35,7 +32,6 @@ class World {
   addServer(server) {
     if (!server.server_id) return;
     this.servers[server.server_id] = server;
-    server.rejoinVoiceChannelOnStartup();
   }
 
   removeServer(server) {
@@ -121,25 +117,6 @@ class World {
       if (w.servers[s].isBound()) c++;
     }
     return c;
-  };
-  
-  incrementStatDailyActiveServers(server_id) {
-    this._dailyStats.activeServers[server_id] = 1;
-  };
-  
-  startDailyResetTimer() {
-    var world = this;
-    var daily_reset = function() {
-      world.resetDailyStats();
-    };
-    
-    setTimeout(daily_reset, 24 * 60 * 60 * 1000);
-  };
-  
-  resetDailyStats() {
-    this.dailyStats = this._dailyStats;
-    this._dailyStats = {};
-    this._dailyStats.activeServers = {};
   };
   
   startPresenceRotation() {

@@ -58,18 +58,6 @@ class Server {
     this.world = world;
   }
 
-  rejoinVoiceChannelOnStartup() {
-    if (!this.bound_to) return;
-    this.setMaster(this.bound_to, this.bound_to_username);
-    var chan_id = this.current_voice_channel_id; // to get around the guard condition
-    this.current_voice_channel_id = null;
-    var master_voice_chan_id = botStuff.getUserVoiceChannel(this.bound_to);
-    if (!master_voice_chan_id)
-      this.release();
-    else if (master_voice_chan_id == chan_id)
-      this.joinVoiceChannel(chan_id);
-  };
-
   setMaster(user_id, username) {
     this.bound_to = user_id;
     this.bound_to_username = username;
@@ -251,7 +239,6 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
-        server.world.incrementStatDailyActiveServers(server.server_id);
         callback();
       }
     });
@@ -264,8 +251,9 @@ class Server {
     var server = this;
     if (!callback) callback = function () { };
 
+    var channel_id = server.current_voice_channel_id;
     if (server.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(server.current_voice_channel_id, function () {
+      bot.leaveVoiceChannel(channel_id, function () {
         server.current_voice_channel_id = null;
         server.world.setPresence();
         callback();
@@ -375,17 +363,22 @@ class Server {
     };
 
     request.input = { text: null, ssml: message };
+    
+    var channel_id = server.current_voice_channel_id;
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        return Common.error(err);
+        Common.error(err);
+        return;
       }
       try {
-        bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
+        bot.getAudioContext(channel_id, function (error, stream) {
           if (error) {
-            return Common.error(error);
-          } try {
+            Common.error(error);
+            return;
+          } 
+          try {
             stream.write(response.audioContent);
             callback();
           } catch (ex) {
