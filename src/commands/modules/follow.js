@@ -14,6 +14,8 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  * * */
 function follow(msg, server, world) {
+  if (server.connecting) return msg.il8nResponse('follow.connecting');
+  if (server.leaving) return msg.il8nResponse('follow.leaving');
   if (server.isBound()) {
     if (!server.isMaster(msg.user_id)) {
       msg.il8nResponse('follow.nope', { name: msg.boundNick() });
@@ -52,6 +54,9 @@ function follow(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function unfollow(msg, server, world) {
+  if (server.connecting) return msg.il8nResponse('unfollow.connecting');
+  if (server.leaving) return msg.il8nResponse('unfollow.leaving');
+  
   if (!server.isBound()) {
     msg.il8nResponse('unfollow.none');
     return;
@@ -79,6 +84,9 @@ function unfollow(msg, server, world) {
  * * */
 function sidle(msg, server, world) {
 
+  if (server.connecting) return msg.il8nResponse('sidle.connecting');
+  if (server.leaving) return msg.il8nResponse('sidle.leaving');
+  
   if (!server.isBound()) {
     msg.il8nResponse('sidle.none');
     return;
@@ -118,6 +126,9 @@ function sidle(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function transfer(msg, server, world) {
+
+  if (server.connecting) return msg.il8nResponse('transfer.connecting');
+  if (server.leaving) return msg.il8nResponse('transfer.leaving');
 
   if (!msg.ownerIsMaster() && !server.canManageTheServer(msg.user_id)) {
     msg.il8nResponse('transfer.nopermissions');

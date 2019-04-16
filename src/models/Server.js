@@ -144,12 +144,16 @@ class Server {
   };
 
   release() {
-    this.bound_to = null;
-    this.bound_to_username = null;
-    this.permitted = {};
-    clearTimeout(this.neglect_timeout);
-
-    this.leaveVoiceChannel();
+    var server = this;
+    server.leaving = true;
+    
+    this.leaveVoiceChannel(function() {
+      server.bound_to = null;
+      server.bound_to_username = null;
+      server.permitted = {};
+      clearTimeout(server.neglect_timeout);
+      server.leaving = false;
+    });
   };
 
   isMaster(user_id) {
@@ -255,16 +259,12 @@ class Server {
     if (!callback) callback = function () { };
 
     var channel_id = server.current_voice_channel_id;
-    if (server.current_voice_channel_id != null) {
+    if (channel_id) {
       bot.leaveVoiceChannel(channel_id, function () {
         server.current_voice_channel_id = null;
         server.world.setPresence();
         callback();
       });
-    }
-    else {
-      server.current_voice_channel_id = null;
-      server.world.setPresence();
     }
   };
 
@@ -431,7 +431,7 @@ class Server {
 
     if (server.inChannel()) {
       server.talk("The server is shutting down", null, function () {
-        server.leaveVoiceChannel();
+        server.release();
       });
     }
     else {
