@@ -66,14 +66,17 @@ function debug(msg, server, world) {
 
   if (!msg.ownerIsDev()) return;
 
+  var member_count = 0;
   var c = 0;
   for (var s in world.servers) {
     if (world.servers[s].isBound()) c++;
+    member_count += Object.keys(bot.servers[s].members).length;
   }
 
   var r = "Active: " + c + "\n";
   r += "Servers: " + Object.keys(world.servers).length + "\n";
-
+  r += "Total members: " + member_count + "\n";
+  
   r += "\nActive Servers:\n";
   for (var s in world.servers) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + build_permitted_string(world.servers[s]) + "\n";
