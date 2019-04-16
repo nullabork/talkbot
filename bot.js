@@ -172,7 +172,7 @@ process.on('SIGINT', function () {
 
 // something goes wrong we didnt think of or having got around to putting a band-aid fix on
 process.on('uncaughtException', function (err) {
-  Common.out('uncaughtException');
+  Common.out('uncaughtException: ' + err.message);
   world.saveAll();
   Common.error(err);
   bot.disconnect();

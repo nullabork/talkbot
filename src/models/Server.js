@@ -224,9 +224,11 @@ class Server {
   // NOTE: this is async, so if you want to run a continuation use the callback.
   joinVoiceChannel(channel_id, callback) {
 
-    if (!callback) callback = function () { };
     var server = this;
-    if (server.current_voice_channel_id == channel_id) return;
+    if (!callback) callback = function () { };
+    if (server.current_voice_channel_id == channel_id) return Common.error('joinVoiceChannel(' + channel_id + '): already joined!');
+    if (server.connecting) return Common.error('joinVoiceChannel(' + channel_id + '): tried to connect twice!');
+    server.connecting = true;
 
     if (!server.isServerChannel(channel_id)) {
       Common.error("joinVoiceChannel() on the wrong server");
@@ -239,6 +241,7 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
+        server.connecting = false;
         callback();
       }
     });
