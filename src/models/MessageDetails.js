@@ -85,7 +85,8 @@ class MessageDetails {
   }
 
   getOwnersVoiceChannel() {
-    return botStuff.getUserVoiceChannel(this.user_id);
+    var server_id = this.server.server_id;
+    return botStuff.getUserVoiceChannel(server_id, this.user_id);
   };
 
   getUserIds() {

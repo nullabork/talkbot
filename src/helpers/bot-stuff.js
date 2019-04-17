@@ -36,20 +36,22 @@ class BotStuff {
     return (this.bot.channels[channel_id].type == 2);
   }
 
-  getUserVoiceChannel(user_id) {
+  getUserVoiceChannel(server_id, user_id) {
     if (!user_id) return;
+    if (!server_id) return;
 
     let bot = this.bot;
 
-    for (var server in bot.servers) {
-      for (var channel in bot.servers[server].channels) {
-        var chan = bot.servers[server].channels[channel];
-        if (chan.type == 2) {
-          for (var member in chan.members) {
-            var u = chan.members[member];
-            if (u.user_id == user_id) {
-              return channel;
-            }
+    var server = bot.server[server_id];
+    if (!server) return;
+    
+    for (var channel in server.channels) {
+      var chan = server.channels[channel];
+      if (chan.type == 2) {
+        for (var member in chan.members) {
+          var u = chan.members[member];
+          if (u.user_id == user_id) {
+            return channel;
           }
         }
       }
@@ -64,11 +66,6 @@ class BotStuff {
       return Common.caseToSpace(name);
     })
   }
-
-  isUserInVoiceChannel(user_id) {
-    if (!user_id) return false;
-    return this.getUserVoiceChannel(user_id) != null;
-  };
 
   sendMessage(channel_id, message) {
     let bot = this.bot;

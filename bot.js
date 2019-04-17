@@ -100,6 +100,8 @@ bot.on('guildDelete', function(server) {
 // when messages come in
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
+  console.log(bot.users[user_id]);
+
   if (!evt.d) return null;
 
   var server_id = evt.d.guild_id;

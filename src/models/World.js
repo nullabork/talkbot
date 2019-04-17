@@ -52,11 +52,11 @@ class World {
     // itself.
     // run delayed execution of the code to get the real answers
     var delayed_execution = function() {
-      var chan_id = botStuff.getUserVoiceChannel(user_id);
       
       var leave_servers = [];
       
       for (var server_id in world.servers) {
+        var chan_id = botStuff.getUserVoiceChannel(server_id, user_id);
         var s = world.servers[server_id];
         if (s.bound_to == user_id) {
           if (chan_id != s.current_voice_channel_id) {

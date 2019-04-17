@@ -161,9 +161,8 @@ function transfer(msg, server, world) {
     server.joinVoiceChannel(voiceChan);
 
     msg.il8nResponse('transfer.okay', {
-      name : server.getBoundToNick()
+      name : username
     });
-
   } else {
     msg.il8nResponse('transfer.broken');
   }

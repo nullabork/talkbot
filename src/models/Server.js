@@ -136,7 +136,8 @@ class Server {
   }
 
   getOwnersVoiceChannel(user_id) {
-    return botStuff.getUserVoiceChannel(user_id);
+    var server_id = this.server.server_id;
+    return botStuff.getUserVoiceChannel(server_id, user_id);
   };
 
   release(callback) {
@@ -166,24 +167,6 @@ class Server {
 
   isBound() {
     return this.bound_to != null;
-  };
-
-  getBoundToNick() {
-    var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-
-    if (!this.bound_to || !channel_id) {
-      return null;
-    }
-
-    if (channel_id && this.bound_to) {
-      return botStuff.findThingsName(channel_id, this.bound_to);
-    }
-
-    if (this.bound_to_username) {
-      return this.bound_to_username;
-    }
-
-    return this.bound_to;
   };
 
   // determines if the user can manage this server
