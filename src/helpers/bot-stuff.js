@@ -6,6 +6,8 @@ var Discord = require('discord.io'),
   tl8 = require('@google-cloud/translate'),
   textToSpeech = require('@google-cloud/text-to-speech');
 
+var P_ADMINISTRATOR = 0x00000008;
+var P_MANAGE_GUILD = 0x00000020;
 
 class BotStuff {
 
@@ -31,11 +33,40 @@ class BotStuff {
 
   }
 
-  isVoiceChannel(channel_id) {
-    if (!channel_id) return false;
-    return (this.bot.channels[channel_id].type == 2);
+  isServerChannel(server_id, channel_id) {
+    let bot = this.bot;
+    return bot.channels[channel_id].guild_id == server_id;
   }
 
+  isServerOwner(server_id, user_id) {
+    let bot = this.bot;
+    return bot.servers[server_id].owner_id == user_id;
+  };
+
+  // determine if user has the biggest permissions available
+  userHasPermissions(server_id, user_id, permission_bit) {
+    for (var r in this.bot.servers[server_id].members[user_id].roles) {
+      if (this.roleHasPermission(bot.servers[server_id].members[user_id].roles[r], permission_bit)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // determines if the user can manage this server
+  canManageTheServer(server_id, user_id) {
+    return this.userHasPermissions(server_id, user_id, P_ADMINISTRATOR) ||
+      this.userHasPermissions(server_id, user_id, P_MANAGE_GUILD) ||
+      this.isServerOwner(server_id, user_id);
+  }
+
+
+  isVoiceChannel(channel_id) {
+    let bot = this.bot;
+    if (!channel_id) return false;
+    return (bot.channels[channel_id].type == 2);
+  }
+  
   getUserVoiceChannel(server_id, user_id) {
     if (!user_id) return;
     if (!server_id) return;
@@ -122,6 +153,13 @@ class BotStuff {
     return member.roles.indexOf(role_id) > -1;
   };
   
+  // see the constants up top
+  roleHasPermission(server_id, role_id, permission_bit) {
+    let bot = this.bot;
+    if (bot.servers[server_id].roles[role_id] == null) return false;
+    if (bot.servers[server_id].roles[role_id]._permissions & permission_bit) return true;
+    else return false;
+  };
 
 }
 
