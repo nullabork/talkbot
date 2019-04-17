@@ -164,17 +164,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
 // ctrl-c
 process.on('SIGINT', function () {
-  Common.out('SIGINT');
-  world.saveAll();
-  bot.disconnect();
-  process.exit();
+  world.kill('SIGINT');
 });
 
 // something goes wrong we didnt think of or having got around to putting a band-aid fix on
 process.on('uncaughtException', function (err) {
-  Common.out('uncaughtException: ' + err.message);
-  world.saveAll();
   Common.error(err);
-  bot.disconnect();
-  process.exit();
+  world.kill('uncaughtException: ' + err.message);
 });
