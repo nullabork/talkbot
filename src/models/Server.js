@@ -242,6 +242,7 @@ class Server {
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
         Common.error(error);
+        server.connecting = false;
       }
       else {
         server.setVoiceChannel(channel_id);
@@ -250,9 +251,6 @@ class Server {
       }
     });
   };
-
-
-
 
   // permit another user to speak
   permit(snowflake_id) {    
