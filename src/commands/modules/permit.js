@@ -21,6 +21,16 @@ function permit(msg, server, world) {
   }
 
   var target_ids = msg.getUserAndRoleIds();
+  let none_snowflake_role_ids = msg.lookForRoleFromWordArgs();
+
+
+  if(!target_ids) target_ids = [];
+  //merge roles from ids and words
+  target_ids = [
+    ...target_ids,
+    ...none_snowflake_role_ids
+  ];
+
   if (!target_ids || !target_ids.length) {
     msg.il8nResponse('permit.none');
     return;

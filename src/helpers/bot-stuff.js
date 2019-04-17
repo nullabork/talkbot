@@ -10,17 +10,17 @@ var Discord = require('discord.io'),
 class BotStuff {
 
   constructor(shard_number, total_shards) {
-    
+
     if (!shard_number) shard_number = 0;
     if (!total_shards) total_shards = 1;
-    
+
     Common.out('Setting up client for shard ID#' + shard_number + '. Total count of shards is ' + total_shards);
-        
+
     this.auth = auth;
     this.bot = new Discord.Client({
       token: auth.token,
       autorun: true,
-      shard: [shard_number,total_shards] 
+      shard: [shard_number,total_shards]
     });
 
     this.tts_client = new textToSpeech.TextToSpeechClient();
@@ -114,18 +114,32 @@ class BotStuff {
 
     return null;
   }
-  
+
   userHasRole(server_id, user_id, role_id){
     let bot = this.bot;
     var server = bot.servers[server_id];
     if (!server) return false;
     if (!server.roles[role_id]) return false;
     var member = server.members[user_id];
-    if (!member) return false;    
+    if (!member) return false;
     return member.roles.indexOf(role_id) > -1;
-  };
-  
+  }
 
+
+  getRole(server_id, roleWord) {
+    let bot = this.bot;
+    var server = bot.servers[server_id];
+    if (!server || !roleWord || !server.roles ) return null;
+
+    let keys = Object.keys(server.roles);
+
+    for (const role_id of keys) {
+      let role = server.roles[role_id];
+      if(role && role.name && roleWord.toLowerCase() == role.name.toLowerCase()) return role;
+    }
+
+    return null;
+  }
 }
 
 const args = require('yargs').argv;

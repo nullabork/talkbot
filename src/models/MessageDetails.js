@@ -21,7 +21,7 @@ class MessageDetails {
 
   response(message, params) {
     var _this = this;
-    
+
     _this.bot.simulateTyping(_this.channel_id, function () {
       _this.bot.sendMessage({
         to: _this.channel_id,
@@ -64,7 +64,7 @@ class MessageDetails {
     if ( !params ) params = {};
     params.title = params.title || server.getUserSetting(_this.user_id, 'mytitle');
     var message = server.lang(key, params);
-    
+
     return this.response(message);
   }
 
@@ -91,14 +91,26 @@ class MessageDetails {
   getUserIds() {
     return Common.userIDs(this.message);
   };
-  
+
   getUserAndRoleIds() {
     return Common.userAndRoleIDs(this.message);
   };
-  
+
+  lookForRoleFromWordArgs() {
+    var roles = [];
+    for (const word of this.args) {
+      let role = botStuff.getRole(this.server.server_id, word);
+      if(role && role.id) {
+        roles.push(role.id);
+      }
+    }
+
+    return roles;
+  };
+
   // gets all the IDs as names
   getUserNicksAsCSV() {
-    
+
     var msg = this;
     var target_ids = msg.getUserAndRoleIds();
     var names = '';
@@ -110,7 +122,7 @@ class MessageDetails {
         names += target_id + ', ';
     });
     names = names.substring(0, names.length-2);
-    
+
     return names;
   };
 
