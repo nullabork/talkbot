@@ -58,18 +58,6 @@ class Server {
     this.world = world;
   }
 
-  rejoinVoiceChannelOnStartup() {
-    if (!this.bound_to) return;
-    this.setMaster(this.bound_to, this.bound_to_username);
-    var chan_id = this.current_voice_channel_id; // to get around the guard condition
-    this.current_voice_channel_id = null;
-    var master_voice_chan_id = botStuff.getUserVoiceChannel(this.bound_to);
-    if (!master_voice_chan_id)
-      this.release();
-    else if (master_voice_chan_id == chan_id)
-      this.joinVoiceChannel(chan_id);
-  };
-
   setMaster(user_id, username) {
     this.bound_to = user_id;
     this.bound_to_username = username;
@@ -156,12 +144,16 @@ class Server {
   };
 
   release() {
-    this.bound_to = null;
-    this.bound_to_username = null;
-    this.permitted = {};
-    clearTimeout(this.neglect_timeout);
-
-    this.leaveVoiceChannel();
+    var server = this;
+    server.leaving = true;
+    
+    this.leaveVoiceChannel(function() {
+      server.bound_to = null;
+      server.bound_to_username = null;
+      server.permitted = {};
+      clearTimeout(server.neglect_timeout);
+      server.leaving = false;
+    });
   };
 
   isMaster(user_id) {
@@ -236,9 +228,11 @@ class Server {
   // NOTE: this is async, so if you want to run a continuation use the callback.
   joinVoiceChannel(channel_id, callback) {
 
-    if (!callback) callback = function () { };
     var server = this;
-    if (server.current_voice_channel_id == channel_id) return;
+    if (!callback) callback = function () { };
+    if (server.current_voice_channel_id == channel_id) return Common.error('joinVoiceChannel(' + channel_id + '): already joined!');
+    if (server.connecting) return Common.error('joinVoiceChannel(' + channel_id + '): tried to connect twice!');
+    server.connecting = true;
 
     if (!server.isServerChannel(channel_id)) {
       Common.error("joinVoiceChannel() on the wrong server");
@@ -251,7 +245,7 @@ class Server {
       }
       else {
         server.setVoiceChannel(channel_id);
-        server.world.incrementStatDailyActiveServers(server.server_id);
+        server.connecting = false;
         callback();
       }
     });
@@ -264,16 +258,13 @@ class Server {
     var server = this;
     if (!callback) callback = function () { };
 
-    if (server.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(server.current_voice_channel_id, function () {
+    var channel_id = server.current_voice_channel_id;
+    if (channel_id) {
+      bot.leaveVoiceChannel(channel_id, function () {
         server.current_voice_channel_id = null;
         server.world.setPresence();
         callback();
       });
-    }
-    else {
-      server.current_voice_channel_id = null;
-      server.world.setPresence();
     }
   };
 
@@ -295,8 +286,8 @@ class Server {
   isPermitted(user_id) {
     if (!user_id) return false;
     for(var permitted in this.permitted) {
-      if ( permitted == user_id ) return this.permitted != null;
-      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted != null;
+      if ( permitted == user_id ) return this.permitted[permitted] != null;
+      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted[permitted] != null;
     }
     return false;
   };
@@ -375,17 +366,22 @@ class Server {
     };
 
     request.input = { text: null, ssml: message };
+    
+    var channel_id = server.current_voice_channel_id;
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        return Common.error(err);
+        Common.error(err);
+        return;
       }
       try {
-        bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
+        bot.getAudioContext(channel_id, function (error, stream) {
           if (error) {
-            return Common.error(error);
-          } try {
+            Common.error(error);
+            return;
+          } 
+          try {
             stream.write(response.audioContent);
             callback();
           } catch (ex) {
@@ -435,7 +431,7 @@ class Server {
 
     if (server.inChannel()) {
       server.talk("The server is shutting down", null, function () {
-        server.leaveVoiceChannel();
+        server.release();
       });
     }
     else {

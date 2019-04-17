@@ -66,17 +66,17 @@ function debug(msg, server, world) {
 
   if (!msg.ownerIsDev()) return;
 
+  var member_count = 0;
   var c = 0;
   for (var s in world.servers) {
     if (world.servers[s].isBound()) c++;
+    member_count += Object.keys(bot.servers[s].members).length;
   }
 
   var r = "Active: " + c + "\n";
   r += "Servers: " + Object.keys(world.servers).length + "\n";
-
-  if ( world.dailyStats && world.dailyStats.activeServers )
-    r += "Daily Active Servers: " + Object.keys(world.dailyStats.activeServers).length + "\n";
-
+  r += "Total members: " + member_count + "\n";
+  
   r += "\nActive Servers:\n";
   for (var s in world.servers) {
     if (world.servers[s].isBound()) r += world.servers[s].server_name + " - " + build_permitted_string(world.servers[s]) + "\n";
@@ -90,8 +90,12 @@ function build_permitted_string(server) {
   for( var id in server.permitted ) {
     prefix = id == server.bound_to ? '(master)' : '';
     var member = bot.servers[server.server_id].members[id];
-    if ( member ) users += ' ' + prefix + member.nick || member.username;
-    else users += ' ' + id;
+    if ( member ) users += ' ' + prefix + (member.nick ? member.nick : (bot.users[id] ? bot.users[id].username : id));
+    else {
+      var role = bot.servers[server.server_id].roles[id];
+      if ( role ) users += ' ' + role.name;
+      else users += ' ' + id;
+    }
   }
   return users.trim();
 };
