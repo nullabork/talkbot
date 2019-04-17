@@ -42,10 +42,12 @@ class UnMute extends Command {
   get hidden () { return false; }
 
   execute ({input, server, world}) {
-    if (!server.getUserSetting(input.user_id, 'muted'))
+    var user_id = input.user_id;
+        
+    if (!server.getUserSetting(user_id, 'muted'))
       return input.il8nResponse('unmute.alreadyunmuted');
 
-    server.addUserSetting(input.user_id,'muted',false);
+    server.addUserSetting(user_id,'muted',false);
     return input.il8nResponse('unmute.okay');
   }
 }

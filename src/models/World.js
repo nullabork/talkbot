@@ -97,14 +97,24 @@ class World {
     this.presence_timeout = setTimeout(presence_timer, 50);
   }
   
+  // save all the states
   saveAll() {
     for (var server_id in this.servers) {
       this.servers[server_id].save();
     }
   };
   
+  // release all servers from their masters
+  releaseAll() {
+    for (var server_id in this.servers) {
+      this.servers[server_id].release();
+    }
+  };
+  
+  // shutdown the process
   kill(reason) {
     if (reason) Common.out('kill(): ' + reason);
+    this.releaseAll();
     this.saveAll();
     bot.disconnect();
     process.exit();

@@ -67,8 +67,9 @@ function unfollow(msg, server, world) {
     return;
   }
 
-  server.release();
-  msg.il8nResponse('unfollow.okay');
+  server.release(function() {
+    msg.il8nResponse('unfollow.okay');
+  });
 };
 
 /* * *
