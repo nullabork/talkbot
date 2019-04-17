@@ -129,7 +129,7 @@ class Server {
   };
 
   getOwnersVoiceChannel(user_id) {
-    var server_id = this.server.server_id;
+    var server_id = this.server_id;
     return botStuff.getUserVoiceChannel(server_id, user_id);
   };
 

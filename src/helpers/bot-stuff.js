@@ -45,8 +45,9 @@ class BotStuff {
 
   // determine if user has the biggest permissions available
   userHasPermissions(server_id, user_id, permission_bit) {
-    for (var r in this.bot.servers[server_id].members[user_id].roles) {
-      if (this.roleHasPermission(bot.servers[server_id].members[user_id].roles[r], permission_bit)) {
+    let bot = this.bot;
+    for (var r in bot.servers[server_id].members[user_id].roles) {
+      if (this.roleHasPermission(server_id, bot.servers[server_id].members[user_id].roles[r], permission_bit)) {
         return true;
       }
     }
