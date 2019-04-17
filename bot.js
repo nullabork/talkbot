@@ -100,6 +100,8 @@ bot.on('guildDelete', function(server) {
 // when messages come in
 bot.on('message', function (username, user_id, channel_id, message, evt) {
 
+  console.log(bot.users[user_id]);
+
   if (!evt.d) return null;
 
   var server_id = evt.d.guild_id;
@@ -109,7 +111,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     Common.error("Can't find server for " + channel_id);
     return null;
   }
-
+  
   // is the message a command?
   if (message.substring(0, commands.command_char.length) == commands.command_char) {
 
@@ -118,7 +120,7 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
     var parts = message.match(
       new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
     );
-
+    
     if (!parts || parts.length < 2) {
       return;
     }
@@ -164,17 +166,11 @@ bot.on('message', function (username, user_id, channel_id, message, evt) {
 
 // ctrl-c
 process.on('SIGINT', function () {
-  Common.out('SIGINT');
-  world.saveAll();
-  bot.disconnect();
-  process.exit();
+  world.kill('SIGINT');
 });
 
 // something goes wrong we didnt think of or having got around to putting a band-aid fix on
 process.on('uncaughtException', function (err) {
-  Common.out('uncaughtException');
-  world.saveAll();
   Common.error(err);
-  bot.disconnect();
-  process.exit();
+  world.kill('uncaughtException: ' + err.message);
 });

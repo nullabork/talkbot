@@ -58,7 +58,7 @@ function langVoices(msg, server, world) {
     var table = tablr.headed(data, ['Lang', 'Code', 'Alt']);
     table = table.replace(/--/g, '━━');
 
-    msg.response(server.lang('langs.okay', {table : table, example : auth.command_arg + 'mylang au'}));
+    msg.il8nResponse('langs.okay', {table : table, example : auth.command_arg + 'mylang au'});
 
    // msg.response(server.lang('myvoice.okay', { lang: doc.code }));
   // } else {

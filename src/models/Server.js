@@ -54,22 +54,6 @@ class Server {
     this.messages = {};
   }
 
-  addWorld(world) {
-    this.world = world;
-  }
-
-  rejoinVoiceChannelOnStartup() {
-    if (!this.bound_to) return;
-    this.setMaster(this.bound_to, this.bound_to_username);
-    var chan_id = this.current_voice_channel_id; // to get around the guard condition
-    this.current_voice_channel_id = null;
-    var master_voice_chan_id = botStuff.getUserVoiceChannel(this.bound_to);
-    if (!master_voice_chan_id)
-      this.release();
-    else if (master_voice_chan_id == chan_id)
-      this.joinVoiceChannel(chan_id);
-  };
-
   setMaster(user_id, username) {
     this.bound_to = user_id;
     this.bound_to_username = username;
@@ -125,12 +109,16 @@ class Server {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
+    
+    if ( !params ) params = {};
 
     var command_char = auth.command_char;
-
+    var title = params.title || this.world.default_title;
+    
     params = {
-      ...(params || {}),
-      command_char
+      ...(params),
+      command_char,
+      title 
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
@@ -148,16 +136,28 @@ class Server {
   }
 
   getOwnersVoiceChannel(user_id) {
-    return botStuff.getUserVoiceChannel(user_id);
+    var server_id = this.server.server_id;
+    return botStuff.getUserVoiceChannel(server_id, user_id);
   };
 
-  release() {
-    this.bound_to = null;
-    this.bound_to_username = null;
-    this.permitted = {};
-    clearTimeout(this.neglect_timeout);
+  release(callback) {
+    var server = this;
+    if (server.leaving) return; // dont call it twice dude
+    server.leaving = true;
+    if (!callback) callback = function(err) {};
 
-    this.leaveVoiceChannel();
+    var channel_id = server.current_voice_channel_id;
+    bot.leaveVoiceChannel(channel_id, function (err) {
+      if ( err) Common.error(err);
+      server.bound_to = null;
+      server.bound_to_username = null;
+      server.permitted = {};
+      clearTimeout(server.neglect_timeout);
+      server.current_voice_channel_id = null;
+      server.leaving = false;
+      server.world.setPresence();
+      callback();
+    });
   };
 
   isMaster(user_id) {
@@ -167,24 +167,6 @@ class Server {
 
   isBound() {
     return this.bound_to != null;
-  };
-
-  getBoundToNick() {
-    var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-
-    if (!this.bound_to || !channel_id) {
-      return null;
-    }
-
-    if (channel_id && this.bound_to) {
-      return botStuff.findThingsName(channel_id, this.bound_to);
-    }
-
-    if (this.bound_to_username) {
-      return this.bound_to_username;
-    }
-
-    return this.bound_to;
   };
 
   // determines if the user can manage this server
@@ -220,12 +202,6 @@ class Server {
     return this.current_voice_channel_id != null;
   };
 
-  // is this user permitted to speak
-  isPermitted(user_id) {
-    if (!user_id) return false;
-    return this.permitted[user_id] != null;
-  };
-
   // set the server properties to indicate this is the current voice channel
   setVoiceChannel(channel_id) {
     var server = this;
@@ -238,45 +214,25 @@ class Server {
   // NOTE: this is async, so if you want to run a continuation use the callback.
   joinVoiceChannel(channel_id, callback) {
 
-    if (!callback) callback = function () { };
     var server = this;
-    if (server.current_voice_channel_id == channel_id) return;
+    if (!callback) callback = function () { };
+    if (server.current_voice_channel_id == channel_id) return Common.error('joinVoiceChannel(' + channel_id + '): already joined!');
+    if (server.connecting) return Common.error('joinVoiceChannel(' + channel_id + '): tried to connect twice!');
+    server.connecting = true;
 
-    if (!server.isServerChannel(channel_id)) {
-      Common.error("joinVoiceChannel() on the wrong server");
-      return;
-    }
+    if (!server.isServerChannel(channel_id)) return Common.error('joinVoiceChannel(' + channel_id + ') on the wrong server');
 
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
         Common.error(error);
+        server.connecting = false;
       }
       else {
         server.setVoiceChannel(channel_id);
-        server.world.incrementStatDailyActiveServers(server.server_id);
+        server.connecting = false;
         callback();
       }
     });
-  };
-
-  // get the server to leave a voice channel
-  // NOTE: this is async, so if you want to run a continuation use the callback.
-  leaveVoiceChannel(callback) {
-
-    var server = this;
-    if (!callback) callback = function () { };
-
-    if (server.current_voice_channel_id != null) {
-      bot.leaveVoiceChannel(server.current_voice_channel_id, function () {
-        server.current_voice_channel_id = null;
-        server.world.setPresence();
-        callback();
-      });
-    }
-    else {
-      server.current_voice_channel_id = null;
-      server.world.setPresence();
-    }
   };
 
   // permit another user to speak
@@ -291,6 +247,16 @@ class Server {
     this.resetNeglectTimeout();
     this.permitted[snowflake_id] = null;
     this.save();
+  };
+
+  // is this user permitted to speak
+  isPermitted(user_id) {
+    if (!user_id) return false;
+    for(var permitted in this.permitted) {
+      if ( permitted == user_id ) return this.permitted[permitted] != null;
+      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted[permitted] != null;
+    }
+    return false;
   };
 
   // reset the timer that unfollows a user if they dont use the bot
@@ -311,13 +277,17 @@ class Server {
 
     // delay for 3 seconds to allow the bot to talk
     var neglectedrelease = function () {
-      var timeout_neglectedrelease = function () { server.release(); };
+      var timeout_neglectedrelease = function () { 
+        Common.out('neglected: in chan');
+        server.release(); 
+      };
       setTimeout(timeout_neglectedrelease, 3000);
     };
 
     if (server.inChannel()) {
       server.talk("I feel neglected, I'm leaving", null, neglectedrelease);
     } else {
+      Common.out('neglected: server.release() not in chan');
       server.release();
     }
   }
@@ -367,17 +337,22 @@ class Server {
     };
 
     request.input = { text: null, ssml: message };
+    
+    var channel_id = server.current_voice_channel_id;
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
-        return Common.error(err);
+        Common.error(err);
+        return;
       }
       try {
-        bot.getAudioContext(server.current_voice_channel_id, function (error, stream) {
+        bot.getAudioContext(channel_id, function (error, stream) {
           if (error) {
-            return Common.error(error);
-          } try {
+            Common.error(error);
+            return;
+          } 
+          try {
             stream.write(response.audioContent);
             callback();
           } catch (ex) {
@@ -423,11 +398,12 @@ class Server {
   // run this to cleanup resources before shutting down
   shutdown() {
 
+    Common.out("shutdown(): " + (new Error()).stack);
     var server = this;
 
     if (server.inChannel()) {
       server.talk("The server is shutting down", null, function () {
-        server.leaveVoiceChannel();
+        server.release();
       });
     }
     else {

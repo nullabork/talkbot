@@ -34,14 +34,14 @@ var BotCommand = require('@models/BotCommand');
 function mylang(msg, server, world) {
 
   if(!msg.args || !msg.args.length){
-    msg.response(server.lang('mylang.more'));
+    msg.il8nResponse('mylang.more');
     return;
   }
 
   if(msg.args[0] == 'default'){
     server.addUserSetting(msg.user_id, 'language', 'default');
     server.addUserSetting(msg.user_id, 'name', 'default');
-    msg.response( server.lang('general.auto', {key: "mylang"}) );
+    msg.il8nResponse('general.auto', {key: "mylang"});
     return;
   }
 
@@ -49,7 +49,7 @@ function mylang(msg, server, world) {
 
   if(!docs || !docs.length) {
     //what dont know???? why? you should by now...
-    msg.response(server.lang('mylang.no', { lang: msg.args[0]}));
+    msg.il8nResponse('mylang.no', { lang: msg.args[0]});
     return;
   }
 

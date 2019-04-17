@@ -21,7 +21,7 @@ function defaults(msg, server, world) {
 
   server.clearUserSettings(msg.user_id);
 
-  msg.response( server.lang('defaults.okay') );
+  msg.il8nResponse('defaults.okay');
 
 };
 

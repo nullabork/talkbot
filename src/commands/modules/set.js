@@ -6,7 +6,7 @@ var BotCommand = require('@models/BotCommand');
 
 function set(msg, server, world) {
   if (!msg.ownerIsMaster()) {
-    msg.response(server.lang('set.nope'));
+    msg.il8nResponse('set.nope');
     return;
   }
 
@@ -17,7 +17,7 @@ function set(msg, server, world) {
   var parts = msg.message.match(/(\S+\.\S+)\s+(.*)/i);
 
   server.messages[parts[1]] = parts[2];
-  msg.response(server.lang('set.okay', { lang: parts[1] }));
+  msg.il8nResponse('set.okay', { lang: parts[1] });
 
 };
 

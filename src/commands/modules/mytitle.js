@@ -4,10 +4,10 @@ var BotCommand = require('@models/BotCommand');
 
 var Common = require("@helpers/common");
 /**
- * Command: myhonorific
- * sets pitch user config
+ * Command: mytitle
+ * sets title user config
  *
- * usage !myhonorific [title]
+ * usage !mytitle [title]
  *
  * @param   {[MessageDetails]}  msg  [message releated helper functions]
  * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
@@ -15,21 +15,25 @@ var Common = require("@helpers/common");
  *
  * @return  {[undefined]}
  */
-function myhonorific(msg, server, world) {
-  if (!msg.args.length) return;
+function mytitle(msg, server, world) {
+  if (!msg.args.length)
+  {
+    msg.il8nResponse('mytitle.read');
+    return;
+  }
 
-  server.addUserSetting(msg.user_id,'myhonorific', msg.args[0]);
-  msg.response('myhonorific.okay');
+  server.addUserSetting(msg.user_id,'mytitle', msg.message);
+  msg.il8nResponse('mytitle.set');
 };
 
 var command = new BotCommand({
-  command_name: 'myhonorific',
+  command_name: 'mytitle',
   command_arg: 'p',
-  execute: myhonorific,
-  short_help: 'myhonorific.shorthelp',
-  long_help: 'myhonorific.longhelp',
+  execute: mytitle,
+  short_help: 'mytitle.shorthelp',
+  long_help: 'mytitle.longhelp',
   group: "personalization",
-  parameters: "<pitch>",
+  parameters: "<title>",
   hidden: true
 });
 

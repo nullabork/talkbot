@@ -1,14 +1,8 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
-
 function leave(msg, server, world) {
-  if (server.isBound() && !server.isMaster(msg.user_id)) {
-    msg.response(server.lang('leave.nope'));
-  } else {
-    server.leaveVoiceChannel();
-  }
+  return msg.il8nResponse('Hey you might be meaning to try !unfollow');
 };
 
 

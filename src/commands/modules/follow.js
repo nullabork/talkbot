@@ -14,28 +14,29 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  * * */
 function follow(msg, server, world) {
+  if (server.connecting) return msg.il8nResponse('follow.connecting');
+  if (server.leaving) return msg.il8nResponse('follow.leaving');
   if (server.isBound()) {
     if (!server.isMaster(msg.user_id)) {
-      msg.response(server.lang('follow.nope', { name: msg.boundNick() }));
+      msg.il8nResponse('follow.nope', { name: msg.boundNick() });
     } else {
-      msg.response(server.lang('follow.huh'));
+      msg.il8nResponse('follow.huh');
     }
   } else {
     var voiceChan = msg.getOwnersVoiceChannel();
-    if (voiceChan) {
+    if (server.isServerChannel(voiceChan)) {
       server.setMaster(msg.user_id, msg.username);
       server.joinVoiceChannel(voiceChan);
 
-      var muted = "";
-
+      msg.il8nResponse('follow.okay');
+      
       if (server.getUserSetting(msg.user_id, 'muted')) {
-        muted = "\n" + server.lang('mute.unmuted');
         server.addUserSetting(msg.user_id,'muted',false);
+        msg.il8nResponse('mute.unmuted');
       }
 
-      msg.response(server.lang('follow.okay') + muted);
     } else {
-      msg.response(server.lang('follow.join'));
+      msg.il8nResponse('follow.join');
     }
   }
 
@@ -53,18 +54,22 @@ function follow(msg, server, world) {
  * @return  {[undefined]}
  * * */
 function unfollow(msg, server, world) {
+  if (server.connecting) return msg.il8nResponse('unfollow.connecting');
+  if (server.leaving) return msg.il8nResponse('unfollow.leaving');
+  
   if (!server.isBound()) {
-    msg.response(server.lang('unfollow.none'));
+    msg.il8nResponse('unfollow.none');
     return;
   }
 
   if (!msg.ownerIsMaster()) {
-    msg.response(server.lang('unfollow.nope'));
+    msg.il8nResponse('unfollow.nope');
     return;
   }
 
-  server.release();
-  msg.response(server.lang('unfollow.okay'));
+  server.release(function() {
+    msg.il8nResponse('unfollow.okay');
+  });
 };
 
 /* * *
@@ -80,13 +85,16 @@ function unfollow(msg, server, world) {
  * * */
 function sidle(msg, server, world) {
 
+  if (server.connecting) return msg.il8nResponse('sidle.connecting');
+  if (server.leaving) return msg.il8nResponse('sidle.leaving');
+  
   if (!server.isBound()) {
-    msg.response(server.lang('sidle.none'));
+    msg.il8nResponse('sidle.none');
     return;
   }
 
   if (!server.canManageTheServer(msg.user_id)) {
-    msg.response(server.lang('sidle.nope'));
+    msg.il8nResponse('sidle.nope');
     return;
   }
 
@@ -95,17 +103,15 @@ function sidle(msg, server, world) {
   var voiceChan = msg.getOwnersVoiceChannel();
   if (voiceChan) {
     server.joinVoiceChannel(voiceChan);
-
-    var muted = "";
-
+    msg.il8nResponse('sidle.okay');
+    
     if (server.getUserSetting(msg.user_id, 'muted')) {
-      muted = "\n" + server.lang('mute.unmuted');
       server.addUserSetting(msg.user_id,'muted',false);
+      msg.il8nResponse('mute.unmuted');
     }
 
-    msg.response(server.lang('sidle.okay') + muted);
   } else {
-    msg.response(server.lang('sidle.broken'));
+    msg.il8nResponse('sidle.broken');
   }
 };
 
@@ -122,19 +128,22 @@ function sidle(msg, server, world) {
  * * */
 function transfer(msg, server, world) {
 
+  if (server.connecting) return msg.il8nResponse('transfer.connecting');
+  if (server.leaving) return msg.il8nResponse('transfer.leaving');
+
   if (!msg.ownerIsMaster() && !server.canManageTheServer(msg.user_id)) {
-    msg.response(server.lang('transfer.nopermissions'));
+    msg.il8nResponse('transfer.nopermissions');
     return;
   }
 
   if (msg.args.length == 0) {
-    msg.response(server.lang('transfer.args'));
+    msg.il8nResponse('transfer.args');
     return;
   }
 
   var target_ids = msg.getUserIds();
   if (!target_ids || !target_ids.length || target_ids.length > 1) {
-    msg.response(server.lang('transfer.args'));
+    msg.il8nResponse('transfer.args');
     return;
   }
 
@@ -142,7 +151,7 @@ function transfer(msg, server, world) {
   var username = msg.getNick(user_id);
 
   if ( !username || username == "" ) {
-    msg.response(server.lang('transfer.unknownnick'));
+    msg.il8nResponse('transfer.unknownnick');
     return;
   }
 
@@ -151,19 +160,11 @@ function transfer(msg, server, world) {
   if (voiceChan) {
     server.joinVoiceChannel(voiceChan);
 
-    var muted = "";
-
-    if (server.getUserSetting(msg.user_id, 'muted')) {
-      muted = "\n" + server.lang('mute.unmuted');
-      server.addUserSetting(msg.user_id,'muted',false);
-    }
-
-    msg.response(server.lang('transfer.okay', {
-      name : server.getBoundToNick()
-    }) + muted);
-
+    msg.il8nResponse('transfer.okay', {
+      name : username
+    });
   } else {
-    msg.response(server.lang('transfer.broken'));
+    msg.il8nResponse('transfer.broken');
   }
 };
 

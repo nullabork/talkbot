@@ -21,7 +21,9 @@
     "okay": "Yes, :title!",
     "huh": "Yes, :title?",
     "nope": "Sorry, :name is my :title today. Get them to :command_charpermit you",
-    "shorthelp": "The bot will join your voice channel and speak what you write"
+    "shorthelp": "The bot will join your voice channel and speak what you write",
+    "connecting": "Cant follow, currently connecting to voice",
+    "leaving": "Cant follow until we've left voice"
   },
   "en.defaults": {
     "okay": "Your voice settings have been reset :D",
@@ -31,7 +33,9 @@
     "okay": "Goodbye :title",
     "nope": "Sorry, you're not my :title.",
     "none": "I have no :title... would you like to be my :title?",
-    "shorthelp": "Release the bot"
+    "shorthelp": "Release the bot",
+    "connecting": "Cant unfollow, currently connecting to voice",
+    "leaving": "Cant unfollow, already leaving voice"
   },
   "en.permit": {
     "okay": "I'll listen to :name now",
@@ -190,5 +194,9 @@
     "notpermitted": "You have to be permitted to use this command",
     "notinchannel": "Get the bot to join a voice channel before using this command",
     "shorthelp": "Speak when you're muted"
+  },
+  "en.mytitle": {
+    "read": "I call you :title",
+    "set": "I'll now call you :title"
   }
 }
