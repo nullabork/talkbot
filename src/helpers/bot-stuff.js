@@ -42,7 +42,7 @@ class BotStuff {
 
     let bot = this.bot;
 
-    var server = bot.server[server_id];
+    var server = bot.servers[server_id];
     if (!server) return;
     
     for (var channel in server.channels) {
