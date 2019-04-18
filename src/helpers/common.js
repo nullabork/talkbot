@@ -37,7 +37,7 @@ class Common {
 
     return map;
   }
-  
+
   //fetches all forms of message Ids from a string and returns an array
   static userIDs(message) {
     var user_ids = message.match(/<@!{0,1}(\d{12,19})>/g);
@@ -53,7 +53,7 @@ class Common {
     });
 
     return map;
-  }  
+  }
 
   //console.log() if its turned on
   static out(message) {
@@ -83,7 +83,7 @@ class Common {
     if (config.logging && config.logging.err) {
       console.error(
         "\n" +
-        new Date() + " " +
+        new Date() + "\n" +
         message
       );
     }
@@ -125,7 +125,7 @@ class Common {
   static replaceLast(str, strToReplace, replacement) {
     var pos = str.lastIndexOf(strToReplace);
     if ( pos < 0 ) return str;
-    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);    
+    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);
   };
 
   //const element = string[char];
@@ -263,7 +263,11 @@ class Common {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
-  
+
+  static alertBeepsSSML(){
+    return "<audio src='https://sfx.nullabork.dev/definite.mp3' clipEnd='0.5s' repeatCount='3' /><break time='500ms'/>";
+  }
+
 }
 
 module.exports = Common;

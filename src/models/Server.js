@@ -113,16 +113,16 @@ class Server {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
-    
+
     if ( !params ) params = {};
 
     var command_char = auth.command_char;
     var title = params.title || this.world.default_title;
-    
+
     params = {
       ...(params),
       command_char,
-      title 
+      title
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
@@ -130,7 +130,7 @@ class Server {
       params
     ]);
   }
-  
+
   isLangKey(possible_key) {
     return this.messages && this.messages[possible_key];
   };
@@ -146,7 +146,7 @@ class Server {
   release() {
     var server = this;
     server.leaving = true;
-    
+
     this.leaveVoiceChannel(function() {
       server.bound_to = null;
       server.bound_to_username = null;
@@ -269,7 +269,7 @@ class Server {
   };
 
   // permit another user to speak
-  permit(snowflake_id) {    
+  permit(snowflake_id) {
     this.resetNeglectTimeout();
     this.permitted[snowflake_id] = {};
     this.save();
@@ -321,7 +321,6 @@ class Server {
     }
   }
 
-
   // speak a message in a voice channel
   talk(message, options, callback) {
 
@@ -366,7 +365,7 @@ class Server {
     };
 
     request.input = { text: null, ssml: message };
-    
+
     var channel_id = server.current_voice_channel_id;
 
     // Performs the Text-to-Speech request
@@ -380,7 +379,7 @@ class Server {
           if (error) {
             Common.error(error);
             return;
-          } 
+          }
           try {
             stream.write(response.audioContent);
             callback();
@@ -486,7 +485,7 @@ class Server {
 
     message = botStuff.resolveMessageSnowFlakes(channel_id, message);
     message = Common.cleanMessage(message);
-    
+
     var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
     if (ret) message = ret;
 
