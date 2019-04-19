@@ -1,7 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-function leave(msg, server, world) {
+function leave(msg) {
   return msg.il8nResponse('Hey you might be meaning to try !unfollow');
 };
 

@@ -1,28 +1,19 @@
-
-var langMap = require("@helpers/voiceMap");
-
 // models
 var BotCommand = require('@models/BotCommand');
 
 /**
- * Command: tolang
- * sets language user config
- *
- * usage !tolang au
- *
+ * Command: defaults
+ * Clears all the user settings
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function defaults(msg, server, world) {
+function defaults(msg) {
 
-  server.clearUserSettings(msg.user_id);
+  server.clearMemberSettings(msg.message.member);
 
   msg.il8nResponse('defaults.okay');
-
 };
 
 var command = new BotCommand({

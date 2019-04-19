@@ -1,9 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
-
-function ping(msg, server, world) {
+function ping(msg) {
   msg.il8nResponse('ping.okay');
 };
 

@@ -11,10 +11,6 @@ class World {
 
   constructor() {
     this.servers = {};
-    this.broadcastTimout = null;
-    this.broadcastID = null;
-    this.broadcastMessage = null;
-    this.broadcaster = null;
     this.presence_renderers = [this.renderPresenceHelp]; // , this.renderPresenceCounts, this.renderPresenceFollow];
     this.presence_renderers_index = 0;
     this.presence_rotation_timeout = null;
@@ -25,12 +21,11 @@ class World {
   startup() {
     var world = this;
     world.setPresence();
-    world.startPresenceRotation();
     world.startRebootTimer();
+    bot.guilds.tap(guild => world.addServer(new Server(guild, world)));
   };  
-  
+    
   addServer(server) {
-    if (!server.server_id) return;
     this.servers[server.server_id] = server;
   }
 
@@ -41,49 +36,16 @@ class World {
     server.dispose();
   }
 
-  checkMastersVoiceChannels(user_id) {
-
-    var world = this;
-    if (!user_id) return;
-
-    // calling getUserVoiceChannel() during the VOICE_STATUS_UPDATE event
-    // means that bot.servers[...] etc. arrays are not yet up to date.
-    // The underlying framework is providing the events to us before processing
-    // itself.
-    // run delayed execution of the code to get the real answers
-    var delayed_execution = function() {
-      
-      var leave_servers = [];
-      
-      for (var server_id in world.servers) {
-        var chan_id = botStuff.getUserVoiceChannel(server_id, user_id);
-        var s = world.servers[server_id];
-        if (s.bound_to == user_id) {
-          if (chan_id != s.current_voice_channel_id) {
-            leave_servers.push(s);
-          }
-        }
-      }
-      
-      for ( var i=0;i<leave_servers.length;i++) {     
-        var s = leave_servers[i];
-        s.talk('My master left, bye everyone', null, function() { s.release(); });
-      }      
-    };
-
-    setTimeout(delayed_execution, 1000);
-  }
-
   setPresence() {
 
     var w = this;
     var presence_timer = function() {
       w.presence_timeout = null;
 
-      bot.setPresence({
+      bot.user.setPresence({
         status: 'online',
         game: {
-          name: w.renderPresence(),
+          name: w.renderPresenceHelp(),
           type: 1,
           url: 'https://github.com/nullabork/talkbot'
         }
@@ -96,6 +58,11 @@ class World {
       clearTimeout(this.presence_timeout);
     this.presence_timeout = setTimeout(presence_timer, 50);
   }
+  
+  renderPresenceHelp() {
+    var cmds = require("@commands");
+    return bot.guilds.size + " servers, " + cmds.command_char + "help";
+  };
   
   // save all the states
   saveAll() {
@@ -111,15 +78,24 @@ class World {
     }
   };
   
-  // shutdown the process
+/* * *
+ * kill()
+ *
+ * Attempts to shutdown gracefully - pass a reason 
+ * * */
   kill(reason) {
     if (reason) Common.out('kill(): ' + reason);
     this.releaseAll();
     this.saveAll();
-    bot.disconnect();
+    bot.destroy();
     process.exit();
   }
   
+/* * *
+ * getActiveServersCount()
+ *
+ * Gets the number of servers where someone is !following 
+ * * */
   getActiveServersCount() {
     var w = this;
     var c = 0;
@@ -128,23 +104,9 @@ class World {
     }
     return c;
   };
-  
-  startPresenceRotation() {
-    var world = this;
-    var rotatePresenceBanner = function() {
-      var w = world;
-      w.nextPresenceRenderer();
-      w.setPresence();
-      //if ( w.presence_rotation_timeout )
-      //  clearTimeout(w.presence_rotation_timeout);
-      //w.presence_rotation_timeout = setTimeout(rotatePresenceBanner, 120000);
-    };
     
-    rotatePresenceBanner();
-  };
-  
 /* * *
- * startRebootTimer
+ * startRebootTimer()
  *
  * When called sets the bot to automatically reboot when no one is using it
  * Its a hack to work around network bugs and so forth 
@@ -165,38 +127,10 @@ class World {
     setTimeout(reboot_timer, 12 * 60 * 60 * 1000); // kick off in 12 hours
   };
   
-  nextPresenceRenderer() {
-    this.presence_renderers_index++;
-  };
-  
-  renderPresence() {
-    var renderer = this.presence_renderers[this.presence_renderers_index % this.presence_renderers.length];
-    return renderer.call(this); //HACKSSSS
-  };
-  
-  renderPresenceFollow() {
-    var cmds = require("@commands");
-    return Object.keys(bot.servers).length + " servers, " + cmds.command_char + "follow";
-  };
-  
-  renderPresenceHelp() {
-    var cmds = require("@commands");
-    return Object.keys(bot.servers).length + " servers, " + cmds.command_char + "help";
-  };
-  
-  renderPresenceCounts() {
-    var w = this;
-    var s = Object.keys(bot.servers).length + " servers, " + w.getActiveServersCount() + " active";
-    return s;
-  };
-  
   dispose() {
     for ( var s in this.servers ) {
       this.servers[s].dispose();
     }
-    
-    clearTimeout(this.presence_timeout);
-    clearTimeout(this.presence_rotation_timeout);
   };
   
 }

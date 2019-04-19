@@ -14,17 +14,12 @@ function Commands() {
 
   this.command_char = auth.command_char || '!';
 
-
-
   this.add = function (command, force) {
     var key = command.command_name.toLowerCase();
     //if is there and the force argument is false
     if (this.commands[key] && !force) return;
     //add the command to the the map
     this.commands[key] = command;
-
-
-
 
     //no listeners, then stop/
     if (!command.listeners) return;

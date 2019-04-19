@@ -1,9 +1,9 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
-function who(msg, server, world) {
-  var master_nick = server.bound_to_username;
+function who(msg) {
+  var server = msg.server;
+  var master_nick = server.bound_to.username;
   if (!master_nick) {
     msg.il8nResponse('who.none');
   } else {

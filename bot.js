@@ -1,3 +1,4 @@
+'use strict'
 /*
  *  _____     _ _    ____        _
  * |_   _|_ _| | | _| __ )  ___ | |_
@@ -28,147 +29,150 @@ var world = require('@models/World'),
   Command = require('@models/Command');
 
 // runtime testing
-testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
+testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
 testing.TestIfGoogleEnvironmentVarIsSet();
+testing.TestIfNodeOpusIsInstalled();
+// TODO: Test node-opus is installed
 
 // Creates a client
 var bot = botStuff.bot;
 
 // FANCY SPLASH SCREEN
-figlet('TalkBot', function(err, data) {
-  console.log(data);
-});
+figlet('TalkBot', (err, data) => console.log(data));
 
 // when the server is ready to go
-bot.on('ready', function (evt) {
-  Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+bot.on('ready', () => {
+  Common.out('Logged in as: ' + bot.user.username + ' - (' + bot.user.id + ')');
   world.startup();
 });
 
 // if we get disconnected???
-bot.on('disconnect', function (evt) {
-  world.saveAll();
-  world.dispose();
-  Common.out('Disconnected, reconnecting');
-  Common.out(evt);
-  bot.connect();
+bot.on('disconnect', evt => {
+  try {
+    world.saveAll();
+    world.dispose();
+    Common.out('Disconnected, reconnecting');
+    Common.out(evt);
+    botStuff.connect();
+  }
+  catch(ex) { Common.error(ex); }
+});
+
+// when the bot is added to new servers
+bot.on('guildCreate', guild => {
+  try {
+    //add the relationships
+    world.addServer(new Server(guild, world));
+  }
+  catch(ex) { Common.error(ex); }
+});
+
+// when the bot is removed from servers
+bot.on('guildDelete', guild => {
+  try {
+    var world_server = world.servers[guild.id];
+    world.removeServer(world_server);
+    Common.out("Server " + guild.name + " removed");
+  }
+  catch(ex) { Common.error(ex); }
 });
 
 // handle voice state updates
-bot.on('any', function (evt) {
-  var user_id = null;
-  var server_id = null;
-  var channel_id = null;
-
-  if (evt.t == 'VOICE_STATE_UPDATE') {
-
-    // if my master's voice status changes
-    if (evt.d) {
-      channel_id = evt.d.channel_id;
-      server_id = evt.d.guild_id;
-      user_id = evt.d.user_id;
+bot.on('voiceStateUpdate', (oldMember, newMember) => {
+  try {
+    var server = world.servers[oldMember.guild.id];
+    if (!server.isMaster(oldMember.id))
+      return;
+    
+    // they've changed voice channels 
+    if ( oldMember.voiceChannel && !newMember.voiceChannel )
+    {
+      server.release();
     }
-
-    var server = world.servers[server_id];
-    if (server && server.isMaster(user_id)) {
-      world.checkMastersVoiceChannels(user_id);
-    }
+    else if ( oldMember.voiceChannel.id != newMember.voiceChannel.id )
+    {
+      server.switchVoiceChannels(newMember.voiceChannel);
+    }      
   }
-});
-
-// new servers arrive
-bot.on('guildCreate', function(server) {
-  var server_id = server.id;
-
-  //create server instance
-  let s = new Server(server_id,world);
-  //add the relationships
-  world.addServer(s);
-
-});
-
-// servers get deleted
-bot.on('guildDelete', function(server) {
-  if (!server) return; // why would we lose a server?
-                       // because the world isn't a marshmallow
-  var world_server = world.servers[server.id];
-  var name = world_server.server_name;
-  world.removeServer(world_server);
-  Common.out("Server " + name + " removed");
+  catch(ex) { Common.error(ex); }
 });
 
 // when messages come in
-bot.on('message', function (username, user_id, channel_id, message, evt) {
+bot.on('message', message => {
+  try {
 
-  if (!evt.d) return null;
+    var server = world.servers[message.guild.id];
 
-  var server_id = evt.d.guild_id;
-  var server = world.servers[server_id];
-
-  if (server == null) {
-    Common.error("Can't find server for " + channel_id);
-    return null;
-  }
-  
-  // is the message a command?
-  if (message.substring(0, commands.command_char.length) == commands.command_char) {
-
-    server.resetNeglectTimeout();
-
-    var parts = message.match(
-      new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
-    );
+    if (server == null) {
+      Common.error("Can't find server for guild id: " + message.guild.id);
+      return null;
+    }
     
-    if (!parts || parts.length < 2) {
-      return;
-    }
+    // is the message a command?
+    if (message.content.substring(0, commands.command_char.length) == commands.command_char) {
 
-    var cmdChar = parts[1];
-    var cmdVerb = parts[2] || null;
-    var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
-    var cmdMessage = (parts[3] || "").trim();
+      server.resetNeglectTimeout();
 
-    if (!cmdVerb || !cmdChar) {
-      return;
-    }
+      var parts = message.content.match(
+        new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
+      );
+      
+      if (!parts || parts.length < 2) {
+        return;
+      }
 
-    var msgDets = new MessageDetails({
-      channel_id: channel_id,
-      user_id: user_id,
-      bot: botStuff.bot,
-      world: world,
-      server: server,
-      username: username,
-      cmdChar: cmdChar,
-      cmd: cmdVerb,
-      args: cmdArgs,
-      message: cmdMessage,
-    });
+      var cmdChar = parts[1];
+      var cmdVerb = parts[2] || null;
+      var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
+      var cmdContent = (parts[3] || "").trim();
 
-    var command = commands.get(msgDets.cmd);
-    if(!command) return;
+      if (!cmdVerb || !cmdChar) {
+        return;
+      }
 
-    //this is for the new way... v3 of writing commands, so we can use argument destructoring
-    if (command instanceof Command) {
-      command.execute({details : msgDets, input : msgDets, server, world});
+      var msgDets = new MessageDetails({
+        world: world,
+        server: server,
+        cmdChar: cmdChar,
+        cmd: cmdVerb,
+        args: cmdArgs,
+        content: cmdContent,
+        message: message
+      });
+
+      var command = commands.get(msgDets.cmd);
+      if(!command) return;
+
+      //this is for the new way... v3 of writing commands, so we can use argument destructoring
+      if (command instanceof Command) {
+        command.execute({input : msgDets});
+      } else {
+        command.execute.apply(this, [msgDets]);
+      }
+
     } else {
-      command.execute.apply(this, [msgDets, server, world]);
+      // say it out loud
+      server.speak(message);
     }
-
-  } else {
-    // if its not a command speak it
-    var settings = server.getUserSettings(user_id);
-    if ( !settings.muted ) server.speak(message, channel_id, user_id, world);
   }
+  catch(ex) { Common.error(ex); }
 });
+
+// capture a whole pile of useful information
+bot.on('error', Common.error);
+bot.on('guildUnavailable', guild => Common.error('guild unavailable: ' + guild.id));
+bot.on('rateLimit',        info  => { Common.error('rate limited'); Common.error(info) });
+bot.on('reconnecting',     ()    => Common.error('reconnecting'));
+bot.on('resume',           ()    => Common.error('resume'));
+bot.on('warn',             info  => Common.error('warn:' + warn));
 
 // ctrl-c
-process.on('SIGINT', function () {
-  world.kill('SIGINT');
-});
+process.on('SIGINT', () => world.kill('SIGINT'));
 
 // something goes wrong we didnt think of or having got around to putting a band-aid fix on
 process.on('uncaughtException', function (err) {
   Common.error(err);
   world.kill('uncaughtException: ' + err.message);
 });
+
+botStuff.connect();

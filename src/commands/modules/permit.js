@@ -9,26 +9,24 @@ var BotCommand = require('@models/BotCommand');
  * usage: !permit @username1 @username2
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function permit(msg, server, world) {
+function permit(msg) {
+  var server = msg.server;
+  
   if (!msg.ownerIsMaster()) {
     msg.il8nResponse('permit.nope');
     return;
   }
 
-  var target_ids = msg.getUserAndRoleIds();
-  if (!target_ids || !target_ids.length) {
+  if ( msg.message.mentions.members.size == 0 ) {
     msg.il8nResponse('permit.none');
     return;
   }
 
-  target_ids.forEach(function (target_id) {
-    server.permit(target_id);
-  });
+  msg.message.mentions.members.tap( member => server.permit(member.id));
+  msg.message.mentions.roles.tap( role => server.permit(role.id));
 
   var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
 
@@ -41,40 +39,45 @@ function permit(msg, server, world) {
  * The bot master can permit authority to other users
  * A person permited may unpermit themselves
  *
- * usage: !unpermit @username1 @username2
+ * usage: !unpermit @username1 @username2 @role1
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function unpermit(msg, server) {
+function unpermit(msg) {
 
-  if (!server.isPermitted(msg.user_id)) {
+  var server = msg.server;
+
+  if (!msg.ownerIsPermitted()) {
     msg.il8nResponse('unpermit.deny');
     return;
   }
-
-  var target_ids = msg.getUserIds();
-  if (!target_ids || !target_ids.length) {
-    target_ids = [msg.user_id];
+  
+  if ( msg.message.mentions.members.size == 0 ) {
+    server.unpermit(msg.member.id);
   }
 
-  for (let i = 0; i < target_ids.length; i++) {
-    var target_id = target_ids[i];
-
-    if (target_id != msg.user_id && !msg.ownerIsMaster()) {
+  msg.message.mentions.members.tap( member => {
+    if (member.id != msg.message.member.id && !msg.ownerIsMaster()) {
       msg.il8nResponse('unpermit.deny');
       continue;
     }
 
-    server.unpermit(target_id);
-  }
+    server.unpermit(member.id);
+  });
+
+  msg.message.mentions.roles.tap( role => {
+    if (!msg.ownerIsMaster()) {
+      msg.il8nResponse('unpermit.deny');
+      continue;
+    }
+
+    server.unpermit(role.id);
+  });
 
   var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
   msg.il8nResponse('unpermit.okay', { name: nicks });
-
 };
 
 var command_permit = new BotCommand({

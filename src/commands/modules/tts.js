@@ -8,17 +8,16 @@ class TTS extends Command {
   get group () {  return 'control'; }
   get hidden () { return false; }
 
-  execute ({input, server, world}) {
-    if ( input.message.length < 1 ) return;
-    if ( Common.isMessageExcluded(input.message) ) return;
+  execute ({input}) {
+    var server = input.server;
 
     if (!server.inChannel())
       return input.il8nResponse('tts.notinchannel');
 
-    if (!server.isPermitted(input.user_id))
+    if (!input.ownerIsPermitted())
       return input.il8nResponse('tts.notpermitted');
 
-    server.speak(input.message, input.channel_id, input.user_id, world);
+    server.speak(input.content, input.message.channel, input.message.member);
   }
 }
 
@@ -27,21 +26,20 @@ class Mute extends Command {
   get group () {  return 'personalization'; }
   get hidden () { return false; }
 
-  execute ({input, server, world}) {
-    var target_ids = [input.user_id];
-    
-    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.getUserIds().length > 0 )
-    {
-      target_ids = input.getUserIds();
-    }
+  execute ({input}) {
+    var server = input.server;
         
-    for ( var target_id in target_ids ) {
-      if (server.getUserSetting(target_id, 'muted'))
-        return input.il8nResponse('mute.alreadymuted');
-
-      server.addUserSetting(target_id,'muted',true);
+    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
+    {
+      input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',true));
+      return input.il8nResponse('mute.okay', {name: input.getDisplayNamesAsCSV() });
     }
-    return input.il8nResponse('mute.okay');
+    else
+    {
+      var member = input.message.member;
+      server.addMemberSetting(input.message.member,'muted',true);
+      return input.il8nResponse('mute.okay', {name: 'you' });
+    }
   }
 }
 
@@ -50,21 +48,41 @@ class UnMute extends Command {
   get group () {  return 'personalization'; }
   get hidden () { return false; }
 
-  execute ({input, server, world}) {
-    var target_ids = [input.user_id];
+  execute ({input}) {
+    var server = input.server;
     
-    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.getUserIds().length > 0 )
+    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
     {
-      target_ids = input.getUserIds();
+      input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',false));
+      return input.il8nResponse('unmute.okay', {name: input.getDisplayNamesAsCSV() });
     }
-        
-    for ( var target_id in target_ids ) {
-      if (!server.getUserSetting(target_id, 'muted'))
-        return input.il8nResponse('unmute.alreadyunmuted');
+    else
+    {
+      var member = input.message.member;
+      server.addMemberSetting(member,'muted',false);
+      return input.il8nResponse('unmute.okay', {name: 'you' });
+    }
 
-      server.addUserSetting(target_id,'muted',false);
+  }
+}
+
+class Stop extends Command {
+
+  get group () {  return 'control'; }
+  get hidden () { return true; }
+
+  execute ({input}) {
+    var server = input.server;
+    
+    if ( input.ownerIsPermitted() || input.ownerCanManageTheServer())
+    {
+      server.stop('requested by stop command');
+      return input.il8nResponse('stop.okay');
     }
-    return input.il8nResponse('unmute.okay');
+    else
+    {
+      return input.il8nResponse('stop.nope');
+    }
   }
 }
 
@@ -73,7 +91,8 @@ exports.register =  (commands) => {
   commands.addAll([
     TTS.command,
     Mute.command,
-    UnMute.command
+    UnMute.command,
+    Stop.command
   ]);
 };
 
@@ -81,10 +100,12 @@ exports.unRegister = (commands) => {
   commands.removeAll([
     TTS.command,
     Mute.command,
-    UnMute.command
+    UnMute.command,
+    Stop.command
   ]);
 };
 
 exports.TTS = TTS;
 exports.Mute = Mute;
 exports.UnMute = UnMute;
+exports.Stop = Stop;

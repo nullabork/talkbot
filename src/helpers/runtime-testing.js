@@ -1,7 +1,7 @@
 
 class RuntimeTesting {
 
-  static TestIfChildProcessIsWorkingHowDiscordIONeedsItTo() {
+  static TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo() {
     // run this to test if you need a different version of node
 
     var ChildProc = require('child_process');
@@ -20,7 +20,7 @@ class RuntimeTesting {
       process.exit();
     }
     else {
-      console.log("Loaded a player OK.");
+      console.log("Loaded FFMPEG OK.");
     }
   }
   
@@ -38,7 +38,11 @@ class RuntimeTesting {
       process.exit();
     }    
     
-    console.log("Loaded a the Google TTS API credentials OK.");    
+    console.log("Loaded the Google TTS API credentials OK.");    
+  }
+  
+  static TestIfNodeOpusIsInstalled() {
+    console.log("Loaded Node OPUS OK.");
   }
 };
 

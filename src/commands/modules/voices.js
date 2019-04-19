@@ -29,13 +29,12 @@ var BotCommand = require('@models/BotCommand');
  * TR
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function listVoices(msg, server, world) {
-  // if (server.isPermitted(msg.user_id)) {
+function listVoices(msg) {
+  
+    var server = msg.server;
 
     if(!msg.args || !msg.args.length){
       msg.il8nResponse('voices.more');

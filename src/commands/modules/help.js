@@ -13,8 +13,6 @@ var Command = require('@models/Command'),
  * usage: !help
  *
  * @param   {[MessageDetails]}  input     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
@@ -104,8 +102,9 @@ class Help extends Command {
   }
 
 
-  execute ({input, server, world}) {
+  execute ({input}) {
 
+    var server = input.server;
     var other = input.args[0],
       self = this,
       cmds = require("@commands"),

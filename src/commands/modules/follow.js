@@ -9,33 +9,32 @@ var BotCommand = require('@models/BotCommand'),
  * master
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  * * */
-function follow(msg, server, world) {
+function follow(msg) {
+  var server = msg.server;
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
   if (server.isBound()) {
-    if (!server.isMaster(msg.user_id)) {
-      msg.il8nResponse('follow.nope', { name: msg.boundNick() });
+    if (!server.isMaster(msg.message.member)) {
+      msg.il8nResponse('follow.nope', { name: server.bound_to.displayName });
     } else {
       msg.il8nResponse('follow.huh');
     }
   } else {
-    var voiceChan = msg.getOwnersVoiceChannel();
-    if (botStuff.isServerChannel(server.server_id, voiceChan)) {
-      server.setMaster(msg.user_id, msg.username);
-      server.joinVoiceChannel(voiceChan);
-
-      msg.il8nResponse('follow.okay');
-      
-      if (server.getUserSetting(msg.user_id, 'muted')) {
-        server.addUserSetting(msg.user_id,'muted',false);
-        msg.il8nResponse('mute.unmuted');
-      }
-
+    if (msg.message.member.voiceChannel) {
+      server.setMaster(msg.message.member);
+      server.joinVoiceChannel(msg.message.member.voiceChannel)
+      .then(() => {
+        msg.il8nResponse('follow.okay');
+        
+        // unmute them if they're muted
+        if (server.getMemberSetting(msg.message.member, 'muted')) {
+          server.addMemberSetting(msg.message.member,'muted',false);
+          msg.il8nResponse('mute.unmuted');
+        }
+      });
     } else {
       msg.il8nResponse('follow.join');
     }
@@ -49,12 +48,11 @@ function follow(msg, server, world) {
  * The bot will stop following the command writer is they are the master
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  * * */
-function unfollow(msg, server, world) {
+function unfollow(msg) {
+  var server = msg.server;
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
   
@@ -79,13 +77,11 @@ function unfollow(msg, server, world) {
  * The server admin can sidle into the bot as a permitted person to take over control
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  * * */
-function sidle(msg, server, world) {
-
+function sidle(msg) {
+  var server = msg.server;
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
   
@@ -99,20 +95,23 @@ function sidle(msg, server, world) {
     return;
   }
 
-  server.setMaster(msg.user_id, msg.username);
-
-  var voiceChan = msg.getOwnersVoiceChannel();
-  if (voiceChan) {
-    server.joinVoiceChannel(voiceChan);
-    msg.il8nResponse('sidle.okay');
-    
-    if (server.getUserSetting(msg.user_id, 'muted')) {
-      server.addUserSetting(msg.user_id,'muted',false);
-      msg.il8nResponse('mute.unmuted');
-    }
-
-  } else {
-    msg.il8nResponse('sidle.broken');
+  var newMaster = msg.message.member;
+  if ( !newMaster ) {
+    msg.il8nResponse('sidle.membernoexist');
+    return;
+  }
+  
+  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+    msg.il8nResponse('sidle.novoice');
+    return;
+  }
+  
+  server.setMaster(newMaster);
+  msg.il8nResponse('sidle.okay');
+  
+  if (server.getMemberSetting(newMaster, 'muted')) {
+    server.addMemberSetting(newMaster,'muted',false);
+    msg.il8nResponse('mute.unmuted');
   }
 };
 
@@ -122,13 +121,12 @@ function sidle(msg, server, world) {
  * The server admin or master can transfer control of the bot to a third party
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  * * */
-function transfer(msg, server, world) {
+function transfer(msg) {
 
+  var server = msg.server;
   if (server.connecting) return msg.il8nResponse('transfer.connecting');
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
 
@@ -142,31 +140,24 @@ function transfer(msg, server, world) {
     return;
   }
 
-  var target_ids = msg.getUserIds();
-  if (!target_ids || !target_ids.length || target_ids.length > 1) {
+  if (msg.message.mentions.members.size < 1) {
     msg.il8nResponse('transfer.args');
     return;
   }
 
-  var user_id = target_ids[0];
-  var username = msg.getNick(user_id);
-
-  if ( !username || username == "" ) {
-    msg.il8nResponse('transfer.unknownnick');
+  var newMaster = msg.message.mentions.members.first();
+  if ( !newMaster ) {
+    msg.il8nResponse('transfer.membernoexist');
     return;
   }
-
-  server.setMaster(user_id, username);
-  var voiceChan = server.getOwnersVoiceChannel(user_id);
-  if (voiceChan) {
-    server.joinVoiceChannel(voiceChan);
-
-    msg.il8nResponse('transfer.okay', {
-      name : username
-    });
-  } else {
-    msg.il8nResponse('transfer.broken');
+  
+  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+    msg.il8nResponse('transfer.novoice');
+    return;
   }
+  
+  server.setMaster(newMaster);
+  msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
 };
 
 var command_follow = new BotCommand({

@@ -10,8 +10,6 @@
  * usage: !sfx [emoji_name]           - play this emoji
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
@@ -87,8 +85,9 @@ class SFX extends Command {
     server.save();
   }
 
-  execute ({input, server, world}) {
+  execute ({input}) {
 
+    var server = input.server;
     var sfx_command = input.args[0],
       sfx_word = input.args[1],
       sfx_url = input.args[2];
@@ -155,11 +154,11 @@ class SFX extends Command {
      */
     else if(sfx_command && Common.isURL( sfx_command ))
     {
-      server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.getUserSettings(input.user_id));
+      server.talk(Common.makeAudioSSML(server.audioEmojis[sfx_command]), server.getMemberSettings(input.message.member));
     }
     else if(sfx_command && sfxs[sfx_command])
     {
-      server.talk(Common.makeAudioSSML(sfxs[sfx_command]), server.getUserSettings(input.user_id));
+      server.talk(Common.makeAudioSSML(sfxs[sfx_command]), server.getMemberSettings(input.message.member));
     }
     /**
      * Somthing should have happened

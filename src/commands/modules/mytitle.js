@@ -1,8 +1,7 @@
 // models
 var BotCommand = require('@models/BotCommand');
-
-
 var Common = require("@helpers/common");
+
 /**
  * Command: mytitle
  * sets title user config
@@ -10,19 +9,17 @@ var Common = require("@helpers/common");
  * usage !mytitle [title]
  *
  * @param   {[MessageDetails]}  msg  [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function mytitle(msg, server, world) {
+function mytitle(msg) {
   if (!msg.args.length)
   {
     msg.il8nResponse('mytitle.read');
     return;
   }
 
-  server.addUserSetting(msg.user_id,'mytitle', msg.message);
+  msg.server.addMemberSetting(msg.message.member, 'mytitle', msg.content);
   msg.il8nResponse('mytitle.set');
 };
 

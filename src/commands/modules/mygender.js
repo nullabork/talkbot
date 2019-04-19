@@ -1,7 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand');
 
-
 /**
  * Command: mygender
  * sets your gender user config
@@ -9,25 +8,24 @@ var BotCommand = require('@models/BotCommand');
  * usage !mygender male
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
 
-function mygender(msg, server, world) {
+function mygender(msg) {
+  var server = msg.server;
   if (msg.args.length == 0) {
     msg.il8nResponse('mygender.noargs');
     return;
   }
 
   if(msg.args[0] == 'default'){
-    server.addUserSetting(msg.user_id, 'gender', 'default');
+    server.addMemberSetting(msg.message.member, 'gender', 'default');
     msg.il8nResponse('general.auto', {key: "mygender"});
     return;
   }
 
-  var gender = msg.getMessage().trim();
+  var gender = msg.content.trim();
   if (/^(boy|bud|chap|bloke|man|dude|m|male)$/i.test(gender)) {
     gender = "MALE";
   } else if (/^(girl|feminine|lady|gal|women|chick|f|female)$/i.test(gender)) {
@@ -36,15 +34,15 @@ function mygender(msg, server, world) {
     gender = "FEMALE";
   }
 
-  server.addUserSetting(msg.user_id,'gender',gender);
+  server.addMemberSetting(msg.message.member,'gender',gender);
 
   var response = server.lang('mygender.okay', { gender: gender });
-  var voiceName = server.getUserSetting(msg.user_id,'name');
+  var voiceName = server.getMemberSetting(msg.message.member,'name');
   if( voiceName && voiceName != "default" ) {
     response += "\n" + server.lang('myvoice.noped');
   }
 
-  server.addUserSetting(msg.user_id, 'name', 'default');
+  server.addMemberSetting(msg.message.member, 'name', 'default');
   msg.response(response);
 };
 

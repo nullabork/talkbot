@@ -4,18 +4,21 @@ var BotCommand = require('@models/BotCommand');
 
 var Common = require("@helpers/common");
 
-function speed(msg, server, world) {
+function speed(msg) {
+  var server = msg.server;
+  var member = msg.message.member;
+  
   if (!msg.args.length) return;
 
   if(msg.args[0] == 'default'){
-    server.addUserSetting(msg.user_id, 'speed', 'default');
+    server.addMemberSetting(member, 'speed', 'default');
     msg.il8nResponse('general.auto', {key: "myspeed"});
     return;
   }
 
   var speed = parseFloat(msg.args[0]);
   speed = Common.numberClamp(speed, 0.25, 4.0);
-  server.addUserSetting(msg.user_id,'speed',speed);
+  server.addMemberSetting(member,'speed',speed);
   msg.il8nResponse('myspeed.okay', { speed: speed });
 
 };

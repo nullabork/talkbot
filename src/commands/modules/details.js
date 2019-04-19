@@ -1,6 +1,6 @@
 // models
 var BotCommand = require('@models/BotCommand'),
-  CommentBuilder = require('@models/CommentBuilder');
+    CommentBuilder = require('@models/CommentBuilder');
 
 /**
  * Command: details
@@ -8,30 +8,21 @@ var BotCommand = require('@models/BotCommand'),
  * will print out users details
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function details(msg, server, world) {
+function details(msg) {
 
-  var target_ids = [msg.user_id];
+  var target = msg.message.mentions.members.first() || msg.message.member;
 
-  if (msg.args.length > 0 ) {
-    target_ids = msg.getUserIds();
-    if (!target_ids || !target_ids.length) {
-      target_ids = [msg.user_id];
-    }
-  }
-
-  let settings = server.getUserSettings(target_ids[0]);
+  let settings = msg.server.getMemberSettings(target);
 
   // prevent people getting the bot booted for spamming
   if(!settings || !Object.keys(settings).length) {
     return msg.response(
       CommentBuilder.create({
         data : {
-          "_heading" : server.lang('details.none', {user: target_ids[0]}),
+          "_heading" : msg.server.lang('details.none', {user: target.displayName}),
           "_data" : null
         }
       })
@@ -41,7 +32,7 @@ function details(msg, server, world) {
   msg.response(
     CommentBuilder.create({
       data : {
-        "_heading" :  server.lang('details.for', {user: msg.getNick(target_ids[0]) }),
+        "_heading" : msg.server.lang('details.for', {user: target.displayName }),
         "_data" : settings
       },
       keyMap : {

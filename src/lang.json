@@ -133,7 +133,7 @@
     "nopermissions" : "You cannot do this.",
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
-    "broken" : "Hmmm that didnt work on submit a bug on github",
+    "broken" : "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
     "shorthelp": "Transfer control of the bot to another person"
   },
   "en.help": {
@@ -181,14 +181,14 @@
   },
   "en.mute": {
     "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "You're now muted",
-    "alreadymuted": "You're already muted",
+    "okay": "I've muted :name",
+    "alreadymuted": ":name is already muted",
     "shorthelp": "Mute yourself so your text is not read out"
   },
   "en.unmute": {
     "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "You're now unmuted",
-    "alreadyunmuted": "You're already unmuted",
+    "okay": "I've unmuted :name",
+    "alreadyunmuted": ":name is already unmuted",
     "shorthelp": "Unmute yourself so all your text is read out"
   },
   "en.tts": {
