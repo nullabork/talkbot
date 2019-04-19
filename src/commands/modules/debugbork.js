@@ -98,13 +98,15 @@ function debug(msg, server, world) {
 function build_permitted_string(server) {
   var users = '';
   for( var id in server.permitted ) {
-    prefix = id == server.bound_to ? '(master)' : '';
-    var member = bot.servers[server.server_id].members[id];
-    if ( member ) users += ', ' + prefix + (member.nick ? member.nick : (bot.users[id] ? bot.users[id].username : id));
-    else {
-      var role = bot.servers[server.server_id].roles[id];
-      if ( role ) users += ', ' + role.name;
-      else users += ', ' + id;
+    if ( server.permitted[id] ) {
+      prefix = id == server.bound_to ? '(master)' : '';
+      var member = bot.servers[server.server_id].members[id];
+      if ( member ) users += ', ' + prefix + (member.nick ? member.nick : (bot.users[id] ? bot.users[id].username : id));
+      else {
+        var role = bot.servers[server.server_id].roles[id];
+        if ( role ) users += ', ' + role.name;
+        else users += ', ' + id;
+      }
     }
   }
   if ( users.length < 2 ) return '';
