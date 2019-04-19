@@ -265,7 +265,7 @@ class Common {
   };
 
   static alertBeepsSSML(){
-    return "<audio src='https://sfx.nullabork.dev/definite.mp3' clipEnd='0.5s' repeatCount='3' /><break time='500ms'/>";
+    return ' <audio src="https://sfx.nullabork.dev/definite.mp3" clipEnd="0.5s" repeatCount="3" /> <break time="500ms"/> ';
   }
 
 }

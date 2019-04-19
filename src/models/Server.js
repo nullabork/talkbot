@@ -472,8 +472,11 @@ class Server {
       !server.isPermitted(user_id)
     ) return;
 
-    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
+    if(channel_id) {
+      message = botStuff.resolveMessageSnowFlakes(channel_id, message);
+    }
     message = Common.cleanMessage(message);
+
 
     var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
     if (ret) message = ret;
