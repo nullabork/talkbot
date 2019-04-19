@@ -12,9 +12,6 @@ var Lang = require("lang.js"),
   fs = require('fs');
 
 // https://discordapp.com/developers/docs/topics/permissions
-var P_ADMINISTRATOR = 0x00000008;
-var P_MANAGE_GUILD = 0x00000020;
-
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -131,12 +128,9 @@ class Server {
     return this.messages && this.messages[possible_key];
   };
 
-  isServerChannel(channel_id) {
-    return bot.channels[channel_id].guild_id == this.server_id;
-  }
-
   getOwnersVoiceChannel(user_id) {
-    return botStuff.getUserVoiceChannel(user_id);
+    var server_id = this.server_id;
+    return botStuff.getUserVoiceChannel(server_id, user_id);
   };
 
   release(callback) {
@@ -168,51 +162,6 @@ class Server {
     return this.bound_to != null;
   };
 
-  getBoundToNick() {
-    var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-
-    if (!this.bound_to || !channel_id) {
-      return null;
-    }
-
-    if (channel_id && this.bound_to) {
-      return botStuff.findThingsName(channel_id, this.bound_to);
-    }
-
-    if (this.bound_to_username) {
-      return this.bound_to_username;
-    }
-
-    return this.bound_to;
-  };
-
-  // determines if the user can manage this server
-  canManageTheServer(user_id) {
-    return this.userHasPermissions(user_id, P_ADMINISTRATOR) ||
-      this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
-      this.isServerOwner(user_id);
-  }
-
-  // see the constants up top
-  roleHasPermission(role_id, permission_bit) {
-    if (bot.servers[this.server_id].roles[role_id] == null) return false;
-    if (bot.servers[this.server_id].roles[role_id]._permissions & permission_bit) return true;
-    else return false;
-  };
-
-  isServerOwner(user_id) {
-    return bot.servers[this.server_id].owner_id == user_id;
-  };
-
-  // determine if user has the biggest permissions available
-  userHasPermissions(user_id, permission_bit) {
-    for (var r in bot.servers[this.server_id].members[user_id].roles) {
-      if (this.roleHasPermission(bot.servers[this.server_id].members[user_id].roles[r], permission_bit)) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   // does this server think it's in a voice channel
   inChannel() {
@@ -237,7 +186,7 @@ class Server {
     if (server.connecting) return Common.error('joinVoiceChannel(' + channel_id + '): tried to connect twice!');
     server.connecting = true;
 
-    if (!server.isServerChannel(channel_id)) return Common.error('joinVoiceChannel(' + channel_id + ') on the wrong server');
+    if (!botStuff.isServerChannel(server.server_id, channel_id)) return Common.error('joinVoiceChannel(' + channel_id + ') on the wrong server');
 
     bot.joinVoiceChannel(channel_id, function (error, events) {
       if (error) {
@@ -397,13 +346,6 @@ class Server {
     if (escape_regex) search_text = Common.escapeRegExp(search_text);
     delete this.textrules[search_text];
     this.save();
-  };
-
-  removeTextRuleByIndex(index) {
-    var i = 0;
-    for (var k in Object.keys(this.textrules))
-      if (++i == index)
-        this.removeTextRule(k);
   };
 
   clearAllTextRules() {

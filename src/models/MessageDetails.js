@@ -43,10 +43,6 @@ class MessageDetails {
     return this.server.isMaster(this.user_id);
   }
 
-  ownerCanManageTheServer() {
-    return this.server.canManageTheServer(this.user_id);
-  }
-
   ownerIsDev() {
     if (!auth.dev_ids || !auth.dev_ids.length) {
       return false;
@@ -55,8 +51,12 @@ class MessageDetails {
   }
 
   ownerIsPermitted() {
-    return this.server.permitted[this.user_id] != null;
+    return this.server.isPermitted(this.user_id);
   };
+
+  ownerCanManageTheServer() {
+    return botStuff.canManageTheServer(this.server.server_id, this.user_id);
+  }
 
   il8nResponse(key, params) {
     var _this = this;
@@ -69,7 +69,9 @@ class MessageDetails {
   }
 
   ownerIsServerOwner() {
-    return this.server.server_owner_user_id == this.user_id;
+    var _this = this;
+    var server = this.server;
+    return botStuff.isServerOwner(server.server_id, _this.user_id);
   };
 
   messageNick() {
@@ -85,7 +87,8 @@ class MessageDetails {
   }
 
   getOwnersVoiceChannel() {
-    return botStuff.getUserVoiceChannel(this.user_id);
+    var server_id = this.server.server_id;
+    return botStuff.getUserVoiceChannel(server_id, this.user_id);
   };
 
   getUserIds() {

@@ -17,7 +17,17 @@ var bot = botStuff.bot;
  */
 function kill(msg, server, world) {
   if (msg.ownerIsDev()) {
-    world.kill('debugbork');
+    
+    // provide the # of minutes before killing
+    if (msg.args[0] * 60000 > 59999) // its a number > 1 minute 
+    {
+      for ( var server_id in world.servers )
+        if ( world.servers[server_id].inChannel())
+          world.servers[server_id].talk('The bot is rebooting in ' + msg.args[0] + ' minutes');
+      setTimeout(function() {world.kill('debugbork ' + msg.args[0]);}, msg.args[0] * 60000);
+    }
+    else 
+      world.kill('debugbork');
   }
 };
 
@@ -88,16 +98,19 @@ function debug(msg, server, world) {
 function build_permitted_string(server) {
   var users = '';
   for( var id in server.permitted ) {
-    prefix = id == server.bound_to ? '(master)' : '';
-    var member = bot.servers[server.server_id].members[id];
-    if ( member ) users += ' ' + prefix + (member.nick ? member.nick : (bot.users[id] ? bot.users[id].username : id));
-    else {
-      var role = bot.servers[server.server_id].roles[id];
-      if ( role ) users += ' ' + role.name;
-      else users += ' ' + id;
+    if ( server.permitted[id] ) {
+      prefix = id == server.bound_to ? '(master)' : '';
+      var member = bot.servers[server.server_id].members[id];
+      if ( member ) users += ', ' + prefix + (member.nick ? member.nick : (bot.users[id] ? bot.users[id].username : id));
+      else {
+        var role = bot.servers[server.server_id].roles[id];
+        if ( role ) users += ', ' + role.name;
+        else users += ', ' + id;
+      }
     }
   }
-  return users.trim();
+  if ( users.length < 2 ) return '';
+  return users.trim().substring(2);
 };
 
 var command_kill = new BotCommand({

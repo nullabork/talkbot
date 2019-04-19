@@ -6,6 +6,8 @@ var Discord = require('discord.io'),
   tl8 = require('@google-cloud/translate'),
   textToSpeech = require('@google-cloud/text-to-speech');
 
+var P_ADMINISTRATOR = 0x00000008;
+var P_MANAGE_GUILD = 0x00000020;
 
 class BotStuff {
 
@@ -31,25 +33,57 @@ class BotStuff {
 
   }
 
-  isVoiceChannel(channel_id) {
-    if (!channel_id) return false;
-    return (this.bot.channels[channel_id].type == 2);
+  isServerChannel(server_id, channel_id) {
+    let bot = this.bot;
+    return bot.channels[channel_id].guild_id == server_id;
   }
 
-  getUserVoiceChannel(user_id) {
+  isServerOwner(server_id, user_id) {
+    let bot = this.bot;
+    return bot.servers[server_id].owner_id == user_id;
+  };
+
+  // determine if user has the biggest permissions available
+  userHasPermissions(server_id, user_id, permission_bit) {
+    let bot = this.bot;
+    for (var r in bot.servers[server_id].members[user_id].roles) {
+      if (this.roleHasPermission(server_id, bot.servers[server_id].members[user_id].roles[r], permission_bit)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // determines if the user can manage this server
+  canManageTheServer(server_id, user_id) {
+    return this.userHasPermissions(server_id, user_id, P_ADMINISTRATOR) ||
+      this.userHasPermissions(server_id, user_id, P_MANAGE_GUILD) ||
+      this.isServerOwner(server_id, user_id);
+  }
+
+
+  isVoiceChannel(channel_id) {
+    let bot = this.bot;
+    if (!channel_id) return false;
+    return (bot.channels[channel_id].type == 2);
+  }
+
+  getUserVoiceChannel(server_id, user_id) {
     if (!user_id) return;
+    if (!server_id) return;
 
     let bot = this.bot;
 
-    for (var server in bot.servers) {
-      for (var channel in bot.servers[server].channels) {
-        var chan = bot.servers[server].channels[channel];
-        if (chan.type == 2) {
-          for (var member in chan.members) {
-            var u = chan.members[member];
-            if (u.user_id == user_id) {
-              return channel;
-            }
+    var server = bot.servers[server_id];
+    if (!server) return;
+
+    for (var channel in server.channels) {
+      var chan = server.channels[channel];
+      if (chan.type == 2) {
+        for (var member in chan.members) {
+          var u = chan.members[member];
+          if (u.user_id == user_id) {
+            return channel;
           }
         }
       }
@@ -64,11 +98,6 @@ class BotStuff {
       return Common.caseToSpace(name);
     })
   }
-
-  isUserInVoiceChannel(user_id) {
-    if (!user_id) return false;
-    return this.getUserVoiceChannel(user_id) != null;
-  };
 
   sendMessage(channel_id, message) {
     let bot = this.bot;
@@ -123,7 +152,15 @@ class BotStuff {
     var member = server.members[user_id];
     if (!member) return false;
     return member.roles.indexOf(role_id) > -1;
-  }
+  };
+
+  // see the constants up top
+  roleHasPermission(server_id, role_id, permission_bit) {
+    let bot = this.bot;
+    if (bot.servers[server_id].roles[role_id] == null) return false;
+    if (bot.servers[server_id].roles[role_id]._permissions & permission_bit) return true;
+    else return false;
+  };
 
 
   getRole(server_id, roleWord) {

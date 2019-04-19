@@ -69,7 +69,7 @@
     "no": "Sorry, I cant find the language :lang.",
     "deny": "Sorry, you're not permitted",
     "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc.",
-    "more" : "You must specify a language code. You can find codes with `:command_charmylangs`"
+    "more" : "You must specify a language code. You can find codes with `:command_charlangs`"
   },
   "en.myvoice": {
     "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
@@ -173,6 +173,7 @@
   "en.textruleusage": {
     "title" : "Text replacement rules",
     "command" : "Find <find> and replace it with <replacement>",
+    "command_regex" : "Find <find> and replace it with <replacement> using regular expressions",
     "list" : "List all rules",
     "del" : "Delete a rule by key",
     "clearall" : "Clear all rules"
@@ -201,6 +202,7 @@
   },
   "en.mytitle": {
     "read": "I call you :title",
-    "set": "I'll now call you :title"
+    "set": "I'll now call you :title",
+    "shorthelp": "Set your personal title"
   }
 }

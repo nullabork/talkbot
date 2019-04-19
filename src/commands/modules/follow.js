@@ -1,5 +1,6 @@
 // models
-var BotCommand = require('@models/BotCommand');
+var BotCommand = require('@models/BotCommand'),
+  botStuff = require('@helpers/bot-stuff');
 
 /* * *
  * Command: follow
@@ -24,7 +25,7 @@ function follow(msg, server, world) {
     }
   } else {
     var voiceChan = msg.getOwnersVoiceChannel();
-    if (server.isServerChannel(voiceChan)) {
+    if (botStuff.isServerChannel(server.server_id, voiceChan)) {
       server.setMaster(msg.user_id, msg.username);
       server.joinVoiceChannel(voiceChan);
 
@@ -93,7 +94,7 @@ function sidle(msg, server, world) {
     return;
   }
 
-  if (!server.canManageTheServer(msg.user_id)) {
+  if (!msg.ownerCanManageTheServer()) {
     msg.il8nResponse('sidle.nope');
     return;
   }
@@ -131,7 +132,7 @@ function transfer(msg, server, world) {
   if (server.connecting) return msg.il8nResponse('transfer.connecting');
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
 
-  if (!msg.ownerIsMaster() && !server.canManageTheServer(msg.user_id)) {
+  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer()) {
     msg.il8nResponse('transfer.nopermissions');
     return;
   }
@@ -161,9 +162,8 @@ function transfer(msg, server, world) {
     server.joinVoiceChannel(voiceChan);
 
     msg.il8nResponse('transfer.okay', {
-      name : server.getBoundToNick()
+      name : username
     });
-
   } else {
     msg.il8nResponse('transfer.broken');
   }

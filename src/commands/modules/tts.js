@@ -28,10 +28,19 @@ class Mute extends Command {
   get hidden () { return false; }
 
   execute ({input, server, world}) {
-    if (server.getUserSetting(input.user_id, 'muted'))
-      return input.il8nResponse('mute.alreadymuted');
+    var target_ids = [input.user_id];
+    
+    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.getUserIds().length > 0 )
+    {
+      target_ids = input.getUserIds();
+    }
+        
+    for ( var target_id in target_ids ) {
+      if (server.getUserSetting(target_id, 'muted'))
+        return input.il8nResponse('mute.alreadymuted');
 
-    server.addUserSetting(input.user_id,'muted',true);
+      server.addUserSetting(target_id,'muted',true);
+    }
     return input.il8nResponse('mute.okay');
   }
 }
@@ -42,12 +51,19 @@ class UnMute extends Command {
   get hidden () { return false; }
 
   execute ({input, server, world}) {
-    var user_id = input.user_id;
+    var target_ids = [input.user_id];
+    
+    if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.getUserIds().length > 0 )
+    {
+      target_ids = input.getUserIds();
+    }
         
-    if (!server.getUserSetting(user_id, 'muted'))
-      return input.il8nResponse('unmute.alreadyunmuted');
+    for ( var target_id in target_ids ) {
+      if (!server.getUserSetting(target_id, 'muted'))
+        return input.il8nResponse('unmute.alreadyunmuted');
 
-    server.addUserSetting(user_id,'muted',false);
+      server.addUserSetting(target_id,'muted',false);
+    }
     return input.il8nResponse('unmute.okay');
   }
 }

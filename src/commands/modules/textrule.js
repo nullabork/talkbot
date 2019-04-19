@@ -189,10 +189,11 @@ class TextRule extends Command {
           data : {
             _heading : usage,
             _data : {
-                [command + " add <find> -> <replacement>"]      : server.lang('textruleusage.command'),
-                [command + " list"]                             : server.lang('textruleusage.list'),
-                [command + " del <word|emoji>"]                 : server.lang('textruleusage.del'),
-                [command + " clearall"]                         : server.lang('textruleusage.clearall')
+                [command + " add <find> -> <replacement>"]                      : server.lang('textruleusage.command'),
+                [command + " addregex <find_pattern> -> <replacement_pattern>"] : server.lang('textruleusage.command_regex'),
+                [command + " list"]                                             : server.lang('textruleusage.list'),
+                [command + " del <word|emoji>"]                                 : server.lang('textruleusage.del'),
+                [command + " clearall"]                                         : server.lang('textruleusage.clearall')
             }
           }
         })
