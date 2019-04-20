@@ -1,7 +1,8 @@
 {
   "en.general" : {
     "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
-    "nope" : "Sorry, only a server admin or server manager can do this."
+    "nope" : "Sorry, only a server admin or server manager can do this.",
+    "okay" : "Looks like this might have completed!?"
   },
   "en.set": {
     "okay": "Set message for :lang",
@@ -127,6 +128,9 @@
     "okay": "Okay you're now the :title",
     "none": "I have no :title",
     "broken": "Something went wrong getting the voice channel, you might still have been made the :title"
+  },
+  "en.broadcast": {
+    "confirmation": "Confirmation Needed, Use :command_charbroadcast <confirm | yes | y>"
   },
   "en.transfer": {
     "okay": "Okay :name is now the :title",

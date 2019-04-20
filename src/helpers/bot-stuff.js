@@ -12,14 +12,22 @@ var P_MANAGE_GUILD = 0x00000020;
 class BotStuff {
 
   constructor(shard_number, total_shards) {
-    
+
     if (!shard_number) shard_number = 0;
     if (!total_shards) total_shards = 1;
-    
+
     Common.out('Setting up client for shard ID#' + shard_number + '. Total count of shards is ' + total_shards);
-        
+
     this.auth = auth;
+<<<<<<< HEAD
     this.bot = new Discord.Client();
+=======
+    this.bot = new Discord.Client({
+      token: auth.token,
+      autorun: true,
+      shard: [shard_number,total_shards]
+    });
+>>>>>>> 659410ba8069159872ab55c13c968bc5282b558d
 
     this.tts_client = new textToSpeech.TextToSpeechClient();
 
@@ -48,7 +56,7 @@ class BotStuff {
   isVoiceChannel(channel) {
     return channel.type == 2;
   }
-  
+
   getUserVoiceChannel(server_id, user_id) {
     if (!user_id) return;
     if (!server_id) return;
@@ -57,7 +65,7 @@ class BotStuff {
 
     var server = bot.servers[server_id];
     if (!server) return;
-    
+
     for (var channel in server.channels) {
       var chan = server.channels[channel];
       if (chan.type == 2) {
@@ -124,17 +132,17 @@ class BotStuff {
 
     return null;
   }
-  
+
   userHasRole(server_id, user_id, role_id){
     let bot = this.bot;
     var server = bot.servers[server_id];
     if (!server) return false;
     if (!server.roles[role_id]) return false;
     var member = server.members[user_id];
-    if (!member) return false;    
+    if (!member) return false;
     return member.roles.indexOf(role_id) > -1;
   };
-  
+
   // see the constants up top
   roleHasPermission(server_id, role_id, permission_bit) {
     let bot = this.bot;
@@ -143,6 +151,21 @@ class BotStuff {
     else return false;
   };
 
+
+  getRole(server_id, roleWord) {
+    let bot = this.bot;
+    var server = bot.servers[server_id];
+    if (!server || !roleWord || !server.roles ) return null;
+
+    let keys = Object.keys(server.roles);
+
+    for (const role_id of keys) {
+      let role = server.roles[role_id];
+      if(role && role.name && roleWord.toLowerCase() == role.name.toLowerCase()) return role;
+    }
+
+    return null;
+  }
 }
 
 const args = require('yargs').argv;

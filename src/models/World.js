@@ -12,7 +12,7 @@ class World {
   constructor() {
     this.servers = {};
     this.presence_timeout = null;
-    this.default_title = 'master';    
+    this.default_title = 'master';
   }
 
 /* * *
@@ -25,8 +25,8 @@ class World {
     world.setPresence();
     world.startRebootTimer();
     bot.guilds.tap(guild => world.addServer(guild));
-  };  
-    
+  };
+
 /* * *
  * addServer()
  *
@@ -35,7 +35,7 @@ class World {
   addServer(guild) {
     this.servers[guild.id] = new Server(guild, this);
   }
-  
+
 /* * *
  * removeServer()
  *
@@ -52,7 +52,7 @@ class World {
 /* * *
  * setPresence()
  *
- * Set the bot's presence  
+ * Set the bot's presence
  * * */
   setPresence() {
 
@@ -69,51 +69,51 @@ class World {
         }
       });
     };
-    
+
     // this protects against spamming discord with presence updates
     // and getting banned
     if ( this.presence_timeout )
       clearTimeout(this.presence_timeout);
     this.presence_timeout = setTimeout(presence_timer, 50);
   };
-  
+
 /* * *
  * renderPresenceHelp()
  *
- * Create a presence string  
+ * Create a presence string
  * * */
   renderPresenceHelp() {
     var cmds = require("@commands");
     return cmds.command_char + "help, " + bot.guilds.size + " servers";
   };
-  
-  
+
+
 /* * *
  * saveAll()
  *
- * Save the state of every server in the world 
+ * Save the state of every server in the world
  * * */
   saveAll() {
     for (var server_id in this.servers) {
       this.servers[server_id].save();
     }
   };
-  
+
 /* * *
  * releaseAll()
  *
- * Call release() on each server 
+ * Call release() on each server
  * * */
   releaseAll() {
     for (var server_id in this.servers) {
       this.servers[server_id].release();
     }
   };
-  
+
 /* * *
  * kill()
  *
- * Attempts to shutdown gracefully - pass a reason 
+ * Attempts to shutdown gracefully - pass a reason
  * * */
   kill(reason) {
     if (reason) Common.out('kill(): ' + reason);
@@ -122,11 +122,11 @@ class World {
     bot.destroy();
     process.exit();
   };
-  
+
 /* * *
  * getActiveServersCount()
  *
- * Gets the number of servers where someone is !following 
+ * Gets the number of servers where someone is !following
  * * */
   getActiveServersCount() {
     var w = this;
@@ -136,43 +136,43 @@ class World {
     }
     return c;
   };
-    
+
 /* * *
  * startRebootTimer()
  *
  * When called sets the bot to automatically reboot when no one is using it
- * Its a hack to work around network bugs and so forth 
+ * Its a hack to work around network bugs and so forth
  * * */
   startRebootTimer() {
     var world = this;
-    
+
     var reboot_timer = function() {
-      
+
       if ( world.getActiveServersCount() == 0 ) {
         world.kill('Inactivity reboot');
         return;
       }
-      
-      // if someone is using it it'll get here and we'll 
+
+      // if someone is using it it'll get here and we'll
       // check again in an hour to see if we can reboot it
-      setTimeout(reboot_timer, 60 * 60 * 1000); 
+      setTimeout(reboot_timer, 60 * 60 * 1000);
     };
-    
+
     // kick off in 12 hours
-    setTimeout(reboot_timer, 12 * 60 * 60 * 1000); 
+    setTimeout(reboot_timer, 12 * 60 * 60 * 1000);
   };
 
 /* * *
  * dispose()
  *
  * Safely clean up any resources for this class
- * * */ 
+ * * */
   dispose() {
     for ( var s in this.servers ) {
       this.servers[s].dispose();
     }
   };
-  
+
 }
 
 module.exports = new World();

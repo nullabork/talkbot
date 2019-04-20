@@ -101,16 +101,16 @@ class Server {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
-    
+
     if ( !params ) params = {};
 
     var command_char = auth.command_char;
     var title = params.title || this.world.default_title;
-    
+
     params = {
       ...(params),
       command_char,
-      title 
+      title
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
@@ -118,7 +118,7 @@ class Server {
       params
     ]);
   }
-  
+
   isLangKey(possible_key) {
     return this.messages && this.messages[possible_key];
   };
@@ -145,7 +145,7 @@ class Server {
     if (server.leaving) return; // dont call it twice dude
     server.voiceConnection.disconnect();
   };
-  
+
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
   joinVoiceChannel(voiceChannel) {
@@ -154,9 +154,9 @@ class Server {
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
-    
+
     //console.log(voiceChannel);
-    
+
     var p = voiceChannel.join()
       .then(connection => {
         connection.on('closing', server.voiceChannelClosing);
@@ -167,9 +167,9 @@ class Server {
         server.connecting = false;
       }, error => {
         server.connecting = false;
-        Common.error(error); 
+        Common.error(error);
       });
-      
+
     return p;
   };
 
@@ -179,7 +179,7 @@ class Server {
     server.permitted = {};
     clearTimeout(server.neglect_timeout);
   };
-  
+
   voiceChannelDisconnect() {
     var server = this;
     server.voiceConnection = null;
@@ -187,9 +187,9 @@ class Server {
     server.world.setPresence();
     //callback();
   };
-  
+
   // permit another user to speak
-  permit(snowflake_id) {    
+  permit(snowflake_id) {
     this.resetNeglectTimeout();
     this.permitted[snowflake_id] = {};
     this.save();
@@ -207,7 +207,7 @@ class Server {
     if (!member) return false;
     for(var snowflake_id in this.permitted) {
       if (this.permitted[snowflake_id])
-        if (snowflake_id == member.id || member.roles.has(member.id)) 
+        if (snowflake_id == member.id || member.roles.has(member.id))
           return true;
     }
     return false;
@@ -231,9 +231,9 @@ class Server {
 
     // delay for 3 seconds to allow the bot to talk
     var neglectedrelease = function () {
-      var timeout_neglectedrelease = function () { 
+      var timeout_neglectedrelease = function () {
         Common.out('neglected: in chan');
-        server.release(); 
+        server.release();
       };
       setTimeout(timeout_neglectedrelease, 3000);
     };
@@ -320,8 +320,8 @@ class Server {
 
     return null;
   };
-  
-  
+
+
   // speak a message in a voice channel
   talk(message, options, callback) {
 
@@ -375,20 +375,20 @@ class Server {
       }
     });
   }
-  
+
   stop(reason) {
     this.voiceDispatcher.end(reason);
   }
-  
+
   playAudioContent(audioContent, callback) {
     var server = this;
-    
+
     /*
-    var dispatcher_ended = 
+    var dispatcher_ended =
       var nextAudio = server.audioQueue.shift();
       if ( nextAudio ) nextAudio();
     };
-    
+
     if ( server.playing )
     {
       if ( !server.audioQueue ) server.audioQueue = [];
@@ -396,13 +396,13 @@ class Server {
       server.audioQueue.push(callback);
     }
       // queue up the next audio*/
-    
+
     server.playing = true;
     var readable = new stream.Duplex();
     //readable._read = () => {}; // _read is required but you can noop it
     readable.push(audioContent);
     readable.push(null);
-    
+
     server.voiceDispatcher = server.voiceConnection
       .playStream(readable)
       .on('end', reason => {

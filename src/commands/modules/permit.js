@@ -14,7 +14,7 @@ var BotCommand = require('@models/BotCommand');
  */
 function permit(msg) {
   var server = msg.server;
-  
+
   if (!msg.ownerIsMaster()) {
     msg.il8nResponse('permit.nope');
     return;
@@ -24,6 +24,17 @@ function permit(msg) {
     msg.il8nResponse('permit.none');
     return;
   }
+
+  // var target_ids = msg.getUserAndRoleIds();
+  // let none_snowflake_role_ids = msg.lookForRoleFromWordArgs();
+
+
+  // if(!target_ids) target_ids = [];
+  // //merge roles from ids and words
+  // target_ids = [
+  //   ...target_ids,
+  //   ...none_snowflake_role_ids
+  // ];
 
   msg.message.mentions.members.tap( member => server.permit(member.id));
   msg.message.mentions.roles.tap( role => server.permit(role.id));
@@ -53,7 +64,7 @@ function unpermit(msg) {
     msg.il8nResponse('unpermit.deny');
     return;
   }
-  
+
   if ( msg.message.mentions.members.size == 0 ) {
     server.unpermit(msg.member.id);
   }
