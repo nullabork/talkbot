@@ -1,9 +1,6 @@
 
-var fs = require('fs'),
-  paths = require('@paths'),
-  botStuff = require("@helpers/bot-stuff"),
+var botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
-  auth = require("@auth"),
   Common = require("@helpers/common"),
   bot = botStuff.bot;
 

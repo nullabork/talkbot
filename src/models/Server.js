@@ -4,11 +4,9 @@ var Lang = require("lang.js"),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
   MessageSSML = require('@models/MessageSSML'),
-  MessageDetails = require('@models/MessageDetails'),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   auth = require('@auth'),
-  bot = botStuff.bot,
   fs = require('fs'),
   stream = require('stream');
 
@@ -159,8 +157,19 @@ class Server {
     
     var p = voiceChannel.join()
       .then(connection => {
-        connection.on('closing', server.voiceChannelClosing);
-        connection.on('disconnect', server.voiceChannelDisconnect);
+        connection.on('closing', () => {
+          server.leaving = true;
+          server.bound_to = null;
+          server.permitted = {};
+          clearTimeout(server.neglect_timeout);
+        });
+        connection.on('disconnect', () => {
+          var server = this;
+          server.voiceConnection = null;
+          server.leaving = false;
+          server.world.setPresence();
+          //callback();
+        });
         server.voiceConnection = connection;
         server.save();
         server.world.setPresence();
@@ -171,21 +180,6 @@ class Server {
       });
       
     return p;
-  };
-
-  voiceChannelClosing() {
-    server.leaving = true;
-    server.bound_to = null;
-    server.permitted = {};
-    clearTimeout(server.neglect_timeout);
-  };
-  
-  voiceChannelDisconnect() {
-    var server = this;
-    server.voiceConnection = null;
-    server.leaving = false;
-    server.world.setPresence();
-    //callback();
   };
   
   // permit another user to speak
@@ -360,6 +354,8 @@ class Server {
 
     request.input = { text: null, ssml: message };
 
+    console.log("tts");
+
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
@@ -368,6 +364,7 @@ class Server {
       }
       try {
         // might have to queue the content if its playing currently
+        console.log("tts-buildstream");
         server.playAudioContent(response.audioContent, callback);
       }
       catch (e) {
@@ -399,13 +396,15 @@ class Server {
     
     server.playing = true;
     var readable = new stream.Duplex();
-    //readable._read = () => {}; // _read is required but you can noop it
+    readable._read = () => {}; // _read is required but you can noop it
     readable.push(audioContent);
     readable.push(null);
     
+    console.log("tts-play");
     server.voiceDispatcher = server.voiceConnection
       .playStream(readable)
       .on('end', reason => {
+        console.log("tts-end");
         server.playing = false;
         callback();
       })
@@ -426,7 +425,7 @@ class Server {
       settings.muted
     ) return;
 
-    var content = message.cleanContent;
+    var content = Common.cleanMessage(message.cleanContent);
     var ret = commands.notify('message', { message: message, content: content, server: server });
     if (ret) content = ret;
 

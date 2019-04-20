@@ -206,8 +206,8 @@ class TextRule extends Command {
    *
    * @return  {[type]}            [return description]
    */
-  onMessage({message, modified, server}) {
-    var content = modified || message.content;
+  onMessage({message, content, modified, server}) {
+    var content = modified || content;
 
     for ( var textrule in server.textrules ) {
       var re = new RegExp(textrule, 'gi');
