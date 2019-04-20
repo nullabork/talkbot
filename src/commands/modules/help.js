@@ -40,8 +40,9 @@ class Help extends Command {
       },
 
       "Issues" : [
-        'To submit bugs (and shitpost) go to https://github.com/nullabork/talkbot',
-        'To Talk to other humans join our discord https://discordapp.com/invite/NxrPp8g'
+        'For documentation go to https://talkbot.nullabork.dev/',
+        'For talk about the bot join our discord https://discordapp.com/invite/NxrPp8g',
+        'To add talkbot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0'
       ]
     };
   }

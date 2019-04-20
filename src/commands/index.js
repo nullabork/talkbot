@@ -2,7 +2,11 @@ var path = require("path"),
   auth = require('@auth');
 
 // models
-var BotCommand = require('@models/BotCommand');
+var BotCommand = require('@models/BotCommand'),
+  MessageDetails = require('@models/MessageDetails'),
+  Command = require('@models/Command'),
+  Common = require('@helpers/common');
+
 
 function Commands() {
   var self = this;
@@ -152,6 +156,56 @@ function Commands() {
       Common.error(ex);
     }
     return ret;
+  };
+  
+  // is this Message a command message?
+  this.isCommand = function(message) {
+    return (message.content.substring(0, this.command_char.length) == this.command_char);
+  }
+  
+  // process a message coming in from the real world
+  this.process = function(message, server, world) {
+    
+    if ( !this.isCommand(message)) return;
+    
+    var parts = message.content.match(
+      new RegExp("(" + Common.escapeRegExp(this.command_char) + ")([^ ]+)(.*)", "i")
+    );
+    
+    if (!parts || parts.length < 2) {
+      return;
+    }
+
+    var cmdChar = parts[1];
+    var cmdVerb = parts[2] || null;
+    var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
+    var cmdContent = (parts[3] || "").trim();
+
+    if (!cmdVerb || !cmdChar) {
+      return;
+    }
+
+    var msgDets = new MessageDetails({
+      world: world,
+      server: server,
+      message: message,
+      cmdChar: cmdChar,
+      cmd: cmdVerb,
+      args: cmdArgs,
+      content: cmdContent
+    });
+
+    var command = this.get(msgDets.cmd);
+    if(!command) return;
+
+    server.resetNeglectTimeout();
+
+    //this is for the new way... v3 of writing commands, so we can use argument destructoring
+    if (command instanceof Command) {
+      command.execute({input : msgDets});
+    } else {
+      command.execute.apply(this, [msgDets]);
+    }
   };
 }
 

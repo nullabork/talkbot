@@ -9,7 +9,6 @@
     "@google-cloud/translate": "^2.1.4",
     "array-query": "^0.1.2",
     "child_process": "^1.0.2",
-    "discord.io": "github:izy521/discord.io",
     "discord.js": "^11.4.2",
     "fetch": "^1.1.0",
     "ffmpeg": "0.0.4",

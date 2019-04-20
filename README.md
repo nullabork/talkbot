@@ -4,7 +4,7 @@
 Discord bot for natural voice text-to-speech and language translation
 
 
-Try it out here: https://discord.gg/NxrPp8g
+Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 
 
 # Quick start 

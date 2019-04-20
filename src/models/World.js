@@ -11,31 +11,49 @@ class World {
 
   constructor() {
     this.servers = {};
-    this.presence_renderers = [this.renderPresenceHelp]; // , this.renderPresenceCounts, this.renderPresenceFollow];
-    this.presence_renderers_index = 0;
-    this.presence_rotation_timeout = null;
     this.presence_timeout = null;
     this.default_title = 'master';    
   }
 
+/* * *
+ * startup()
+ *
+ * Actions that run when the world object is created
+ * * */
   startup() {
     var world = this;
     world.setPresence();
     world.startRebootTimer();
-    bot.guilds.tap(guild => world.addServer(new Server(guild, world)));
+    bot.guilds.tap(guild => world.addServer(guild));
   };  
     
-  addServer(server) {
-    this.servers[server.server_id] = server;
+/* * *
+ * addServer()
+ *
+ * Add a server to the world - pass Guild
+ * * */
+  addServer(guild) {
+    this.servers[guild.id] = new Server(guild, this);
   }
-
-  removeServer(server) {
-    if ( !this.servers[server.server_id] ) return;
-    delete this.servers[server.server_id];
+  
+/* * *
+ * removeServer()
+ *
+ * Remove a server from the world - pass Guild
+ * * */
+  removeServer(guild) {
+    if ( !this.servers[guild.id] ) return;
+    var server = this.servers[guild.id];
+    delete this.servers[guild.id];
     server.save();
     server.dispose();
   }
 
+/* * *
+ * setPresence()
+ *
+ * Set the bot's presence  
+ * * */
   setPresence() {
 
     var w = this;
@@ -57,21 +75,35 @@ class World {
     if ( this.presence_timeout )
       clearTimeout(this.presence_timeout);
     this.presence_timeout = setTimeout(presence_timer, 50);
-  }
-  
-  renderPresenceHelp() {
-    var cmds = require("@commands");
-    return bot.guilds.size + " servers, " + cmds.command_char + "help";
   };
   
-  // save all the states
+/* * *
+ * renderPresenceHelp()
+ *
+ * Create a presence string  
+ * * */
+  renderPresenceHelp() {
+    var cmds = require("@commands");
+    return cmds.command_char + "help, " + bot.guilds.size + " servers";
+  };
+  
+  
+/* * *
+ * saveAll()
+ *
+ * Save the state of every server in the world 
+ * * */
   saveAll() {
     for (var server_id in this.servers) {
       this.servers[server_id].save();
     }
   };
   
-  // release all servers from their masters
+/* * *
+ * releaseAll()
+ *
+ * Call release() on each server 
+ * * */
   releaseAll() {
     for (var server_id in this.servers) {
       this.servers[server_id].release();
@@ -89,7 +121,7 @@ class World {
     this.saveAll();
     bot.destroy();
     process.exit();
-  }
+  };
   
 /* * *
  * getActiveServersCount()
@@ -116,17 +148,25 @@ class World {
     
     var reboot_timer = function() {
       
-      if ( world.getActiveServersCount() == 0 )
-      {
+      if ( world.getActiveServersCount() == 0 ) {
         world.kill('Inactivity reboot');
+        return;
       }
       
-      setTimeout(reboot_timer, 60 * 60 * 1000); // every hour check if no one is using
+      // if someone is using it it'll get here and we'll 
+      // check again in an hour to see if we can reboot it
+      setTimeout(reboot_timer, 60 * 60 * 1000); 
     };
     
-    setTimeout(reboot_timer, 12 * 60 * 60 * 1000); // kick off in 12 hours
+    // kick off in 12 hours
+    setTimeout(reboot_timer, 12 * 60 * 60 * 1000); 
   };
-  
+
+/* * *
+ * dispose()
+ *
+ * Safely clean up any resources for this class
+ * * */ 
   dispose() {
     for ( var s in this.servers ) {
       this.servers[s].dispose();

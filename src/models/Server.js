@@ -143,23 +143,8 @@ class Server {
     var server = this;
     if (!server.voiceConnection) return;
     if (server.leaving) return; // dont call it twice dude
-    server.leaving = true;
     server.voiceConnection.disconnect();
   };
-  
-  hookConnectionEvents(connection)
-  {
-    var server = this;
-    connection.on('disconnect', () => {
-      server.bound_to = null;
-      server.permitted = {};
-      clearTimeout(server.neglect_timeout);
-      server.voiceConnection = null;
-      server.leaving = false;
-      server.world.setPresence();
-      //callback();
-    });
-  }
   
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
@@ -174,7 +159,8 @@ class Server {
     
     var p = voiceChannel.join()
       .then(connection => {
-        server.hookConnectionEvents(connection);
+        connection.on('closing', server.voiceChannelClosing);
+        connection.on('disconnect', server.voiceChannelDisconnect);
         server.voiceConnection = connection;
         server.save();
         server.world.setPresence();
@@ -187,6 +173,20 @@ class Server {
     return p;
   };
 
+  voiceChannelClosing() {
+    server.leaving = true;
+    server.bound_to = null;
+    server.permitted = {};
+    clearTimeout(server.neglect_timeout);
+  };
+  
+  voiceChannelDisconnect() {
+    var server = this;
+    server.voiceConnection = null;
+    server.leaving = false;
+    server.world.setPresence();
+    //callback();
+  };
   
   // permit another user to speak
   permit(snowflake_id) {    
