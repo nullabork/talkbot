@@ -43,7 +43,7 @@ class Server {
     });
 
     this.messages = {};
-  }
+  };
 
   // GuildMember
   setMaster(member) {
@@ -51,7 +51,7 @@ class Server {
     this.permit(member.id);
     this.resetNeglectTimeout();
     this.save();
-  }
+  };
 
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
@@ -61,7 +61,7 @@ class Server {
         ...add
       }
     }
-  }
+  };
 
   addMemberSetting(member, name, value) {
     if (!this.memberSettings) this.memberSettings = {};
@@ -72,29 +72,29 @@ class Server {
     this.memberSettings[member.id][name] = value;
     this.save();
     return value;
-  }
+  };
 
 
   clearMemberSettings(member) {
     if (!this.memberSettings) this.memberSettings = {};
     this.memberSettings[member.id] = {};
     this.save();
-  }
+  };
 
   getMemberSetting(member, name) {
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return null;
     return this.memberSettings[member.id][name];
-  }
+  };
 
   deleteMemberSetting(member, name) {
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return;
     delete this.memberSettings[member.id][name];
-  }
+  };
 
   getMemberSettings(member) {
     if (!this.memberSettings || !this.memberSettings[member.id]) return {};
     return this.memberSettings[member.id];
-  }
+  };
 
   lang(key, params) {
     if (this.isLangKey(key)) {
@@ -116,7 +116,7 @@ class Server {
       key,
       params
     ]);
-  }
+  };
   
   isLangKey(possible_key) {
     return this.messages && this.messages[possible_key];
@@ -129,6 +129,7 @@ class Server {
     return this.bound_to.id == member.id;
   };
 
+  // true if this server is bound to a user already
   isBound() {
     return this.bound_to != null;
   };
@@ -241,29 +242,6 @@ class Server {
       Common.out('neglected: server.release() not in chan');
       server.release();
     }
-  }
-
-
-  addTextRule(search_text, replace_text, escape_regex) {
-    if (replace_text == '') return;
-    if (search_text == '') return;
-    search_text = search_text.trim().toLowerCase();
-    replace_text = replace_text.trim();
-    if (escape_regex) search_text = Common.escapeRegExp(search_text);
-    this.textrules[search_text] = replace_text;
-    this.save();
-  };
-
-  removeTextRule(search_text, escape_regex) {
-    search_text = search_text.trim().toLowerCase();
-    if (escape_regex) search_text = Common.escapeRegExp(search_text);
-    delete this.textrules[search_text];
-    this.save();
-  };
-
-  clearAllTextRules() {
-    this.textrules = {};
-    this.save();
   };
 
   // run this to cleanup resources before shutting down
@@ -278,7 +256,7 @@ class Server {
     else {
       server.release();
     }
-  }
+  };
 
   // when the server is deleted or shutdown or disconnected run this to cleanup things
   dispose() {
@@ -376,13 +354,13 @@ class Server {
         Common.error(e);
       }
     });
-  }
+  };
   
   // stop all currently playing audio and empty the audio queue
   stop(reason) {
     this.audioQueue = [];
     if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
-  }
+  };
   
   // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, callback) {
@@ -426,7 +404,7 @@ class Server {
       })
       .on('error', error => Common.error(error));
       server.voiceDispatcher.passes = 1;
-  }
+  };
 
   // call this if you want to check a msg content is valid and run it through translation
   speak(message) {

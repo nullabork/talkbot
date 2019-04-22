@@ -208,7 +208,6 @@ class TextRule extends Command {
    */
   onMessage({message, content, modified, server}) {
     var content = modified || content;
-
     for ( var textrule in server.textrules ) {
       var re = new RegExp(textrule, 'gi');
       content = content.replace(re, server.textrules[textrule]);
