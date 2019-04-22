@@ -28,7 +28,7 @@ function permit(msg) {
   msg.message.mentions.members.tap( member => server.permit(member.id));
   msg.message.mentions.roles.tap( role => server.permit(role.id));
 
-  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
+  var nicks = Common.replaceLast(msg.getDisplayNamesAsCSV(), ', ', ' and ');
 
   msg.il8nResponse('permit.okay', { name: nicks });
 };
@@ -76,7 +76,7 @@ function unpermit(msg) {
     server.unpermit(role.id);
   });
 
-  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
+  var nicks = Common.replaceLast(msg.getDisplayNamesAsCSV(), ', ', ' and ');
   msg.il8nResponse('unpermit.okay', { name: nicks });
 };
 
