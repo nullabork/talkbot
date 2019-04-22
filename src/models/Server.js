@@ -355,6 +355,7 @@ class Server {
     request.input = { text: null, ssml: message };
 
     console.log("tts");
+    console.log(request);
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
@@ -379,34 +380,37 @@ class Server {
   
   playAudioContent(audioContent, callback) {
     var server = this;
-    
-    /*
-    var dispatcher_ended = 
-      var nextAudio = server.audioQueue.shift();
-      if ( nextAudio ) nextAudio();
-    };
-    
-    if ( server.playing )
-    {
-      if ( !server.audioQueue ) server.audioQueue = [];
-      callback = function() { server.playAudioContent(audioContent, callback); };
-      server.audioQueue.push(callback);
+    var readable = audioContent;
+
+    if ( server.leaving ) return;
+
+    if (!( readable instanceof stream.Duplex) ) {
+      readable = new stream.Duplex();
+      readable._read = () => {}; // _read is required but you can noop it
+      readable.push(audioContent);
+      readable.push(null);
     }
-      // queue up the next audio*/
+
+    // queue it up if there's something playing
+    if ( server.playing ) {
+      if ( !server.audioQueue ) server.audioQueue = [];
+      var queueFunc = () => server.playAudioContent(readable, callback);
+      server.audioQueue.push(queueFunc);
+      return;
+    }
     
+    // play the content
     server.playing = true;
-    var readable = new stream.Duplex();
-    readable._read = () => {}; // _read is required but you can noop it
-    readable.push(audioContent);
-    readable.push(null);
-    
     console.log("tts-play");
     server.voiceDispatcher = server.voiceConnection
-      .playStream(readable)
+      .playArbitraryInput(readable)
       .on('end', reason => {
         console.log("tts-end");
         server.playing = false;
         callback();
+        if ( !server.audioQueue ) return;
+        var nextAudio = server.audioQueue.shift();
+        if ( nextAudio ) nextAudio();
       })
       .on('error', error => Common.error(error));
   }

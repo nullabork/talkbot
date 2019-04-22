@@ -11,6 +11,9 @@ class TTS extends Command {
   execute ({input}) {
     var server = input.server;
 
+    if (!server.isBound())
+      return input.il8nResponse('tts.notinchannel');
+
     if (!server.inChannel())
       return input.il8nResponse('tts.notinchannel');
 

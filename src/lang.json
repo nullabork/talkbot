@@ -193,7 +193,7 @@
   },
   "en.tts": {
     "notpermitted": "You have to be permitted to use this command",
-    "notinchannel": "Get the bot to join a voice channel before using this command",
+    "notinchannel": "Get the bot to follow you using :command_charfollow before using this command",
     "shorthelp": "Speak when you're muted"
   },
   "en.mytitle": {

@@ -200,6 +200,8 @@ function Commands() {
 
     server.resetNeglectTimeout();
 
+    Common.out(server.guild.id + ': ' + msgDets.cmd + ' ' + msgDets.content);
+
     //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {
       command.execute({input : msgDets});
