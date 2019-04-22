@@ -88,7 +88,7 @@ class MessageSSML extends MessageParser {
       compiled.push(element.closeString());
     });
 
-    return '<speak>' + compiled.join(" ") + this.messageBuffer() + '</speak>';
+    return '<speak>' + compiled.join(" ") + /*this.messageBuffer() +*/ '</speak>';
   }
 }
 

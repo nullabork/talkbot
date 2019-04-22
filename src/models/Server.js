@@ -438,6 +438,8 @@ class Server {
     ) return;
 
     var content = Common.cleanMessage(message.cleanContent);
+    if ( content.length < 1 ) return;    
+
     var ret = commands.notify('message', { message: message, content: content, server: server });
     if (ret) content = ret;
 
