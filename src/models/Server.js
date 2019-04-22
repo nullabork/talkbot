@@ -152,7 +152,7 @@ class Server {
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
     
-    //console.log(voiceChannel);
+    console.log(voiceChannel);
     
     var p = voiceChannel.join()
       .then(connection => {
@@ -347,6 +347,7 @@ class Server {
       },
       // Select the type of audio encoding
       audioConfig: {
+        //audioEncoding: 'LINEAR16',
         audioEncoding: 'MP3',
         pitch: settings.pitch || 0.0,
         speakingRate: settings.speed || 1.0
@@ -413,6 +414,8 @@ class Server {
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 10000);
     server.voiceDispatcher = server.voiceConnection
       .playArbitraryInput(readable)
+      //.playOpusStream(readable)
+      //.playConvertedStream(readable, {bitrate:64}) // LINEARPCM is 16bit
       .on('end', reason => {
         console.log("tts-end");
         clearTimeout(server.voice_timeout);
