@@ -8,8 +8,10 @@ var Lang = require("lang.js"),
   langmap = require('@helpers/langmap'),
   auth = require('@auth'),
   fs = require('fs'),
-  stream = require('stream');
-
+  stream = require('stream'),
+  streamifier = require('streamifier'),
+  prism = require('prism-media');
+   
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -347,12 +349,9 @@ class Server {
       },
       // Select the type of audio encoding
       audioConfig: {
-        //audioEncoding: 'OGG_OPUS',
-        //audioEncoding: 'LINEAR16',
-        audioEncoding: 'MP3',
+        audioEncoding: 'OGG_OPUS',
         pitch: settings.pitch || 0.0,
         speakingRate: settings.speed || 1.0,
-        //sample_rate_hertz: 48000,
         effects_profile_id: ['headphone-class-device']
       },
     };
@@ -395,10 +394,7 @@ class Server {
     if ( server.leaving ) return;
 
     if (!( readable instanceof stream.Readable) ) {
-      readable = new stream.Readable();
-      readable._read = () => {}; // _read is required but you can noop it
-      readable.push(audioContent);
-      readable.push(null); // this might be making it stay open
+      readable = new streamifier.createReadStream(audioContent);
     }
 
     // queue it up if there's something playing
@@ -416,9 +412,7 @@ class Server {
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 10000);
     server.voiceDispatcher = server.voiceConnection
-      .playArbitraryInput(readable)
-      //.playOpusStream(readable)
-      //.playConvertedStream(readable, {bitrate:64}) // LINEARPCM is 16bit
+      .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
         console.log("tts-end");
         clearTimeout(server.voice_timeout);

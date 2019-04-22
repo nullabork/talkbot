@@ -239,11 +239,10 @@ class Common {
     return message.replace(/\n|\r/gi, "");
   }
 
-  //truncate message to 200 characters should be used before all the other things
-  //TODO: define length in config
+  //truncate message to 2000 characters should be used before all the other things
   static truncateMessage(message) {
-    if (message.length > 1000) {
-      message = message.substring(0, 1000);
+    if (message.length > 2000 ) {
+      message = message.substring(0, 2000 );
     }
     return message;
   }
