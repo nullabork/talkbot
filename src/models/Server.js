@@ -378,7 +378,7 @@ class Server {
   // stop all currently playing audio and empty the audio queue
   stop(reason) {
     this.audioQueue = [];
-    this.voiceDispatcher.end(reason);
+    if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
   }
   
   // internal function for playing audio content returned from the TTS API and queuing it
@@ -394,7 +394,7 @@ class Server {
       readable = new stream.Readable();
       readable._read = () => {}; // _read is required but you can noop it
       readable.push(audioContent);
-     // readable.push(null); // this might be making it stay open
+      readable.push(null); // this might be making it stay open
     }
 
     // queue it up if there's something playing
@@ -409,13 +409,17 @@ class Server {
     // play the content
     server.playing = true;
     console.log("tts-play");
+    if ( server.voice_timeout) clearTimeout(server.voice_timeout);
+    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 10000);
     server.voiceDispatcher = server.voiceConnection
       .playArbitraryInput(readable)
       .on('end', reason => {
         console.log("tts-end");
+        clearTimeout(server.voice_timeout);
         server.playing = false;
+        server.voiceDispatcher = null;
+        server.voice_timeout = null;
         callback();
-        console.log(server.audioQueue);
         if ( !server.audioQueue ) return;
         var nextAudio = server.audioQueue.shift();
         if ( nextAudio ) nextAudio();
