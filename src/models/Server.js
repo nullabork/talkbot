@@ -383,9 +383,11 @@ class Server {
   
   // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, callback) {
+
     var server = this;
     var readable = audioContent;
 
+    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
     if ( server.leaving ) return;
 
     if (!( readable instanceof stream.Readable) ) {
