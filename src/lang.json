@@ -200,5 +200,9 @@
     "read": "I call you :title",
     "set": "I'll now call you :title",
     "shorthelp": "Set your personal title"
+  },
+  "en.stop": {
+    "okay": "Stopped",
+    "nope": "Sorry you need to be permitted or a server manager to stop voice"
   }
 }

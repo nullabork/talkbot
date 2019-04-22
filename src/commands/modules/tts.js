@@ -76,7 +76,8 @@ class Stop extends Command {
 
   execute ({input}) {
     var server = input.server;
-    
+
+    if ( !input.server.inChannel()) return;
     if ( input.ownerIsPermitted() || input.ownerCanManageTheServer())
     {
       server.stop('requested by stop command');

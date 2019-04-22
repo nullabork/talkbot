@@ -10,7 +10,6 @@ var Lang = require("lang.js"),
   fs = require('fs'),
   stream = require('stream');
 
-// https://discordapp.com/developers/docs/topics/permissions
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -160,6 +159,7 @@ class Server {
         connection.on('closing', () => {
           server.leaving = true;
           server.bound_to = null;
+          server.stop('voiceClosing'); // stop playing
           server.permitted = {};
           clearTimeout(server.neglect_timeout);
         });
@@ -175,6 +175,7 @@ class Server {
         server.world.setPresence();
         server.connecting = false;
       }, error => {
+        server.stop('joinError');
         server.connecting = false;
         Common.error(error); 
       });
@@ -374,24 +375,28 @@ class Server {
     });
   }
   
+  // stop all currently playing audio and empty the audio queue
   stop(reason) {
+    this.audioQueue = [];
     this.voiceDispatcher.end(reason);
   }
   
+  // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, callback) {
     var server = this;
     var readable = audioContent;
 
     if ( server.leaving ) return;
 
-    if (!( readable instanceof stream.Duplex) ) {
-      readable = new stream.Duplex();
+    if (!( readable instanceof stream.Readable) ) {
+      readable = new stream.Readable();
       readable._read = () => {}; // _read is required but you can noop it
       readable.push(audioContent);
-      readable.push(null);
+     // readable.push(null); // this might be making it stay open
     }
 
     // queue it up if there's something playing
+    // queueFunc is a call containing both the callback and the content
     if ( server.playing ) {
       if ( !server.audioQueue ) server.audioQueue = [];
       var queueFunc = () => server.playAudioContent(readable, callback);
@@ -408,6 +413,7 @@ class Server {
         console.log("tts-end");
         server.playing = false;
         callback();
+        console.log(server.audioQueue);
         if ( !server.audioQueue ) return;
         var nextAudio = server.audioQueue.shift();
         if ( nextAudio ) nextAudio();
