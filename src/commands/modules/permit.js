@@ -55,13 +55,13 @@ function unpermit(msg) {
   }
   
   if ( msg.message.mentions.members.size == 0 ) {
-    server.unpermit(msg.member.id);
+    server.unpermit(msg.message.member.id);
   }
 
   msg.message.mentions.members.tap( member => {
     if (member.id != msg.message.member.id && !msg.ownerIsMaster()) {
       msg.il8nResponse('unpermit.deny');
-      continue;
+      return;
     }
 
     server.unpermit(member.id);
@@ -70,7 +70,7 @@ function unpermit(msg) {
   msg.message.mentions.roles.tap( role => {
     if (!msg.ownerIsMaster()) {
       msg.il8nResponse('unpermit.deny');
-      continue;
+      return;
     }
 
     server.unpermit(role.id);
