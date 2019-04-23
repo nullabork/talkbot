@@ -60,9 +60,16 @@ bot.on('guildCreate', guild => {
 bot.on('guildDelete', guild => {
   try {
     world.removeServer(guild);
-    Common.out("Server " + guild.name + " removed");
   }
   catch(ex) { Common.error(ex); }
+});
+
+// when a member is removed unfollow
+bot.on('guildMemberRemove', member => {
+  if (server.isMaster(member))
+  {
+    server.release();
+  }
 });
 
 // handle voice state updates

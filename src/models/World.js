@@ -31,6 +31,7 @@ class World {
  * * */
   addServer(guild) {
     this.servers[guild.id] = new Server(guild, this);
+    Common.out(guild.id + ": added to the world");
   }
   
 /* * *
@@ -44,6 +45,7 @@ class World {
     delete this.servers[guild.id];
     server.save();
     server.dispose();
+    Common.out(guild.id + ": removed from the world");
   }
 
 /* * *
