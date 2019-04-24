@@ -44,13 +44,6 @@ class Broadcast extends Command {
     if (!input.ownerIsDev()) return;
     let message = input.content;
 
-    console.log("arg - " + input.args);
-    console.log("arg - " + input.args.length == 1);
-    console.log("arg - " + input.args[0].length);
-    console.log("arg - " + /(confirm|yes|y)/gi.test(input.args[0]));
-    console.log("arg - " + this.broadcastMessage);
-    console.log("arg - " + this.broadcastMessage.length  > 15);
-
     if(
       input.args &&
       input.args.length == 1 &&
