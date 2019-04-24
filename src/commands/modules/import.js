@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var Command = require('@models/Command')
   Common = require('@helpers/common'),
   CommentBuilder = require('@models/CommentBuilder'),

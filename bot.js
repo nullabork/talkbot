@@ -1,4 +1,4 @@
-/*jshint esversion: 8 */
+/*jshint esversion: 9 */
 /*
  *  _____     _ _    ____        _
  * |_   _|_ _| | | _| __ )  ___ | |_

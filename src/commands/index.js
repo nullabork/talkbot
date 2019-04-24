@@ -30,7 +30,7 @@ function Commands() {
     //no listeners, then stop/
     if (!command.listeners) return;
 
-    //add the listerners
+    //add the listeners
     for (var type in command.listeners) {
       //check if listener is good
       if (!command.listeners.hasOwnProperty(type) || !command.listeners[type]) continue;

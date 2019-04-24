@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // class for all the details of a command
 var Common = require('@helpers/common');
 

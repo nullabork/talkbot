@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var pad = require('pad');
 var Common = require('@helpers/common');
 

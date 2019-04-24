@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 class SSMLTag {
   constructor(details) {
     this.open = null;

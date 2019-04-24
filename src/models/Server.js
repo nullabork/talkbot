@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var Lang = require("lang.js"),
   paths = require('@paths'),

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 

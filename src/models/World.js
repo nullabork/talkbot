@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),

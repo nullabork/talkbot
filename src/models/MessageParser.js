@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 class MessageParser {
   constructor(text) {
     this.text = text;

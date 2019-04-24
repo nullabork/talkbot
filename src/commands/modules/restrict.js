@@ -1,15 +1,4 @@
-/**
- * Command: textrule
- * Adds regular expressions to replace text in messages with other text
- *
- * usage !textrule add search text -> replace text
- *       !textrule del search text
- *       !textrule list
- *
- * @param   {[MessageDetails]}  msg     [message releated helper functions]
- *
- * @return  {[undefined]}
- */
+/*jshint esversion: 9 */
 
 var Command = require('@models/Command')
   CommentBuilder = require('@models/CommentBuilder'),
@@ -44,12 +33,13 @@ class Restrict extends Command {
     return input.response(
       CommentBuilder.create({
         data : {
-          _heading : usage,
-          _description: server.lang('restrictusage.description', {restrictions: this.getRestrictionString(server)}),
-          _data : {
-            [command]                            : server.lang('restrictusage.noargs'),
-            [command + " none"]                  : server.lang('restrictusage.none'),
-            [command + " channel1 channel2 etc"] : server.lang('restrictusage.channels'),
+          [usage] :  [
+            server.lang('restrictusage.description', {restrictions: this.getRestrictionString(server)})
+          ],          
+          "commands" : {
+            [command]                 : server.lang('restrictusage.noargs'),
+            [command + " none"]       : server.lang('restrictusage.none'),
+            [command + " #channel1"]  : server.lang('restrictusage.channels')
           }
         }
       })
@@ -79,11 +69,11 @@ class Restrict extends Command {
       input.il8nResponse('restrict.args');
     } 
     else {
-      input.message.mentions.channels.tap( chan => server.restrictions.push(chan.id) );
+      input.message.mentions.channels.tap( chan => { if ( !server.restrictions.includes(chan.id) ) server.restrictions.push(chan.id); } );
       var chans = Common.makeNiceCsv(input.message.mentions.channels, item => item.name);
       input.il8nResponse('restrict.okay', {channels: chans});
     }
-  };
+  }
 
   /**
    * [onMessage event]

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var Command = require('@models/Command'),
   auth = require('@auth'),

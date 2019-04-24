@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var MessageParser = require('@models/MessageParser'),
   ssmlConfig = require('@helpers/ssml-dictionary'),
   Common = require('@helpers/common');

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var Common = require('@helpers/common'),
   query = require('array-query');
 

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 /**
  * Command: textrule
  * Adds regular expressions to replace text in messages with other text

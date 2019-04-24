@@ -1,12 +1,12 @@
+/*jshint esversion: 9 */
 /**
  * Command: stats
  * shows some stuff
  */
 
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   CommentBuilder = require('@models/CommentBuilder'),
-  auth = require('@auth'),
   Common = require('@helpers/common');
 
 class Stats extends Command {

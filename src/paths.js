@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var path = require('path'),
   dirSplit = __dirname.split(path.sep),
   dir = dirSplit.pop() && dirSplit.join(path.sep);

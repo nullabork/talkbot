@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var config = require("@auth");
 
 class Common {

@@ -1,4 +1,4 @@
-'use strict';
+/*jshint esversion: 9 */
 
 var Discord = require('discord.js'),
   auth = require("@auth"),
