@@ -24,7 +24,7 @@ class Help extends Command {
       "Quickstart" : [
         "1. join a voice channel",
         "2. type " + auth.command_char + "follow",
-        "3. Type some text and hear the bot speak"
+        "3. Type 'Hello World' to hear the bot speak"
       ],
 
       "Control" : {

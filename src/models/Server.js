@@ -328,9 +328,12 @@ class Server {
       // Select the type of audio encoding
       audioConfig: {
         audioEncoding: 'OGG_OPUS',
+        //audioEncoding: 'MP3',
         pitch: settings.pitch || 0.0,
         speakingRate: settings.speed || 1.0,
-        effects_profile_id: ['headphone-class-device']
+        volume_gain_db: -6.0,
+        //sample_rate_hertz: 12000,
+        //effects_profile_id: ['telephony-class-application']
       },
     };
 
