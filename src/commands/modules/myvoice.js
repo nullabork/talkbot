@@ -20,7 +20,7 @@ function myVoice(msg) {
   var server = msg.server;
   
   if(!msg.args || !msg.args.length){
-    msg.il8nResponse('myvoice.more');
+    msg.il8nResponse('myvoice.more', {voice: server.getMemberSetting(msg.message.member, 'name') || 'default'});
     return;
   }
 

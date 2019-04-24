@@ -10,7 +10,7 @@ function speed(msg) {
   var member = msg.message.member;
 
   if (msg.args.length == 0) {
-    msg.il8nResponse('myspeed.usage', {speed: server.getMemberSetting(msg.message.member, 'myspeed') });
+    msg.il8nResponse('myspeed.usage', {speed: server.getMemberSetting(msg.message.member, 'speed') || 'default'});
     return;
   }
 
