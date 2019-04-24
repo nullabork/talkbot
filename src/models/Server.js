@@ -415,11 +415,11 @@ class Server {
     server.playing = true;
     console.log("tts-play");
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
-    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 10000);
+    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
-        console.log("tts-end");
+        console.log("tts-end: " + reason);
         clearTimeout(server.voice_timeout);
         server.playing = false;
         server.voiceDispatcher = null;
@@ -438,7 +438,7 @@ class Server {
 
     if (!message.member) {
       console.error(new Error("speak(...): message.member is null"));
-      console.error(message.member);
+      console.error(message);
       return; // why is this null?
     }
     var server = this;

@@ -66,10 +66,14 @@ bot.on('guildDelete', guild => {
 
 // when a member is removed unfollow
 bot.on('guildMemberRemove', member => {
-  if (server.isMaster(member))
-  {
-    server.release();
+  try {
+    var server = world.servers[member.guild.id];
+    if (server.isMaster(member))
+    {
+      server.release();
+    }
   }
+  catch(ex) { Common.error(ex); }
 });
 
 // handle voice state updates
