@@ -12,7 +12,7 @@ var Lang = require("lang.js"),
   stream = require('stream'),
   streamifier = require('streamifier'),
   prism = require('prism-media');
-   
+
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
@@ -53,8 +53,17 @@ class Server {
     this.permit(member.id);
     this.resetNeglectTimeout();
     this.save();
-  };
+  }
 
+
+  /**
+   * Merges or creates the `add` object  passed in, on to `this` scope using the `key` ad the key
+   *
+   * @param   {[type]}  key  name to add merge and create `add` against
+   * @param   {[type]}  add  object to merge or create
+   *
+   * @return  {[void]}
+   */
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
     if (this[key]) {
@@ -63,7 +72,18 @@ class Server {
         ...add
       }
     }
-  };
+  }
+
+  getSettingObject (name) {
+    if (!this[name] || typeof this[name] !== 'object') return {};
+    return this[name]
+  }
+
+  getSettingObjectValue (objName, valueKey) {
+    let object = this.getSettingObject(objName);
+    if (typeof object[valueKey] == 'undefined') return null;
+    return object[valueKey];
+  }
 
   addMemberSetting(member, name, value) {
     if (!this.memberSettings) this.memberSettings = {};
@@ -102,16 +122,16 @@ class Server {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
-    
+
     if ( !params ) params = {};
 
     var command_char = auth.command_char;
     var title = params.title || this.world.default_title;
-    
+
     params = {
       ...(params),
       command_char,
-      title 
+      title
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
@@ -119,7 +139,7 @@ class Server {
       params
     ]);
   };
-  
+
   isLangKey(possible_key) {
     return this.messages && this.messages[possible_key];
   };
@@ -147,7 +167,7 @@ class Server {
     if (server.leaving) return; // dont call it twice dude
     server.voiceConnection.disconnect();
   };
-  
+
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
   joinVoiceChannel(voiceChannel) {
@@ -156,9 +176,9 @@ class Server {
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
-    
+
     console.log(voiceChannel);
-    
+
     var p = voiceChannel.join()
       .then(connection => {
         connection.on('closing', () => {
@@ -182,14 +202,14 @@ class Server {
       }, error => {
         server.stop('joinError');
         server.connecting = false;
-        Common.error(error); 
+        Common.error(error);
       });
-      
+
     return p;
   };
-  
+
   // permit another user to speak
-  permit(snowflake_id) {    
+  permit(snowflake_id) {
     this.resetNeglectTimeout();
     this.permitted[snowflake_id] = {};
     this.save();
@@ -207,7 +227,7 @@ class Server {
     if (!member) return false;
     for(var snowflake_id in this.permitted) {
       if (this.permitted[snowflake_id])
-        if (snowflake_id == member.id || member.roles.has(member.id)) 
+        if (snowflake_id == member.id || member.roles.has(member.id))
           return true;
     }
     return false;
@@ -231,9 +251,9 @@ class Server {
 
     // delay for 3 seconds to allow the bot to talk
     var neglectedrelease = function () {
-      var timeout_neglectedrelease = function () { 
+      var timeout_neglectedrelease = function () {
         Common.out('neglected: in chan');
-        server.release(); 
+        server.release();
       };
       setTimeout(timeout_neglectedrelease, 3000);
     };
@@ -279,6 +299,8 @@ class Server {
       if (key == "world") return undefined;
       if (key == "guild") return undefined;
       if (key == "voiceDispatcher") return undefined;
+      if (key == "keepQueue") return undefined;
+
       else return value;
     };
 
@@ -297,8 +319,8 @@ class Server {
 
     return null;
   };
-  
-  
+
+
   // speak a message in a voice channel
   talk(message, options, callback) {
 
@@ -360,13 +382,13 @@ class Server {
       }
     });
   };
-  
+
   // stop all currently playing audio and empty the audio queue
   stop(reason) {
     this.audioQueue = [];
     if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
   };
-  
+
   // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, callback) {
 
@@ -388,7 +410,7 @@ class Server {
       server.audioQueue.push(queueFunc);
       return;
     }
-    
+
     // play the content
     server.playing = true;
     console.log("tts-play");
@@ -429,7 +451,7 @@ class Server {
       !server.isPermitted(message.member) ||
       settings.muted
     ) return;
-    
+
     var accept = commands.notify('validate', { message: message, server: server });
 
     if (accept === false) return; // nerf the message because it didnt validate
@@ -439,11 +461,13 @@ class Server {
     var ret = commands.notify('message', { message: message, content: content, server: server });
     if (ret !== null) content = ret.trim();
 
-    if ( content.length < 1 ) return;    
+    if ( content.length < 1 ) return;
 
     function _speak(msg) {
       var ssml = new MessageSSML(msg, { server: server }).build();
-      server.talk(ssml, settings);
+      server.talk(ssml, settings, () => {
+        commands.notify('messageDelivered', { message: message, content: message.message, server: server })
+      });
     }
 
     var tolang = server.getMemberSetting(message.member, 'toLanguage');
