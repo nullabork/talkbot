@@ -12,7 +12,7 @@
  * @return  {[undefined]}
  */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
   Common = require('@helpers/common');

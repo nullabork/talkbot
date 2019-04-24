@@ -117,7 +117,7 @@ bot.on('message', message => {
 });
 
 // when messages are edited
-bot.on('messageUpdate', (oldMessage, newMessage) => {
+/*bot.on('messageUpdate', (oldMessage, newMessage) => {
   if ( newMessage.member.id == bot.user.id ) return;
 
   var server = world.servers[newMessage.guild.id];
@@ -134,7 +134,7 @@ bot.on('messageUpdate', (oldMessage, newMessage) => {
     // say it out loud
     server.speak(newMessage);
   }
-});
+});*/
 
 // if we get disconnected???
 bot.on('disconnect', evt => {
