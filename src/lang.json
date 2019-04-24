@@ -8,7 +8,7 @@
     "none": "no"
   },
   "en.who": {
-    "okay": "My :title is :name",
+    "okay": "My :title is :mymaster, these members/roles are permitted: :permitted",
     "none": "I have no :title :~(",
     "shorthelp": "Who is the current :title"
   },
@@ -203,6 +203,23 @@
   },
   "en.stop": {
     "okay": "Stopped",
-    "nope": "Sorry you need to be permitted or a server manager to stop voice"
+    "nope": "Sorry you need to be permitted or a server manager to stop voice",
+    "shorthelp": "Stop the current text from being read out"
+  },
+  "en.restrict": {
+    "current":"The bot is currently restricted to :restrictions",
+    "usage":":command_charrestrict none - allow talkbot to listen on all channels\n:command_charrestrict #channel - restrict talkbot to listen on #channel",
+    "nopermissions":"You need have permissions to manage the server to alter this command",
+    "setdefault":"The bot will now listen on all channels",
+    "args":"Please include a channel eg. :command_charrestrict #channel",
+    "okay":"I'll only listen on these channels now: :channels",
+    "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
+  },
+  "en.restrictusage": {
+    "title": "Restrict the channels to listen for text",
+    "description": "The bot is currently restricted to these channels :restrictions",
+    "noargs" : "This output",
+    "none" : "Allow the bot to listen on all channels",
+    "channels" : "Restrict the bot to only listen on these channels"
   }
 }

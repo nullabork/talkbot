@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var tablr = require("tablr");
 var langMap = require("@helpers/voiceMap");

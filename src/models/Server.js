@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var Lang = require("lang.js"),
   paths = require('@paths'),
@@ -30,6 +31,7 @@ class Server {
     this.permitted = {};
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
+    this.restrictions = state_data.restrictions || [];
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
@@ -350,9 +352,12 @@ class Server {
       // Select the type of audio encoding
       audioConfig: {
         audioEncoding: 'OGG_OPUS',
+        //audioEncoding: 'MP3',
         pitch: settings.pitch || 0.0,
         speakingRate: settings.speed || 1.0,
-        effects_profile_id: ['headphone-class-device']
+        volume_gain_db: -6.0,
+        //sample_rate_hertz: 12000,
+        //effects_profile_id: ['telephony-class-application']
       },
     };
 
@@ -426,7 +431,7 @@ class Server {
       })
       .on('error', error => Common.error(error));
       server.voiceDispatcher.passes = 1;
-  };
+  }
 
   // call this if you want to check a msg content is valid and run it through translation
   speak(message) {
@@ -442,15 +447,20 @@ class Server {
       settings.muted
     ) return;
 
+    var accept = commands.notify('validate', { message: message, server: server });
+
+    if (accept === false) return; // nerf the message because it didnt validate
+
     var content = Common.cleanMessage(message.cleanContent);
-    if ( content.length < 1 ) return;
 
     var ret = commands.notify('message', { message: message, content: content, server: server });
-    if (ret) content = ret;
+    if (ret !== null) content = ret.trim();
+
+    if ( content.length < 1 ) return;
 
     function _speak(msg) {
-      var content = new MessageSSML(msg, { server: server }).build();
-      server.talk(content, settings, () => {
+      var ssml = new MessageSSML(msg, { server: server }).build();
+      server.talk(ssml, settings, () => {
         commands.notify('messageDelivered', { message: message, content: message.message, server: server })
       });
     }

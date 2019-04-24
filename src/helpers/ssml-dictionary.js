@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var SSMLTag = require('@models/SSMLTag');
 
 module.exports = [

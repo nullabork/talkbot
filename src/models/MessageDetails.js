@@ -1,4 +1,4 @@
-'use strict';
+/*jshint esversion: 9 */
 var botStuff = require("@helpers/bot-stuff"),
   Common = require("@helpers/common"),
   auth = require("@auth");

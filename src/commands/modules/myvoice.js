@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var langMap = require("@helpers/voiceMap");
 var Common = require('@helpers/common');

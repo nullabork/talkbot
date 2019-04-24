@@ -1,5 +1,6 @@
+/*jshint esversion: 9 */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   Common = require('@helpers/common'),
   CommentBuilder = require('@models/CommentBuilder');
 
@@ -39,7 +40,6 @@ class Mute extends Command {
     }
     else
     {
-      var member = input.message.member;
       server.addMemberSetting(input.message.member,'muted',true);
       return input.il8nResponse('mute.okay', {name: 'you' });
     }

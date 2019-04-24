@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var config = require("@auth");
 
 class Common {
@@ -64,11 +65,7 @@ class Common {
     }
 
     if (config.logging && config.logging.out) {
-      console.log(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.log(new Date().toISOString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -81,11 +78,7 @@ class Common {
     }
 
     if (config.logging && config.logging.err) {
-      console.error(
-        "\n" +
-        new Date() + " " +
-        message
-      );
+      console.error(new Date().toISOString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -255,6 +248,21 @@ class Common {
     message = Common.removeNullsChars(message);
     message = Common.truncateMessage(message);
     return message;
+  }
+
+  static makeCsv(collection, selector) {
+    var csv = '';
+    if (collection.size == 0) return '';
+    collection.forEach(item => {
+      csv += selector(item) + ', ';
+    });
+    csv = csv.substring(0, csv.length-2);
+    
+    return csv;
+  }
+
+  static makeNiceCsv(collection, selector) {
+    return Common.replaceLast(Common.makeCsv(collection, selector), ', ', ' and ');
   }
 
   //make some sfx audio tag

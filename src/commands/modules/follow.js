@@ -1,6 +1,6 @@
+/*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand'),
-  botStuff = require('@helpers/bot-stuff');
+var BotCommand = require('@models/BotCommand');
 
 /* * *
  * Command: follow

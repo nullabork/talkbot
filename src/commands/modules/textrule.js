@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 /**
  * Command: textrule
  * Adds regular expressions to replace text in messages with other text
@@ -11,7 +12,7 @@
  * @return  {[undefined]}
  */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
   Common = require('@helpers/common');
@@ -201,13 +202,14 @@ class TextRule extends Command {
    * [onMessage event]
    *
    * @param   {[type]}  {message  [the original message object]
+   * @param   {[type]}  content   [the original content]
    * @param   {[type]}  modified  [the modified content]
    * @param   {[type]}  server}   [server description]}
    *
    * @return  {[type]}            [return description]
    */
   onMessage({message, content, modified, server}) {
-    var content = modified || content;
+    var content = modified === null ? content : modified;
     for ( var textrule in server.textrules ) {
       var re = new RegExp(textrule, 'gi');
       content = content.replace(re, server.textrules[textrule]);

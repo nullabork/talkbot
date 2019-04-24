@@ -1,8 +1,7 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 var Common = require('@helpers/common');
-var botStuff = require('@helpers/bot-stuff');
-var bot = botStuff.bot;
 
 /**
  * Command: debugbork
@@ -73,7 +72,7 @@ function build_permitted_string(server) {
       if ( member ) members += ', ' + prefix + member.displayName;
       else {
         var role = server.guild.roles.find(x => x.id == id);
-        if ( role ) members += ', ' + role.name;
+        if ( role ) members += ', (role)' + role.name;
         else members += ', ' + id;
       }
     }

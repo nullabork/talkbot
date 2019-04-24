@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
@@ -19,9 +20,9 @@ class World {
  * * */
   startup() {
     var world = this;
+    bot.guilds.tap(guild => world.addServer(guild));
     world.setPresence();
     world.startRebootTimer();
-    bot.guilds.tap(guild => world.addServer(guild));
   };  
     
 /* * *
@@ -31,6 +32,7 @@ class World {
  * * */
   addServer(guild) {
     this.servers[guild.id] = new Server(guild, this);
+    this.setPresence();
     Common.out(guild.id + ": added to the world");
   }
   
@@ -43,6 +45,7 @@ class World {
     if ( !this.servers[guild.id] ) return;
     var server = this.servers[guild.id];
     delete this.servers[guild.id];
+    this.setPresence();
     server.save();
     server.dispose();
     Common.out(guild.id + ": removed from the world");
