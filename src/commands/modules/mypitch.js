@@ -19,7 +19,10 @@ var Common = require("@helpers/common");
 function mypitch(msg) {
   var server = msg.server;
   
-  if (!msg.args.length) return;
+  if (msg.args.length == 0) {
+    msg.il8nResponse('mypitch.usage', {gender: server.getMemberSetting(msg.message.member, 'mypitch') });
+    return;
+  }
 
   if(msg.args[0] == 'default'){
     server.addMemberSetting(msg.message.member, 'pitch', 'default');

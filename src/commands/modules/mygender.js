@@ -16,7 +16,7 @@ var BotCommand = require('@models/BotCommand');
 function mygender(msg) {
   var server = msg.server;
   if (msg.args.length == 0) {
-    msg.il8nResponse('mygender.noargs');
+    msg.il8nResponse('mygender.usage', {gender: server.getMemberSetting(msg.message.member, 'gender') });
     return;
   }
 

@@ -87,17 +87,20 @@
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Set the gender the bot will speak with"
+    "shorthelp": "Set the gender the bot will speak with",
+    "usage": "Set the gender the bot will speak with. Your current gender is :gender"
   },
   "en.mypitch": {
     "okay": "OK, your personal pitch is now :pitch.",
     "deny": "Sorry, you're not permitted",
-  "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20"
+    "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20",
+    "usage": "Set the pitch the bot will speak with. Your current pitch is :pitch"
   },
   "en.myspeed": {
     "okay": "OK, your personal speed is now :speed.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0"
+    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0",
+    "usage": "Set the speed the bot will speak with. Your current speed is :speed"
   },
   "en.sfx": {
     "nope": "Sorry, only a server admin can set emojis",
