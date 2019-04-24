@@ -14,6 +14,10 @@ Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 3. Type `!follow`
 4. Type the message `Hello World` to hear it read out to you
 
+# Documentation
+
+Check out the documentation on gitbook: https://nullabork.gitbook.io/talkbot/
+
 # Commands in discord
 The bot requires a master to control it. Once you're its master it'll convert your text into voice in the current voice channel. The bot will also follow you between voice channels. Other users will only be able to use the bot if you permit them to use it. If you don't use the bot for 30 minutes it'll unfollow you.
 ```yaml
