@@ -1,7 +1,8 @@
 {
   "en.general" : {
     "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
-    "nope" : "Sorry, only a server admin or server manager can do this."
+    "nope" : "Sorry, only a server admin or server manager can do this.",
+    "okay" : "Okay that worked! ☑"
   },
   "en.set": {
     "okay": "Set message for :lang",
@@ -205,7 +206,8 @@
     "shorthelp": "Set your personal title"
   },
   "en.stop": {
-    "okay": "Stopped",
+    "okay": "Stopped current message",
+    "okayAll": "Stopped **all** current messages",
     "nope": "Sorry you need to be permitted or a server manager to stop voice",
     "shorthelp": "Stop the current text from being read out"
   },
@@ -224,5 +226,13 @@
     "noargs" : "This output",
     "none" : "Allow the bot to listen on all channels",
     "channels" : "Restrict the bot to only listen on these channels"
+  },
+  "en.keep": {
+    "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
+    "keepCount" : "I am now just remembering the latest **:count** messages.",
+    "all" : "Okay I will now keep all messages and not delete any! ;)"
+  },
+  "en.broadcast": {
+    "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
   }
 }

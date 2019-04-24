@@ -384,8 +384,10 @@ class Server {
   };
 
   // stop all currently playing audio and empty the audio queue
-  stop(reason) {
-    this.audioQueue = [];
+  stop(reason, all) {
+    if(all){
+      this.audioQueue = [];
+    }
     if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
   };
 

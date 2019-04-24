@@ -56,7 +56,7 @@ class MessageDetails {
     if ( !params ) params = {};
     params.title = params.title || server.getMemberSetting(_this.message.member, 'mytitle');
     var message = server.lang(key, params);
-    
+
     return this.response(message);
   }
 
@@ -74,7 +74,7 @@ class MessageDetails {
     var server_id = this.server.server_id;
     return botStuff.getUserVoiceChannel(server_id, _this.message.member.id);
   };
-  
+
   // gets all the IDs as names
   getDisplayNamesAsCSV() {
     var msg = this;
@@ -83,7 +83,7 @@ class MessageDetails {
       names += member.displayName + ', ';
     });
     names = names.substring(0, names.length-2);
-    
+
     return names;
   };
 }

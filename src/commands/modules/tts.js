@@ -32,7 +32,7 @@ class Mute extends Command {
 
   execute ({input}) {
     var server = input.server;
-        
+
     if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
     {
       input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',true));
@@ -53,7 +53,7 @@ class UnMute extends Command {
 
   execute ({input}) {
     var server = input.server;
-    
+
     if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
     {
       input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',false));
@@ -78,14 +78,19 @@ class Stop extends Command {
     var server = input.server;
 
     if ( !input.server.inChannel()) return;
-    if ( input.ownerIsPermitted() || input.ownerCanManageTheServer())
-    {
-      server.stop('requested by stop command');
-      return input.il8nResponse('stop.okay');
-    }
-    else
+    if (!(input.ownerIsPermitted() || input.ownerCanManageTheServer()))
     {
       return input.il8nResponse('stop.nope');
+    }
+
+    var firstArg = input.args && input.args.length? input.args[0] : "";
+
+    if (/^(all)/i.test(firstArg)) {
+      server.stop('stop all requested by stop command', true);
+      return input.il8nResponse('stop.okayAll');
+    } else {
+      server.stop('stop requested by stop command');
+      return input.il8nResponse('stop.okay');
     }
   }
 }
