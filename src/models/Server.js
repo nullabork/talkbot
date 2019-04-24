@@ -408,7 +408,7 @@ class Server {
       })
       .on('error', error => Common.error(error));
       server.voiceDispatcher.passes = 1;
-  };
+  }
 
   // call this if you want to check a msg content is valid and run it through translation
   speak(message) {
@@ -429,7 +429,6 @@ class Server {
     if (accept === false) return; // nerf the message because it didnt validate
 
     var content = Common.cleanMessage(message.cleanContent);
-
 
     var ret = commands.notify('message', { message: message, content: content, server: server });
     if (ret !== null) content = ret.trim();

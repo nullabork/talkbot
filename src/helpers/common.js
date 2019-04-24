@@ -64,11 +64,7 @@ class Common {
     }
 
     if (config.logging && config.logging.out) {
-      console.log(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.log(new Date().toUTCString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -81,11 +77,7 @@ class Common {
     }
 
     if (config.logging && config.logging.err) {
-      console.error(
-        "\n" +
-        new Date() + " " +
-        message
-      );
+      console.error(new Date().toUTCString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 

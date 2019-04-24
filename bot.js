@@ -1,4 +1,4 @@
-'use strict'
+/*jshint esversion: 8 */
 /*
  *  _____     _ _    ____        _
  * |_   _|_ _| | | _| __ )  ___ | |_
@@ -114,6 +114,26 @@ bot.on('message', message => {
     }
   }
   catch(ex) { Common.error(ex); }
+});
+
+// when messages are edited
+bot.on('messageUpdate', (oldMessage, newMessage) => {
+  if ( newMessage.member.id == bot.user.id ) return;
+
+  var server = world.servers[newMessage.guild.id];
+
+  if (server == null) {
+    Common.error("Can't find server for guild id: " + newMessage.guild.id);
+    return null;
+  }
+
+  // is the message a command?
+  if (commands.isCommand(newMessage)) {
+    commands.process(newMessage, server, world);
+  } else {
+    // say it out loud
+    server.speak(newMessage);
+  }
 });
 
 // if we get disconnected???

@@ -37,12 +37,30 @@ class Restrict extends Command {
     return csv.substring(2);
   }
 
+  usage(input, server) {
+    let usage = server.lang('restrictusage.title');
+    var command = auth.command_char + this.command_name;
+
+    return input.response(
+      CommentBuilder.create({
+        data : {
+          _heading : usage,
+          _description: server.lang('restrictusage.description', {restrictions: this.getRestrictionString(server)}),
+          _data : {
+            [command]                            : server.lang('restrictusage.noargs'),
+            [command + " none"]                  : server.lang('restrictusage.none'),
+            [command + " channel1 channel2 etc"] : server.lang('restrictusage.channels'),
+          }
+        }
+      })
+    );
+  }
+
   execute ({input}) {
     var server = input.server;
 
     if (input.args.length == 0) {
-      input.il8nResponse('restrict.current', {restrictions: this.getRestrictionString(server)});
-      input.il8nResponse('restrict.usage');
+      this.usage(input, server);
       return;
     }
 
@@ -65,7 +83,7 @@ class Restrict extends Command {
       var chans = Common.makeNiceCsv(input.message.mentions.channels, item => item.name);
       input.il8nResponse('restrict.okay', {channels: chans});
     }
-  }
+  };
 
   /**
    * [onMessage event]
