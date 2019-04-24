@@ -8,7 +8,7 @@ var Common = require("@helpers/common");
 function speed(msg) {
   var server = msg.server;
   var member = msg.message.member;
-  
+
   if (msg.args.length == 0) {
     msg.il8nResponse('myspeed.usage', {speed: server.getMemberSetting(msg.message.member, 'myspeed') });
     return;
@@ -34,7 +34,7 @@ var command = new BotCommand({
   short_help: 'myspeed.shorthelp',
   long_help: 'myspeed.longhelp',
   group: "personalization",
-  parameters: "<speed>"
+  // parameters: "<speed>"
 });
 
 

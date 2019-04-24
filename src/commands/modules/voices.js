@@ -34,7 +34,7 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function listVoices(msg) {
-  
+
     var server = msg.server;
 
     if(!msg.args || !msg.args.length){
@@ -76,7 +76,7 @@ var command = new BotCommand({
   short_help: 'voices.shorthelp',
   long_help: 'voices.longhelp',
   group: "info",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 

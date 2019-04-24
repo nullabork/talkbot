@@ -18,7 +18,7 @@ var Common = require("@helpers/common");
  */
 function mypitch(msg) {
   var server = msg.server;
-  
+
   if (msg.args.length == 0) {
     msg.il8nResponse('mypitch.usage', {gender: server.getMemberSetting(msg.message.member, 'mypitch') });
     return;
@@ -44,7 +44,7 @@ var command = new BotCommand({
   short_help: 'mypitch.shorthelp',
   long_help: 'mypitch.longhelp',
   group: "personalization",
-  parameters: "<pitch>"
+  // parameters: "<pitch>"
 });
 
 

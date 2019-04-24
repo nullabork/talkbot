@@ -31,7 +31,7 @@ var command = new BotCommand({
   short_help: 'mytitle.shorthelp',
   long_help: 'mytitle.longhelp',
   group: "personalization",
-  parameters: "<title>",
+  // parameters: "<title>",
   hidden: false
 });
 

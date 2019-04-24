@@ -60,7 +60,7 @@ var command = new BotCommand({
   short_help: 'tolang.shorthelp',
   long_help: 'tolang.longhelp',
   group: "personalization",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 
