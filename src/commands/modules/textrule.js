@@ -209,7 +209,7 @@ class TextRule extends Command {
    * @return  {[type]}            [return description]
    */
   onMessage({message, content, modified, server}) {
-    var content = modified === null ? content : modified;
+    content = content || modified;
     for ( var textrule in server.textrules ) {
       var re = new RegExp(textrule, 'gi');
       content = content.replace(re, server.textrules[textrule]);

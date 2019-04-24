@@ -424,7 +424,7 @@ class Server {
         server.playing = false;
         server.voiceDispatcher = null;
         server.voice_timeout = null;
-        callback();
+        try { callback(); } catch(ex) { Common.error(ex); }
         if ( !server.audioQueue ) return;
         var nextAudio = server.audioQueue.shift();
         if ( nextAudio ) nextAudio();
@@ -459,7 +459,7 @@ class Server {
     var content = Common.cleanMessage(message.cleanContent);
 
     var ret = commands.notify('message', { message: message, content: content, server: server });
-    if (ret !== null) content = ret.trim();
+    if (ret) content = ret;
 
     if ( content.length < 1 ) return;
 
