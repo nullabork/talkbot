@@ -38,7 +38,7 @@ class Common {
 
     return map;
   }
-  
+
   //fetches all forms of message Ids from a string and returns an array
   static userIDs(message) {
     var user_ids = message.match(/<@!{0,1}(\d{12,19})>/g);
@@ -54,7 +54,7 @@ class Common {
     });
 
     return map;
-  }  
+  }
 
   //console.log() if its turned on
   static out(message) {
@@ -65,7 +65,7 @@ class Common {
     }
 
     if (config.logging && config.logging.out) {
-      console.log(new Date().toISOString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
+      console.log(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -78,7 +78,7 @@ class Common {
     }
 
     if (config.logging && config.logging.err) {
-      console.error(new Date().toISOString() + " " +  message + (message.indexOf('\n') > -1 ? "\n" : ""));
+      console.error(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -118,7 +118,7 @@ class Common {
   static replaceLast(str, strToReplace, replacement) {
     var pos = str.lastIndexOf(strToReplace);
     if ( pos < 0 ) return str;
-    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);    
+    return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);
   };
 
   //const element = string[char];
@@ -257,7 +257,7 @@ class Common {
       csv += selector(item) + ', ';
     });
     csv = csv.substring(0, csv.length-2);
-    
+
     return csv;
   }
 
@@ -270,7 +270,11 @@ class Common {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
-  
+
+  static alertBeepsSSML() {
+    return ' <audio src="https://sfx.nullabork.dev/definite.mp3" clipEnd="0.5s" repeatCount="3" /> <break time="500ms"/> ';
+  }
+
 }
 
 module.exports = Common;
