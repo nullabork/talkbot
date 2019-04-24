@@ -13,7 +13,8 @@ function Commands() {
   this.commands = {};
   this.listeners = {
     token: [],
-    message: []
+    message: [],
+    validate: []
   };
 
   this.command_char = auth.command_char || '!';
@@ -136,7 +137,6 @@ function Commands() {
       for (let i = 0; i < funcs.length; i++) {
         var func = funcs[i].cb;
 
-
         if (typeof func == 'function') {
           args = {
             ...args,
@@ -145,7 +145,7 @@ function Commands() {
 
           var resp = func.apply(this, [args]);
 
-          if (resp) {
+          if (resp !== null) {
             ret = resp;
           }
         }

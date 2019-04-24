@@ -30,6 +30,7 @@ class Server {
     this.permitted = {};
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
+    this.restrictions = state_data.restrictions || [];
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
@@ -422,16 +423,22 @@ class Server {
       !server.isPermitted(message.member) ||
       settings.muted
     ) return;
+    
+    var accept = commands.notify('validate', { message: message, server: server });
+
+    if (accept === false) return; // nerf the message because it didnt validate
 
     var content = Common.cleanMessage(message.cleanContent);
-    if ( content.length < 1 ) return;    
+
 
     var ret = commands.notify('message', { message: message, content: content, server: server });
-    if (ret) content = ret;
+    if (ret !== null) content = ret.trim();
+
+    if ( content.length < 1 ) return;    
 
     function _speak(msg) {
-      var content = new MessageSSML(msg, { server: server }).build();
-      server.talk(content, settings);
+      var ssml = new MessageSSML(msg, { server: server }).build();
+      server.talk(ssml, settings);
     }
 
     var tolang = server.getMemberSetting(message.member, 'toLanguage');

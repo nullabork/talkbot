@@ -62,7 +62,8 @@ class Command {
     var self = this;
     return {
       message : this.onMessage || null,
-      token : this.onToken || null
+      token : this.onToken || null,
+      validate: this.onValidate || null
     }
   }
 }

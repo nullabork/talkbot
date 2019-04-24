@@ -81,7 +81,7 @@ class Stats extends Command {
 
   onMessage({message, server}) {
     Stats.addMessageStats({server, message});
-    return false;
+    return null;
   }
 }
 

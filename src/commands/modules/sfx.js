@@ -201,6 +201,7 @@ class SFX extends Command {
     if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
       return Common.makeAudioSSML(server.audioEmojis[token]);
     }
+    return null;
   }
 
 }

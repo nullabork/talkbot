@@ -96,6 +96,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
 // when messages come in
 bot.on('message', message => {
   try {
+    if ( message.member.id == bot.user.id ) return;
 
     var server = world.servers[message.guild.id];
 

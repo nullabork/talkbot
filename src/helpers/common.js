@@ -257,6 +257,21 @@ class Common {
     return message;
   }
 
+  static makeCsv(collection, selector) {
+    var csv = '';
+    if (collection.size == 0) return '';
+    collection.forEach(item => {
+      csv += selector(item) + ', ';
+    });
+    csv = csv.substring(0, csv.length-2);
+    
+    return csv;
+  }
+
+  static makeNiceCsv(collection, selector) {
+    return Common.replaceLast(Common.makeCsv(collection, selector), ', ', ' and ');
+  }
+
   //make some sfx audio tag
   static makeAudioSSML(url) {
     var ssml = "<audio src='" + url + "' />";
