@@ -18,7 +18,7 @@ var BotCommand = require('@models/BotCommand');
  */
 function myVoice(msg) {
   var server = msg.server;
-  
+
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('myvoice.more', {voice: server.getMemberSetting(msg.message.member, 'name') || 'default'});
     return;
@@ -50,7 +50,7 @@ var command = new BotCommand({
   short_help: 'myvoice.shorthelp',
   long_help: 'myvoice.longhelp',
   group: "personalization",
-  parameters: "<voice|alias>"
+  // parameters: "<voice|alias>"
 });
 
 
