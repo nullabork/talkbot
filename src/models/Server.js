@@ -414,6 +414,11 @@ class Server {
   // call this if you want to check a msg content is valid and run it through translation
   speak(message) {
 
+    if (!message.member) {
+      console.error(new Error("speak(...): message.member is null"));
+      console.error(message.member);
+      return; // why is this null?
+    }
     var server = this;
     var settings = server.getMemberSettings(message.member);
 

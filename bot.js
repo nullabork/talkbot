@@ -151,7 +151,7 @@ bot.on('disconnect', evt => {
 // capture a whole pile of useful information
 bot.on('error',            Common.error);
 bot.on('guildUnavailable', guild => Common.error('guild unavailable: ' + guild.id));
-bot.on('rateLimit',        info  => { Common.error('rate limited'); Common.error(info) });
+bot.on('rateLimit',        info  => { Common.error('rate limited'); Common.error(info); });
 bot.on('reconnecting',     ()    => Common.error('reconnecting'));
 bot.on('resume',           ()    => Common.error('resume'));
 bot.on('warn',             info  => Common.error('warn:' + warn));
