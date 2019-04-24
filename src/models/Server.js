@@ -32,6 +32,8 @@ class Server {
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
     this.restrictions = state_data.restrictions || [];
+    this.keepMessages = state_data.keepMessages || {};
+    this.stats = state_data.stats || {};
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
