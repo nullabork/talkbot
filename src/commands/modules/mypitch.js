@@ -20,7 +20,7 @@ function mypitch(msg) {
   var server = msg.server;
   
   if (msg.args.length == 0) {
-    msg.il8nResponse('mypitch.usage', {gender: server.getMemberSetting(msg.message.member, 'mypitch') });
+    msg.il8nResponse('mypitch.usage', {pitch: server.getMemberSetting(msg.message.member, 'pitch') });
     return;
   }
 
