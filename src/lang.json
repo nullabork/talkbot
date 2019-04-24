@@ -211,6 +211,7 @@
     "nopermissions":"You need have permissions to manage the server to alter this command",
     "setdefault":"The bot will now listen on all channels",
     "args":"Please include a channel eg. :command_charrestrict #channel",
-    "okay":"I'll only listen on these channels now: :channels"
+    "okay":"I'll only listen on these channels now: :channels",
+    "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
   }
 }
