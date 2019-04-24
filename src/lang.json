@@ -2,14 +2,14 @@
   "en.general" : {
     "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
     "nope" : "Sorry, only a server admin or server manager can do this.",
-    "okay" : "Looks like this might have completed!?"
+    "okay" : "Okay that worked! ☑"
   },
   "en.set": {
     "okay": "Set message for :lang",
     "none": "no"
   },
   "en.who": {
-    "okay": "My :title is :name",
+    "okay": "My :title is :mymaster, these members/roles are permitted: :permitted",
     "none": "I have no :title :~(",
     "shorthelp": "Who is the current :title"
   },
@@ -76,7 +76,7 @@
     "no": "Sorry, I cant find the voice :voice.",
     "shorthelp": "Change accent or style.",
     "auto" : "Now the bot will choose the best voice and use your lang and gender settings.",
-    "more" : "You must specify a voice code. eg `:command_charmyvoice lily`",
+    "more" : "You must specify a voice code. eg `:command_charmyvoice lily`. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
     "noped" : "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
   },
   "en.tolang": {
@@ -88,17 +88,20 @@
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Set the gender the bot will speak with"
+    "shorthelp": "Set the gender the bot will speak with",
+    "usage": "Set the gender the bot will speak with. Your current gender is :gender"
   },
   "en.mypitch": {
     "okay": "OK, your personal pitch is now :pitch.",
     "deny": "Sorry, you're not permitted",
-  "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20"
+    "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20",
+    "usage": "Set the pitch the bot will speak with. Your current pitch is :pitch"
   },
   "en.myspeed": {
     "okay": "OK, your personal speed is now :speed.",
     "deny": "Sorry, you're not permitted",
-    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0"
+    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0",
+    "usage": "Set the speed the bot will speak with. Your current speed is :speed"
   },
   "en.sfx": {
     "nope": "Sorry, only a server admin can set emojis",
@@ -129,27 +132,24 @@
     "none": "I have no :title",
     "broken": "Something went wrong getting the voice channel, you might still have been made the :title"
   },
-  "en.broadcast": {
-    "confirmation": "Confirmation Needed, Use :command_charbroadcast <confirm | yes | y>"
-  },
   "en.transfer": {
     "okay": "Okay :name is now the :title",
     "nopermissions" : "You cannot do this.",
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
-    "broken" : "Hmmm that didnt work on submit a bug on github",
+    "broken" : "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
     "shorthelp": "Transfer control of the bot to another person"
   },
   "en.help": {
     "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
   },
   "en.langs" : {
-    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n:command_charmylang au",
+    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
     "shorthelp" : "List of languages",
     "longhelp" : "List of languages"
   },
   "en.voices" : {
-    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n:command_charmyvoice sally",
+    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
     "shorthelp" : "List of voices, `:command_charvoices au`",
     "longhelp" : "List of voices, `:command_charvoices au`",
     "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
@@ -185,24 +185,54 @@
   },
   "en.mute": {
     "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "You're now muted",
-    "alreadymuted": "You're already muted",
+    "okay": "I've muted :name",
+    "alreadymuted": ":name is already muted",
     "shorthelp": "Mute yourself so your text is not read out"
   },
   "en.unmute": {
     "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "You're now unmuted",
-    "alreadyunmuted": "You're already unmuted",
+    "okay": "I've unmuted :name",
+    "alreadyunmuted": ":name is already unmuted",
     "shorthelp": "Unmute yourself so all your text is read out"
   },
   "en.tts": {
     "notpermitted": "You have to be permitted to use this command",
-    "notinchannel": "Get the bot to join a voice channel before using this command",
+    "notinchannel": "Get the bot to follow you using :command_charfollow before using this command",
     "shorthelp": "Speak when you're muted"
   },
   "en.mytitle": {
     "read": "I call you :title",
     "set": "I'll now call you :title",
     "shorthelp": "Set your personal title"
+  },
+  "en.stop": {
+    "okay": "Stopped current message",
+    "okayAll": "Stopped **all** current messages",
+    "nope": "Sorry you need to be permitted or a server manager to stop voice",
+    "shorthelp": "Stop the current text from being read out"
+  },
+  "en.restrict": {
+    "current":"The bot is currently restricted to :restrictions",
+    "usage":":command_charrestrict none - allow talkbot to listen on all channels\n:command_charrestrict #channel - restrict talkbot to listen on #channel",
+    "nopermissions":"You need have permissions to manage the server to alter this command",
+    "setdefault":"The bot will now listen on all channels",
+    "args":"Please include a channel eg. :command_charrestrict #channel",
+    "okay":"I'll only listen on these channels now: :channels",
+    "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
+  },
+  "en.restrictusage": {
+    "title": "Restrict the channels to listen for text",
+    "description": "The bot is currently restricted to these channels :restrictions",
+    "noargs" : "This output",
+    "none" : "Allow the bot to listen on all channels",
+    "channels" : "Restrict the bot to only listen on these channels"
+  },
+  "en.keep": {
+    "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
+    "keepCount" : "I am now just remembering the latest **:count** messages.",
+    "all" : "Okay I will now keep all messages and not delete any! ;)"
+  },
+  "en.broadcast": {
+    "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
   }
 }

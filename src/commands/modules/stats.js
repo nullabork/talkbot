@@ -1,12 +1,12 @@
+/*jshint esversion: 9 */
 /**
  * Command: stats
  * shows some stuff
  */
 
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   CommentBuilder = require('@models/CommentBuilder'),
-  auth = require('@auth'),
   Common = require('@helpers/common');
 
 class Stats extends Command {
@@ -31,11 +31,11 @@ class Stats extends Command {
   }
 
   //take a message and extract parts to add to stats
-  static addMessageStats({server, user_id, message}) {
+  static addMessageStats({server, message}) {
     Stats.initStats({server});
-    server.stats.characterCount += message.replace(/\s/g, '').length;
-    server.stats.wordCount += message.split(/\s/).length;
-    server.stats.uniqueUsers[user_id] = true;
+    server.stats.characterCount += message.cleanContent.replace(/\s/g, '').length;
+    server.stats.wordCount += message.cleanContent.split(/\s/).length;
+    server.stats.uniqueUsers[message.member.id] = true;
   }
 
   static getServerStats({server}){
@@ -64,7 +64,8 @@ class Stats extends Command {
     return stats;
   }
 
-  execute ({input, server, world}) {
+  execute ({input}) {
+    var world = input.world;
     if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
 
     Stats.initStats({server});
@@ -78,9 +79,9 @@ class Stats extends Command {
     input.response(help.out());
   }
 
-  onMessage({message, user_id, server}) {
-    Stats.addMessageStats({server, user_id, message});
-    return false;
+  onMessage({message, server}) {
+    Stats.addMessageStats({server, message});
+    return null;
   }
 }
 

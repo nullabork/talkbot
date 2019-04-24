@@ -1,9 +1,4 @@
-/**
- * Command: stats
- * shows some stuff
- */
-
-
+/*jshint esversion: 9 */
 var Command = require('@models/Command')
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
@@ -41,18 +36,23 @@ class Broadcast extends Command {
     }
   }
 
-  execute ({input, server, world}) {
+  execute ({input}) {
+
+    let server = input.server;
+    let world = input.world;
+
     if (!input.ownerIsDev()) return;
-    let message = input.getMessage();
+    let message = input.content;
 
     if(
-      input.args
-      && input.args.length == 1
-      && input.args[0].length
-      && /(confirm|yes|y)/gi.test(input.args[0])
-      && this.broadcastMessage
-      && this.broadcastMessage.length > 15)
+      input.args &&
+      input.args.length == 1 &&
+      input.args[0].length &&
+      /(confirm|yes|y)/gi.test(input.args[0]) &&
+      this.broadcastMessage &&
+      this.broadcastMessage.length > 15)
     {
+
       Broadcast.broadcast({
         world,
         broadcastMessage : this.broadcastMessage

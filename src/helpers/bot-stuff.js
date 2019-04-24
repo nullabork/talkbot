@@ -1,6 +1,6 @@
-'use strict';
+/*jshint esversion: 9 */
 
-var Discord = require('discord.io'),
+var Discord = require('discord.js'),
   auth = require("@auth"),
   Common = require("@helpers/common"),
   tl8 = require('@google-cloud/translate'),
@@ -19,53 +19,34 @@ class BotStuff {
     Common.out('Setting up client for shard ID#' + shard_number + '. Total count of shards is ' + total_shards);
 
     this.auth = auth;
-    this.bot = new Discord.Client({
-      token: auth.token,
-      autorun: true,
-      shard: [shard_number,total_shards]
-    });
+    this.bot = new Discord.Client();
 
     this.tts_client = new textToSpeech.TextToSpeechClient();
 
     this.translate_client = new tl8.Translate({
       projectId: "talk-bork",
     });
-
   }
 
-  isServerChannel(server_id, channel_id) {
-    let bot = this.bot;
-    return bot.channels[channel_id].guild_id == server_id;
+  connect() {
+    this.bot.login(auth.token);
   }
 
-  isServerOwner(server_id, user_id) {
-    let bot = this.bot;
-    return bot.servers[server_id].owner_id == user_id;
-  };
-
-  // determine if user has the biggest permissions available
-  userHasPermissions(server_id, user_id, permission_bit) {
-    let bot = this.bot;
-    for (var r in bot.servers[server_id].members[user_id].roles) {
-      if (this.roleHasPermission(server_id, bot.servers[server_id].members[user_id].roles[r], permission_bit)) {
-        return true;
-      }
-    }
-    return false;
+  isServerOwner(server, member) {
+    return server.guild.ownerID == member.id;
   };
 
   // determines if the user can manage this server
-  canManageTheServer(server_id, user_id) {
-    return this.userHasPermissions(server_id, user_id, P_ADMINISTRATOR) ||
-      this.userHasPermissions(server_id, user_id, P_MANAGE_GUILD) ||
-      this.isServerOwner(server_id, user_id);
-  }
+  canManageTheServer(server, member) {
+    var rtn = (member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) ||
+               member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) ||
+              this.isServerOwner(server, member));
 
+    return rtn;
+  };
 
-  isVoiceChannel(channel_id) {
-    let bot = this.bot;
-    if (!channel_id) return false;
-    return (bot.channels[channel_id].type == 2);
+  isVoiceChannel(channel) {
+    return channel.type == 2;
   }
 
   getUserVoiceChannel(server_id, user_id) {

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var config = require("@auth");
 
 class Common {
@@ -64,11 +65,7 @@ class Common {
     }
 
     if (config.logging && config.logging.out) {
-      console.log(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.log(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -81,11 +78,7 @@ class Common {
     }
 
     if (config.logging && config.logging.err) {
-      console.error(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.error(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -239,11 +232,10 @@ class Common {
     return message.replace(/\n|\r/gi, "");
   }
 
-  //truncate message to 200 characters should be used before all the other things
-  //TODO: define length in config
+  //truncate message to 2000 characters should be used before all the other things
   static truncateMessage(message) {
-    if (message.length > 1000) {
-      message = message.substring(0, 1000);
+    if (message.length > 2000 ) {
+      message = message.substring(0, 2000 );
     }
     return message;
   }
@@ -258,13 +250,28 @@ class Common {
     return message;
   }
 
+  static makeCsv(collection, selector) {
+    var csv = '';
+    if (collection.size == 0) return '';
+    collection.forEach(item => {
+      csv += selector(item) + ', ';
+    });
+    csv = csv.substring(0, csv.length-2);
+
+    return csv;
+  }
+
+  static makeNiceCsv(collection, selector) {
+    return Common.replaceLast(Common.makeCsv(collection, selector), ', ', ' and ');
+  }
+
   //make some sfx audio tag
   static makeAudioSSML(url) {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
 
-  static alertBeepsSSML(){
+  static alertBeepsSSML() {
     return ' <audio src="https://sfx.nullabork.dev/definite.mp3" clipEnd="0.5s" repeatCount="3" /> <break time="500ms"/> ';
   }
 

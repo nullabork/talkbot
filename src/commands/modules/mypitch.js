@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 
@@ -12,24 +13,27 @@ var Common = require("@helpers/common");
  * -20 - +20
  *
  * @param   {[MessageDetails]}  msg  [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function mypitch(msg, server, world) {
-  if (!msg.args.length) return;
+function mypitch(msg) {
+  var server = msg.server;
+  
+  if (msg.args.length == 0) {
+    msg.il8nResponse('mypitch.usage', {gender: server.getMemberSetting(msg.message.member, 'mypitch') });
+    return;
+  }
 
   if(msg.args[0] == 'default'){
-    server.addUserSetting(msg.user_id, 'pitch', 'default');
+    server.addMemberSetting(msg.message.member, 'pitch', 'default');
     msg.il8nResponse('general.auto', {key: "mypitch"});
     return;
   }
 
-  var pitch = parseFloat(msg.getMessage()),
+  var pitch = parseFloat(msg.content),
       pitch = Common.numberClamp(pitch, -20, 20);
 
-  server.addUserSetting(msg.user_id,'pitch',pitch);
+  server.addMemberSetting(msg.message.member,'pitch',pitch);
   msg.il8nResponse('mypitch.okay', { pitch: pitch });
 };
 

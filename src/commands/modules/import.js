@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var Command = require('@models/Command')
   Common = require('@helpers/common'),
   CommentBuilder = require('@models/CommentBuilder'),
@@ -8,7 +9,9 @@ var Command = require('@models/Command')
 
 
 class Import extends Command {
-  execute ({input, server, world}) {
+  execute ({input}) {
+    var server = input.server;
+    
     if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
 
     let import_url = input.args[0];

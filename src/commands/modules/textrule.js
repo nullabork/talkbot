@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 /**
  * Command: textrule
  * Adds regular expressions to replace text in messages with other text
@@ -7,13 +8,11 @@
  *       !textrule list
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
   Common = require('@helpers/common');
@@ -82,7 +81,8 @@ class TextRule extends Command {
     server.save();
   }
 
-  execute ({input, server, world}) {
+  execute ({input}) {
+    var server = input.server;
     var args = [
         ...input.args
       ],
@@ -90,11 +90,8 @@ class TextRule extends Command {
       message = args.join(' '),
       opts = message.split('->'),
 
-
       find = opts.length > 0 ? opts[0].trim() : null,
       replacement = opts.length > 1 ? opts[1].trim() : null;
-
-
 
     let rules = TextRule.getRules(server);
 
@@ -202,24 +199,22 @@ class TextRule extends Command {
   }
 
   /**
-   * [onToken event]
+   * [onMessage event]
    *
-   * @param   {[type]}  {token    [{token word]
-   * @param   {[type]}  modified  [modified word that get modified by each event in different commands]
+   * @param   {[type]}  {message  [the original message object]
+   * @param   {[type]}  content   [the original content]
+   * @param   {[type]}  modified  [the modified content]
    * @param   {[type]}  server}   [server description]}
    *
    * @return  {[type]}            [return description]
    */
-  onMessage({message, modified, server}) {
-    message = modified || message;
-
+  onMessage({message, content, modified, server}) {
+    content = content || modified;
     for ( var textrule in server.textrules ) {
-
-
       var re = new RegExp(textrule, 'gi');
-      message = message.replace(re, server.textrules[textrule]);
+      content = content.replace(re, server.textrules[textrule]);
     }
-    return message;
+    return content;
   }
 
 }

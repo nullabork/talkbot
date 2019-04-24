@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var Command = require('@models/Command'),
   auth = require('@auth'),
@@ -13,8 +14,6 @@ var Command = require('@models/Command'),
  * usage: !help
  *
  * @param   {[MessageDetails]}  input     [message releated helper functions]
- * @param   {[Server]}          server  [Object related to the Server the command was typed in.]
- * @param   {[World]}           world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
@@ -26,7 +25,7 @@ class Help extends Command {
       "Quickstart" : [
         "1. join a voice channel",
         "2. type " + auth.command_char + "follow",
-        "3. Type some text and hear the bot speak"
+        "3. Type 'Hello World' to hear the bot speak"
       ],
 
       "Control" : {
@@ -42,8 +41,9 @@ class Help extends Command {
       },
 
       "Issues" : [
-        'To submit bugs (and shitpost) go to https://github.com/nullabork/talkbot',
-        'To Talk to other humans join our discord https://discordapp.com/invite/NxrPp8g'
+        'For documentation go to https://talkbot.nullabork.dev/',
+        'For talk about the bot join our discord https://discordapp.com/invite/NxrPp8g',
+        'To add talkbot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0'
       ]
     };
   }
@@ -104,8 +104,9 @@ class Help extends Command {
   }
 
 
-  execute ({input, server, world}) {
+  execute ({input}) {
 
+    var server = input.server;
     var other = input.args[0],
       self = this,
       cmds = require("@commands"),

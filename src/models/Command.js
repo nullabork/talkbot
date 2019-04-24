@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // class for all the details of a command
 var Common = require('@helpers/common');
 
@@ -62,7 +63,9 @@ class Command {
     var self = this;
     return {
       message : this.onMessage || null,
-      token : this.onToken || null
+      token : this.onToken || null,
+      messageDelivered : this.onMessageDelivered || null,
+      validate: this.onValidate || null
     }
   }
 }
