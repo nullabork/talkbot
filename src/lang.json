@@ -214,7 +214,7 @@
   "en.restrict": {
     "current":"The bot is currently restricted to :restrictions",
     "usage":":command_charrestrict none - allow talkbot to listen on all channels\n:command_charrestrict #channel - restrict talkbot to listen on #channel",
-    "nopermissions":"You need have permissions to manage the server to alter this command",
+    "nopermissions":"You need have Manage Server permissions to alter the channels Talkbot is restricted to",
     "setdefault":"The bot will now listen on all channels",
     "args":"Please include a channel eg. :command_charrestrict #channel",
     "okay":"I'll only listen on these channels now: :channels",
@@ -231,7 +231,8 @@
     "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
     "keepCount" : "I am now just remembering the latest **:count** messages.\nUse `:command_charkeep all` to not delete any message.",
     "all" : "Okay I will now keep all messages and not delete any! ;)",
-    "shorthelp" : "Specify how many messages to keep, the rest will be deleted."
+    "shorthelp" : "Specify how many messages to keep, the rest will be deleted.",
+    "nope": "You need have Manage Server permissions to alter the number of messages Talkbot keeps"
   },
   "en.broadcast": {
     "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"

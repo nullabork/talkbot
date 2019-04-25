@@ -57,7 +57,7 @@ class Keep extends Command {
 
   execute ({ input, msg }) {
     if (!input.ownerCanManageTheServer()) return input.il8nResponse( 'keep.nope');
-
+    
     var server = input.server;
 
     if (!input.args.length) {
