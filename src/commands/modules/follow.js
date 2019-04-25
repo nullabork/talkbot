@@ -161,7 +161,7 @@ function transfer(msg) {
   }
 
   if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.voiceConnection.channel.id )) {
-    msg.il8nResponse('transfer.novoice');
+    msg.il8nResponse('transfer.samevoice');
     return;
   }
 

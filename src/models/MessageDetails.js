@@ -25,11 +25,6 @@ class MessageDetails {
         .then(chan.stopTyping());
   }
 
-  getResolvedMessage() {
-    var content = this.content;
-    return botStuff.resolveMessageSnowFlakes(content);
-  }
-
   ownerIsMaster() {
     return this.server.isMaster(this.message.member);
   }
@@ -69,11 +64,6 @@ class MessageDetails {
   boundNick() {
     return this.message.guild.members.find( x => x.id == this.server.bound_to).nick;
   }
-
-  getOwnersVoiceChannel() {
-    var server_id = this.server.server_id;
-    return botStuff.getUserVoiceChannel(server_id, _this.message.member.id);
-  };
 
   // gets all the IDs as names
   getDisplayNamesAsCSV() {
