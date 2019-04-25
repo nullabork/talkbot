@@ -44,7 +44,8 @@ function follow(msg) {
     }
   }
 
-};
+}
+
 
 /* * *
  * Command: unfollow
@@ -105,7 +106,7 @@ function sidle(msg) {
     return;
   }
 
-  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+  if ( !newMaster.voiceChannel || newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
     msg.il8nResponse('sidle.novoice');
     return;
   }
@@ -155,14 +156,30 @@ function transfer(msg) {
     return;
   }
 
-  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+  if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.voiceConnection.channel.id )) {
     msg.il8nResponse('transfer.novoice');
     return;
   }
 
   server.setMaster(newMaster);
-  msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
-};
+  if (server.voiceConnection)
+  {
+    msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+  }
+  else
+  {
+    server.joinVoiceChannel(newMaster.voiceChannel)
+    .then(() => {
+      msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+
+      // unmute them if they're muted
+      if (server.getMemberSetting(newMaster, 'muted')) {
+        server.addMemberSetting(newMaster,'muted',false);
+        msg.il8nResponse('mute.unmuted');
+      }
+    });    
+  }
+}
 
 var command_follow = new BotCommand({
   command_name: 'follow',

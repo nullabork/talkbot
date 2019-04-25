@@ -24,7 +24,7 @@ class Server {
 
     this.server_name = guild.name;
     this.audioEmojis = state_data.audioEmojis || {};
-    this.memberSettings = state_data.memberSettings || {};
+    this.memberSettings = state_data.memberSettings || state_data.userSettings || {};
     this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
     this.bound_to = null;
     this.voiceConnection = null;
@@ -179,15 +179,16 @@ class Server {
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
 
-    console.log(voiceChannel);
-
     var p = voiceChannel.join()
       .then(connection => {
         connection.on('closing', () => {
           server.leaving = true;
-          server.bound_to = null;
+          if (!server.switching_channels)
+          {
+            server.bound_to = null;
+            server.permitted = {};
+          }
           server.stop('voiceClosing'); // stop playing
-          server.permitted = {};
           clearTimeout(server.neglect_timeout);
         });
         connection.on('disconnect', () => {
@@ -209,6 +210,22 @@ class Server {
 
     return p;
   };
+
+  // switch from whatever the current voice channel is to this voice channel
+  switchVoiceChannel(voiceChannel) {
+    var server = this;
+    if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
+    if (!server.voiceConnection) return Common.error(new Error("server.voiceConnection is null"));
+    if (voiceChannel.id == server.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
+
+    server.switching_channels = true;
+
+    server.voiceConnection.on(
+      'disconnect', 
+      () => server.joinVoiceChannel(voiceChannel).then(() => server.switching_channels = false )
+      );
+    server.voiceConnection.disconnect();
+  }
 
   // permit another user to speak
   permit(snowflake_id) {

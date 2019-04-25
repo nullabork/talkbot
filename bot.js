@@ -86,13 +86,13 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
       return;
     
     // they've changed voice channels 
-    if ( oldMember.voiceChannel && !newMember.voiceChannel || oldMember.voiceChannel.id != newMember.voiceChannel.id) {
+    if ( oldMember.voiceChannel && !newMember.voiceChannel ) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
       server.release();
     }
-/*    else if ( oldMember.voiceChannel.id != newMember.voiceChannel.id )
+    else if ( oldMember.voiceChannel.id != newMember.voiceChannel.id )
     {
-      server.switchVoiceChannels(newMember.voiceChannel);
-    }      */
+      server.switchVoiceChannel(newMember.voiceChannel);
+    }      
   }
   catch(ex) { Common.error(ex); }
 });

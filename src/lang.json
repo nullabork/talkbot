@@ -135,9 +135,10 @@
   },
   "en.transfer": {
     "okay": "Okay :name is now the :title",
-    "nopermissions" : "You cannot do this.",
+    "nopermissions" : "You need to have Manager Server permissions of be a server admin to do this.",
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
+    "novoice" : "I need to be in a voice channel first",
     "broken" : "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
     "shorthelp": "Transfer control of the bot to another person"
   },
