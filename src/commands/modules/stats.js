@@ -66,6 +66,7 @@ class Stats extends Command {
 
   execute ({input}) {
     var world = input.world;
+    var server = input.server;
     if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
 
     Stats.initStats({server});
