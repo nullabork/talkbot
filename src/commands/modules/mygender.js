@@ -54,7 +54,7 @@ var command = new BotCommand({
   short_help: 'mygender.shorthelp',
   long_help: 'mygender.longhelp',
   group: "personalization",
-  parameters: "<gender>"
+  // parameters: "<gender>"
 });
 
 exports.register = function (commands) {

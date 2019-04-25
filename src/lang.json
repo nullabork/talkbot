@@ -229,8 +229,9 @@
   },
   "en.keep": {
     "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
-    "keepCount" : "I am now just remembering the latest **:count** messages.",
-    "all" : "Okay I will now keep all messages and not delete any! ;)"
+    "keepCount" : "I am now just remembering the latest **:count** messages.\nUse `:command_charkeep all` to not delete any message.",
+    "all" : "Okay I will now keep all messages and not delete any! ;)",
+    "shorthelp" : "Specify how many messages to keep, the rest will be deleted."
   },
   "en.broadcast": {
     "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"

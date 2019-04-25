@@ -35,7 +35,7 @@ var BotCommand = require('@models/BotCommand');
 function mylang(msg) {
 
   var server = msg.server;
-  
+
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('mylang.more');
     return;
@@ -79,7 +79,7 @@ var command = new BotCommand({
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',
   group: "personalization",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 

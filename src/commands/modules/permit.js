@@ -87,7 +87,7 @@ var command_permit = new BotCommand({
   short_help: 'permit.shorthelp',
   long_help: 'permit.longhelp',
   group: "control",
-  parameters: "[<user>]",
+  // parameters: "[<user>]",
   order : 5
 
 });
@@ -98,7 +98,7 @@ var command_unpermit = new BotCommand({
   short_help: 'unpermit.shorthelp',
   long_help: 'unpermit.longhelp',
   group: "control",
-  parameters: "[<user>]",
+  // parameters: "[<user>]",
   order : 6
 });
 

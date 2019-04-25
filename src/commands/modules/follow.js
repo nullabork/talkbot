@@ -28,7 +28,7 @@ function follow(msg) {
       server.joinVoiceChannel(msg.message.member.voiceChannel)
       .then(() => {
         msg.il8nResponse('follow.okay');
-        
+
         // unmute them if they're muted
         if (server.getMemberSetting(msg.message.member, 'muted')) {
           server.addMemberSetting(msg.message.member,'muted',false);
@@ -55,7 +55,7 @@ function unfollow(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
-  
+
   if (!server.isBound()) {
     msg.il8nResponse('unfollow.none');
     return;
@@ -84,7 +84,7 @@ function sidle(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
-  
+
   if (!server.isBound()) {
     msg.il8nResponse('sidle.none');
     return;
@@ -100,15 +100,15 @@ function sidle(msg) {
     msg.il8nResponse('sidle.membernoexist');
     return;
   }
-  
+
   if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
     msg.il8nResponse('sidle.novoice');
     return;
   }
-  
+
   server.setMaster(newMaster);
   msg.il8nResponse('sidle.okay');
-  
+
   if (server.getMemberSetting(newMaster, 'muted')) {
     server.addMemberSetting(newMaster,'muted',false);
     msg.il8nResponse('mute.unmuted');
@@ -150,12 +150,12 @@ function transfer(msg) {
     msg.il8nResponse('transfer.membernoexist');
     return;
   }
-  
+
   if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
     msg.il8nResponse('transfer.novoice');
     return;
   }
-  
+
   server.setMaster(newMaster);
   msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
 };
@@ -193,7 +193,7 @@ var command_transfer = new BotCommand({
   long_help: 'transfer.longhelp',
   group: "control",
   order : 3,
-  parameters: "user"
+  // parameters: "user"
 });
 
 exports.register = function (commands) {
