@@ -232,10 +232,12 @@
   },
   "en.keep": {
     "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
-    "keepCount" : "I am now just remembering the latest **:count** messages.\nUse `:command_charkeep all` to not delete any message.",
+    "keepAll": "I am now not deleting any messages\nUse `:command_charkeep <number>` to delete older messages.",
+    "keepCount" : "I am now deleting messages older than the last **:count** messages.\nUse `:command_charkeep all` to not delete any messages.",
     "all" : "Okay I will now keep all messages and not delete any! ;)",
     "shorthelp" : "Specify how many messages to keep, the rest will be deleted.",
-    "nope": "You need have Manage Server permissions to alter the number of messages Talkbot keeps"
+    "nope": "You need have Manage Server permissions to alter the number of messages Talkbot keeps",
+    "msgpermissions": "The bot needs Manage Message permissions on the server to do this"
   },
   "en.broadcast": {
     "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"

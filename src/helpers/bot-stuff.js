@@ -45,6 +45,15 @@ class BotStuff {
     return rtn;
   };
 
+  botHasManageMessagePermissions(server)
+  {
+    var botMember = server.guild.members.find( x => x.id == this.bot.user.id);
+    if (!botMember) return Common.error(new Error('Cant find the member object for this bot')); // something went wrong!
+
+    var rtn = botMember.hasPermission(Discord.Permissions.FLAGS.MANAGE_MESSAGES, false, true, true);
+    return rtn;
+  }
+
   isVoiceChannel(channel) {
     return channel.type == 2;
   }

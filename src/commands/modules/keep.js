@@ -15,7 +15,8 @@
  * @return  {[undefined]}
  */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
+  botStuff = require('@helpers/bot-stuff');
 
 class Keep extends Command {
 
@@ -55,19 +56,21 @@ class Keep extends Command {
     server.addSettings('keepMessages', { keepQueue : queue});
   }
 
-  execute ({ input, msg }) {
-    if (!input.ownerCanManageTheServer()) return input.il8nResponse( 'keep.nope');
-    
+  execute ({ input }) {
     var server = input.server;
 
     if (!input.args.length) {
-      //server.addSettings('keepMessages', { count : null });
       let count = server.getSettingObjectValue('keepMessages', 'count') || "all";
       input.il8nResponse( 'keep.usage');
-      input.il8nResponse( 'keep.keepCount', {count});
+      if ( count == 'all' ) input.il8nResponse('keep.keepAll');
+      else input.il8nResponse( 'keep.keepCount', {count});
       return;
     }
 
+    if (!input.ownerCanManageTheServer()) return input.il8nResponse( 'keep.nope');
+
+    if (!botStuff.botHasManageMessagePermissions(server)) return input.il8nResponse('keep.msgpermissions');
+    
     if (/^(all)/i.test(input.args[0])) {
       server.addSettings('keepMessages', { count : null });
       return input.il8nResponse( 'keep.all');
@@ -86,7 +89,6 @@ class Keep extends Command {
   onMessageDelivered ({ message, server }) {
     Keep.cleanup(server, message)
   }
-
 }
 
 // registration
