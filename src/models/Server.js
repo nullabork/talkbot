@@ -167,6 +167,7 @@ class Server {
     var server = this;
     if (!server.voiceConnection) return;
     if (server.leaving) return; // dont call it twice dude
+    if (callback) server.voiceConnection.on('disconnect', callback);
     server.voiceConnection.disconnect();
   };
 
@@ -381,9 +382,6 @@ class Server {
 
     request.input = { text: null, ssml: message };
 
-    console.log("tts");
-    console.log(request);
-
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
@@ -392,7 +390,6 @@ class Server {
       }
       try {
         // might have to queue the content if its playing currently
-        console.log("tts-buildstream");
         server.playAudioContent(response.audioContent, callback);
       }
       catch (e) {
@@ -433,13 +430,11 @@ class Server {
 
     // play the content
     server.playing = true;
-    console.log("tts-play");
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
-        console.log("tts-end: " + reason);
         clearTimeout(server.voice_timeout);
         server.playing = false;
         server.voiceDispatcher = null;
