@@ -16,6 +16,7 @@ function follow(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
+  if (server.switching_channel) return msg.il8nResponse('follow.switching');
   if (server.isBound()) {
     if (!server.isMaster(msg.message.member)) {
       msg.il8nResponse('follow.nope', { name: server.bound_to.displayName });
@@ -60,6 +61,7 @@ function unfollow(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
+  if (server.switching_channel) return msg.il8nResponse('unfollow.switching');
 
   if (!server.isBound()) {
     msg.il8nResponse('unfollow.none');
@@ -89,6 +91,7 @@ function sidle(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
+  if (server.switching_channel) return msg.il8nResponse('sidle.switching');
 
   if (!server.isBound()) {
     msg.il8nResponse('sidle.none');
@@ -134,6 +137,7 @@ function transfer(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('transfer.connecting');
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
+  if (server.switching_channel) return msg.il8nResponse('transfer.switching');
 
   if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer()) {
     msg.il8nResponse('transfer.nopermissions');
@@ -161,13 +165,18 @@ function transfer(msg) {
     return;
   }
 
+  if ( !msg.message.member.voiceChannel.joinable) {
+    msg.il8nResponse('transfer.channelpermissions');
+    return;
+  }
+
   server.setMaster(newMaster);
   if (server.voiceConnection)
   {
     msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
   }
   else
-  {
+  {      
     server.joinVoiceChannel(newMaster.voiceChannel)
     .then(() => {
       msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
