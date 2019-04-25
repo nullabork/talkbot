@@ -24,6 +24,10 @@ function follow(msg) {
     }
   } else {
     if (msg.message.member.voiceChannel) {
+
+      if ( !msg.message.member.voiceChannel.joinable) 
+        return msg.il8nResponse('follow.permissions');
+
       server.setMaster(msg.message.member);
       server.joinVoiceChannel(msg.message.member.voiceChannel)
       .then(() => {
