@@ -27,7 +27,7 @@ function build_permitted_string(server) {
       }
     }
   }
-  if ( members.length < 2 ) return '';
+  if ( members.length < 2 ) return 'no one else';
   return members.trim().substring(2);
 }
 

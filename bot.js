@@ -100,6 +100,12 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
 // when messages come in
 bot.on('message', message => {
   try {
+    if (!message.member) {
+      console.error(new Error("speak(...): message.member is null"));
+      console.error(message);
+      return; // why is this null?
+    }
+
     if ( message.member.id == bot.user.id ) return;
 
     var server = world.servers[message.guild.id];
