@@ -28,6 +28,7 @@ var BotCommand = require('@models/BotCommand');
  * ES
  * SE
  * TR
+ * RU
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  *

@@ -6,9 +6,6 @@ var Discord = require('discord.js'),
   tl8 = require('@google-cloud/translate'),
   textToSpeech = require('@google-cloud/text-to-speech');
 
-var P_ADMINISTRATOR = 0x00000008;
-var P_MANAGE_GUILD = 0x00000020;
-
 class BotStuff {
 
   constructor(shard_number, total_shards) {
