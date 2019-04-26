@@ -282,7 +282,7 @@ function voiceMap(config) {
       "voice_alias" : "Sarah",
       "gender": "FEMALE"
     },
-    
+    /*
     {
       "language": "French (France)",
       "type": "Standard",
@@ -291,7 +291,7 @@ function voiceMap(config) {
       "voice": "fr-FR-Standard-A",
       "voice_alias" : "madeline",
       "gender": "FEMALE"
-    },
+    },*/
     {
       "language": "French (France)",
       "type": "Standard",
