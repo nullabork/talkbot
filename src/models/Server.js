@@ -366,7 +366,7 @@ class Server {
     if (!callback) callback = function () { };
 
     var settings = {
-      gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
+      gender:   options.gender == 'default' ? 'NEUTRAL' : options.gender,
       language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
@@ -459,7 +459,7 @@ class Server {
         if ( nextAudio ) nextAudio();
       })
       .on('error', error => Common.error(error));
-      server.voiceDispatcher.passes = 1;
+      server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation
@@ -487,27 +487,26 @@ class Server {
 
     if ( content.length < 1 ) return;
 
-    function _speak(msg) {
+    ret = commands.notify('configureVoice', { message: message, original_settings: settings, server: server });
+    if (ret) settings = ret;
+
+    function _speak(msg, settings) {
       var ssml = new MessageSSML(msg, { server: server }).build();
-      server.talk(ssml, settings, () => {
-        commands.notify('messageDelivered', { message: message, content: message.message, server: server })
-      });
+      server.talk(ssml, settings, () => commands.notify('messageDelivered', { message: message, content: message.message, server: server }));
     }
 
     var tolang = server.getMemberSetting(message.member, 'toLanguage');
-    if (tolang && !tolang == "default") {
-
+    if (tolang && tolang != "default") {
       botStuff.translate_client
         .translate(content, tolang)
         .then(results => {
-          _speak(results[0]);
+          _speak(results[0], settings);
         })
         .catch(Common.error);
     } else {
-      _speak(content);
-    };
-  };
-
-};
+      _speak(content, settings);
+    }
+  }
+}
 
 module.exports = Server;

@@ -72,7 +72,9 @@ class Command {
       leaveVoice: self.onLeaveVoice || null,
 
       follow: self.onFollow || null,
-      unfollow: self.onUnfollow || null
+      unfollow: self.onUnfollow || null,
+
+      configureVoice: self.onConfigureVoice || null
     }
   }
 }

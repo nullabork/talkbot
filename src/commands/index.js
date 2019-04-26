@@ -19,7 +19,8 @@ function Commands() {
     joinVoice: [],
     leaveVoice: [],
     follow: [],
-    unfollow: []
+    unfollow: [],
+    configureSettings: []
   };
 
   this.command_char = auth.command_char || '!';
