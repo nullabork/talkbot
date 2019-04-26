@@ -217,6 +217,14 @@ class Server {
   // switch from whatever the current voice channel is to this voice channel
   switchVoiceChannel(voiceChannel) {
     var server = this;
+    if (server.switching_channels || server.connecting || server.leaving) {
+      if ( !server.switchQueue ) server.switchQueue = [];
+      server.switchQueue.push(voiceChannel);
+
+      // drop it if the queue gets too large
+      if ( server.switchQueue.length > 3 ) server.switchQueue.shift(); 
+      return;
+    }
     if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
     if (!server.voiceConnection) return Common.error(new Error("server.voiceConnection is null"));
     if (voiceChannel.id == server.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
@@ -225,22 +233,26 @@ class Server {
 
     server.voiceConnection.on(
       'disconnect', 
-      () => server.joinVoiceChannel(voiceChannel).then(() => server.switching_channels = false )
-      );
+      () => server.joinVoiceChannel(voiceChannel).then(() => { 
+        server.switching_channels = false;
+        if ( server.switchQueue && server.switchQueue.length > 0 )
+          server.switchVoiceChannel(server.switchQueue.shift());
+      })
+    );
     server.voiceConnection.disconnect();
   }
 
   // permit another user to speak
   permit(snowflake_id) {
     this.resetNeglectTimeout();
-    this.permitted[snowflake_id] = {};
+    this.permitted[snowflake_id] = true;
     this.save();
   };
 
   // unpermit another user to speak
   unpermit(snowflake_id) {
     this.resetNeglectTimeout();
-    this.permitted[snowflake_id] = null;
+    this.permitted[snowflake_id] = false;
     this.save();
   };
 
@@ -322,6 +334,7 @@ class Server {
       if (key == "guild") return undefined;
       if (key == "voiceDispatcher") return undefined;
       if (key == "keepQueue") return undefined;
+      if (key == "switchQueue") return undefined;
 
       else return value;
     };
@@ -411,9 +424,6 @@ class Server {
     var server = this;
     var readable = audioContent;
 
-    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
-    if ( server.leaving ) return;
-
     if (!( readable instanceof stream.Readable) ) {
       readable = new streamifier.createReadStream(audioContent);
     }
@@ -426,6 +436,9 @@ class Server {
       server.audioQueue.push(queueFunc);
       return;
     }
+
+    if ( server.leaving ) return;
+    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
 
     // play the content
     server.playing = true;
