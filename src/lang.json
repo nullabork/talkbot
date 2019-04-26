@@ -255,5 +255,11 @@
     "setokay": "Yes :title. I've set your prefix to :setting",
     "on": "Ok :title, your voice will now prefix with :setting",
     "off": "Ok :title, your voice will not be prefixed"
+  },
+  "en.mysuffix": {
+    "usage": ":command_charmysuffix set [mysuffix]\n:command_char mysuffix on/off\nYour suffix is :setting",
+    "setokay": "Yes :title. I've set your suffix to :setting",
+    "on": "Ok :title, your voice will now suffix with :setting",
+    "off": "Ok :title, your voice will not be suffixed"
   }
 }

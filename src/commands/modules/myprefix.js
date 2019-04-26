@@ -14,7 +14,7 @@ class MyPrefix extends Command {
         var member = input.message.member;
         var myprefix = server.getMemberSetting(member, 'myprefix') || { prefix: member.displayName, enabled: false };
 
-        if (!input.args.length) return input.il8nResponse('myprefix.usage', {setting: prefix});
+        if (!input.args.length) return input.il8nResponse('myprefix.usage', {setting: myprefix.prefix});
 
         var mode = input.args[0];
         if (/^(on)$/i.test(mode)) {
