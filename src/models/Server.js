@@ -244,14 +244,14 @@ class Server {
 
   // permit another user to speak
   permit(snowflake_id) {
-    this.resetNeglectTimeout();
+    this.resetNeglectTimeout(); // this is redundant, its run from the command as well
     this.permitted[snowflake_id] = true;
     this.save();
   };
 
   // unpermit another user to speak
   unpermit(snowflake_id) {
-    this.resetNeglectTimeout();
+    this.resetNeglectTimeout(); // this is redundant, its run from the command as well
     this.permitted[snowflake_id] = false;
     this.save();
   };

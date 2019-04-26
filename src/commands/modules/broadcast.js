@@ -43,6 +43,7 @@ class Broadcast extends Command {
     let world = input.world;
 
     if (!input.ownerIsDev()) return;
+    if (server.isBound()) return input.il8nResponse('broadcast.notinvoice');
     let message = input.content;
 
     if(
