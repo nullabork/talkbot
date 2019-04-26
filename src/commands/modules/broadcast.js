@@ -13,9 +13,10 @@ class Broadcast extends Command {
 
   setConfirmation({ broadcastMessage }) {
     this.broadcastMessage = broadcastMessage;
-    setTimeout(() => {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
       this.broadcastMessage = "";
-    }, 40000);
+    }, 140000);
   }
 
   static speakMessageToServer({server, broadcastMessage}) {
