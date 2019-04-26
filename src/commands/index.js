@@ -149,7 +149,6 @@ function Commands() {
           };
 
           var resp = func.apply(this, [args]);
-
           if (resp !== null) {
             ret = resp;
           }

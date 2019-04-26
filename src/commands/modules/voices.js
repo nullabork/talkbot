@@ -35,8 +35,6 @@ var BotCommand = require('@models/BotCommand');
  */
 function listVoices(msg) {
 
-    var server = msg.server;
-
     if(!msg.args || !msg.args.length){
       msg.il8nResponse('voices.more');
       return;

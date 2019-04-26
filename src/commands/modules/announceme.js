@@ -11,6 +11,7 @@ class AnnounceMe extends Command {
 
     execute ({input}) {
         var server = input.server;
+        var member = input.message.member;
         var currentMode = server.getMemberSetting(member, 'announceme') || 'off';
 
         if (!input.args.length) return input.il8nResponse('announceme.usage', {setting: currentMode});

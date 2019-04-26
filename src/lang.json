@@ -249,5 +249,11 @@
     "announceleave": "My :title, :name has :verb",
     "on": "Ok :title, you will now be announced when joining voice",
     "off": "Ok :title, you will not be announced when joining voice"
+  },
+  "en.myprefix": {
+    "usage": ":command_charmyprefix set [myprefix]\n:command_char myprefix on/off\nYour prefix is :setting",
+    "setokay": "Yes :title. I've set your prefix to :setting",
+    "on": "Ok :title, your voice will now prefix with :setting",
+    "off": "Ok :title, your voice will not be prefixed"
   }
 }

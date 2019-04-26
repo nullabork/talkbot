@@ -20,6 +20,10 @@ class MessageDetails {
   response(message, params) {
     var _this = this;
     var chan = _this.message.channel;
+    if ( message.length > 2000 ) {
+      Common.error(new Error("message too long for discord"));
+      message = message.substring(0,2000);
+    }
     chan.startTyping(1);
     chan.send(message)
         .then(chan.stopTyping());
