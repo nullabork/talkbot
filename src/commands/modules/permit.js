@@ -1,7 +1,7 @@
 /*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
-
+var Common = require('@helpers/common');
 
 /**
  * Command: permit
@@ -21,16 +21,16 @@ function permit(msg) {
     return;
   }
 
-  if ( msg.message.mentions.members.size == 0 ) {
+  let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
+  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
     msg.il8nResponse('permit.none');
     return;
   }
 
   msg.message.mentions.members.tap( member => server.permit(member.id));
-  msg.message.mentions.roles.tap( role => server.permit(role.id));
+  roles.tap( role => server.permit(role.id));
 
-  var nicks = Common.replaceLast(msg.getDisplayNamesAsCSV(), ', ', ' and ');
-
+  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
   msg.il8nResponse('permit.okay', { name: nicks });
 };
 
@@ -55,7 +55,10 @@ function unpermit(msg) {
     return;
   }
 
-  if ( msg.message.mentions.members.size == 0 ) {
+  let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
+  roles.tap( role => server.unpermit(role.id));
+
+  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
     server.unpermit(msg.message.member.id);
   }
 
@@ -77,7 +80,7 @@ function unpermit(msg) {
     server.unpermit(role.id);
   });
 
-  var nicks = Common.replaceLast(msg.getDisplayNamesAsCSV(), ', ', ' and ');
+  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
   msg.il8nResponse('unpermit.okay', { name: nicks });
 };
 

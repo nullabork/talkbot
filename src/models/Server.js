@@ -222,7 +222,7 @@ class Server {
       server.switchQueue.push(voiceChannel);
 
       // drop it if the queue gets too large
-      if ( server.switchQueue.length > 3 ) server.switchQueue.shift(); 
+      if ( server.switchQueue.length > 3 ) server.switchQueue.shift();
       return;
     }
     if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
@@ -232,8 +232,8 @@ class Server {
     server.switching_channels = true;
 
     server.voiceConnection.on(
-      'disconnect', 
-      () => server.joinVoiceChannel(voiceChannel).then(() => { 
+      'disconnect',
+      () => server.joinVoiceChannel(voiceChannel).then(() => {
         server.switching_channels = false;
         if ( server.switchQueue && server.switchQueue.length > 0 )
           server.switchVoiceChannel(server.switchQueue.shift());
@@ -259,9 +259,11 @@ class Server {
   // is this user permitted to speak
   isPermitted(member) {
     if (!member) return false;
+    if (this.permitted[member.id] === false) return false;
+
     for(var snowflake_id in this.permitted) {
       if (this.permitted[snowflake_id])
-        if (snowflake_id == member.id || member.roles.has(member.id))
+        if (snowflake_id == member.id || member.roles.has(snowflake_id))
           return true;
     }
     return false;

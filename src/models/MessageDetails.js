@@ -29,6 +29,22 @@ class MessageDetails {
         .then(chan.stopTyping());
   }
 
+  getNonSnowflakeRoles(){
+    if(!this.args) {
+      return [];
+    }
+
+    let roles = this.server.guild.roles;
+    return roles.filter((item) => {
+      return item.name && this.args.indexOf(item.name) > -1;
+    });
+  }
+
+  getResolvedMessage() {
+    var content = this.content;
+    return botStuff.resolveMessageSnowFlakes(content);
+  }
+
   ownerIsMaster() {
     return this.server.isMaster(this.message.member);
   }
