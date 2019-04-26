@@ -76,6 +76,10 @@ class Common {
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
+    else if ( typeof message == 'object' )
+    {
+      message = message.toString();
+    }
 
     if (config.logging && config.logging.err) {
       console.error(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
