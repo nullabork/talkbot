@@ -25,9 +25,11 @@ function permit(msg) {
     msg.il8nResponse('permit.none');
     return;
   }
+ let roles = msg.message.mentions.roles.clone();
+  roles = roles.concat(msg.getNonSnowflakeRoles());
 
   msg.message.mentions.members.tap( member => server.permit(member.id));
-  msg.message.mentions.roles.tap( role => server.permit(role.id));
+  roles.tap( role => server.permit(role.id));
 
   var nicks = Common.replaceLast(msg.getDisplayNamesAsCSV(), ', ', ' and ');
 
