@@ -1,5 +1,7 @@
+/*jshint esversion: 9 */
 
 var langMap = require("@helpers/voiceMap");
+
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -10,14 +12,13 @@ var BotCommand = require('@models/BotCommand');
  *
  * usage !tolang au
  *
- *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function toLang(msg, server, world) {
+function toLang(msg) {
+
+  var server = msg.server;
 
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('mylang.more');
@@ -25,7 +26,7 @@ function toLang(msg, server, world) {
   }
 
   if(msg.args[0] == 'default'){
-    server.addUserSetting(msg.user_id, 'toLanguage', 'default');
+    server.addMemberSetting(msg.message.member, 'toLanguage', 'default');
     msg.il8nResponse('general.auto', {key: "tolang"});
     return;
   }
@@ -40,17 +41,16 @@ function toLang(msg, server, world) {
 
   var doc = docs[0];
 
-  server.addUserSetting(msg.user_id,'toLanguage', doc.translate);
-  server.addUserSetting(msg.user_id,'language', doc.code);
+  server.addMemberSetting(msg.message.member,'toLanguage', doc.translate);
+  server.addMemberSetting(msg.message.member,'language', doc.code);
   var response = server.lang('tolang.okay', { lang: doc.language });
 
-
-  var voiceName = server.getUserSetting(msg.user_id,'name');
+  var voiceName = server.getMemberSetting(msg.message.member,'name');
   if( voiceName && voiceName != "default" ) {
     response += "\n" + server.lang('myvoice.noped');
   }
 
-  server.addUserSetting(msg.user_id,'name', 'default');
+  server.addMemberSetting(msg.message.member,'name', 'default');
   msg.response(response);
 };
 
@@ -61,7 +61,7 @@ var command = new BotCommand({
   short_help: 'tolang.shorthelp',
   long_help: 'tolang.longhelp',
   group: "personalization",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 

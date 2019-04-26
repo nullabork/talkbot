@@ -1,7 +1,8 @@
+/*jshint esversion: 9 */
 
 class RuntimeTesting {
 
-  static TestIfChildProcessIsWorkingHowDiscordIONeedsItTo() {
+  static TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo() {
     // run this to test if you need a different version of node
 
     var ChildProc = require('child_process');
@@ -20,7 +21,7 @@ class RuntimeTesting {
       process.exit();
     }
     else {
-      console.log("Loaded a player OK.");
+      console.log("Loaded FFMPEG OK.");
     }
   }
   
@@ -38,7 +39,27 @@ class RuntimeTesting {
       process.exit();
     }    
     
-    console.log("Loaded a the Google TTS API credentials OK.");    
+    console.log("Loaded the Google TTS API credentials OK.");    
+  }
+  
+  static TestIfNodeOpusIsInstalled() {
+
+    try {
+      var opus = require('node-opus');
+    }
+    catch(ex)
+    {
+      console.log('WARN: The good opus is not installed: node-opus');
+      try {
+        var opus = require('opusscript');
+      }
+      catch(ex2) {
+        console.log('Cant find any opus installed');
+        process.exit();
+      }
+    }
+
+    console.log("Loaded Node OPUS OK.");
   }
 };
 

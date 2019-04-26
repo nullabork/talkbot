@@ -1,9 +1,12 @@
+/*jshint esversion: 9 */
 /*
  *  _____     _ _    ____        _
  * |_   _|_ _| | | _| __ )  ___ | |_
  *   | |/ _` | | |/ /  _ \ / _ \| __|
  *   | | (_| | |   <| |_) | (_) | |_
  *   |_|\__,_|_|_|\_\____/ \___/ \__|
+ *
+ * A discord text to speech bot
  *
  * http://github.com/nullabork/talkbot
  */
@@ -27,148 +30,144 @@ var world = require('@models/World'),
   Server = require('@models/Server'),
   Command = require('@models/Command');
 
-// runtime testing
-testing.TestIfChildProcessIsWorkingHowDiscordIONeedsItTo();
-testing.TestIfGoogleEnvironmentVarIsSet();
-
-// Creates a client
 var bot = botStuff.bot;
 
+// runtime testing
+testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
+testing.TestIfGoogleEnvironmentVarIsSet();
+testing.TestIfNodeOpusIsInstalled();
+// TODO: Test node-opus is installed, the call above does nothing
+
 // FANCY SPLASH SCREEN
-figlet('TalkBot', function(err, data) {
-  console.log(data);
-});
+figlet('TalkBot', (err, data) => console.log(data));
 
 // when the server is ready to go
-bot.on('ready', function (evt) {
-  Common.out('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+bot.on('ready', () => {
+  Common.out('Logged in as: ' + bot.user.username + ' - (' + bot.user.id + ')');
   world.startup();
 });
 
-// if we get disconnected???
-bot.on('disconnect', function (evt) {
-  world.saveAll();
-  world.dispose();
-  Common.out('Disconnected, reconnecting');
-  Common.out(evt);
-  bot.connect();
+// when the bot is added to new servers
+bot.on('guildCreate', guild => {
+  try {
+    //add the relationships
+    world.addServer(guild);
+  }
+  catch(ex) { Common.error(ex); }
+});
+
+// when the bot is removed from servers
+bot.on('guildDelete', guild => {
+  try {
+    world.removeServer(guild);
+  }
+  catch(ex) { Common.error(ex); }
+});
+
+// when a member is removed unfollow
+bot.on('guildMemberRemove', member => {
+  try {
+    var server = world.servers[member.guild.id];
+    if (server.isMaster(member))
+    {
+      server.release();
+    }
+  }
+  catch(ex) { Common.error(ex); }
 });
 
 // handle voice state updates
-bot.on('any', function (evt) {
-  var user_id = null;
-  var server_id = null;
-  var channel_id = null;
-
-  if (evt.t == 'VOICE_STATE_UPDATE') {
-
-    // if my master's voice status changes
-    if (evt.d) {
-      channel_id = evt.d.channel_id;
-      server_id = evt.d.guild_id;
-      user_id = evt.d.user_id;
+bot.on('voiceStateUpdate', (oldMember, newMember) => {
+  if (!oldMember) return;
+  
+  try {
+    var server = world.servers[oldMember.guild.id];
+    if (!server.isMaster(oldMember))
+      return;
+    
+    // they've changed voice channels 
+    if ( oldMember.voiceChannel && !newMember.voiceChannel ) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
+      server.release();
     }
-
-    var server = world.servers[server_id];
-    if (server && server.isMaster(user_id)) {
-      world.checkMastersVoiceChannels(user_id);
-    }
+    else if ( oldMember.voiceChannel.id != newMember.voiceChannel.id )
+    {
+      server.switchVoiceChannel(newMember.voiceChannel);
+    }      
   }
-});
-
-// new servers arrive
-bot.on('guildCreate', function(server) {
-  var server_id = server.id;
-
-  //create server instance
-  let s = new Server(server_id,world);
-  //add the relationships
-  world.addServer(s);
-
-});
-
-// servers get deleted
-bot.on('guildDelete', function(server) {
-  if (!server) return; // why would we lose a server?
-                       // because the world isn't a marshmallow
-  var world_server = world.servers[server.id];
-  var name = world_server.server_name;
-  world.removeServer(world_server);
-  Common.out("Server " + name + " removed");
+  catch(ex) { Common.error(ex); }
 });
 
 // when messages come in
-bot.on('message', function (username, user_id, channel_id, message, evt) {
+bot.on('message', message => {
+  try {
+    if ( message.member && message.member.id == bot.user.id ) return;
 
-  if (!evt.d) return null;
+    var server = null;
+    if ( message.guild ) {
+      server = world.servers[message.guild.id];
 
-  var server_id = evt.d.guild_id;
-  var server = world.servers[server_id];
+      if (server == null) {
+        Common.error("Can't find server for guild id: " + message.guild.id);
+        return null;
+      }
+    }
+    
+    // is the message a command?
+    if (commands.isCommand(message)) {
+      commands.process(message, server, world);
+    } else if ( message.member ) {
+      // say it out loud
+      server.speak(message);
+    }
+  }
+  catch(ex) { Common.error(ex); }
+});
+
+// when messages are edited
+/*bot.on('messageUpdate', (oldMessage, newMessage) => {
+  if ( newMessage.member.id == bot.user.id ) return;
+
+  var server = world.servers[newMessage.guild.id];
 
   if (server == null) {
-    Common.error("Can't find server for " + channel_id);
+    Common.error("Can't find server for guild id: " + newMessage.guild.id);
     return null;
   }
-  
+
   // is the message a command?
-  if (message.substring(0, commands.command_char.length) == commands.command_char) {
-
-    server.resetNeglectTimeout();
-
-    var parts = message.match(
-      new RegExp("(" + Common.escapeRegExp(commands.command_char) + ")([^ ]+)(.*)", "i")
-    );
-    
-    if (!parts || parts.length < 2) {
-      return;
-    }
-
-    var cmdChar = parts[1];
-    var cmdVerb = parts[2] || null;
-    var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
-    var cmdMessage = (parts[3] || "").trim();
-
-    if (!cmdVerb || !cmdChar) {
-      return;
-    }
-
-    var msgDets = new MessageDetails({
-      channel_id: channel_id,
-      user_id: user_id,
-      bot: botStuff.bot,
-      world: world,
-      server: server,
-      username: username,
-      cmdChar: cmdChar,
-      cmd: cmdVerb,
-      args: cmdArgs,
-      message: cmdMessage,
-    });
-
-    var command = commands.get(msgDets.cmd);
-    if(!command) return;
-
-    //this is for the new way... v3 of writing commands, so we can use argument destructoring
-    if (command instanceof Command) {
-      command.execute({details : msgDets, input : msgDets, server, world});
-    } else {
-      command.execute.apply(this, [msgDets, server, world]);
-    }
-
+  if (commands.isCommand(newMessage)) {
+    commands.process(newMessage, server, world);
   } else {
-    // if its not a command speak it
-    var settings = server.getUserSettings(user_id);
-    if ( !settings.muted ) server.speak(message, channel_id, user_id, world);
+    // say it out loud
+    server.speak(newMessage);
   }
+});*/
+
+// if we get disconnected???
+bot.on('disconnect', evt => {
+  try {
+    world.saveAll();
+    world.dispose();
+    Common.out('Disconnected, reconnecting');
+    Common.out(evt);
+    botStuff.connect();
+  }
+  catch(ex) { Common.error(ex); }
 });
+
+// capture a whole pile of useful information
+bot.on('error',            Common.error);
+bot.on('guildUnavailable', guild    => Common.error('guild unavailable: ' + guild.id));
+bot.on('rateLimit',        info     => { Common.error('rate limited'); Common.error(info); });
+bot.on('reconnecting',     ()       => Common.error('reconnecting'));
+bot.on('resume',           replayed => Common.error('resume: ' + replayed));
+bot.on('warn',             info     => Common.error('warn:' + info));
 
 // ctrl-c
-process.on('SIGINT', function () {
-  world.kill('SIGINT');
-});
+process.on('SIGINT', () => world.kill('SIGINT'));
 
 // something goes wrong we didnt think of or having got around to putting a band-aid fix on
-process.on('uncaughtException', function (err) {
-  Common.error(err);
-  world.kill('uncaughtException: ' + err.message);
-});
+process.on('uncaughtException', err => { Common.error(err); world.kill('uncaughtException: ' + err.message); });
+
+// start it up!
+botStuff.connect();

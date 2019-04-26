@@ -1,50 +1,59 @@
+/*jshint esversion: 9 */
 var Common = require('@helpers/common');
 
 function LangMap(config) {
   //this.codeMap = {};
   var self = this;
   this.defaultLang = {
+    name: 'English (US)',
     root: 'en',
     code: 'en-US',
-    voices: ['Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D', 'Wavenet-E', 'Wavenet-F']
+    voices: ['Standard-B', 'Standard-C', 'Standard-D', 'Standard-E', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D', 'Wavenet-E', 'Wavenet-F'],
   };
 
   this.voices = [
-    self.defaultLang,
+    self.defaultLang,    
     {
-      name: 'Dutch',
+      name: 'Danish (Denmark)',
+      root: 'da',
+      translate : 'da',
+      code: 'da-DK',
+      voices: ['Standard-A', 'Wavenet-A']
+    },
+    {
+      name: 'Dutch (Netherlands)',
       root: 'nl',
       translate : 'nl',
       code: 'nl-NL',
       voices: ['Standard-A', 'Wavenet-A']
     },
     {
-      name: 'English',
+      name: 'English (Australian)',
       root: 'en',
       translate : 'en',
       code: 'en-AU',
       voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
     },
     {
-      name: 'English',
+      name: 'English (British)',
       root: 'en',
       translate : 'en',
       code: 'en-GB',
       voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
     },
     {
-      name: 'French',
+      name: 'French (France)',
       root: 'fr',
       translate : 'fr',
       code: 'fr-FR',
       voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
     },
     {
-      name: 'French',
+      name: 'French (Canada)',
       root: 'fr',
       translate : 'fr',
       code: 'fr-CA',
-      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D']
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
     },
     {
       name: 'German',
@@ -72,14 +81,49 @@ function LangMap(config) {
       root: 'ko',
       translate: 'ko',
       code: 'ko-KR',
-      voices: ['Standard-A', 'Wavenet-A']
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
     },
     {
-      name: 'Portuguese',
+      name: 'Norwegian',
+      root: 'nb',
+      translate: 'nb',
+      code: 'nb-NO',
+      voices: ['Standard-E', 'Wavenet-E']
+    },
+    {
+      name: 'Polish',
+      root: 'pl',
+      translate: 'pl',
+      code: 'pl-PL',
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Standard-E', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D', 'Wavenet-E']
+    },
+    {
+      name: 'Portuguese (Brazil)',
       root: 'pt',
       translate: 'pt',
       code: 'pt-BR',
-      voices: ['Standard-A']
+      voices: ['Standard-A', 'Wavenet-A']
+    },
+    {
+      name: 'Portuguese (Portugal)',
+      root: 'pt',
+      translate: 'pt',
+      code: 'pt-PT',
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
+    },
+    {
+      name: 'Russian',
+      root: 'ru',
+      translate: 'ru',
+      code: 'ru-RU',
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D']
+    },
+    {
+      name: 'Slovak',
+      root: 'sk',
+      translate: 'sk',
+      code: 'sk-SK',
+      voices: ['Standard-A', 'Wavenet-A']
     },
     {
       name: "Spanish",
@@ -89,18 +133,25 @@ function LangMap(config) {
       voices: ['Standard-A']
     },
     {
+      name: 'Swedish',
       root: 'sv',
       translate: 'sv',
-      name: 'Swedish',
       code: 'sv-SE',
-      voices: ['Standard-A']
+      voices: ['Standard-A', 'Wavenet-A']
     },
     {
       name: 'Turkish',
       root: 'tr',
       translate: 'tr',
       code: 'tr-TR',
-      voices: ['Standard-A']
+      voices: ['Standard-A', 'Standard-B', 'Standard-C', 'Standard-D', 'Standard-E', 'Wavenet-A', 'Wavenet-B', 'Wavenet-C', 'Wavenet-D', 'Wavenet-E']
+    },
+    {
+      name: 'Ukranian',
+      root: 'uk',
+      translate: 'uk',
+      code: 'uk-UA',
+      voices: ['Standard-A', 'Wavenet-A']
     }
 
   ];

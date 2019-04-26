@@ -1,49 +1,44 @@
+/*jshint esversion: 9 */
 
 var Lang = require("lang.js"),
   paths = require('@paths'),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
   MessageSSML = require('@models/MessageSSML'),
-  MessageDetails = require('@models/MessageDetails'),
   Common = require('@helpers/common'),
   langmap = require('@helpers/langmap'),
   auth = require('@auth'),
-  bot = botStuff.bot,
-  fs = require('fs');
-
-// https://discordapp.com/developers/docs/topics/permissions
-var P_ADMINISTRATOR = 0x00000008;
-var P_MANAGE_GUILD = 0x00000020;
+  fs = require('fs'),
+  stream = require('stream'),
+  streamifier = require('streamifier'),
+  prism = require('prism-media');
 
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
 
-  constructor(server_id, world) {
-    this.server_id = server_id;
+  constructor(guild, world) {
+    this.server_id = guild.id;
 
-    var inst = bot.servers[this.server_id];
     var state_data = this.loadState() || {};
 
-    this.server_name = inst.name;
-    this.server_owner_user_id = inst.owner_id;
-    this.users = bot.users[this.server_owner_user_id] || {};
-    if (this.users[this.server_owner_user_id])
-      this.server_owner_username = this.users[this.server_owner_user_id];
-
+    this.server_name = guild.name;
     this.audioEmojis = state_data.audioEmojis || {};
-    this.userSettings = state_data.userSettings || {};
+    this.memberSettings = state_data.memberSettings || state_data.userSettings || {};
     this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
     this.bound_to = null;
-    this.bound_to_username = null;
-    this.current_voice_channel_id = null;
+    this.voiceConnection = null;
     this.permitted = {};
     this.neglect_timeout = null;
     this.language = state_data.language || 'en-AU';
+    this.restrictions = state_data.restrictions || [];
+    this.keepMessages = state_data.keepMessages || {};
+    this.stats = state_data.stats || {};
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
     this.world = world;
+    this.guild = guild;
 
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
@@ -52,16 +47,25 @@ class Server {
     });
 
     this.messages = {};
-  }
+  };
 
-  setMaster(user_id, username) {
-    this.bound_to = user_id;
-    this.bound_to_username = username;
-    this.permit(user_id);
+  // GuildMember
+  setMaster(member) {
+    this.bound_to = member;
+    this.permit(member.id);
     this.resetNeglectTimeout();
     this.save();
   }
 
+
+  /**
+   * Merges or creates the `add` object  passed in, on to `this` scope using the `key` ad the key
+   *
+   * @param   {[type]}  key  name to add merge and create `add` against
+   * @param   {[type]}  add  object to merge or create
+   *
+   * @return  {[void]}
+   */
   addSettings(key, add) {
     if (typeof add == 'object' && !this[key]) this[key] = {};
     if (this[key]) {
@@ -72,206 +76,195 @@ class Server {
     }
   }
 
-  addUserSetting(user_id, name, value) {
-    if (!this.userSettings) this.userSettings = {};
-    if (!this.userSettings[user_id]) {
-      this.userSettings[user_id] = {};
+  getSettingObject (name) {
+    if (!this[name] || typeof this[name] !== 'object') return {};
+    return this[name]
+  }
+
+  getSettingObjectValue (objName, valueKey) {
+    let object = this.getSettingObject(objName);
+    if (typeof object[valueKey] == 'undefined') return null;
+    return object[valueKey];
+  }
+
+  addMemberSetting(member, name, value) {
+    if (!this.memberSettings) this.memberSettings = {};
+    if (!this.memberSettings[member.id]) {
+      this.memberSettings[member.id] = {};
     }
 
-    this.userSettings[user_id][name] = value;
+    this.memberSettings[member.id][name] = value;
     this.save();
     return value;
-  }
+  };
 
 
-  clearUserSettings(user_id) {
-    if (!this.userSettings) this.userSettings = {};
-    this.userSettings[user_id] = {};
+  clearMemberSettings(member) {
+    if (!this.memberSettings) this.memberSettings = {};
+    this.memberSettings[member.id] = {};
     this.save();
-  }
+  };
 
-  getUserSetting(user_id, name) {
-    if (!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return null;
-    return this.userSettings[user_id][name];
-  }
+  getMemberSetting(member, name) {
+    if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return null;
+    return this.memberSettings[member.id][name];
+  };
 
-  deleteUserSetting(user_id, name) {
-    if (!this.userSettings || !this.userSettings[user_id] || !this.userSettings[user_id][name]) return;
-    delete this.userSettings[user_id][name];
-  }
+  deleteMemberSetting(member, name) {
+    if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return;
+    delete this.memberSettings[member.id][name];
+  };
 
-  getUserSettings(user_id) {
-    if (!this.userSettings || !this.userSettings[user_id]) return {};
-    return this.userSettings[user_id];
-  }
+  getMemberSettings(member) {
+    if (!this.memberSettings || !this.memberSettings[member.id]) return {};
+    return this.memberSettings[member.id];
+  };
 
   lang(key, params) {
     if (this.isLangKey(key)) {
       return this.messages[key];
     }
-    
+
     if ( !params ) params = {};
 
     var command_char = auth.command_char;
     var title = params.title || this.world.default_title;
-    
+
     params = {
       ...(params),
       command_char,
-      title 
+      title
     }
 
     return this.commandResponses.get.apply(this.commandResponses, [
       key,
       params
     ]);
-  }
-  
+  };
+
   isLangKey(possible_key) {
     return this.messages && this.messages[possible_key];
   };
 
-  isServerChannel(channel_id) {
-    return bot.channels[channel_id].guild_id == this.server_id;
-  }
-
-  getOwnersVoiceChannel(user_id) {
-    return botStuff.getUserVoiceChannel(user_id);
+  // GuildMember
+  isMaster(member) {
+    if (!member) return false;
+    if (!this.bound_to) return false;
+    return this.bound_to.id == member.id;
   };
 
-  release(callback) {
-    var server = this;
-    if (server.leaving) return; // dont call it twice dude
-    server.leaving = true;
-    if (!callback) callback = function(err) {};
-
-    var channel_id = server.current_voice_channel_id;
-    bot.leaveVoiceChannel(channel_id, function (err) {
-      if ( err) Common.error(err);
-      server.bound_to = null;
-      server.bound_to_username = null;
-      server.permitted = {};
-      clearTimeout(server.neglect_timeout);
-      server.current_voice_channel_id = null;
-      server.leaving = false;
-      server.world.setPresence();
-      callback();
-    });
-  };
-
-  isMaster(user_id) {
-    if (!user_id) return false;
-    return this.bound_to == user_id;
-  };
-
+  // true if this server is bound to a user already
   isBound() {
     return this.bound_to != null;
   };
 
-  getBoundToNick() {
-    var channel_id = botStuff.getUserVoiceChannel(this.bound_to);
-
-    if (!this.bound_to || !channel_id) {
-      return null;
-    }
-
-    if (channel_id && this.bound_to) {
-      return botStuff.findThingsName(channel_id, this.bound_to);
-    }
-
-    if (this.bound_to_username) {
-      return this.bound_to_username;
-    }
-
-    return this.bound_to;
-  };
-
-  // determines if the user can manage this server
-  canManageTheServer(user_id) {
-    return this.userHasPermissions(user_id, P_ADMINISTRATOR) ||
-      this.userHasPermissions(user_id, P_MANAGE_GUILD) ||
-      this.isServerOwner(user_id);
-  }
-
-  // see the constants up top
-  roleHasPermission(role_id, permission_bit) {
-    if (bot.servers[this.server_id].roles[role_id] == null) return false;
-    if (bot.servers[this.server_id].roles[role_id]._permissions & permission_bit) return true;
-    else return false;
-  };
-
-  isServerOwner(user_id) {
-    return bot.servers[this.server_id].owner_id == user_id;
-  };
-
-  // determine if user has the biggest permissions available
-  userHasPermissions(user_id, permission_bit) {
-    for (var r in bot.servers[this.server_id].members[user_id].roles) {
-      if (this.roleHasPermission(bot.servers[this.server_id].members[user_id].roles[r], permission_bit)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   // does this server think it's in a voice channel
   inChannel() {
-    return this.current_voice_channel_id != null;
+    return this.voiceConnection != null;
   };
 
-  // set the server properties to indicate this is the current voice channel
-  setVoiceChannel(channel_id) {
+  release(callback) {
     var server = this;
-    server.current_voice_channel_id = channel_id;
-    server.save();
-    server.world.setPresence();
-  }
+    if (!server.voiceConnection) return;
+    if (server.leaving) return; // dont call it twice dude
+    if (callback) server.voiceConnection.on('disconnect', callback);
+    commands.notify('leaveVoice', {server: server});
+    server.voiceConnection.disconnect();
+  };
 
   // get the server to join a voice channel
-  // NOTE: this is async, so if you want to run a continuation use the callback.
-  joinVoiceChannel(channel_id, callback) {
+  // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
+  joinVoiceChannel(voiceChannel) {
 
     var server = this;
-    if (!callback) callback = function () { };
-    if (server.current_voice_channel_id == channel_id) return Common.error('joinVoiceChannel(' + channel_id + '): already joined!');
-    if (server.connecting) return Common.error('joinVoiceChannel(' + channel_id + '): tried to connect twice!');
+    if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
+    if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
 
-    if (!server.isServerChannel(channel_id)) return Common.error('joinVoiceChannel(' + channel_id + ') on the wrong server');
-
-    bot.joinVoiceChannel(channel_id, function (error, events) {
-      if (error) {
+    var p = voiceChannel.join()
+      .then(connection => {
+        connection.on('closing', () => {
+          server.leaving = true;
+          if (!server.switching_channels)
+          {
+            server.bound_to = null;
+            server.permitted = {};
+          }
+          server.stop('voiceClosing'); // stop playing
+          clearTimeout(server.neglect_timeout);
+        });
+        connection.on('disconnect', () => {
+          var server = this;
+          server.voiceConnection = null;
+          server.leaving = false;
+          server.world.setPresence();
+          //callback();
+        });
+        server.voiceConnection = connection;
+        server.save();
+        server.world.setPresence();
+        server.connecting = false;
+        commands.notify('joinVoice', {server: server});
+      }, error => {
+        server.stop('joinError');
+        server.connecting = false;
         Common.error(error);
-        server.connecting = false;
-      }
-      else {
-        server.setVoiceChannel(channel_id);
-        server.connecting = false;
-        callback();
-      }
-    });
+      });
+
+    return p;
   };
 
+  // switch from whatever the current voice channel is to this voice channel
+  switchVoiceChannel(voiceChannel) {
+    var server = this;
+    if (server.switching_channels || server.connecting || server.leaving) {
+      if ( !server.switchQueue ) server.switchQueue = [];
+      server.switchQueue.push(voiceChannel);
+
+      // drop it if the queue gets too large
+      if ( server.switchQueue.length > 3 ) server.switchQueue.shift();
+      return;
+    }
+    if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
+    if (!server.voiceConnection) return Common.error(new Error("server.voiceConnection is null"));
+    if (voiceChannel.id == server.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
+
+    server.switching_channels = true;
+
+    server.voiceConnection.on(
+      'disconnect',
+      () => server.joinVoiceChannel(voiceChannel).then(() => {
+        server.switching_channels = false;
+        if ( server.switchQueue && server.switchQueue.length > 0 )
+          server.switchVoiceChannel(server.switchQueue.shift());
+      })
+    );
+    server.voiceConnection.disconnect();
+  }
+
   // permit another user to speak
-  permit(snowflake_id) {    
-    this.resetNeglectTimeout();
-    this.permitted[snowflake_id] = {};
+  permit(snowflake_id) {
+    this.resetNeglectTimeout(); // this is redundant, its run from the command as well
+    this.permitted[snowflake_id] = true;
     this.save();
   };
 
   // unpermit another user to speak
   unpermit(snowflake_id) {
-    this.resetNeglectTimeout();
-    this.permitted[snowflake_id] = null;
+    this.resetNeglectTimeout(); // this is redundant, its run from the command as well
+    this.permitted[snowflake_id] = false;
     this.save();
   };
 
   // is this user permitted to speak
-  isPermitted(user_id) {
-    if (!user_id) return false;
-    for(var permitted in this.permitted) {
-      if ( permitted == user_id ) return this.permitted[permitted] != null;
-      if ( botStuff.userHasRole(this.server_id, user_id, permitted)) return this.permitted[permitted] != null;
+  isPermitted(member) {
+    if (!member) return false;
+    if (this.permitted[member.id] === false) return false;
+
+    for(var snowflake_id in this.permitted) {
+      if (this.permitted[snowflake_id])
+        if (snowflake_id == member.id || member.roles.has(snowflake_id))
+          return true;
     }
     return false;
   };
@@ -294,9 +287,9 @@ class Server {
 
     // delay for 3 seconds to allow the bot to talk
     var neglectedrelease = function () {
-      var timeout_neglectedrelease = function () { 
+      var timeout_neglectedrelease = function () {
         Common.out('neglected: in chan');
-        server.release(); 
+        server.release();
       };
       setTimeout(timeout_neglectedrelease, 3000);
     };
@@ -307,109 +300,6 @@ class Server {
       Common.out('neglected: server.release() not in chan');
       server.release();
     }
-  }
-
-
-  // speak a message in a voice channel
-  talk(message, options, callback) {
-
-    var server = this;
-    if (!server.inChannel()) return;
-    if (!options) options = {};
-
-    for (var key in options) {
-      if (options.hasOwnProperty(key) && options[key] == 'auto') {
-        options[key] = 'default';
-      }
-    }
-
-    var settings = {
-      gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
-      language: options.language == 'default' ? 'en-AU' : options.language || server.language
-    }
-
-    if (options.name != 'default') settings.name = options.name;
-    if (options.pitch != 'default') settings.pitch = options.pitch;
-    if (options.speed != 'default') settings.speed = options.speed;
-
-    server.resetNeglectTimeout();
-
-    var play_padding = (message.length < 20);
-    if (!callback) callback = function () { };
-
-    var request = {
-      input: { text: message },
-      // Select the language and SSML Voice Gender (optional)
-      voice: {
-        languageCode: settings.language || '',
-        ssmlGender: settings.gender || 'NEUTRAL',
-        name: settings.name || ''
-      },
-      // Select the type of audio encoding
-      audioConfig: {
-        audioEncoding: 'MP3',
-        pitch: settings.pitch || 0.0,
-        speakingRate: settings.speed || 1.0
-      },
-    };
-
-    request.input = { text: null, ssml: message };
-    
-    var channel_id = server.current_voice_channel_id;
-
-    // Performs the Text-to-Speech request
-    botStuff.tts().synthesizeSpeech(request, (err, response) => {
-      if (err) {
-        Common.error(err);
-        return;
-      }
-      try {
-        bot.getAudioContext(channel_id, function (error, stream) {
-          if (error) {
-            Common.error(error);
-            return;
-          } 
-          try {
-            stream.write(response.audioContent);
-            callback();
-          } catch (ex) {
-            Common.error(ex);
-          }
-        });
-      }
-      catch (e) {
-        Common.error(e);
-      }
-    });
-  }
-
-  addTextRule(search_text, replace_text, escape_regex) {
-    if (replace_text == '') return;
-    if (search_text == '') return;
-    search_text = search_text.trim().toLowerCase();
-    replace_text = replace_text.trim();
-    if (escape_regex) search_text = Common.escapeRegExp(search_text);
-    this.textrules[search_text] = replace_text;
-    this.save();
-  };
-
-  removeTextRule(search_text, escape_regex) {
-    search_text = search_text.trim().toLowerCase();
-    if (escape_regex) search_text = Common.escapeRegExp(search_text);
-    delete this.textrules[search_text];
-    this.save();
-  };
-
-  removeTextRuleByIndex(index) {
-    var i = 0;
-    for (var k in Object.keys(this.textrules))
-      if (++i == index)
-        this.removeTextRule(k);
-  };
-
-  clearAllTextRules() {
-    this.textrules = {};
-    this.save();
   };
 
   // run this to cleanup resources before shutting down
@@ -419,14 +309,12 @@ class Server {
     var server = this;
 
     if (server.inChannel()) {
-      server.talk("The server is shutting down", null, function () {
-        server.release();
-      });
+      server.talk("The server is shutting down", null, () => server.release());
     }
     else {
       server.release();
     }
-  }
+  };
 
   // when the server is deleted or shutdown or disconnected run this to cleanup things
   dispose() {
@@ -436,12 +324,20 @@ class Server {
 
   // save the state file
   save(_filename) {
+
     var self = this;
     this.updated = new Date();
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
       if (key == "commandResponses") return undefined;
+      if (key == "voiceConnection") return undefined;
+      if (key == "bound_to") return undefined;
       if (key == "world") return undefined;
+      if (key == "guild") return undefined;
+      if (key == "voiceDispatcher") return undefined;
+      if (key == "keepQueue") return undefined;
+      if (key == "switchQueue") return undefined;
+
       else return value;
     };
 
@@ -461,43 +357,154 @@ class Server {
     return null;
   };
 
-  // call this if you want to check a message is valid and run it through translation
-  speak(message, channel_id, user_id) {
+  // speak a message in a voice channel - raw text
+  talk(message, options, callback) {
 
     var server = this;
+    if (!server.inChannel()) return;
+    if (!options) options = {};
+    if (!callback) callback = function () { };
 
-    if (
-      message.length < 1 ||
-      Common.isMessageExcluded(message) ||
-      !server.inChannel() ||
-      !server.isPermitted(user_id)
-    ) return;
-
-    message = botStuff.resolveMessageSnowFlakes(channel_id, message);
-    message = Common.cleanMessage(message);
-    
-    var ret = commands.notify('message', { message: message, user_id, server, world: server.world });
-    if (ret) message = ret;
-
-    function _speak(msg) {
-      var message = new MessageSSML(msg, { server: server }).build();
-      var settings = server.getUserSettings(user_id);
-      server.talk(message, settings);
+    var settings = {
+      gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
+      language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
-    var tolang = server.getUserSetting(user_id, 'toLanguage');
+    if (options.name != 'default') settings.name = options.name;
+    if (options.pitch != 'default') settings.pitch = options.pitch;
+    if (options.speed != 'default') settings.speed = options.speed;
+
+    server.resetNeglectTimeout();
+
+    var request = {
+      input: { text: null, ssml: message },
+      // Select the language and SSML Voice Gender (optional)
+      voice: {
+        languageCode: settings.language || '',
+        ssmlGender: settings.gender || 'NEUTRAL',
+        name: settings.name || ''
+      },
+      // Select the type of audio encoding
+      audioConfig: {
+        audioEncoding: 'OGG_OPUS',
+        //audioEncoding: 'MP3',
+        pitch: settings.pitch || 0.0,
+        speakingRate: settings.speed || 1.0,
+        volume_gain_db: -6.0,
+        //sample_rate_hertz: 12000,
+        //effects_profile_id: ['telephony-class-application']
+      },
+    };
+
+    // Performs the Text-to-Speech request
+    botStuff.tts().synthesizeSpeech(request, (err, response) => {
+      if (err) {
+        Common.error(err);
+        return;
+      }
+      try {
+        // might have to queue the content if its playing currently
+        server.playAudioContent(response.audioContent, callback);
+      }
+      catch (e) {
+        Common.error(e);
+      }
+    });
+  };
+
+  // stop all currently playing audio and empty the audio queue
+  stop(reason, all) {
+    if(all){
+      this.audioQueue = [];
+    }
+    if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
+  };
+
+  // internal function for playing audio content returned from the TTS API and queuing it
+  playAudioContent(audioContent, callback) {
+
+    var server = this;
+    var readable = audioContent;
+
+    if (!( readable instanceof stream.Readable) ) {
+      readable = new streamifier.createReadStream(audioContent);
+    }
+
+    // queue it up if there's something playing
+    // queueFunc is a call containing both the callback and the content
+    if ( server.playing ) {
+      if ( !server.audioQueue ) server.audioQueue = [];
+      var queueFunc = () => server.playAudioContent(readable, callback);
+      server.audioQueue.push(queueFunc);
+      return;
+    }
+
+    if ( server.leaving ) return;
+    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
+
+    // play the content
+    server.playing = true;
+    if ( server.voice_timeout) clearTimeout(server.voice_timeout);
+    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
+    server.voiceDispatcher = server.voiceConnection
+      .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
+      .on('end', reason => {
+        clearTimeout(server.voice_timeout);
+        server.playing = false;
+        server.voiceDispatcher = null;
+        server.voice_timeout = null;
+        try { callback(); } catch(ex) { Common.error(ex); }
+        if ( !server.audioQueue ) return;
+        var nextAudio = server.audioQueue.shift();
+        if ( nextAudio ) nextAudio();
+      })
+      .on('error', error => Common.error(error));
+      server.voiceDispatcher.passes = 1;
+  }
+
+  // call this if you want to check a msg content is valid and run it through translation
+  speak(message) {
+
+    var server = this;
+    var settings = server.getMemberSettings(message.member);
+
+    if (
+      message.cleanContent.length < 1 ||
+      Common.isMessageExcluded(message.cleanContent) ||
+      !server.inChannel() ||
+      !server.isPermitted(message.member) ||
+      settings.muted
+    ) return;
+
+    var accept = commands.notify('validate', { message: message, server: server });
+
+    if (accept === false) return; // nerf the message because it didnt validate
+
+    var content = Common.cleanMessage(message.cleanContent);
+
+    var ret = commands.notify('message', { message: message, content: content, server: server });
+    if (ret) content = ret;
+
+    if ( content.length < 1 ) return;
+
+    function _speak(msg) {
+      var ssml = new MessageSSML(msg, { server: server }).build();
+      server.talk(ssml, settings, () => {
+        commands.notify('messageDelivered', { message: message, content: message.message, server: server })
+      });
+    }
+
+    var tolang = server.getMemberSetting(message.member, 'toLanguage');
     if (tolang && !tolang == "default") {
 
       botStuff.translate_client
-        .translate(message, tolang)
+        .translate(content, tolang)
         .then(results => {
           _speak(results[0]);
         })
-        .catch(err => {
-          Common.error(err);
-        });
+        .catch(Common.error);
     } else {
-      _speak(message);
+      _speak(content);
     };
   };
 

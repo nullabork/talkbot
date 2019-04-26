@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var Common = require('@helpers/common'),
   query = require('array-query');
 
@@ -7,6 +8,25 @@ function voiceMap(config) {
 
 
   this.voices = [
+    {
+      "language": "Danish (Denmark)",
+      "type": "Standard",
+      "code": "da-DK",
+      "translate" : 'en',
+      "voice": "da-DK-Standard-A",
+      "voice_alias" : "Dora",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Danish (Denmark)",
+      "type": "WaveNet",
+      "code": "da-DK",
+      "translate" : 'en',
+      "voice": "da-DK-Wavenet-A",
+      "voice_alias" : "Heidi",
+      "gender": "FEMALE"
+    },
+
     {
       "language": "Dutch (Netherlands)",
       "type": "Standard",
@@ -25,6 +45,7 @@ function voiceMap(config) {
       "voice_alias" : "Mila",
       "gender": "FEMALE"
     },
+
     {
       "language": "English (Australia)",
       "type": "Standard",
@@ -97,6 +118,7 @@ function voiceMap(config) {
       "voice_alias" : "James",
       "gender": "MALE"
     },
+
     {
       "language": "English (UK)",
       "type": "Standard",
@@ -178,6 +200,7 @@ function voiceMap(config) {
       "voice_alias" : "Liam",
       "gender": "MALE"
     },
+
     {
       "language": "English (US)",
       "type": "Standard",
@@ -259,17 +282,18 @@ function voiceMap(config) {
       "voice_alias" : "Sarah",
       "gender": "FEMALE"
     },
+    /*
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
       "translate" : 'fr',
       "voice": "fr-FR-Standard-A",
       "voice_alias" : "madeline",
       "gender": "FEMALE"
-    },
+    },*/
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -278,7 +302,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -287,7 +311,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -296,7 +320,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -305,7 +329,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -314,7 +338,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -323,7 +347,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
-      "language": "French",
+      "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
       "translate" : 'fr',
@@ -331,6 +355,7 @@ function voiceMap(config) {
       "voice_alias" : "Arthur",
       "gender": "MALE"
     },
+
     {
       "language": "French (Canada)",
       "type": "Standard",
@@ -367,6 +392,43 @@ function voiceMap(config) {
       "voice_alias" : "Felix",
       "gender": "MALE"
     },
+    {
+      "language": "French (Canada)",
+      "type": "WaveNet",
+      "code": "fr-CA",
+      "translate" : 'fr',
+      "voice": "fr-CA-Wavenet-A",
+      "voice_alias" : "Delphine",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "French (Canada)",
+      "type": "WaveNet",
+      "code": "fr-CA",
+      "translate" : 'fr',
+      "voice": "fr-CA-Wavenet-B",
+      "voice_alias" : "Alexandre",
+      "gender": "MALE"
+    },
+    {
+      "language": "French (Canada)",
+      "type": "WaveNet",
+      "code": "fr-CA",
+      "translate" : 'fr',
+      "voice": "fr-CA-Wavenet-C",
+      "voice_alias" : "Camille",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "French (Canada)",
+      "type": "WaveNet",
+      "code": "fr-CA",
+      "translate" : 'fr',
+      "voice": "fr-CA-Wavenet-D",
+      "voice_alias" : "George",
+      "gender": "MALE"
+    },
+
     {
       "language": "German",
       "type": "Standard",
@@ -421,6 +483,8 @@ function voiceMap(config) {
       "voice_alias" : "Jonas",
       "gender": "MALE"
     },
+
+    
     {
       "language": "Italian",
       "type": "Standard",
@@ -439,6 +503,7 @@ function voiceMap(config) {
       "voice_alias" : "Giulia",
       "gender": "FEMALE"
     },
+
     {
       "language": "Japanese",
       "type": "Standard",
@@ -457,6 +522,7 @@ function voiceMap(config) {
       "voice_alias" : "Rio",
       "gender": "FEMALE"
     },
+
     {
       "language": "Korean",
       "type": "Standard",
@@ -468,6 +534,33 @@ function voiceMap(config) {
     },
     {
       "language": "Korean",
+      "type": "Standard",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Standard-B",
+      "voice_alias" : "Seo-yeon",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Korean",
+      "type": "Standard",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Standard-C",
+      "voice_alias" : "Ye-jun",
+      "gender": "MALE"
+    },
+    {
+      "language": "Korean",
+      "type": "Standard",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Standard-D",
+      "voice_alias" : "Do-yoon",
+      "gender": "MALE"
+    },
+    {
+      "language": "Korean",
       "type": "WaveNet",
       "code": "ko-KR",
       "translate" : 'ko',
@@ -475,6 +568,145 @@ function voiceMap(config) {
       "voice_alias" : "Seo-yun",
       "gender": "FEMALE"
     },
+    {
+      "language": "Korean",
+      "type": "WaveNet",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Wavenet-B",
+      "voice_alias" : "Min-seo",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Korean",
+      "type": "WaveNet",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Wavenet-C",
+      "voice_alias" : "Hyun-woo",
+      "gender": "MALE"
+    },
+    {
+      "language": "Korean",
+      "type": "WaveNet",
+      "code": "ko-KR",
+      "translate" : 'ko',
+      "voice": "ko-KR-Wavenet-D",
+      "voice_alias" : "Gun-woo",
+      "gender": "MALE"
+    },
+
+    {
+      "language": "Norwegian",
+      "type": "Standard",
+      "code": "nb-NO",
+      "translate" : 'nb',
+      "voice": "nb-NO-Standard-E",
+      "voice_alias" : "Hilda",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Norwegian",
+      "type": "WaveNet",
+      "code": "nb-NO",
+      "translate" : 'nb',
+      "voice": "nb-NO-Wavenet-E",
+      "voice_alias" : "Liv",
+      "gender": "FEMALE"
+    },
+
+    {
+      "language": "Polish",
+      "type": "Standard",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Standard-A",
+      "voice_alias" : "Ada",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Polish",
+      "type": "Standard",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Standard-B",
+      "voice_alias" : "Oskar",
+      "gender": "MALE"
+    },
+    {
+      "language": "Polish",
+      "type": "Standard",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Standard-C",
+      "voice_alias" : "Robert",
+      "gender": "MALE"
+    },
+    {
+      "language": "Polish",
+      "type": "Standard",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Standard-D",
+      "voice_alias" : "Nadia",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Polish",
+      "type": "Standard",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Standard-E",
+      "voice_alias" : "Danka",
+      "gender": "FEMALE"
+    },
+
+    {
+      "language": "Polish",
+      "type": "WaveNet",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Wavenet-A",
+      "voice_alias" : "Ela",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Polish",
+      "type": "WaveNet",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Wavenet-B",
+      "voice_alias" : "Stefan",
+      "gender": "MALE"
+    },
+    {
+      "language": "Polish",
+      "type": "WaveNet",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Wavenet-C",
+      "voice_alias" : "Olaf",
+      "gender": "MALE"
+    },
+    {
+      "language": "Polish",
+      "type": "WaveNet",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Wavenet-D",
+      "voice_alias" : "Marta",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Polish",
+      "type": "WaveNet",
+      "code": "pl-PL",
+      "translate" : 'pl',
+      "voice": "pl-PL-Wavenet-E",
+      "voice_alias" : "Wanda",
+      "gender": "FEMALE"
+    },
+    
     {
       "language": "Portugese (Brazil)",
       "type": "Standard",
@@ -485,6 +717,182 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "language": "Portugese (Brazil)",
+      "type": "WaveNet",
+      "code": "pt-BR",
+      "translate" : 'pt',
+      "voice": "pt-BR-Wavenet-A",
+      "voice_alias" : "Helena",
+      "gender": "FEMALE"
+    },
+
+    {
+      "language": "Portugese (Portugal)",
+      "type": "Standard",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Standard-A",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "Standard",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Standard-B",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "Standard",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Standard-C",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "Standard",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Standard-D",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "WaveNet",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Wavenet-A",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "WaveNet",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Wavenet-B",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "WaveNet",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Wavenet-C",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Portugese (Portugal)",
+      "type": "WaveNet",
+      "code": "pt-PT",
+      "translate" : 'pt',
+      "voice": "pt-PT-Wavenet-D",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+
+    {
+      "language": "Russian",
+      "type": "Standard",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Standard-A",
+      "voice_alias" : "Diana",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Russian",
+      "type": "Standard",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Standard-B",
+      "voice_alias" : "Nikola",
+      "gender": "MALE"
+    },
+    {
+      "language": "Russian",
+      "type": "Standard",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Standard-C",
+      "voice_alias" : "Nina",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Russian",
+      "type": "Standard",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Standard-D",
+      "voice_alias" : "Luca",
+      "gender": "MALE"
+    },
+    
+    {
+      "language": "Russian",
+      "type": "WaveNet",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Wavenet-A",
+      "voice_alias" : "Tanya",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Russian",
+      "type": "WaveNet",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Wavenet-B",
+      "voice_alias" : "Boris",
+      "gender": "MALE"
+    },
+    {
+      "language": "Russian",
+      "type": "WaveNet",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Wavenet-C",
+      "voice_alias" : "Veronica",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Russian",
+      "type": "WaveNet",
+      "code": "ru-RU",
+      "translate" : 'ru',
+      "voice": "ru-RU-Wavenet-D",
+      "voice_alias" : "Ivan",
+      "gender": "MALE"
+    },
+
+    {
+      "language": "Slovak",
+      "type": "Standard",
+      "code": "sk-SK",
+      "translate" : 'sk',
+      "voice": "sk-SK-Standard-A",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Slovak",
+      "type": "WaveNet",
+      "code": "sk-SK",
+      "translate" : 'sk',
+      "voice": "sk-SK-Wavenet-A",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+
+    {
       "language": "Spanish",
       "type": "Standard",
       "code": "es-ES",
@@ -493,6 +901,7 @@ function voiceMap(config) {
       "voice_alias" : "Camila",
       "gender": "FEMALE"
     },
+
     {
       "language": "Swedish",
       "type": "Standard",
@@ -511,6 +920,7 @@ function voiceMap(config) {
       "voice_alias" : "Agnes",
       "gender": "FEMALE"
     },
+
     {
       "language": "Turkish",
       "type": "Standard",
@@ -522,13 +932,108 @@ function voiceMap(config) {
     },
     {
       "language": "Turkish",
+      "type": "Standard",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Standard-B",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "Standard",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Standard-C",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "Standard",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Standard-D",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "Standard",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Standard-E",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+
+    {
+      "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
       "translate" : 'tr',
       "voice": "tr-TR-Wavenet-A",
       "voice_alias" : "Ecrin",
       "gender": "FEMALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "WaveNet",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Wavenet-B",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "WaveNet",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Wavenet-C",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "WaveNet",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Wavenet-D",
+      "voice_alias" : "",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Turkish",
+      "type": "WaveNet",
+      "code": "tr-TR",
+      "translate" : 'tr',
+      "voice": "tr-TR-Wavenet-E",
+      "voice_alias" : "",
+      "gender": "MALE"
+    },
+
+
+    {
+      "language": "Ukranian",
+      "type": "Standard",
+      "code": "uk-UA",
+      "translate" : 'uk',
+      "voice": "uk-UA-Standard-A",
+      "voice_alias" : "Katya",
+      "gender": "FEMALE"
+    },
+    {
+      "language": "Ukranian",
+      "type": "WaveNet",
+      "code": "uk-UA",
+      "translate" : 'uk',
+      "voice": "uk-UA-Wavenet-A",
+      "voice_alias" : "Elina",
+      "gender": "FEMALE"
     }
+
+
   ];
 
   this.getVoice = function (input) {

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var tablr = require("tablr");
 var langMap = require("@helpers/voiceMap");
@@ -29,13 +30,10 @@ var BotCommand = require('@models/BotCommand');
  * TR
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
- * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
- * @param   {[World]}  world   [Object related to the realm and general bot stuff]
  *
  * @return  {[undefined]}
  */
-function listVoices(msg, server, world) {
-  // if (server.isPermitted(msg.user_id)) {
+function listVoices(msg) {
 
     if(!msg.args || !msg.args.length){
       msg.il8nResponse('voices.more');
@@ -53,18 +51,18 @@ function listVoices(msg, server, world) {
     var data = docs.map(function(lang){
       return [
         lang.voice,
-        lang.voice_alias,
+        !lang.voice_alias ? "(none)" : lang.voice_alias,
         lang.gender,
         lang.type == "WaveNet"? "😎" : "🤢"
       ]
     });
 
-    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', "???"]);
+    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', 'Quality']);
     table = table.replace(/--/g, '━━');
 
     msg.il8nResponse('voices.okay', {
       table : table,
-      example : auth.command_arg + 'myvoice au'
+      example : auth.command_arg + 'myvoice en-au'
     });
 
 };
@@ -76,7 +74,7 @@ var command = new BotCommand({
   short_help: 'voices.shorthelp',
   long_help: 'voices.longhelp',
   group: "info",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 

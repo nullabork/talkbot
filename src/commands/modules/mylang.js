@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 var langMap = require("@helpers/voiceMap");
 
@@ -31,7 +32,9 @@ var BotCommand = require('@models/BotCommand');
  *
  * @return  {[undefined]}
  */
-function mylang(msg, server, world) {
+function mylang(msg) {
+
+  var server = msg.server;
 
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('mylang.more');
@@ -39,8 +42,8 @@ function mylang(msg, server, world) {
   }
 
   if(msg.args[0] == 'default'){
-    server.addUserSetting(msg.user_id, 'language', 'default');
-    server.addUserSetting(msg.user_id, 'name', 'default');
+    server.addMemberSetting(msg.message.member, 'language', 'default');
+    server.addMemberSetting(msg.message.member, 'name', 'default');
     msg.il8nResponse('general.auto', {key: "mylang"});
     return;
   }
@@ -55,17 +58,16 @@ function mylang(msg, server, world) {
 
   var doc = docs[0];
 
-  //server.[msg.user_id].language = doc.code;
-  server.addUserSetting(msg.user_id,'language', doc.code);
+  server.addMemberSetting(msg.message.member,'language', doc.code);
 
   var response = server.lang('mylang.okay', { lang: doc.language });
 
-  var voiceName = server.getUserSetting(msg.user_id,'name');
+  var voiceName = server.getMemberSetting(msg.message.member,'name');
   if( voiceName && voiceName != "default" ) {
     response += "\n" + server.lang('myvoice.noped');
   }
 
-  server.addUserSetting(msg.user_id,'name', 'default');
+  server.addMemberSetting(msg.message.member,'name', 'default');
   msg.response(response);
 
 };
@@ -77,7 +79,7 @@ var command = new BotCommand({
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',
   group: "personalization",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 
