@@ -106,7 +106,7 @@ class Help extends Command {
 
   execute ({input}) {
 
-    var server = input.server;
+    var server = input.server || input.world.servers[auth.supportServer.id]; // if no server, use the support server
     var other = input.args[0],
       self = this,
       cmds = require("@commands"),

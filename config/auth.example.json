@@ -6,7 +6,7 @@
      "err" : true,
      "out" : true
    },
-  "givemelink": {
-    "endpoint": ""
-  }
+   "supportServer":{
+     "id": "490087447758241793"
+   }
 }
