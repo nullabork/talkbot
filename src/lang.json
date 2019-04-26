@@ -242,5 +242,12 @@
   },
   "en.broadcast": {
     "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
+  },
+  "en.announceme": {
+    "usage": ":command_charannounceme on/off. Your setting is :setting",
+    "announcejoin": "My :title, :name has :verb",
+    "announceleave": "My :title, :name has :verb",
+    "on": "Ok :title, you will now be announced when joining voice",
+    "off": "Ok :title, you will not be announced when joining voice"
   }
 }

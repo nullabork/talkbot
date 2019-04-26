@@ -602,7 +602,7 @@ function voiceMap(config) {
       "code": "nb-NO",
       "translate" : 'nb',
       "voice": "nb-NO-Standard-E",
-      "voice_alias" : "",
+      "voice_alias" : "Hilda",
       "gender": "FEMALE"
     },
     {
@@ -611,7 +611,7 @@ function voiceMap(config) {
       "code": "nb-NO",
       "translate" : 'nb',
       "voice": "nb-NO-Wavenet-E",
-      "voice_alias" : "",
+      "voice_alias" : "Liv",
       "gender": "FEMALE"
     },
 
@@ -621,7 +621,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Standard-A",
-      "voice_alias" : "",
+      "voice_alias" : "Ada",
       "gender": "FEMALE"
     },
     {
@@ -630,7 +630,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Standard-B",
-      "voice_alias" : "",
+      "voice_alias" : "Oskar",
       "gender": "MALE"
     },
     {
@@ -639,7 +639,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Standard-C",
-      "voice_alias" : "",
+      "voice_alias" : "Robert",
       "gender": "MALE"
     },
     {
@@ -648,7 +648,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Standard-D",
-      "voice_alias" : "",
+      "voice_alias" : "Nadia",
       "gender": "FEMALE"
     },
     {
@@ -657,7 +657,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Standard-E",
-      "voice_alias" : "",
+      "voice_alias" : "Danka",
       "gender": "FEMALE"
     },
 
@@ -667,7 +667,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Wavenet-A",
-      "voice_alias" : "",
+      "voice_alias" : "Ela",
       "gender": "FEMALE"
     },
     {
@@ -676,7 +676,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Wavenet-B",
-      "voice_alias" : "",
+      "voice_alias" : "Stefan",
       "gender": "MALE"
     },
     {
@@ -685,7 +685,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Wavenet-C",
-      "voice_alias" : "",
+      "voice_alias" : "Olaf",
       "gender": "MALE"
     },
     {
@@ -694,7 +694,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Wavenet-D",
-      "voice_alias" : "",
+      "voice_alias" : "Marta",
       "gender": "FEMALE"
     },
     {
@@ -703,7 +703,7 @@ function voiceMap(config) {
       "code": "pl-PL",
       "translate" : 'pl',
       "voice": "pl-PL-Wavenet-E",
-      "voice_alias" : "",
+      "voice_alias" : "Wanda",
       "gender": "FEMALE"
     },
     
@@ -805,7 +805,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Standard-A",
-      "voice_alias" : "",
+      "voice_alias" : "Diana",
       "gender": "FEMALE"
     },
     {
@@ -814,7 +814,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Standard-B",
-      "voice_alias" : "",
+      "voice_alias" : "Nikola",
       "gender": "MALE"
     },
     {
@@ -823,7 +823,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Standard-C",
-      "voice_alias" : "",
+      "voice_alias" : "Nina",
       "gender": "FEMALE"
     },
     {
@@ -832,7 +832,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Standard-D",
-      "voice_alias" : "",
+      "voice_alias" : "Luca",
       "gender": "MALE"
     },
     
@@ -842,7 +842,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Wavenet-A",
-      "voice_alias" : "",
+      "voice_alias" : "Tanya",
       "gender": "FEMALE"
     },
     {
@@ -851,7 +851,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Wavenet-B",
-      "voice_alias" : "",
+      "voice_alias" : "Boris",
       "gender": "MALE"
     },
     {
@@ -860,7 +860,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Wavenet-C",
-      "voice_alias" : "",
+      "voice_alias" : "Veronica",
       "gender": "FEMALE"
     },
     {
@@ -869,7 +869,7 @@ function voiceMap(config) {
       "code": "ru-RU",
       "translate" : 'ru',
       "voice": "ru-RU-Wavenet-D",
-      "voice_alias" : "",
+      "voice_alias" : "Ivan",
       "gender": "MALE"
     },
 
@@ -1020,7 +1020,7 @@ function voiceMap(config) {
       "code": "uk-UA",
       "translate" : 'uk',
       "voice": "uk-UA-Standard-A",
-      "voice_alias" : "",
+      "voice_alias" : "Katya",
       "gender": "FEMALE"
     },
     {
@@ -1029,7 +1029,7 @@ function voiceMap(config) {
       "code": "uk-UA",
       "translate" : 'uk',
       "voice": "uk-UA-Wavenet-A",
-      "voice_alias" : "",
+      "voice_alias" : "Elina",
       "gender": "FEMALE"
     }
 

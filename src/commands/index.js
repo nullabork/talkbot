@@ -15,7 +15,11 @@ function Commands() {
   this.listeners = {
     token: [],
     message: [],
-    validate: []
+    validate: [],
+    joinVoice: [],
+    leaveVoice: [],
+    follow: [],
+    unfollow: []
   };
 
   this.command_char = auth.command_char || '!';

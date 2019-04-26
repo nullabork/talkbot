@@ -168,6 +168,7 @@ class Server {
     if (!server.voiceConnection) return;
     if (server.leaving) return; // dont call it twice dude
     if (callback) server.voiceConnection.on('disconnect', callback);
+    commands.notify('leaveVoice', {server: server});
     server.voiceConnection.disconnect();
   };
 
@@ -203,6 +204,7 @@ class Server {
         server.save();
         server.world.setPresence();
         server.connecting = false;
+        commands.notify('joinVoice', {server: server});
       }, error => {
         server.stop('joinError');
         server.connecting = false;
@@ -340,12 +342,13 @@ class Server {
     return null;
   };
 
-  // speak a message in a voice channel
+  // speak a message in a voice channel - raw text
   talk(message, options, callback) {
 
     var server = this;
     if (!server.inChannel()) return;
     if (!options) options = {};
+    if (!callback) callback = function () { };
 
     var settings = {
       gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
@@ -358,10 +361,8 @@ class Server {
 
     server.resetNeglectTimeout();
 
-    if (!callback) callback = function () { };
-
     var request = {
-      input: { text: message },
+      input: { text: null, ssml: message },
       // Select the language and SSML Voice Gender (optional)
       voice: {
         languageCode: settings.language || '',
@@ -379,8 +380,6 @@ class Server {
         //effects_profile_id: ['telephony-class-application']
       },
     };
-
-    request.input = { text: null, ssml: message };
 
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
