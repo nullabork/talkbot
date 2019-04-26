@@ -15,16 +15,20 @@ function who(msg) {
 function build_permitted_string(server) {
   var members = '';
   for( var id in server.permitted ) {
+    var member = server.guild.members.find(x => x.id == id);
     if ( server.permitted[id] ) {
-      var member = server.guild.members.find(x => x.id == id);
-      if (  member.id != server.bound_to.id) {
-        if ( member ) members += ', ' + member.displayName;
+      if ( id != server.bound_to.id) {
+        if ( member ) members += ', (permitted)' + member.displayName;
         else {  
           var role = server.guild.roles.find(x => x.id == id);
-          if ( role ) members += ', (role)' + role.name;
+          if ( role ) members += ', (permitted role)' + role.name;
           else members += ', ' + id;
         }
       }
+    }
+    else 
+    {
+      if ( member ) members += ', (unpermitted)' + member.displayName;
     }
   }
   if ( members.length < 2 ) return 'no one else';

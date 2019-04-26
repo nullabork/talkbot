@@ -9,7 +9,7 @@
     "none": "no"
   },
   "en.who": {
-    "okay": "My :title is :mymaster, these members/roles are permitted: :permitted",
+    "okay": "My :title is :mymaster, :permitted",
     "none": "I have no :title :~(",
     "shorthelp": "Who is the current :title"
   },
