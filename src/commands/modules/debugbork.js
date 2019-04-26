@@ -67,9 +67,12 @@ function build_permitted_string(server) {
   var members = '';
   for( var id in server.permitted ) {
     if ( server.permitted[id] ) {
-      prefix = id == server.bound_to.id ? '(master)' : '';
+      var prefix = id == server.bound_to.id ? '(master)' : "";
       var member = server.guild.members.find(x => x.id == id);
-      if ( member ) members += ', ' + prefix + member.displayName;
+      if ( member ) {
+        prefix += member.user.bot ? '(bot)' : '';
+        members += ', ' + prefix + member.displayName;
+      }
       else {
         var role = server.guild.roles.find(x => x.id == id);
         if ( role ) members += ', (role)' + role.name;

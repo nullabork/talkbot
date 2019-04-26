@@ -100,25 +100,22 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
 // when messages come in
 bot.on('message', message => {
   try {
-    if (!message.member) {
-      console.error(new Error("speak(...): message.member is null"));
-      console.error(message);
-      return; // why is this null?
-    }
+    if ( message.member && message.member.id == bot.user.id ) return;
 
-    if ( message.member.id == bot.user.id ) return;
+    var server = null;
+    if ( message.guild ) {
+      server = world.servers[message.guild.id];
 
-    var server = world.servers[message.guild.id];
-
-    if (server == null) {
-      Common.error("Can't find server for guild id: " + message.guild.id);
-      return null;
+      if (server == null) {
+        Common.error("Can't find server for guild id: " + message.guild.id);
+        return null;
+      }
     }
     
     // is the message a command?
     if (commands.isCommand(message)) {
       commands.process(message, server, world);
-    } else {
+    } else if ( message.member ) {
       // say it out loud
       server.speak(message);
     }

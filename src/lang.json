@@ -139,6 +139,7 @@
     "args": "Doesnt look like you typed that command right",
     "unknownnick" : "I dont know this person",
     "novoice" : "I need to be in a voice channel first",
+    "samevoice" : "My new :title has to be in the same channel first",
     "broken" : "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
     "shorthelp": "Transfer control of the bot to another person",
     "channelpermissions": "I don't have permission to join the voice channel for my new :title"
@@ -241,5 +242,24 @@
   },
   "en.broadcast": {
     "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
+  },
+  "en.announceme": {
+    "usage": ":command_charannounceme on/off. Your setting is :setting",
+    "announcejoin": "My :title, :name has :verb",
+    "announceleave": "My :title, :name has :verb",
+    "on": "Ok :title, you will now be announced when joining voice",
+    "off": "Ok :title, you will not be announced when joining voice"
+  },
+  "en.myprefix": {
+    "usage": ":command_charmyprefix set [myprefix]\n:command_char myprefix on/off\nYour prefix is :setting",
+    "setokay": "Yes :title. I've set your prefix to :setting",
+    "on": "Ok :title, your voice will now prefix with :setting",
+    "off": "Ok :title, your voice will not be prefixed"
+  },
+  "en.mysuffix": {
+    "usage": ":command_charmysuffix set [mysuffix]\n:command_char mysuffix on/off\nYour suffix is :setting",
+    "setokay": "Yes :title. I've set your suffix to :setting",
+    "on": "Ok :title, your voice will now suffix with :setting",
+    "off": "Ok :title, your voice will not be suffixed"
   }
 }

@@ -14,32 +14,35 @@ var BotCommand = require('@models/BotCommand');
  * * */
 function follow(msg) {
   var server = msg.server;
+  var member = msg.message.member;
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
   if (server.switching_channel) return msg.il8nResponse('follow.switching');
   if (server.isBound()) {
-    if (!server.isMaster(msg.message.member)) {
+    if (!server.isMaster(member)) {
       msg.il8nResponse('follow.nope', { name: server.bound_to.displayName });
     } else {
       msg.il8nResponse('follow.huh');
     }
   } else {
-    if (msg.message.member.voiceChannel) {
+    if (member.voiceChannel) {
 
-      if ( !msg.message.member.voiceChannel.joinable) 
+      if ( !member.voiceChannel.joinable) 
         return msg.il8nResponse('follow.permissions');
 
-      server.setMaster(msg.message.member);
-      server.joinVoiceChannel(msg.message.member.voiceChannel)
+      server.setMaster(member);
+      server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
-        msg.il8nResponse('follow.okay');
-
-        // unmute them if they're muted
-        if (server.getMemberSetting(msg.message.member, 'muted')) {
-          server.addMemberSetting(msg.message.member,'muted',false);
-          msg.il8nResponse('mute.unmuted');
-        }
-      });
+        
+          commands.notify('follow', {member: member, server: server});
+          msg.il8nResponse('follow.okay');
+  
+          // unmute them if they're muted
+          if (server.getMemberSetting(member, 'muted')) {
+            server.addMemberSetting(member,'muted',false);
+            msg.il8nResponse('mute.unmuted');
+          }
+        });
     } else {
       msg.il8nResponse('follow.join');
     }
@@ -74,6 +77,7 @@ function unfollow(msg) {
   }
 
   server.release(function() {
+    commands.notify('unfollow', {member: msg.message.member, server: server});
     msg.il8nResponse('unfollow.okay');
   });
 };
@@ -161,7 +165,7 @@ function transfer(msg) {
   }
 
   if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.voiceConnection.channel.id )) {
-    msg.il8nResponse('transfer.novoice');
+    msg.il8nResponse('transfer.samevoice');
     return;
   }
 

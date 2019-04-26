@@ -20,6 +20,10 @@ class MessageDetails {
   response(message, params) {
     var _this = this;
     var chan = _this.message.channel;
+    if ( message.length > 2000 ) {
+      Common.error(new Error("message too long for discord"));
+      message = message.substring(0,2000);
+    }
     chan.startTyping(1);
     chan.send(message)
         .then(chan.stopTyping());
@@ -30,7 +34,7 @@ class MessageDetails {
       return [];
     }
 
-    let roles = this.server.roles;
+    let roles = this.server.guild.roles;
     return roles.filter((item) => {
       return item.name && this.args.indexOf(item.name) > -1;
     });
@@ -80,11 +84,6 @@ class MessageDetails {
   boundNick() {
     return this.message.guild.members.find( x => x.id == this.server.bound_to).nick;
   }
-
-  getOwnersVoiceChannel() {
-    var server_id = this.server.server_id;
-    return botStuff.getUserVoiceChannel(server_id, _this.message.member.id);
-  };
 
   // gets all the IDs as names
   getDisplayNamesAsCSV() {

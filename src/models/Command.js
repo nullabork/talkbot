@@ -62,10 +62,17 @@ class Command {
   get listeners() {
     var self = this;
     return {
-      message : this.onMessage || null,
-      token : this.onToken || null,
-      messageDelivered : this.onMessageDelivered || null,
-      validate: this.onValidate || null
+      message : self.onMessage || null,
+      token : self.onToken || null,
+      
+      messageDelivered : self.onMessageDelivered || null,
+      validate: self.onValidate || null,
+
+      joinVoice: self.onJoinVoice || null,
+      leaveVoice: self.onLeaveVoice || null,
+
+      follow: self.onFollow || null,
+      unfollow: self.onUnfollow || null
     }
   }
 }

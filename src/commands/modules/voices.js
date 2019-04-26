@@ -35,8 +35,6 @@ var BotCommand = require('@models/BotCommand');
  */
 function listVoices(msg) {
 
-    var server = msg.server;
-
     if(!msg.args || !msg.args.length){
       msg.il8nResponse('voices.more');
       return;
@@ -53,18 +51,18 @@ function listVoices(msg) {
     var data = docs.map(function(lang){
       return [
         lang.voice,
-        lang.voice_alias,
+        !lang.voice_alias ? "(none)" : lang.voice_alias,
         lang.gender,
         lang.type == "WaveNet"? "😎" : "🤢"
       ]
     });
 
-    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', "???"]);
+    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', 'Quality']);
     table = table.replace(/--/g, '━━');
 
     msg.il8nResponse('voices.okay', {
       table : table,
-      example : auth.command_arg + 'myvoice au'
+      example : auth.command_arg + 'myvoice en-au'
     });
 
 };

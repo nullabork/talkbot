@@ -167,6 +167,8 @@ class Server {
     var server = this;
     if (!server.voiceConnection) return;
     if (server.leaving) return; // dont call it twice dude
+    if (callback) server.voiceConnection.on('disconnect', callback);
+    commands.notify('leaveVoice', {server: server});
     server.voiceConnection.disconnect();
   };
 
@@ -202,6 +204,7 @@ class Server {
         server.save();
         server.world.setPresence();
         server.connecting = false;
+        commands.notify('joinVoice', {server: server});
       }, error => {
         server.stop('joinError');
         server.connecting = false;
@@ -221,7 +224,7 @@ class Server {
     server.switching_channels = true;
 
     server.voiceConnection.on(
-      'disconnect', 
+      'disconnect',
       () => server.joinVoiceChannel(voiceChannel).then(() => server.switching_channels = false )
       );
     server.voiceConnection.disconnect();
@@ -246,7 +249,7 @@ class Server {
     if (!member) return false;
     for(var snowflake_id in this.permitted) {
       if (this.permitted[snowflake_id])
-        if (snowflake_id == member.id || member.roles.has(member.id))
+        if (snowflake_id == member.id || member.roles.has(snowflake_id))
           return true;
     }
     return false;
@@ -339,12 +342,13 @@ class Server {
     return null;
   };
 
-  // speak a message in a voice channel
+  // speak a message in a voice channel - raw text
   talk(message, options, callback) {
 
     var server = this;
     if (!server.inChannel()) return;
     if (!options) options = {};
+    if (!callback) callback = function () { };
 
     var settings = {
       gender: options.gender == 'default' ? 'NEUTRAL' : options.gender,
@@ -357,10 +361,8 @@ class Server {
 
     server.resetNeglectTimeout();
 
-    if (!callback) callback = function () { };
-
     var request = {
-      input: { text: message },
+      input: { text: null, ssml: message },
       // Select the language and SSML Voice Gender (optional)
       voice: {
         languageCode: settings.language || '',
@@ -379,11 +381,6 @@ class Server {
       },
     };
 
-    request.input = { text: null, ssml: message };
-
-    console.log("tts");
-    console.log(request);
-
     // Performs the Text-to-Speech request
     botStuff.tts().synthesizeSpeech(request, (err, response) => {
       if (err) {
@@ -392,7 +389,6 @@ class Server {
       }
       try {
         // might have to queue the content if its playing currently
-        console.log("tts-buildstream");
         server.playAudioContent(response.audioContent, callback);
       }
       catch (e) {
@@ -433,13 +429,11 @@ class Server {
 
     // play the content
     server.playing = true;
-    console.log("tts-play");
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
-        console.log("tts-end: " + reason);
         clearTimeout(server.voice_timeout);
         server.playing = false;
         server.voiceDispatcher = null;

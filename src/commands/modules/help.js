@@ -41,9 +41,9 @@ class Help extends Command {
       },
 
       "Issues" : [
-        'For documentation go to https://nullabork.gitbook.io/talkbot/',
-        'For talk about the bot join our discord https://discordapp.com/invite/NxrPp8g',
-        'To add talkbot to your discord https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0'
+        'Documentation:    https://nullabork.gitbook.io/talkbot/',
+        'Join our discord: https://discordapp.com/invite/NxrPp8g',
+        'Add Talkbot:      https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0'
       ]
     };
   }
@@ -106,7 +106,7 @@ class Help extends Command {
 
   execute ({input}) {
 
-    var server = input.server;
+    var server = input.server || input.world.servers[auth.supportServer.id]; // if no server, use the support server
     var other = input.args[0],
       self = this,
       cmds = require("@commands"),

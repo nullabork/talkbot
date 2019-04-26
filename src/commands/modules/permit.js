@@ -21,12 +21,15 @@ function permit(msg) {
     return;
   }
 
-  if ( msg.message.mentions.members.size == 0 ) {
+  let roles = msg.message.mentions.roles.clone();
+    roles = roles.concat(msg.getNonSnowflakeRoles());
+
+  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
     msg.il8nResponse('permit.none');
     return;
   }
- let roles = msg.message.mentions.roles.clone();
-  roles = roles.concat(msg.getNonSnowflakeRoles());
+
+
 
   msg.message.mentions.members.tap( member => server.permit(member.id));
   roles.tap( role => server.permit(role.id));

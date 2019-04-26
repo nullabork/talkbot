@@ -209,7 +209,7 @@ class TextRule extends Command {
    * @return  {[type]}            [return description]
    */
   onMessage({message, content, modified, server}) {
-    content = content || modified;
+    content = modified || content;
     if(!content) return;
 
     for ( var textrule in server.textrules ) {
