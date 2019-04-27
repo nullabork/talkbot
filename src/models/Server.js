@@ -193,12 +193,15 @@ class Server {
           server.stop('voiceClosing'); // stop playing
           clearTimeout(server.neglect_timeout);
         });
-        connection.on('error', error => Common.error(error));
+        connection.on('error', error => {
+          server.leaving = false;
+          server.connecting = false; // this might cause a race condition
+          server.voiceConnection = null;
+          Common.error(error);
+        });
         connection.on('disconnect', () => {
-          var server = this;
           server.voiceConnection = null;
           server.leaving = false;
-          server.world.setPresence();
           //callback();
         });
         server.voiceConnection = connection;
