@@ -9,6 +9,7 @@ function voiceMap(config) {
 
   this.voices = [
     {
+      "provider": "google",
       "language": "Danish (Denmark)",
       "type": "Standard",
       "code": "da-DK",
@@ -18,6 +19,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Danish (Denmark)",
       "type": "WaveNet",
       "code": "da-DK",
@@ -28,6 +30,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Dutch (Netherlands)",
       "type": "Standard",
       "code": "nl-NL",
@@ -37,6 +40,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Dutch (Netherlands)",
       "type": "WaveNet",
       "code": "nl-NL",
@@ -47,6 +51,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "Standard",
       "code": "en-AU",
@@ -56,6 +61,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "Standard",
       "code": "en-AU",
@@ -65,6 +71,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "Standard",
       "code": "en-AU",
@@ -74,6 +81,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "Standard",
       "code": "en-AU",
@@ -83,6 +91,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "WaveNet",
       "code": "en-AU",
@@ -92,6 +101,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "WaveNet",
       "code": "en-AU",
@@ -101,6 +111,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "WaveNet",
       "code": "en-AU",
@@ -110,6 +121,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (Australia)",
       "type": "WaveNet",
       "code": "en-AU",
@@ -120,6 +132,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "Standard",
       "code": "en-GB",
@@ -129,6 +142,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "Standard",
       "code": "en-GB",
@@ -138,6 +152,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "Standard",
       "code": "en-GB",
@@ -147,6 +162,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "Standard",
       "code": "en-GB",
@@ -156,6 +172,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "WaveNet",
       "code": "en-GB",
@@ -165,6 +182,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "WaveNet",
       "code": "en-GB",
@@ -174,6 +192,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "WaveNet",
       "code": "en-GB",
@@ -183,6 +202,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (UK)",
       "type": "WaveNet",
       "code": "en-GB",
@@ -192,6 +212,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "Standard",
       "code": "en-US",
@@ -202,6 +223,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "Standard",
       "code": "en-US",
@@ -211,6 +233,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "Standard",
       "code": "en-US",
@@ -220,6 +243,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "Standard",
       "code": "en-US",
@@ -229,6 +253,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -238,6 +263,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -247,6 +273,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -256,6 +283,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -265,6 +293,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -274,6 +303,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "English (US)",
       "type": "WaveNet",
       "code": "en-US",
@@ -284,6 +314,7 @@ function voiceMap(config) {
     },
     /*
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
@@ -293,6 +324,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },*/
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
@@ -302,6 +334,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
@@ -311,6 +344,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "Standard",
       "code": "fr-FR",
@@ -320,6 +354,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
@@ -329,6 +364,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
@@ -338,6 +374,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
@@ -347,6 +384,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (France)",
       "type": "WaveNet",
       "code": "fr-FR",
@@ -357,6 +395,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "Standard",
       "code": "fr-CA",
@@ -366,6 +405,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "Standard",
       "code": "fr-CA",
@@ -375,6 +415,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "Standard",
       "code": "fr-CA",
@@ -384,6 +425,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "Standard",
       "code": "fr-CA",
@@ -393,6 +435,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "WaveNet",
       "code": "fr-CA",
@@ -402,6 +445,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "WaveNet",
       "code": "fr-CA",
@@ -411,6 +455,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "WaveNet",
       "code": "fr-CA",
@@ -420,6 +465,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "French (Canada)",
       "type": "WaveNet",
       "code": "fr-CA",
@@ -430,6 +476,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "German",
       "type": "Standard",
       "code": "de-DE",
@@ -439,6 +486,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "German",
       "type": "Standard",
       "code": "de-DE",
@@ -448,6 +496,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "German",
       "type": "WaveNet",
       "code": "de-DE",
@@ -457,6 +506,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "German",
       "type": "WaveNet",
       "code": "de-DE",
@@ -466,6 +516,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "German",
       "type": "WaveNet",
       "code": "de-DE",
@@ -475,6 +526,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "German",
       "type": "WaveNet",
       "code": "de-DE",
@@ -486,6 +538,7 @@ function voiceMap(config) {
 
     
     {
+      "provider": "google",
       "language": "Italian",
       "type": "Standard",
       "code": "it-IT",
@@ -495,6 +548,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Italian",
       "type": "WaveNet",
       "code": "it-IT",
@@ -505,6 +559,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Japanese",
       "type": "Standard",
       "code": "ja-JP",
@@ -514,6 +569,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Japanese",
       "type": "WaveNet",
       "code": "ja-JP",
@@ -524,6 +580,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Korean",
       "type": "Standard",
       "code": "ko-KR",
@@ -533,6 +590,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "Standard",
       "code": "ko-KR",
@@ -542,6 +600,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "Standard",
       "code": "ko-KR",
@@ -551,6 +610,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "Standard",
       "code": "ko-KR",
@@ -560,6 +620,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "WaveNet",
       "code": "ko-KR",
@@ -569,6 +630,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "WaveNet",
       "code": "ko-KR",
@@ -578,6 +640,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "WaveNet",
       "code": "ko-KR",
@@ -587,6 +650,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Korean",
       "type": "WaveNet",
       "code": "ko-KR",
@@ -597,6 +661,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Norwegian",
       "type": "Standard",
       "code": "nb-NO",
@@ -606,6 +671,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Norwegian",
       "type": "WaveNet",
       "code": "nb-NO",
@@ -616,6 +682,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Polish",
       "type": "Standard",
       "code": "pl-PL",
@@ -625,6 +692,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "Standard",
       "code": "pl-PL",
@@ -634,6 +702,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "Standard",
       "code": "pl-PL",
@@ -643,6 +712,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "Standard",
       "code": "pl-PL",
@@ -652,6 +722,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "Standard",
       "code": "pl-PL",
@@ -662,6 +733,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Polish",
       "type": "WaveNet",
       "code": "pl-PL",
@@ -671,6 +743,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "WaveNet",
       "code": "pl-PL",
@@ -680,6 +753,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "WaveNet",
       "code": "pl-PL",
@@ -689,6 +763,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "WaveNet",
       "code": "pl-PL",
@@ -698,6 +773,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Polish",
       "type": "WaveNet",
       "code": "pl-PL",
@@ -708,6 +784,7 @@ function voiceMap(config) {
     },
     
     {
+      "provider": "google",
       "language": "Portugese (Brazil)",
       "type": "Standard",
       "code": "pt-BR",
@@ -717,6 +794,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Brazil)",
       "type": "WaveNet",
       "code": "pt-BR",
@@ -727,6 +805,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "Standard",
       "code": "pt-PT",
@@ -736,6 +815,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "Standard",
       "code": "pt-PT",
@@ -745,6 +825,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "Standard",
       "code": "pt-PT",
@@ -754,6 +835,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "Standard",
       "code": "pt-PT",
@@ -763,6 +845,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "WaveNet",
       "code": "pt-PT",
@@ -772,6 +855,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "WaveNet",
       "code": "pt-PT",
@@ -781,6 +865,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "WaveNet",
       "code": "pt-PT",
@@ -790,6 +875,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Portugese (Portugal)",
       "type": "WaveNet",
       "code": "pt-PT",
@@ -800,6 +886,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Russian",
       "type": "Standard",
       "code": "ru-RU",
@@ -809,6 +896,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "Standard",
       "code": "ru-RU",
@@ -818,6 +906,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "Standard",
       "code": "ru-RU",
@@ -827,6 +916,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "Standard",
       "code": "ru-RU",
@@ -837,6 +927,7 @@ function voiceMap(config) {
     },
     
     {
+      "provider": "google",
       "language": "Russian",
       "type": "WaveNet",
       "code": "ru-RU",
@@ -846,6 +937,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "WaveNet",
       "code": "ru-RU",
@@ -855,6 +947,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "WaveNet",
       "code": "ru-RU",
@@ -864,6 +957,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Russian",
       "type": "WaveNet",
       "code": "ru-RU",
@@ -874,6 +968,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Slovak",
       "type": "Standard",
       "code": "sk-SK",
@@ -883,6 +978,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Slovak",
       "type": "WaveNet",
       "code": "sk-SK",
@@ -893,6 +989,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Spanish",
       "type": "Standard",
       "code": "es-ES",
@@ -903,6 +1000,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Swedish",
       "type": "Standard",
       "code": "sv-SE",
@@ -912,6 +1010,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Swedish",
       "type": "WaveNet",
       "code": "sv-SE",
@@ -922,6 +1021,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "Standard",
       "code": "tr-TR",
@@ -931,6 +1031,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "Standard",
       "code": "tr-TR",
@@ -940,6 +1041,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "Standard",
       "code": "tr-TR",
@@ -949,6 +1051,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "Standard",
       "code": "tr-TR",
@@ -958,6 +1061,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "Standard",
       "code": "tr-TR",
@@ -968,6 +1072,7 @@ function voiceMap(config) {
     },
 
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
@@ -977,6 +1082,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
@@ -986,6 +1092,7 @@ function voiceMap(config) {
       "gender": "MALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
@@ -995,6 +1102,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
@@ -1004,6 +1112,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Turkish",
       "type": "WaveNet",
       "code": "tr-TR",
@@ -1015,6 +1124,7 @@ function voiceMap(config) {
 
 
     {
+      "provider": "google",
       "language": "Ukranian",
       "type": "Standard",
       "code": "uk-UA",
@@ -1024,6 +1134,7 @@ function voiceMap(config) {
       "gender": "FEMALE"
     },
     {
+      "provider": "google",
       "language": "Ukranian",
       "type": "WaveNet",
       "code": "uk-UA",
@@ -1032,8 +1143,6 @@ function voiceMap(config) {
       "voice_alias" : "Elina",
       "gender": "FEMALE"
     }
-
-
   ];
 
   this.getVoice = function (input) {

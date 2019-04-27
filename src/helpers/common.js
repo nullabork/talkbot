@@ -97,6 +97,22 @@ class Common {
     return Math.min(Math.max(number, min), max);
   }
 
+    /**
+   *
+   *
+   * @static
+   * @param {number} [n=0] actual input number you want remapped to the lower and upper range mapping values
+   * @param {number} [r1=0] actual input number min
+   * @param {number} [r2=1] actual input number max
+   * @param {number} [m1=0] lower number range mapping: defaults 0
+   * @param {number} [m2=100] upper number range mapping: defaults 100
+   * @memberof Common
+   */
+  static numberMap(n = 0, r1 = 0, r2 = 1, m1 = 0, m2 = 100){
+    n = Common.numberClamp(n,r1,r2);
+    return (n - r1) / (r2 - r1) * (m2 - m1) + m1;
+  }
+
   //map input number from one range to another range
   static scaleToRange(num, in_min, in_max, out_min, out_max) {
     var number = Common.numberClamp(num, in_min, in_max);
@@ -124,29 +140,6 @@ class Common {
     if ( pos < 0 ) return str;
     return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);
   };
-
-  //const element = string[char];
-  //   if(element != "-"){
-  //     continue;
-  //   }
-
-  //   var index = 0;
-  //   var p = Common.peek(string, char, function(v, c, i){
-  //     if(c == " " || c == "-") {
-  //       return false;
-  //     }
-
-  //     if(/[a-z]/i.test(c)) {
-  //       return true;
-  //     }
-  //   });
-
-  //   if(p){
-
-  //   }
-
-
-  // }
 
   static arg() {
     return {
@@ -243,6 +236,8 @@ class Common {
     }
     return message;
   }
+
+
 
   //cleant a message ready for speaking
   static cleanMessage(message) {
