@@ -169,7 +169,7 @@ function transfer(msg) {
     return;
   }
 
-  if ( !msg.message.member.voiceChannel.joinable) {
+  if ( !newMaster.joinable) {
     msg.il8nResponse('transfer.channelpermissions');
     return;
   }
