@@ -200,12 +200,12 @@ function Commands() {
       content: cmdContent
     });
 
+    Common.out((server? server.guild.id : 'DM') + ': ' + msgDets.cmd + ' ' + msgDets.content);
+
     var command = this.get(msgDets.cmd);
     if(!command) return;
 
     if ( server ) server.resetNeglectTimeout();
-
-    Common.out((server? server.guild.id : 'DM') + ': ' + msgDets.cmd + ' ' + msgDets.content);
 
     //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {

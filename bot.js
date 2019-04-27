@@ -89,7 +89,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
     if ( oldMember.voiceChannel && !newMember.voiceChannel ) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
       server.release();
     }
-    else if ( oldMember.voiceChannel.id != newMember.voiceChannel.id )
+    else if ( oldMember.voiceChannel && newMember.voiceChannel && oldMember.voiceChannel.id != newMember.voiceChannel.id )
     {
       server.switchVoiceChannel(newMember.voiceChannel);
     }      

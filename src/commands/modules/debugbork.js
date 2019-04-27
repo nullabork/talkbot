@@ -50,7 +50,10 @@ function debug(msg) {
     var server = msg.world.servers[id];
     if (server.isBound()) {
       active_server_count++;
-      active_server_names += server.server_name + "(" + server.voiceConnection.channel.members.size + "): " + build_permitted_string(server) + "\n";
+      var chansize = 'no connection';
+      if ( server.voiceConnection)
+        chansize = server.voiceConnection.channel.members.size;
+      active_server_names += server.server_name + "(" + chansize + "): " + build_permitted_string(server) + "\n";
     }
     member_count += server.guild.members.size;
   }
