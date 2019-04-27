@@ -1,15 +1,37 @@
 #!/bin/bash
 
-if (( "$#" != 1 ))
-then
-    echo "Usage: bin/release {version}"
-	exit 1
-fi
+git fetch --all
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LATESTTAG=$(git describe --tags $(git rev-list --tags --max-count=1))
 
-git add -A
-git commit -am "commit for release $1"
-git tag -a $1 -m "$1"
-git push
-git push origin $1
+
+echo
+echo "Create a new Sematic version tag:"
+echo -e "Given a version number \033[1;36mMAJOR.MINOR.PATCH\033[0m, increment the:"
+echo -e "  \033[1;36mMAJOR version \033[0mwhen you make incompatible API changes,"
+echo -e "  \033[1;36mMINOR version \033[0mwhen you add functionality in a backwards-compatible manner, and"
+echo -e "  \033[1;36mPATCH version \033[0mwhen you make backwards-compatible bug fixes.**"
+echo
+echo -n "The latest tag is:"
+echo -n -e "\033[1;36m"
+echo $LATESTTAG
+echo -n -e "\033[0m"
+read -p 'New Release Tag: ' NEWTAG
+
+rx='^([0-9]+\.){0,2}(\*|[0-9]+)$'
+if [[ $NEWTAG =~ $rx ]]; then
+
+  echo "Using Semantic Version $NEWTAG"
+  git add -A
+  git commit -am "commit for release $1"
+  git tag -a $NEWTAG -m "$NEWTAG"
+  git push
+  git push origin $NEWTAG
+
+else
+ echo "ERROR:<->Unable to validate your semantic version: '$NEWTAG'"
+fi
+
+
+
