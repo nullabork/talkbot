@@ -449,7 +449,7 @@ class Server {
     // play the content
     server.playing = true;
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
-    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout').catch(error => Common.error(error)) : null, 60000);
+    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
@@ -462,7 +462,7 @@ class Server {
         var nextAudio = server.audioQueue.shift();
         if ( nextAudio ) nextAudio();
       })
-      .on('error', error => Common.error(error));
+      .on('error', error => Common.error(error))
       server.voiceDispatcher.passes = 3;
   }
 
