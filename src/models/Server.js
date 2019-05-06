@@ -292,6 +292,8 @@ class Server {
   // permit another user to speak
   permit(snowflake_id) {
     this.resetNeglectTimeout(); // this is redundant, its run from the command as well
+    var member = this.guild.members.find( member => member.id == snowflake_id);
+    if ( member ) this.addMemberSetting(member, 'toLanguage', 'default');
     this.permitted[snowflake_id] = true;
     this.save();
   };

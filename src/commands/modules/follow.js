@@ -34,15 +34,16 @@ function follow(msg) {
       server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
         
-          commands.notify('follow', {member: member, server: server});
-          msg.il8nResponse('follow.okay');
-  
-          // unmute them if they're muted
-          if (server.getMemberSetting(member, 'muted')) {
-            server.addMemberSetting(member,'muted',false);
-            msg.il8nResponse('mute.unmuted');
-          }
-        });
+        server.addMemberSetting(member,'toLanguage', 'default');
+        commands.notify('follow', {member: member, server: server});
+        msg.il8nResponse('follow.okay');
+
+        // unmute them if they're muted
+        if (server.getMemberSetting(member, 'muted')) {
+          server.addMemberSetting(member,'muted',false);
+          msg.il8nResponse('mute.unmuted');
+        }
+      });
     } else {
       msg.il8nResponse('follow.join');
     }
@@ -119,6 +120,7 @@ function sidle(msg) {
   }
 
   server.setMaster(newMaster);
+  server.addMemberSetting(newMaster,'toLanguage', 'default');
   msg.il8nResponse('sidle.okay');
 
   if (server.getMemberSetting(newMaster, 'muted')) {
@@ -184,6 +186,8 @@ function transfer(msg) {
     server.joinVoiceChannel(newMaster.voiceChannel)
     .then(() => {
       msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+
+      server.addMemberSetting(newMaster,'toLanguage', 'default');
 
       // unmute them if they're muted
       if (server.getMemberSetting(newMaster, 'muted')) {
