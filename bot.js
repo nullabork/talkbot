@@ -15,9 +15,6 @@
 require('module-alias/register');
 var figlet = require('figlet');
 
-var path = require('path'),
-  paths = require('@paths');
-
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
@@ -30,10 +27,9 @@ var world = require('@models/World');
 var bot = botStuff.bot;
 
 // runtime testing
-testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
-testing.TestIfAPIServicesAreConfigured();
+//testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
+testing.TestIfTTSAPIServicesAreConfigured();
 testing.TestIfNodeOpusIsInstalled();
-// TODO: Test node-opus is installed, the call above does nothing
 
 // FANCY SPLASH SCREEN
 figlet('TalkBot', (err, data) => console.log(data));

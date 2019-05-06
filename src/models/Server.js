@@ -417,24 +417,25 @@ class Server {
       language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
-    if (options.name != 'default') settings.name = options.name;
+    if (options.name != 'default')  settings.name = options.name;
     if (options.pitch != 'default') settings.pitch = options.pitch;
     if (options.speed != 'default') settings.speed = options.speed;
+    if (options.voice_provider)     settings.voice_provider = options.voice_provider;
 
     server.resetNeglectTimeout();
 
-    var service = TextToSpeechService.getService(settings);
+    var service = TextToSpeechService.getService(settings.voice_provider);
     var request = service.buildRequest(message, settings);
 
     // Performs the Text-to-Speech request
-    service.getAudioContent(request, (err, response) => {
+    service.getAudioContent(request, (err, audio) => {
       if (err) {
         Common.error(err);
         return;
       }
       try {
         // might have to queue the content if its playing currently
-        server.playAudioContent(response.audioContent, callback);
+        server.playAudioContent(audio, service.format, callback);
       }
       catch (e) {
         Common.error(e);
@@ -451,12 +452,23 @@ class Server {
   };
 
   // internal function for playing audio content returned from the TTS API and queuing it
-  playAudioContent(audioContent, callback) {
+  playAudioContent(audioContent, format, callback) {
 
     var server = this;
     var readable = audioContent;
 
-    if (!( readable instanceof stream.Readable) ) {
+    var endFunc = reason => {
+      clearTimeout(server.voice_timeout);
+      server.playing = false;
+      server.voiceDispatcher = null;
+      server.voice_timeout = null;
+      try { callback(); } catch(ex) { Common.error(ex); }
+      if ( !server.audioQueue ) return;
+      var nextAudio = server.audioQueue.shift();
+      if ( nextAudio ) nextAudio();
+    };
+
+    if (!readable.pipe) {
       readable = new streamifier.createReadStream(audioContent);
     }
 
@@ -470,26 +482,31 @@ class Server {
     }
 
     if ( server.leaving ) return;
-    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
+    if ( !server.voiceConnection ) 
+      return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
 
     // play the content
     server.playing = true;
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
-    server.voiceDispatcher = server.voiceConnection
-      .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
-      .on('end', reason => {
-        clearTimeout(server.voice_timeout);
-        server.playing = false;
-        server.voiceDispatcher = null;
-        server.voice_timeout = null;
-        try { callback(); } catch(ex) { Common.error(ex); }
-        if ( !server.audioQueue ) return;
-        var nextAudio = server.audioQueue.shift();
-        if ( nextAudio ) nextAudio();
-      })
-      .on('error', error => Common.error(error))
-      server.voiceDispatcher.passes = 3;
+
+    if ( format == 'ogg') 
+      server.voiceDispatcher = server.voiceConnection
+        .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
+        .on('end', reason => endFunc)
+        .on('error', error => Common.error(error));
+
+    else if ( format == 'pcm' ) {
+      server.voiceDispatcher = server.voiceConnection
+        .playStream(readable)
+        .on('end', reason => endFunc)
+        .on('error', error => Common.error(error));
+
+    }
+    else 
+      Common.error('Unknown format: '+ format);
+
+    server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation

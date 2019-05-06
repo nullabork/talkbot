@@ -1,7 +1,7 @@
 /*jshint esversion: 9 */
 
-var langMap = require("@helpers/voiceMap");
-var Common = require('@helpers/common');
+const TextToSpeechService = require("@services/TextToSpeechService"),
+  Common = require('@helpers/common');
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -18,30 +18,56 @@ var BotCommand = require('@models/BotCommand');
  */
 function myVoice(msg) {
   var server = msg.server;
+  var member = msg.message.member;
+  var settings = server.getMemberSettings(member);
+
+  if (!member) return;
 
   if(!msg.args || !msg.args.length){
-    msg.il8nResponse('myvoice.more', {voice: server.getMemberSetting(msg.message.member, 'name') || 'default'});
+    msg.il8nResponse('myvoice.more', {
+      provider: settings.voice_provider || 'default', 
+      voice:    settings.name           || 'default'
+    });
     return;
   }
 
   if(msg.args[0] == 'default'){
-    server.addMemberSetting(msg.message.member, 'name', 'default');
+    server.addMemberSetting(member, 'voice_provider', 'default');
+    server.addMemberSetting(member, 'name', 'default');
     msg.il8nResponse('general.auto', {key: "myvoice"});
     return;
   }
 
-  var found = langMap.getVoice(msg.args[0]);
-  if(found && found.length) {
-    var doc = found[0];
-    server.addMemberSetting(msg.message.member,'name', doc.voice);
-    server.addMemberSetting(msg.message.member,'language', doc.code);
-    server.deleteMemberSetting(msg.message.member,'toLanguage');
+  var tokens = msg.args[0].split('/');
+  if ( tokens.length < 1)
+  {
+    msg.il8nResponse('myvoice.usage');
+    return;
+  } 
+
+  var provider = "";
+  var voice = "";
+
+  if ( tokens.length == 1 )
+    voice = tokens[0];
+  else if ( tokens.length >= 2 )
+  {
+    provider = tokens[0];
+    voice = tokens[1];
+  }
+
+  var voice_info = TextToSpeechService.getVoice(voice, provider);
+  if(voice_info) {
+    server.addMemberSetting(member,'voice_provider', voice_info.provider);
+    server.addMemberSetting(member,'name', voice_info.voice);
+    server.addMemberSetting(member,'language', voice_info.code);
+    server.deleteMemberSetting(member,'toLanguage');
     msg.il8nResponse('myvoice.okay', { voice: msg.args[0] });
   } else {
     msg.il8nResponse('myvoice.no', { voice: msg.args[0] });
     return;
   }
-};
+}
 
 var command = new BotCommand({
   command_name: 'myvoice',
@@ -49,10 +75,8 @@ var command = new BotCommand({
   execute: myVoice,
   short_help: 'myvoice.shorthelp',
   long_help: 'myvoice.longhelp',
-  group: "personalization",
-  // parameters: "<voice|alias>"
+  group: "personalization"
 });
-
 
 exports.register = function (commands) {
   commands.add(command);

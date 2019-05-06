@@ -27,15 +27,8 @@ class RuntimeTesting {
     }
   }
   
-  static TestIfAPIServicesAreConfigured() {
-    fs.readdir(paths.tts, (err, files) => {
-      if (err) return console.log('Unable to scan directory: ' + err);
-  
-      files.forEach(file => {
-          var api = require(paths.tts + '\\' + file);
-          new api().startupTests();
-      });
-    });
+  static TestIfTTSAPIServicesAreConfigured() {
+    require("@services/TextToSpeechService").setupProviders();
   }
   
   static TestIfNodeOpusIsInstalled() {
