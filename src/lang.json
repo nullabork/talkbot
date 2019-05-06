@@ -84,7 +84,8 @@
     "okay": "OK, now translating to :lang.",
     "deny": "Sorry, you're not permitted",
     "nope": "Sorry, I dont have a voice for :lang",
-    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc."
+    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc.",
+    "more" : "You must specify a language code. You can find codes with `:command_charlangs`.\nTo stop translating use `:command_chartolang none`"
   },
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
