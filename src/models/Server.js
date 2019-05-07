@@ -193,11 +193,15 @@ class Server {
           server.stop('voiceClosing'); // stop playing
           clearTimeout(server.neglect_timeout);
         });
+        connection.on('error', error => {
+          server.leaving = false;
+          server.connecting = false; // this might cause a race condition
+          server.voiceConnection = null;
+          Common.error(error);
+        });
         connection.on('disconnect', () => {
-          var server = this;
           server.voiceConnection = null;
           server.leaving = false;
-          server.world.setPresence();
           //callback();
         });
         server.voiceConnection = connection;
@@ -245,6 +249,8 @@ class Server {
   // permit another user to speak
   permit(snowflake_id) {
     this.resetNeglectTimeout(); // this is redundant, its run from the command as well
+    var member = this.guild.members.find( member => member.id == snowflake_id);
+    if ( member ) this.addMemberSetting(member, 'toLanguage', 'default');
     this.permitted[snowflake_id] = true;
     this.save();
   };
@@ -445,7 +451,7 @@ class Server {
     // play the content
     server.playing = true;
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
-    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout').catch(error => Common.error(error)) : null, 60000);
+    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
       .on('end', reason => {
@@ -458,7 +464,7 @@ class Server {
         var nextAudio = server.audioQueue.shift();
         if ( nextAudio ) nextAudio();
       })
-      .on('error', error => Common.error(error));
+      .on('error', error => Common.error(error))
       server.voiceDispatcher.passes = 3;
   }
 

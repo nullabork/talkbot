@@ -86,7 +86,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
       return;
     
     // they've changed voice channels 
-    if ( oldMember.voiceChannel && !newMember.voiceChannel ) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
+    if ( oldMember.voiceChannel && (!newMember.voiceChannel || !newMember.voiceChannel.joinable)) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
       server.release();
     }
     else if ( oldMember.voiceChannel && newMember.voiceChannel && oldMember.voiceChannel.id != newMember.voiceChannel.id )

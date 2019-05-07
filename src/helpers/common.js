@@ -78,7 +78,7 @@ class Common {
     }
     else if ( typeof message == 'object' )
     {
-      message = message.toString();
+      message = JSON.stringify(message);
     }
 
     if (config.logging && config.logging.err) {

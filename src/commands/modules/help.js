@@ -43,7 +43,8 @@ class Help extends Command {
       "Issues" : [
         'Documentation:    https://nullabork.gitbook.io/talkbot/',
         'Join our discord: https://discordapp.com/invite/NxrPp8g',
-        'Add Talkbot:      https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0'
+        'Add Talkbot:      https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0',
+        'Support us:       https://www.patreon.com/talkbot'
       ]
     };
   }
