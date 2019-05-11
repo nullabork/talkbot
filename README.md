@@ -1,5 +1,5 @@
-[logo]: https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/svg/logo.svg "Talkbot"
-![alt text](https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/svg/logo.svg "Talkbot")
+[logo]: https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png "Talkbot"
+![alt text](https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png "Talkbot")
 # Talkbot
 Discord bot for natural voice text-to-speech and language translation
 
