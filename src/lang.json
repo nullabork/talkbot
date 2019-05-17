@@ -26,7 +26,7 @@
     "connecting": "Cant follow, currently connecting to voice",
     "leaving": "Cant follow until we've left voice",
     "permissions": "I don't have permissions to join that voice channel",
-    "pester": "Hey! this server is using talkbot a lot, consider contributing the API costs here: https://www.patreon.com/talkbot"
+    "pester": "Hey! this server is using talkbot a lot, consider contributing the API costs here: <https://www.patreon.com/talkbot>"
   },
   "en.defaults": {
     "okay": "Your voice settings have been reset :D",
