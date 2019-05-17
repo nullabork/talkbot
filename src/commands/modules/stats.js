@@ -27,28 +27,22 @@ class Stats extends Command {
   //make sure all properties are set
   static initStats ({server}) {
 
-
-
     if(!server.stats) server.stats = {};
     if(!server.dailyStats) server.dailyStats = [];
 
     var latest  = server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
-
-    if(!latest || latest.ket != Stats.getDailyKey() ) {
+    if(!latest || latest.key != Stats.getDailyKey() ) {
       latest = {  key : Stats.getDailyKey() };
       server.dailyStats.push(latest);
     }
 
-
-    if(!latest.characterCount) daily.characterCount = 0;
-    if(!latest.wordCount) daily.wordCount = 0;
-    if(!latest.uniqueUsers) daily.uniqueUsers = {};
+    if(!latest.characterCount) latest.characterCount = 0;
+    if(!latest.wordCount) latest.wordCount = 0;
+    if(!latest.uniqueUsers) latest.uniqueUsers = {};
 
     if(!server.stats.characterCount) server.stats.characterCount = 0;
     if(!server.stats.wordCount) server.stats.wordCount = 0;
-    if(!server.stats.uniqueUsers) server.stats.uniqueUsers = {
-
-    };
+    if(!server.stats.uniqueUsers) server.stats.uniqueUsers = {};
   }
 
   //take a message and extract parts to add to stats
@@ -62,7 +56,6 @@ class Stats extends Command {
     server.stats.wordCount += wordCount;
     server.stats.uniqueUsers[message.member.id] = true;
 
-    // var daily = server.dailyStats[Stats.getDailyKey];
     var latest  = server.dailyStats && server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
     if (latest) {
       latest.characterCount += charCount;
@@ -71,13 +64,13 @@ class Stats extends Command {
     }
   }
 
-  static getServerStats({server}){
+  static getServerStats({server}) {
     Stats.initStats({server});
     var daily = [];
 
     if ( server.dailyStats && server.dailyStats.length ) {
       for (let i = 0; i < Math.min(server.dailyStats.length, 5); i++) {
-        daily.push(server.dailyStats[i]);
+        daily.push(server.dailyStats[i].characterCount);
       }
     }
 
