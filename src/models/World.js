@@ -86,9 +86,21 @@ class World {
  * * */
   renderPresenceHelp() {
     var cmds = require("@commands");
-    return cmds.command_char + "help, " + bot.guilds.size + " servers";
+    return cmds.command_char + "help, " + (this.getTotalCharacterCount()/1000).toFixed(1) + "kc";
   };
 
+/* * *
+ * getTotalCharacterCount()
+ * 
+ * Gets the total char count of servers
+ * * */
+  getTotalCharacterCount() {
+    var c = 0;
+    for ( var server in this.servers ) 
+      if (this.servers[server].stats)
+        c += this.servers[server].stats.characterCount;
+    return c;
+  }
 
 /* * *
  * saveAll()

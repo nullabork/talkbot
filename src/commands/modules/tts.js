@@ -21,6 +21,9 @@ class TTS extends Command {
     if (!input.ownerIsPermitted())
       return input.il8nResponse('tts.notpermitted');
 
+    if (!input.message.member)
+      return input.il8nResponse('tts.mustbeinchannel');
+
     server.speak(input.content, input.message.channel, input.message.member);
   }
 }
