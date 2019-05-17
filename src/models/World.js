@@ -86,18 +86,19 @@ class World {
  * * */
   renderPresenceHelp() {
     var cmds = require("@commands");
-    return cmds.command_char + "help, " + (this.getTotalCharacterCount()/1000).toFixed(1) + "kc";
+    var n = (this.getTotalCharacterCount()/1000).toFixed(1);
+    return cmds.command_char + `help, ${Number.isNaN(n)?0:n}kc`;
   };
 
 /* * *
  * getTotalCharacterCount()
- * 
+ *
  * Gets the total char count of servers
  * * */
   getTotalCharacterCount() {
     var c = 0;
-    for ( var server in this.servers ) 
-      if (this.servers[server].stats)
+    for ( var server in this.servers )
+      if (this.servers[server].stats && !isNaN(this.servers[server].stats.characterCount) && typeof this.servers[server].stats.characterCount == 'number')
         c += this.servers[server].stats.characterCount;
     return c;
   }

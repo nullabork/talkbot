@@ -34,6 +34,7 @@ class Server {
     this.restrictions = state_data.restrictions || [];
     this.keepMessages = state_data.keepMessages || {};
     this.stats = state_data.stats || {};
+    this.dailyStats = state_data.dailyStats || [];
     this.fallbackLang = 'en';
     this.created = state_data.created || new Date();
     this.updated = new Date();
