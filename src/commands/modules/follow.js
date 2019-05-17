@@ -30,6 +30,12 @@ function follow(msg) {
       if ( !member.voiceChannel.joinable) 
         return msg.il8nResponse('follow.permissions');
 
+      // using it alot - consider donating!
+      if ( server.stats.characterCount > 100000 && !server.pestered) {
+        msg.il8nResponse('follow.pester');
+        server.pester = true;
+      }
+
       server.setMaster(member);
       server.joinVoiceChannel(member.voiceChannel)
       .then(() => {

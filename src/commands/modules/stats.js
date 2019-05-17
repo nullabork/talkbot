@@ -67,10 +67,15 @@ class Stats extends Command {
   execute ({input}) {
     var world = input.world;
     var server = input.server;
-    if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
 
     Stats.initStats({server});
-    var stats = Stats.getWorldStats({world, sort : (a,b) => b._data.characterCount - a._data.characterCount, limit: 5});
+    var stats = [];
+
+    // show the owner the stats for their server
+    if (!input.ownerIsDev()) stats = [Stats.getServerStats({server})];
+
+    // devs can see everything
+    else stats = Stats.getWorldStats({world, sort : (a,b) => b._data.characterCount - a._data.characterCount, limit: 5});
 
     var help = new CommentBuilder({
       data : { stats  :  stats },
