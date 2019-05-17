@@ -21,17 +21,20 @@ var path = require('path'),
 //helpers
 var commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
+  MessageDetails = require('@models/MessageDetails'),
   Common = require('@helpers/common'),
   testing = require('@helpers/runtime-testing');
 
 //models
-var world = require('@models/World');
+var world = require('@models/World'),
+  Server = require('@models/Server'),
+  Command = require('@models/Command');
 
 var bot = botStuff.bot;
 
 // runtime testing
 testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
-testing.TestIfAPIServicesAreConfigured();
+testing.TestIfGoogleEnvironmentVarIsSet();
 testing.TestIfNodeOpusIsInstalled();
 // TODO: Test node-opus is installed, the call above does nothing
 

@@ -3,7 +3,8 @@
 var Discord = require('discord.js'),
   auth = require("@auth"),
   Common = require("@helpers/common"),
-  tl8 = require('@google-cloud/translate');
+  tl8 = require('@google-cloud/translate'),
+  textToSpeech = require('@google-cloud/text-to-speech');
 
 class BotStuff {
 
@@ -16,6 +17,8 @@ class BotStuff {
 
     this.auth = auth;
     this.bot = new Discord.Client();
+
+    this.tts_client = new textToSpeech.TextToSpeechClient();
 
     this.translate_client = new tl8.Translate({
       projectId: "talk-bork",
@@ -62,6 +65,10 @@ class BotStuff {
       });
     });
   };
+
+  tts() {
+    return this.tts_client;
+  }
 
 
   getRole(server_id, roleWord) {

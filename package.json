@@ -46,8 +46,6 @@
     "@src": "src",
     "@helpers": "src/helpers",
     "@commands": "src/commands",
-    "@models": "src/models",
-    "@services": "src/services",
-    "@tts": "src/services/tts"
+    "@models": "src/models"
   }
 }
