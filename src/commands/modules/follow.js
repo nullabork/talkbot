@@ -33,7 +33,7 @@ function follow(msg) {
       // using it alot - consider donating!
       if ( server.stats.characterCount > 100000 && !server.pestered) {
         msg.il8nResponse('follow.pester');
-        server.pester = true;
+        server.pestered = true;
       }
 
       server.setMaster(member);
