@@ -20,9 +20,30 @@ class Stats extends Command {
     return true;
   }
 
+  static getDailyKey() {
+    var date = new Date();
+    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDay();
+  }
   //make sure all properties are set
   static initStats ({server}) {
+
+
+
     if(!server.stats) server.stats = {};
+    if(!server.dailyStats) server.dailyStats = [];
+
+    var latest  = server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
+
+    if(!latest || latest.ket != Stats.getDailyKey() ) {
+      latest = {  key : Stats.getDailyKey() };
+      server.dailyStats.push(latest);
+    }
+
+
+    if(!latest.characterCount) daily.characterCount = 0;
+    if(!latest.wordCount) daily.wordCount = 0;
+    if(!latest.uniqueUsers) daily.uniqueUsers = {};
+
     if(!server.stats.characterCount) server.stats.characterCount = 0;
     if(!server.stats.wordCount) server.stats.wordCount = 0;
     if(!server.stats.uniqueUsers) server.stats.uniqueUsers = {
@@ -33,18 +54,39 @@ class Stats extends Command {
   //take a message and extract parts to add to stats
   static addMessageStats({server, message}) {
     Stats.initStats({server});
-    server.stats.characterCount += message.cleanContent.replace(/\s/g, '').length;
-    server.stats.wordCount += message.cleanContent.split(/\s/).length;
+
+    var charCount = message.cleanContent.replace(/\s/g, '').length;
+    var wordCount =  message.cleanContent.split(/\s/).length;
+
+    server.stats.characterCount += charCount;
+    server.stats.wordCount += wordCount;
     server.stats.uniqueUsers[message.member.id] = true;
+
+    // var daily = server.dailyStats[Stats.getDailyKey];
+    var latest  = server.dailyStats && server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
+    if (latest) {
+      latest.characterCount += charCount;
+      latest.wordCount += wordCount;
+      latest.uniqueUsers[message.member.id] = true;
+    }
   }
 
   static getServerStats({server}){
     Stats.initStats({server});
+    var daily = [];
+
+    if ( server.dailyStats && server.dailyStats.length ) {
+      for (let i = 0; i < Math.min(server.dailyStats.length, 5); i++) {
+        daily.push(server.dailyStats[i]);
+      }
+    }
+
     var uniqueUsers = Object.keys(server.stats.uniqueUsers).length;
     return {
       uniqueUsers : uniqueUsers,
       characterCount : server.stats.characterCount,
-      wordCount : server.stats.wordCount
+      wordCount : server.stats.wordCount,
+      dailyCharacterCounts : daily.join(', ')
     }
   }
 
