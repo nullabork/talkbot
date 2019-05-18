@@ -87,7 +87,7 @@ class World {
   renderPresenceHelp() {
     var cmds = require("@commands");
     var n = (this.getTotalCharacterCount()/1000).toFixed(1);
-    return cmds.command_char + `help, ${Number.isNaN(n)?0:n}kc`;
+    return cmds.command_char + `help, ${Number.isNaN(n)?0:n}k chars`;
   };
 
 /* * *
