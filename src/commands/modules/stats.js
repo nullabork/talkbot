@@ -22,7 +22,7 @@ class Stats extends Command {
 
   static getDailyKey() {
     var date = new Date();
-    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDay();
+    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDate();
   }
   //make sure all properties are set
   static initStats ({server}) {
