@@ -1,6 +1,7 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
+var BotCommand = require('@models/BotCommand'),
+  auth = require("@auth");
 
 /* * *
  * Command: follow
@@ -29,6 +30,12 @@ function follow(msg) {
 
       if ( !member.voiceChannel.joinable) 
         return msg.il8nResponse('follow.permissions');
+
+      // using it alot - consider donating!
+      if ( auth.pester_threshold && server.stats.characterCount > auth.pester_threshold && !server.pestered) {
+        msg.il8nResponse('follow.pester');
+        server.pestered = true;
+      }
 
       server.setMaster(member);
       server.joinVoiceChannel(member.voiceChannel)

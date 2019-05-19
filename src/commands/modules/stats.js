@@ -20,31 +20,66 @@ class Stats extends Command {
     return true;
   }
 
+  static getDailyKey() {
+    var date = new Date();
+    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDay();
+  }
   //make sure all properties are set
   static initStats ({server}) {
+
     if(!server.stats) server.stats = {};
+    if(!server.dailyStats) server.dailyStats = [];
+
+    var latest  = server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
+    if(!latest || latest.key != Stats.getDailyKey() ) {
+      latest = {  key : Stats.getDailyKey() };
+      server.dailyStats.push(latest);
+    }
+
+    if(!latest.characterCount) latest.characterCount = 0;
+    if(!latest.wordCount) latest.wordCount = 0;
+    if(!latest.uniqueUsers) latest.uniqueUsers = {};
+
     if(!server.stats.characterCount) server.stats.characterCount = 0;
     if(!server.stats.wordCount) server.stats.wordCount = 0;
-    if(!server.stats.uniqueUsers) server.stats.uniqueUsers = {
-
-    };
+    if(!server.stats.uniqueUsers) server.stats.uniqueUsers = {};
   }
 
   //take a message and extract parts to add to stats
   static addMessageStats({server, message}) {
     Stats.initStats({server});
-    server.stats.characterCount += message.cleanContent.replace(/\s/g, '').length;
-    server.stats.wordCount += message.cleanContent.split(/\s/).length;
+
+    var charCount = message.cleanContent.replace(/\s/g, '').length;
+    var wordCount =  message.cleanContent.split(/\s/).length;
+
+    server.stats.characterCount += charCount;
+    server.stats.wordCount += wordCount;
     server.stats.uniqueUsers[message.member.id] = true;
+
+    var latest  = server.dailyStats && server.dailyStats.length && server.dailyStats[server.dailyStats.length - 1];
+    if (latest) {
+      latest.characterCount += charCount;
+      latest.wordCount += wordCount;
+      latest.uniqueUsers[message.member.id] = true;
+    }
   }
 
-  static getServerStats({server}){
+  static getServerStats({server}) {
     Stats.initStats({server});
+    var daily = [];
+
+    if ( server.dailyStats && server.dailyStats.length ) {
+      for (let i = 0; i < Math.min(server.dailyStats.length, 5); i++) {
+        daily.push(server.dailyStats[i].characterCount);
+      }
+    }
+
     var uniqueUsers = Object.keys(server.stats.uniqueUsers).length;
     return {
       uniqueUsers : uniqueUsers,
       characterCount : server.stats.characterCount,
-      wordCount : server.stats.wordCount
+      wordCount : server.stats.wordCount,
+      dailyCharacterCounts : daily.join(', ')
     }
   }
 
@@ -67,10 +102,15 @@ class Stats extends Command {
   execute ({input}) {
     var world = input.world;
     var server = input.server;
-    if (!input.ownerCanManageTheServer()) return input.il8nResponse('general.nope');
 
     Stats.initStats({server});
-    var stats = Stats.getWorldStats({world, sort : (a,b) => b._data.characterCount - a._data.characterCount, limit: 5});
+    var stats = [];
+
+    // show the owner the stats for their server
+    if (!input.ownerIsDev()) stats = [Stats.getServerStats({server})];
+
+    // devs can see everything
+    else stats = Stats.getWorldStats({world, sort : (a,b) => b._data.characterCount - a._data.characterCount, limit: 5});
 
     var help = new CommentBuilder({
       data : { stats  :  stats },

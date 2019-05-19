@@ -34,9 +34,11 @@ class MessageDetails {
       return [];
     }
 
+    this.args.map((e) => e.toLowerCase());
+
     let roles = this.server.guild.roles;
     return roles.filter((item) => {
-      return item.name && this.args.indexOf(item.name) > -1;
+      return item.name && this.args.indexOf(item.name.toLowerCase()) > -1;
     });
   }
 
