@@ -1,8 +1,8 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
-
-var langMap = require("@helpers/langmap");
+var BotCommand = require('@models/BotCommand'),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  Common = require('@helpers/common');
 
 var lang = function (msg) {
   var server = msg.server;

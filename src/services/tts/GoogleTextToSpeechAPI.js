@@ -50,7 +50,8 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
 
     // test all the fields are correctly coming out of the voices
     try {
-      TextToSpeechService.checkVoiceStructure(this.getVoices());
+      GoogleTextToSpeechAPI.voices = this.buildVoices();
+      TextToSpeechService.checkVoiceStructure(GoogleTextToSpeechAPI.voices);
     }
     catch(err) {
       console.log(err);
@@ -103,13 +104,29 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     return client.synthesizeSpeech(request, (err, response) => callback(err, response ? response.audioContent : null));
   }
 
+  getDefaultVoice(gender, lang_code) {
+    // guess a default based on lang and gender or just give htem the standard
+    var voices = GoogleTextToSpeechAPI.voices.filter(voice => voice.language == lang_code && voice.gender == gender);
+    var standard = voices.filter(voice => voice.type == "Standard");
+    // standard voices are cheaper
+    if ( standard.length > 0 ) return standard[0].voice;
+    // give them anything if we dont have a standard one
+    if ( voices.length > 0 ) return voices[0].voice;
+    // all else fails, they're `strayn
+    return 'en-AU-Standard-D';
+  }
+
   getVoices() {
+    return GoogleTextToSpeechAPI.voices;
+  }
+
+  buildVoices() {
     var voices = [
       {
         "language": "Danish (Denmark)",
         "type": "Standard",
         "code": "da-DK",
-        "translate" : 'en',
+        "translate" : 'da',
         "voice": "da-DK-Standard-A",
         "voice_alias" : "Dora",
         "gender": "FEMALE"
@@ -118,7 +135,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "language": "Danish (Denmark)",
         "type": "WaveNet",
         "code": "da-DK",
-        "translate" : 'en',
+        "translate" : 'da',
         "voice": "da-DK-Wavenet-A",
         "voice_alias" : "Heidi",
         "gender": "FEMALE"
@@ -128,7 +145,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "language": "Dutch (Netherlands)",
         "type": "Standard",
         "code": "nl-NL",
-        "translate" : 'en',
+        "translate" : 'nl',
         "voice": "nl-NL-Standard-A",
         "voice_alias" : "Eva",
         "gender": "FEMALE"
@@ -138,7 +155,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "language": "Dutch (Netherlands)",
         "type": "WaveNet",
         "code": "nl-NL",
-        "translate" : 'en',
+        "translate" : 'nl',
         "voice": "nl-NL-Wavenet-A",
         "voice_alias" : "Mila",
         "gender": "FEMALE"

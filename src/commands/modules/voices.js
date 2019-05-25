@@ -1,9 +1,9 @@
 /*jshint esversion: 9 */
 
-var tablr = require("tablr");
-var langMap = require("@helpers/voiceMap");
-var Common = require('@helpers/common');
-var auth = require("@auth");
+var tablr = require("tablr"),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  Common = require('@helpers/common'),
+  auth = require("@auth");
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -13,21 +13,6 @@ var BotCommand = require('@models/BotCommand');
  * sets language user config
  *
  * usage !mylang au
- *
- * US
- * NL
- * AU
- * GB
- * FR
- * CA
- * DE
- * IT
- * JP
- * KR
- * BR
- * ES
- * SE
- * TR
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  *
@@ -40,24 +25,25 @@ function listVoices(msg) {
       return;
     }
 
-    var docs = langMap.getLang(msg.args[0]);
+    var lang_code = msg.args[0].toLowerCase();
 
-    if(!docs || !docs.length) {
-      //what dont know???? why? you should by now...
-      msg.il8nResponse('mylang.no', { lang: msg.args[0]});
-      return;
+    var data = [];
+    for ( var k in TextToSpeechService.providers)
+    {
+      var provider = TextToSpeechService.providers[k];
+
+      var voices = provider.getVoices();
+      voices.map(voice => {
+        if (voice.code.toLowerCase().indexOf(lang_code) > -1) 
+          data.push([
+            voice.provider + '/' + voice.voice,
+            !voice.voice_alias ? "(none)" : voice.voice_alias,
+            voice.gender.substring(0,1).toLowerCase()
+          ]);
+      });
     }
 
-    var data = docs.map(function(lang){
-      return [
-        lang.voice,
-        !lang.voice_alias ? "(none)" : lang.voice_alias,
-        lang.gender,
-        lang.type == "WaveNet"? "😎" : "🤢"
-      ]
-    });
-
-    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', 'Quality']);
+    var table = tablr.headed(data, ['Voice', 'Alias', 'm/f']);
     table = table.replace(/--/g, '━━');
 
     msg.il8nResponse('voices.okay', {
@@ -73,8 +59,7 @@ var command = new BotCommand({
   execute: listVoices,
   short_help: 'voices.shorthelp',
   long_help: 'voices.longhelp',
-  group: "info",
-  // parameters: "<lang>"
+  group: "info"
 });
 
 

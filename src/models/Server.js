@@ -6,10 +6,8 @@ var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
   MessageSSML = require('@models/MessageSSML'),
   Common = require('@helpers/common'),
-  langmap = require('@helpers/langmap'),
   auth = require('@auth'),
   fs = require('fs'),
-  stream = require('stream'),
   streamifier = require('streamifier'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   prism = require('prism-media');
@@ -84,7 +82,7 @@ class Server {
     // access the lang file
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
-      locale: langmap.get(this.language).root,
+      locale: 'en',
       fallback: this.fallbackLang
     });
 

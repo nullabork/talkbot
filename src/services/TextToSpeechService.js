@@ -75,6 +75,19 @@ class TextToSpeechService {
   }
 
   /**
+   * [getDefaultVoice gets the default voice name for this service]
+   * 
+   * @param {string} gender - eg. FEMALE
+   * @param {string} lang_code eg. en-AU
+   * 
+   * @return {string} voice name
+   */
+  getDefaultVoice(gender, lang_code) {
+    Common.error('Please implement the getDefaultVoice function');
+    process.exit();
+  }
+
+  /**
    * [checkVoiceStructure confirm the voices array is formed correctly]
    *
    * @param  {*}  voices

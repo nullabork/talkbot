@@ -22,6 +22,8 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return auth.tts.amazon.limit;
   }
 
+  // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg 
+  // google works fine!
   get format() { return "pcm"; }
 
   /**
@@ -107,7 +109,9 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return AmazonTextToSpeechAPI.voices;
   }
 
-  getDefaultVoice(settings) {
+  getDefaultVoice(gender, lang_code) {
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.language == lang_code && voice.gender == gender);
+    if ( voices.length > 0 ) return voices[0].voice;
     return 'Vicki';
   }
 
@@ -121,7 +125,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
   static buildVoices() {
     var v = [
-      {"language":"Arabic","code":"arb","translate":"arb","voice":"Zeina","gender":"FEMALE"},      
+      {"language":"Arabic","code":"ar-AR","translate":"ar","voice":"Zeina","gender":"FEMALE"},      
       
       {"language":"Chinese, Mandarin","code":"cmn-CN","translate":"cn","voice":"Zhiyu","gender":"FEMALE"},     
 
