@@ -152,7 +152,7 @@ function transfer(msg) {
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
   if (server.switching_channel) return msg.il8nResponse('transfer.switching');
 
-  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer()) {
+  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer() && server.isBound()) {
     msg.il8nResponse('transfer.nopermissions');
     return;
   }
