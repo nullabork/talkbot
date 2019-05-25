@@ -454,6 +454,8 @@ class Server {
   // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, format, callback) {
 
+    console.log('Playing');
+
     var server = this;
     var readable = audioContent;
 
@@ -493,20 +495,21 @@ class Server {
     if ( format == 'ogg') 
       server.voiceDispatcher = server.voiceConnection
         .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
-        .on('end', reason => endFunc)
+        .on('end', endFunc)
         .on('error', error => Common.error(error));
 
     else if ( format == 'pcm' ) {
       server.voiceDispatcher = server.voiceConnection
         .playStream(readable)
-        .on('end', reason => endFunc)
+        .on('end', endFunc)
         .on('error', error => Common.error(error));
 
     }
     else 
       Common.error('Unknown format: '+ format);
 
-    server.voiceDispatcher.passes = 3;
+      console.log('Played');
+      server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation

@@ -22,7 +22,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return auth.tts.amazon.limit;
   }
 
-  get format() { return "ogg"; }
+  get format() { return "pcm"; }
 
   /**
    * [startupTests to check things this API needs to operate]
@@ -35,15 +35,15 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     const secretAccessKey = auth.tts.amazon.secretAccessKey;
     
     if (!secretAccessKey || !accessKeyId) {
-      console.log('Config variable amazon.accessKeyId or amazon.secretAccessKey is not set.');
+      console.log('Config variable tts.amazon.accessKeyId or tts.amazon.secretAccessKey is not set.');
       process.exit(1);
     }
 
     try {
       AmazonTextToSpeechAPI.polly = new amazon({accessKeyId: accessKeyId, secretAccessKey: secretAccessKey});    
+      AmazonTextToSpeechAPI.voices = AmazonTextToSpeechAPI.buildVoices();
       //var v = await self.getVoicesFromAzure(self.accessToken);
-      //AmazonTextToSpeechAPI.voices = self.processVoices(v);
-      //TextToSpeechService.checkVoiceStructure(AmazonTextToSpeechAPI.voices);
+      TextToSpeechService.checkVoiceStructure(AmazonTextToSpeechAPI.voices);
     } catch (err) {
       console.log(`Something went wrong: ${err}`);
       process.exit(1);
@@ -61,11 +61,13 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
    */
   buildRequest (ssml, settings) {
 
+    var self = this;
     let options = {
       text: ssml, // if textType is ssml, than here needs to be the ssml string
       textType: "ssml", // marks if it is ssml, text etc. - optional
-      voiceId: "Vicki", // Polly Voice -> also determines the language - optional settings.voice ||
-      outputFormat: "ogg" // all polly output formats like mp3, pcm etc. - optional
+      voiceId: settings.name || self.getDefaultVoice(settings), // Polly Voice -> also determines the language - optional settings.voice ||
+      outputFormat: "ogg_vorbis", // all polly output formats like mp3, pcm etc. - optional
+      sampleRate: 16000 // use default unless PCM
     };
 
     return options;
@@ -79,11 +81,15 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
    */
   getAudioContent (request, callback) {
 
-    AmazonTextToSpeechAPI.doBookkeeping(request);
+    var self = this;
+
+    self.doBookkeeping(request);
 
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
+      console.log(audioStream);
       if (err) {
         Common.error(err);
+        callback(new Error(err), null);
         return;
       }
       try {
@@ -101,13 +107,115 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return AmazonTextToSpeechAPI.voices;
   }
 
+  getDefaultVoice(settings) {
+    return 'Vicki';
+  }
+
   doBookkeeping(request) {
     if ( !AmazonTextToSpeechAPI.count ) AmazonTextToSpeechAPI.count = 0;
-    AmazonTextToSpeechAPI.count += request.ssml.length;
+    AmazonTextToSpeechAPI.count += request.text.length;
 
     if ( auth.tts.amazon.enforce_limit && AmazonTextToSpeechAPI.count > this.limit )
       throw 'Amazon limit reached';
   }
+
+  static buildVoices() {
+    var v = [
+      {"language":"Arabic","code":"arb","translate":"arb","voice":"Zeina","gender":"FEMALE"},      
+      
+      {"language":"Chinese, Mandarin","code":"cmn-CN","translate":"cn","voice":"Zhiyu","gender":"FEMALE"},     
+
+      {"language":"Danish","code":"da-DK","translate":"da","voice":"Naja","gender":"FEMALE"},      
+      {"language":"Danish","code":"da-DK","translate":"da","voice":"Mads","gender":"MALE"},      
+      
+      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Lotte","gender":"FEMALE"},      
+      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Ruben","gender":"MALE"},      
+
+      {"language":"English (AU)","code":"en-AU","translate":"en","voice":"Nicole","gender":"FEMALE"},      
+      {"language":"English (AU)","code":"en-AU","translate":"en","voice":"Russell","gender":"MALE"},  
+
+      {"language":"English (GB)","code":"en-GB","translate":"en","voice":"Amy","gender":"FEMALE"},      
+      {"language":"English (GB)","code":"en-GB","translate":"en","voice":"Emma","gender":"FEMALE"},      
+      {"language":"English (GB)","code":"en-GB","translate":"en","voice":"Brian","gender":"MALE"},     
+
+      {"language":"English (IN)","code":"en-IN","translate":"en","voice":"Aditi","gender":"FEMALE"},      
+      {"language":"English (IN)","code":"en-IN","translate":"en","voice":"Raveena","gender":"FEMALE"},  
+
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joanna","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kendra","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kimberly","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Salli","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joey","gender":"MALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Justin","gender":"MALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Matthew","gender":"MALE"},      
+
+      {"language":"English (Welsh)","code":"en-GB-WLS","translate":"en","voice":"Geraint","gender":"MALE"},      
+
+      {"language":"French (fr-FR)","code":"fr-FR","translate":"fr","voice":"Celine","gender":"FEMALE"},      
+      {"language":"French (fr-FR)","code":"fr-FR","translate":"fr","voice":"Léa","gender":"FEMALE"},      
+      {"language":"French (fr-FR)","code":"fr-FR","translate":"fr","voice":"Mathieu","gender":"MALE"},      
+
+      {"language":"French (fr-CA)","code":"fr-CA","translate":"fr","voice":"Chantal","gender":"FEMALE"},      
+
+      {"language":"German","code":"de-DE","translate":"de","voice":"Marlene","gender":"FEMALE"},      
+      {"language":"German","code":"de-DE","translate":"de","voice":"Vicki","gender":"FEMALE"},      
+      {"language":"German","code":"de-DE","translate":"de","voice":"Hans","gender":"MALE"},  
+
+      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Dora","gender":"FEMALE"},      
+      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Karl","gender":"MALE"},     
+
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Carla","gender":"FEMALE"},      
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Bianca","gender":"FEMALE"},      
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Giorgio","gender":"MALE"},    
+
+      {"language":"Japanese","code":"ja-JP","translate":"jp","voice":"Mizuki","gender":"FEMALE"},      
+      {"language":"Japanese","code":"ja-JP","translate":"jp","voice":"Takumi","gender":"MALE"},      
+
+      {"language":"Korean","code":"ko-KR","translate":"ko","voice":"Seoyeon","gender":"FEMALE"},      
+
+      {"language":"Norwegian","code":"nb-NO","translate":"nb","voice":"Liv","gender":"FEMALE"},      
+
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Ewa","gender":"FEMALE"},      
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Maja","gender":"FEMALE"},      
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jacek","gender":"MALE"},      
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jan","gender":"MALE"},      
+
+      {"language":"Portuguese (pt-BR)","code":"pt-BR","translate":"pt","voice":"Vitoria","gender":"FEMALE"},      
+      {"language":"Portuguese (pt-BR)","code":"pt-BR","translate":"pt","voice":"Ricardo","gender":"MALE"},      
+
+      {"language":"Portuguese (pt-PT)","code":"pt-PT","translate":"pt","voice":"Ines","gender":"FEMALE"},      
+      {"language":"Portuguese (pt-PT)","code":"pt-PT","translate":"pt","voice":"Cristiano","gender":"MALE"},      
+
+      {"language":"Romanian","code":"ro-RO","translate":"ro","voice":"Carmen","gender":"FEMALE"},      
+
+      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Tatyana","gender":"FEMALE"},      
+      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Maxim","gender":"MALE"},      
+
+      {"language":"Spanish (es-ES)","code":"es-ES","translate":"es","voice":"Conchita","gender":"FEMALE"},      
+      {"language":"Spanish (es-ES)","code":"es-ES","translate":"es","voice":"Enrique","gender":"MALE"},      
+      {"language":"Spanish (es-ES)","code":"es-ES","translate":"es","voice":"Lucia","gender":"FEMALE"},      
+
+      {"language":"Spanish (es-MX)","code":"es-MX","translate":"es","voice":"Mia","gender":"FEMALE"},    
+
+      {"language":"Spanish (es-US)","code":"es-US","translate":"es","voice":"Penelope","gender":"FEMALE"},     
+      {"language":"Spanish (es-US)","code":"es-US","translate":"es","voice":"Miguel","gender":"MALE"},      
+
+      {"language":"Swedish (sv-SE)","code":"sv-SE","translate":"sv","voice":"Astrid","gender":"FEMALE"},  
+
+      {"language":"Turkish (tr-TR)","code":"tr-TR","translate":"tr","voice":"Filiz","gender":"FEMALE"},    
+
+      {"language":"Welsh (cy-GB)","code":"cy-GB","translate":"cy","voice":"Gwyneth","gender":"FEMALE"}      
+    ];
+
+    for( var idx in v ) {
+      v[idx].provider = 'amazon';
+      v[idx].voice_alias = v[idx].voice;
+    }
+
+    return v;
+  }
+
 }
 
 module.exports = AmazonTextToSpeechAPI;

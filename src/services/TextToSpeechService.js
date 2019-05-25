@@ -120,6 +120,7 @@ class TextToSpeechService {
    */
   static getService(provider) {
 
+    provider = provider.toLowerCase();
     if (!TextToSpeechService.providers) 
       TextToSpeechService.setupProviders();
 
@@ -131,6 +132,7 @@ class TextToSpeechService {
   {
     var v = null;
     var service = null;
+    voice_name = voice_name.toLowerCase();
 
     if ( provider )
       service = TextToSpeechService.getService(provider);
@@ -141,7 +143,7 @@ class TextToSpeechService {
       for ( var key in voices)
       {
         v = voices[key];
-        if ( v.voice == voice_name )
+        if ( v.voice == voice_name || v.voice_alias.toLowerCase() == voice_name )
           return v;
       }
     }
@@ -152,7 +154,7 @@ class TextToSpeechService {
         for ( var key in voices)
         {
           v = voices[key];
-          if ( v.voice == voice_name )
+          if ( v.voice.toLowerCase() == voice_name || v.voice_alias.toLowerCase() == voice_name)
             return v;
         }
       }
