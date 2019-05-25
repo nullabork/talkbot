@@ -22,7 +22,7 @@ class Stats extends Command {
 
   static getDailyKey() {
     var date = new Date();
-    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDay();
+    return date.getFullYear() + " - " + date.getMonth() + " - " + date.getDate();
   }
   //make sure all properties are set
   static initStats ({server}) {
@@ -78,23 +78,29 @@ class Stats extends Command {
     return {
       uniqueUsers : uniqueUsers,
       characterCount : server.stats.characterCount,
-      wordCount : server.stats.wordCount,
+      //wordCount : server.stats.wordCount,
       dailyCharacterCounts : daily.join(', ')
     }
   }
 
   static getWorldStats({world, sort, limit}) {
     var stats = [];
-    for (var id in world.servers) {
-      var server = world.servers[id];
+    var servers = world.servers;
+    servers = Object.values(servers);
+
+    if(sort) servers = servers.sort(sort);
+    if(limit) servers = servers.slice(0, limit);
+
+    // for (var id in world.servers) {
+    for (const server of servers) {
       stats.push({
         _heading : server.server_name,
         _data : Stats.getServerStats({server})
       });
     }
 
-    if(sort) stats = stats.sort(sort);
-    if(limit) stats = stats.slice(0, limit);
+
+
 
     return stats;
   }
@@ -102,15 +108,31 @@ class Stats extends Command {
   execute ({input}) {
     var world = input.world;
     var server = input.server;
-
+    var sortMethod = input.args[0];
     Stats.initStats({server});
+
+    var sort = null;
+    switch(sortMethod) {
+      case "daily":
+        sort = (a,b) => {
+          var bds = b.dailyStats[b.dailyStats.length - 1].characterCount;
+          var ads = a.dailyStats[a.dailyStats.length - 1].characterCount;
+          return  bds - ads;
+        }
+        break;
+      default:
+        sort = (a,b) => b.stats.characterCount - a.stats.characterCount;
+    }
+
+
+
     var stats = [];
 
     // show the owner the stats for their server
     if (!input.ownerIsDev()) stats = [Stats.getServerStats({server})];
 
     // devs can see everything
-    else stats = Stats.getWorldStats({world, sort : (a,b) => b._data.characterCount - a._data.characterCount, limit: 5});
+    else stats = Stats.getWorldStats({world, sort : sort, limit: 6});
 
     var help = new CommentBuilder({
       data : { stats  :  stats },
