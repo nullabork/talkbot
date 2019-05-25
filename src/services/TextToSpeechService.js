@@ -112,13 +112,13 @@ class TextToSpeechService {
     return TextToSpeechService.providers[Object.keys(TextToSpeechService.providers)[0]];
   }
 
-  static setupProviders() {
+  static async setupProviders() {
     TextToSpeechService.providers = {};
-    fs.readdirSync(paths.tts).forEach(file => {
+    await fs.readdirSync(paths.tts).forEach(async file => {
       var api = require(paths.tts + '\\' + file);
       var obj = new api();
       if ( obj.enabled ) {
-        obj.startupTests();
+        await obj.startupTests();
         TextToSpeechService.providers[obj.shortname] = obj;
       }
     });      
@@ -134,11 +134,39 @@ class TextToSpeechService {
   static getService(provider) {
 
     provider = provider.toLowerCase();
-    if (!TextToSpeechService.providers) 
-      TextToSpeechService.setupProviders();
 
     var service = TextToSpeechService.providers[provider];
     return service;
+  }
+
+  /**
+   * [Tests if the lang_code is valid]
+   * 
+   * @param {*} lang_code - ISO language code
+   * @param {*} provider  - optional provider name eg. google
+   * 
+   * @returns {boolean}
+   */
+  static isValidLang(lang_code, provider) {
+    return TextToSpeechService.getVoiceRecords(lang_code, provider).length > 0;
+  }
+
+  static getVoiceRecords(lang_code, provider)
+  {
+    if ( provider ) {
+      service = TextToSpeechService.getService(provider);
+      var voices = service.getVoices().filter(voice => voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1);
+      return voices;
+    }
+    else {
+      var v = [];
+      for( var provider in TextToSpeechService.providers) {
+        TextToSpeechService.providers[provider].getVoices()
+        .filter(voice => voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1)
+        .forEach(voice => v.push(voice));
+      }
+      return v;
+    }
   }
 
   static getVoice(voice_name, provider)
@@ -156,7 +184,7 @@ class TextToSpeechService {
       for ( var key in voices)
       {
         v = voices[key];
-        if ( v.voice == voice_name || v.voice_alias.toLowerCase() == voice_name )
+        if ( v.voice.toLowerCase() == voice_name || v.voice_alias.toLowerCase() == voice_name )
           return v;
       }
     }

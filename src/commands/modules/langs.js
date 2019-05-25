@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 
-var tablr = require("tablr"),
+var tt = require("text-table"),
   TextToSpeechService = require('@services/TextToSpeechService'),
   Common = require('@helpers/common'),
   auth = require("@auth");
@@ -20,7 +20,7 @@ var BotCommand = require('@models/BotCommand');
  */
 function langVoices(msg) {
   var have = {};
-  var data = [];
+  var data = [['LANGUAGE', 'CODE']];
   for ( var k in TextToSpeechService.providers)
   {
     var provider = TextToSpeechService.providers[k];
@@ -38,8 +38,7 @@ function langVoices(msg) {
     });
   }
 
-  var table = tablr.headed(data, ['Lang', 'Code']);
-  table = table.replace(/\s\s+/g, ' ');
+  var table = tt(data);
 
   msg.il8nResponse('langs.okay', {table : table, example : auth.command_arg + 'mylang au'});
 };

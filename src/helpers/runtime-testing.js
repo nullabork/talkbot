@@ -1,6 +1,4 @@
 /*jshint esversion: 9 */
-var fs = require('fs'),
-  paths = require('@paths');
 
 class RuntimeTesting {
 
@@ -27,8 +25,8 @@ class RuntimeTesting {
     }
   }
   
-  static TestIfTTSAPIServicesAreConfigured() {
-    require("@services/TextToSpeechService").setupProviders();
+  static async TestIfTTSAPIServicesAreConfigured() {
+    await require("@services/TextToSpeechService").setupProviders();
   }
   
   static TestIfNodeOpusIsInstalled() {

@@ -4,7 +4,6 @@ const Common = require('@helpers/common'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
   rp = require('request-promise'),
-  fs = require('fs'),
   xmlbuilder = require('xmlbuilder');  
 
 class AzureTextToSpeechAPI extends TextToSpeechService {
@@ -115,7 +114,6 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
     let p = rp(options)
       .on('response', response => {
         if (response.statusCode === 200) {
-          //p.pipe(fs.createWriteStream('TTSOutput.wav'));
           callback(null, p);
         }
         else {
@@ -127,7 +125,11 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
   }
 
   getVoices() {
-    return AmazonTextToSpeechAPI.voices;
+    return AzureTextToSpeechAPI.voices;
+  }
+
+  getDefaultVoice(gender, lang_code) {
+    return AzureTextToSpeechAPI.voices[0].voice;
   }
 
   getVoicesFromAzure(accessToken) {
@@ -163,7 +165,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
         code:        voice.Locale,
         translate:   map ? map.translate : voice.Locale.substring(0,2),
         gender:      map ? map.gender : voice.Gender.substring(0,1),
-        voice_alias: map ? map.alias : null,
+        voice_alias: map ? map.alias : '',
         language:    map ? map.language : voice.Locale
       };
 

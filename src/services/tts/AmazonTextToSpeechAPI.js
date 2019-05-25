@@ -212,10 +212,11 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       {"language":"Welsh (cy-GB)","code":"cy-GB","translate":"cy","voice":"Gwyneth","gender":"FEMALE"}      
     ];
 
-    for( var idx in v ) {
-      v[idx].provider = 'amazon';
-      v[idx].voice_alias = v[idx].voice;
-    }
+    // set the provider
+    v.forEach(voice => voice.provider = "amazon");
+
+    // alias is equal to the voice name
+    v.forEach(voice => voice.voice_alias = voice.voice);
 
     return v;
   }

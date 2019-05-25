@@ -74,9 +74,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
       input: { text: null, ssml: ssml },
       // Select the language and SSML Voice Gender (optional)
       voice: {
-        languageCode: settings.language || '',
-        ssmlGender: settings.gender || 'NEUTRAL',
-        name: settings.name || ''
+        name: settings.name || this.getDefaultVoice(settings.gender, settings.language)
       },
       // Select the type of audio encoding
       audioConfig: {
