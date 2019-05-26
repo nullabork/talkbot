@@ -82,8 +82,8 @@ class Server {
     // access the lang file
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
-      locale: 'en',
-      fallback: this.fallbackLang
+      locale: TextToSpeechService.getVoiceRecords(this.language)[0].translate, // switch the locale to the one they use for translate
+      fallback: this.fallbackLang = 'en'
     });
 
     // idk??

@@ -126,7 +126,8 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
 
 
   async fetchAndMapVoices (mapFunction) {
-    let map = new Map();
+    let map = [];
+
     const [result] = await GoogleTextToSpeechAPI.client.listVoices({});
     const voices = result.voices;
 
@@ -137,6 +138,8 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "code": item.languageCodes.length && item.languageCodes[0],
         "codes" : item.languageCodes,
         "voice": item.name,
+        "translate" : item.languageCodes.length && item.languageCodes[0],
+        "language": item.name,
         "gender": item.ssmlGender
       };
 
@@ -144,7 +147,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         voice = mapFunction(voice);
       }
 
-      map.set(voice.voice, voice);
+      map.push(voice);
     });
 
     return map;
@@ -1288,24 +1291,23 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     ];
 
     var voiceMap = new Map();
-
     voices.forEach(voice => {
-      voice.provider = this.shortname;
       voiceMap.set(voice.voice, voice);
     });
 
     let fetchMap = await this.fetchAndMapVoices( voice => {
       if(voiceMap.has(voice.voice)){
-        return {
+       voice = {
           ...voice,
           ...voiceMap.get(voice.voice)
         }
       }
+
+      voice.provider = this.shortname;
       return voice;
     });
 
-    console.log(fetchMap.values());
-    return fetchMap.values();
+    return fetchMap;
   }
 }
 

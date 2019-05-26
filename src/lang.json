@@ -148,12 +148,12 @@
     "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
   },
   "en.langs" : {
-    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
+    "okay" : "```css\n:table\n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
     "shorthelp" : "List of languages",
     "longhelp" : "List of languages"
   },
   "en.voices" : {
-    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
+    "okay" : "```css\n:table\n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
     "shorthelp" : "List of voices, `:command_charvoices au`",
     "longhelp" : "List of voices, `:command_charvoices au`",
     "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"

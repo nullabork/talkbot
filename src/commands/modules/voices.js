@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 
-var tablr = require("tablr"),
+var tt = require("text-table"),
   TextToSpeechService = require('@services/TextToSpeechService'),
   Common = require('@helpers/common'),
   auth = require("@auth");
@@ -27,7 +27,7 @@ function listVoices(msg) {
 
     var lang_code = msg.args[0].toLowerCase();
 
-    var data = [];
+    var data = [['VOICE', 'ALIAS', 'M/F']];
     for ( var k in TextToSpeechService.providers)
     {
       var provider = TextToSpeechService.providers[k];
@@ -43,8 +43,7 @@ function listVoices(msg) {
       });
     }
 
-    var table = tablr.headed(data, ['Voice', 'Alias', 'm/f']);
-    table = table.replace(/--/g, '━━');
+    var table = tt(data);
 
     msg.il8nResponse('voices.okay', {
       table : table,

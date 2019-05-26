@@ -1,10 +1,9 @@
 /*jshint esversion: 9 */
 
-var langMap = require("@helpers/voiceMap");
-
-
-// models
-var BotCommand = require('@models/BotCommand');
+// require
+const TextToSpeechService = require("@services/TextToSpeechService"),
+  Common = require('@helpers/common'),
+  BotCommand = require('@models/BotCommand');
 
 /**
  * Command: tolang
@@ -31,19 +30,22 @@ function toLang(msg) {
     return;
   }
 
-  var docs = langMap.getLang(msg.args[0]);
+  var lang_code = msg.args[0];
 
-  if(!docs || !docs.length) {
+  if(!TextToSpeechService.isValidLang(lang_code)) {
     //what dont know???? why? you should by now...
     msg.il8nResponse('mylang.no', { lang: msg.args[0]});
     return;
   }
 
-  var doc = docs[0];
+  var voices = TextToSpeechService.getVoiceRecords(lang_code);
+  var voice = voices[0];
 
-  server.addMemberSetting(msg.message.member,'toLanguage', doc.translate);
-  server.addMemberSetting(msg.message.member,'language', doc.code);
-  var response = server.lang('tolang.okay', { lang: doc.language });
+  server.addMemberSetting(msg.message.member,'toLanguage', voice.translate);
+  server.addMemberSetting(msg.message.member,'language', voice.code);
+  server.addMemberSetting(msg.message.member,'voice_provider', voice.provider);
+
+  var response = server.lang('tolang.okay', { lang: voice.language });
 
   var voiceName = server.getMemberSetting(msg.message.member,'name');
   if( voiceName && voiceName != "default" ) {
