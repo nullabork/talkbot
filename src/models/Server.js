@@ -60,7 +60,7 @@ class Server {
 
     // statistics on this server
     this.stats = state_data.stats || {};
-    
+
     // when was the server originally created
     this.created = state_data.created || new Date();
 
@@ -422,7 +422,7 @@ class Server {
 
     server.resetNeglectTimeout();
 
-    var service = TextToSpeechService.getService(settings.voice_provider) || TextToSpeechService.defaultProvider();
+    var service = TextToSpeechService.getService(settings.voice_provider) || TextToSpeechService.defaultProvider;
     var request = service.buildRequest(message, settings);
 
     // Performs the Text-to-Speech request
@@ -482,7 +482,7 @@ class Server {
     }
 
     if ( server.leaving ) return;
-    if ( !server.voiceConnection ) 
+    if ( !server.voiceConnection )
       return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
 
     // play the content
@@ -490,7 +490,7 @@ class Server {
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
-    if ( format == 'ogg') 
+    if ( format == 'ogg')
       server.voiceDispatcher = server.voiceConnection
         .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
         .on('end', endFunc)
@@ -503,7 +503,7 @@ class Server {
         .on('error', error => Common.error(error));
 
     }
-    else 
+    else
       Common.error('Unknown format: '+ format);
 
       console.log('Played');
