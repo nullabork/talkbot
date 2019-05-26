@@ -61,6 +61,7 @@ function myVoice(msg) {
     server.addMemberSetting(member,'voice_provider', voice_info.provider);
     server.addMemberSetting(member,'name', voice_info.voice);
     server.addMemberSetting(member,'language', voice_info.code);
+    server.addMemberSetting(member,'gender', voice_info.gender);
     server.deleteMemberSetting(member,'toLanguage');
     msg.il8nResponse('myvoice.okay', { voice: msg.args[0] });
   } else {
