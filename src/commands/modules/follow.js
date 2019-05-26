@@ -1,6 +1,7 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
+var BotCommand = require('@models/BotCommand'),
+  auth = require("@auth");
 
 /* * *
  * Command: follow
@@ -30,19 +31,26 @@ function follow(msg) {
       if ( !member.voiceChannel.joinable) 
         return msg.il8nResponse('follow.permissions');
 
+      // using it alot - consider donating!
+      if ( auth.pester_threshold && server.stats.characterCount > auth.pester_threshold && !server.pestered) {
+        msg.il8nResponse('follow.pester');
+        server.pestered = true;
+      }
+
       server.setMaster(member);
       server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
         
-          commands.notify('follow', {member: member, server: server});
-          msg.il8nResponse('follow.okay');
-  
-          // unmute them if they're muted
-          if (server.getMemberSetting(member, 'muted')) {
-            server.addMemberSetting(member,'muted',false);
-            msg.il8nResponse('mute.unmuted');
-          }
-        });
+        server.addMemberSetting(member,'toLanguage', 'default');
+        commands.notify('follow', {member: member, server: server});
+        msg.il8nResponse('follow.okay');
+
+        // unmute them if they're muted
+        if (server.getMemberSetting(member, 'muted')) {
+          server.addMemberSetting(member,'muted',false);
+          msg.il8nResponse('mute.unmuted');
+        }
+      });
     } else {
       msg.il8nResponse('follow.join');
     }
@@ -119,6 +127,7 @@ function sidle(msg) {
   }
 
   server.setMaster(newMaster);
+  server.addMemberSetting(newMaster,'toLanguage', 'default');
   msg.il8nResponse('sidle.okay');
 
   if (server.getMemberSetting(newMaster, 'muted')) {
@@ -143,7 +152,7 @@ function transfer(msg) {
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
   if (server.switching_channel) return msg.il8nResponse('transfer.switching');
 
-  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer()) {
+  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer() && server.isBound()) {
     msg.il8nResponse('transfer.nopermissions');
     return;
   }
@@ -184,6 +193,8 @@ function transfer(msg) {
     server.joinVoiceChannel(newMaster.voiceChannel)
     .then(() => {
       msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+
+      server.addMemberSetting(newMaster,'toLanguage', 'default');
 
       // unmute them if they're muted
       if (server.getMemberSetting(newMaster, 'muted')) {

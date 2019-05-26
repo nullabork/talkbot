@@ -1,5 +1,6 @@
 /*jshint esversion: 9 */
-var config = require("@auth");
+var config = require("@auth"),
+  util = require('util');
 
 class Common {
   //clean string so its usable in RegExp
@@ -78,7 +79,7 @@ class Common {
     }
     else if ( typeof message == 'object' )
     {
-      message = JSON.stringify(message);
+      message = util.inspect(message);
     }
 
     if (config.logging && config.logging.err) {

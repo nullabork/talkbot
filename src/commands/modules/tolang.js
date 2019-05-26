@@ -20,11 +20,11 @@ function toLang(msg) {
   var server = msg.server;
 
   if(!msg.args || !msg.args.length){
-    msg.il8nResponse('mylang.more');
+    msg.il8nResponse('tolang.more');
     return;
   }
 
-  if(msg.args[0] == 'default'){
+  if(/default|off|none|unset|0/.test(msg.args[0])){
     server.addMemberSetting(msg.message.member, 'toLanguage', 'default');
     msg.il8nResponse('general.auto', {key: "tolang"});
     return;

@@ -61,6 +61,7 @@ function debug(msg) {
   var r = "Active: " + active_server_count + "\n";
   r += "Servers: " + msg.message.client.guilds.size + "\n";
   r += "Total members: " + member_count + "\n";  
+  r += "Total characters: " + msg.world.getTotalCharacterCount() + "\n";  
   r += "\nActive Servers:\n" + active_server_names;
 
   msg.response(r);

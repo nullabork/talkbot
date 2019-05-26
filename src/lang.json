@@ -25,7 +25,8 @@
     "shorthelp": "The bot will join your voice channel and speak what you write",
     "connecting": "Cant follow, currently connecting to voice",
     "leaving": "Cant follow until we've left voice",
-    "permissions": "I don't have permissions to join that voice channel"
+    "permissions": "I don't have permissions to join that voice channel",
+    "pester": "Hey! this server is using talkbot a lot, consider contributing the API costs here: <https://www.patreon.com/talkbot>"
   },
   "en.defaults": {
     "okay": "Your voice settings have been reset :D",
@@ -84,7 +85,8 @@
     "okay": "OK, now translating to :lang.",
     "deny": "Sorry, you're not permitted",
     "nope": "Sorry, I dont have a voice for :lang",
-    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc."
+    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc.",
+    "more" : "You must specify a language code. You can find codes with `:command_charlangs`.\nTo stop translating use `:command_chartolang none`"
   },
   "en.mygender": {
     "okay": "OK, your personal gender is now :gender.",
