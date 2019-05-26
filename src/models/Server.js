@@ -452,8 +452,6 @@ class Server {
   // internal function for playing audio content returned from the TTS API and queuing it
   playAudioContent(audioContent, format, callback) {
 
-    console.log('Playing');
-
     var server = this;
     var readable = audioContent;
 
@@ -476,7 +474,7 @@ class Server {
     // queueFunc is a call containing both the callback and the content
     if ( server.playing ) {
       if ( !server.audioQueue ) server.audioQueue = [];
-      var queueFunc = () => server.playAudioContent(readable, callback);
+      var queueFunc = () => server.playAudioContent(readable, format, callback);
       server.audioQueue.push(queueFunc);
       return;
     }
@@ -503,11 +501,10 @@ class Server {
         .on('error', error => Common.error(error));
 
     }
-    else
+    else {
       Common.error('Unknown format: '+ format);
-
-      console.log('Played');
-      server.voiceDispatcher.passes = 3;
+    }
+    server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation
