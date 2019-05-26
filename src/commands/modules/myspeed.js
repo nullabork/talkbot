@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 
@@ -7,8 +8,11 @@ var Common = require("@helpers/common");
 function speed(msg) {
   var server = msg.server;
   var member = msg.message.member;
-  
-  if (!msg.args.length) return;
+
+  if (msg.args.length == 0) {
+    msg.il8nResponse('myspeed.usage', {speed: server.getMemberSetting(msg.message.member, 'speed') || 'default'});
+    return;
+  }
 
   if(msg.args[0] == 'default'){
     server.addMemberSetting(member, 'speed', 'default');
@@ -30,7 +34,7 @@ var command = new BotCommand({
   short_help: 'myspeed.shorthelp',
   long_help: 'myspeed.longhelp',
   group: "personalization",
-  parameters: "<speed>"
+  // parameters: "<speed>"
 });
 
 

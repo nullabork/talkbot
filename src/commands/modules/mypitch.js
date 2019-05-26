@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 
@@ -17,8 +18,11 @@ var Common = require("@helpers/common");
  */
 function mypitch(msg) {
   var server = msg.server;
-  
-  if (!msg.args.length) return;
+
+  if (msg.args.length == 0) {
+    msg.il8nResponse('mypitch.usage', {pitch: server.getMemberSetting(msg.message.member, 'pitch') });
+    return;
+  }
 
   if(msg.args[0] == 'default'){
     server.addMemberSetting(msg.message.member, 'pitch', 'default');
@@ -40,7 +44,7 @@ var command = new BotCommand({
   short_help: 'mypitch.shorthelp',
   long_help: 'mypitch.longhelp',
   group: "personalization",
-  parameters: "<pitch>"
+  // parameters: "<pitch>"
 });
 
 

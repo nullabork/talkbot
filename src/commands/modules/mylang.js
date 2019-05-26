@@ -1,29 +1,15 @@
+/*jshint esversion: 9 */
 
-var langMap = require("@helpers/voiceMap");
-
-// models
-var BotCommand = require('@models/BotCommand');
+// require
+const TextToSpeechService = require("@services/TextToSpeechService"),
+  Common = require('@helpers/common'),
+  BotCommand = require('@models/BotCommand');
 
 /**
  * Command: mylang
  * sets language user config
  *
  * usage !mylang au
- *
- * US
- * NL
- * AU
- * GB
- * FR
- * CA
- * DE
- * IT
- * JP
- * KR
- * BR
- * ES
- * SE
- * TR
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  * @param   {[Server]}  server  [Object related to the Server the command was typed in.]
@@ -34,7 +20,8 @@ var BotCommand = require('@models/BotCommand');
 function mylang(msg) {
 
   var server = msg.server;
-  
+  var member = msg.message.member;
+
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('mylang.more');
     return;
@@ -47,29 +34,29 @@ function mylang(msg) {
     return;
   }
 
-  var docs = langMap.getLang(msg.args[0]);
+  var lang_code = msg.args[0];
 
-  if(!docs || !docs.length) {
+  if(!TextToSpeechService.isValidLang(lang_code)) {
     //what dont know???? why? you should by now...
-    msg.il8nResponse('mylang.no', { lang: msg.args[0]});
+    msg.il8nResponse('mylang.no', { lang: lang_code});
     return;
   }
 
-  var doc = docs[0];
+  var voice = TextToSpeechService.getVoiceRecords(lang_code)[0];
 
-  server.addMemberSetting(msg.message.member,'language', doc.code);
+  server.addMemberSetting(member,'language', voice.code);
+  server.addMemberSetting(msg.message.member,'voice_provider', voice.provider);
 
-  var response = server.lang('mylang.okay', { lang: doc.language });
+  var response = server.lang('mylang.okay', { lang: voice.language });
 
-  var voiceName = server.getMemberSetting(msg.message.member,'name');
+  var voiceName = server.getMemberSetting(member,'name');
   if( voiceName && voiceName != "default" ) {
     response += "\n" + server.lang('myvoice.noped');
   }
 
-  server.addMemberSetting(msg.message.member,'name', 'default');
+  server.addMemberSetting(member,'name', 'default');
   msg.response(response);
-
-};
+}
 
 var command = new BotCommand({
   command_name: 'mylang',
@@ -78,7 +65,7 @@ var command = new BotCommand({
   short_help: 'mylang.shorthelp',
   long_help: 'mylang.longhelp',
   group: "personalization",
-  parameters: "<lang>"
+  // parameters: "<lang>"
 });
 
 

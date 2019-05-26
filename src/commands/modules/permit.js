@@ -1,6 +1,7 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
-
+var Common = require('@helpers/common');
 
 /**
  * Command: permit
@@ -20,7 +21,12 @@ function permit(msg) {
     return;
   }
 
+<<<<<<< HEAD
   if ( msg.message.mentions.members.size == 0 ) {
+=======
+  let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
+  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
+>>>>>>> plugable_tts
     msg.il8nResponse('permit.none');
     return;
   }
@@ -37,10 +43,9 @@ function permit(msg) {
   // ];
 
   msg.message.mentions.members.tap( member => server.permit(member.id));
-  msg.message.mentions.roles.tap( role => server.permit(role.id));
+  roles.tap( role => server.permit(role.id));
 
-  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
-
+  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
   msg.il8nResponse('permit.okay', { name: nicks });
 };
 
@@ -65,14 +70,22 @@ function unpermit(msg) {
     return;
   }
 
+<<<<<<< HEAD
   if ( msg.message.mentions.members.size == 0 ) {
     server.unpermit(msg.member.id);
+=======
+  let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
+  roles.tap( role => server.unpermit(role.id));
+
+  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
+    server.unpermit(msg.message.member.id);
+>>>>>>> plugable_tts
   }
 
   msg.message.mentions.members.tap( member => {
     if (member.id != msg.message.member.id && !msg.ownerIsMaster()) {
       msg.il8nResponse('unpermit.deny');
-      continue;
+      return;
     }
 
     server.unpermit(member.id);
@@ -81,13 +94,13 @@ function unpermit(msg) {
   msg.message.mentions.roles.tap( role => {
     if (!msg.ownerIsMaster()) {
       msg.il8nResponse('unpermit.deny');
-      continue;
+      return;
     }
 
     server.unpermit(role.id);
   });
 
-  var nicks = Common.replaceLast(msg.getUserNicksAsCSV(), ', ', ' and ');
+  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
   msg.il8nResponse('unpermit.okay', { name: nicks });
 };
 
@@ -97,7 +110,7 @@ var command_permit = new BotCommand({
   short_help: 'permit.shorthelp',
   long_help: 'permit.longhelp',
   group: "control",
-  parameters: "[<user>]",
+  // parameters: "[<user>]",
   order : 5
 
 });
@@ -108,7 +121,7 @@ var command_unpermit = new BotCommand({
   short_help: 'unpermit.shorthelp',
   long_help: 'unpermit.longhelp',
   group: "control",
-  parameters: "[<user>]",
+  // parameters: "[<user>]",
   order : 6
 });
 

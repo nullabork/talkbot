@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 var Common = require("@helpers/common");
@@ -30,8 +31,8 @@ var command = new BotCommand({
   short_help: 'mytitle.shorthelp',
   long_help: 'mytitle.longhelp',
   group: "personalization",
-  parameters: "<title>",
-  hidden: false
+  // parameters: "<title>",
+  hidden: true
 });
 
 

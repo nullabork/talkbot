@@ -1,5 +1,6 @@
+/*jshint esversion: 9 */
 
-var Command = require('@models/Command')
+var Command = require('@models/Command'),
   Common = require('@helpers/common'),
   CommentBuilder = require('@models/CommentBuilder');
 
@@ -11,11 +12,17 @@ class TTS extends Command {
   execute ({input}) {
     var server = input.server;
 
+    if (!server.isBound())
+      return input.il8nResponse('tts.notinchannel');
+
     if (!server.inChannel())
       return input.il8nResponse('tts.notinchannel');
 
     if (!input.ownerIsPermitted())
       return input.il8nResponse('tts.notpermitted');
+
+    if (!input.message.member)
+      return input.il8nResponse('tts.mustbeinchannel');
 
     server.speak(input.content, input.message.channel, input.message.member);
   }
@@ -28,7 +35,7 @@ class Mute extends Command {
 
   execute ({input}) {
     var server = input.server;
-        
+
     if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
     {
       input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',true));
@@ -36,7 +43,6 @@ class Mute extends Command {
     }
     else
     {
-      var member = input.message.member;
       server.addMemberSetting(input.message.member,'muted',true);
       return input.il8nResponse('mute.okay', {name: 'you' });
     }
@@ -50,7 +56,7 @@ class UnMute extends Command {
 
   execute ({input}) {
     var server = input.server;
-    
+
     if (( input.ownerIsMaster() || input.ownerCanManageTheServer()) && input.message.mentions.members.size > 0 )
     {
       input.message.mentions.members.forEach( member => server.addMemberSetting(member,'muted',false));
@@ -73,15 +79,21 @@ class Stop extends Command {
 
   execute ({input}) {
     var server = input.server;
-    
-    if ( input.ownerIsPermitted() || input.ownerCanManageTheServer())
-    {
-      server.stop('requested by stop command');
-      return input.il8nResponse('stop.okay');
-    }
-    else
+
+    if ( !input.server.inChannel()) return;
+    if (!(input.ownerIsPermitted() || input.ownerCanManageTheServer()))
     {
       return input.il8nResponse('stop.nope');
+    }
+
+    var firstArg = input.args && input.args.length? input.args[0] : "";
+
+    if (/^(all)/i.test(firstArg)) {
+      server.stop('stop all requested by stop command', true);
+      return input.il8nResponse('stop.okayAll');
+    } else {
+      server.stop('stop requested by stop command');
+      return input.il8nResponse('stop.okay');
     }
   }
 }

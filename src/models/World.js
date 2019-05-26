@@ -1,9 +1,7 @@
+/*jshint esversion: 9 */
 
-var fs = require('fs'),
-  paths = require('@paths'),
-  botStuff = require("@helpers/bot-stuff"),
+var botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
-  auth = require("@auth"),
   Common = require("@helpers/common"),
   bot = botStuff.bot;
 
@@ -22,9 +20,13 @@ class World {
  * * */
   startup() {
     var world = this;
+    bot.guilds.tap(guild => world.addServer(guild));
     world.setPresence();
     world.startRebootTimer();
+<<<<<<< HEAD
     bot.guilds.tap(guild => world.addServer(guild));
+=======
+>>>>>>> plugable_tts
   };
 
 /* * *
@@ -34,6 +36,11 @@ class World {
  * * */
   addServer(guild) {
     this.servers[guild.id] = new Server(guild, this);
+<<<<<<< HEAD
+=======
+    this.setPresence();
+    Common.out(guild.id + ": added to the world");
+>>>>>>> plugable_tts
   }
 
 /* * *
@@ -45,8 +52,10 @@ class World {
     if ( !this.servers[guild.id] ) return;
     var server = this.servers[guild.id];
     delete this.servers[guild.id];
+    this.setPresence();
     server.save();
     server.dispose();
+    Common.out(guild.id + ": removed from the world");
   }
 
 /* * *
@@ -84,9 +93,25 @@ class World {
  * * */
   renderPresenceHelp() {
     var cmds = require("@commands");
-    return cmds.command_char + "help, " + bot.guilds.size + " servers";
+    var n = (this.getTotalCharacterCount()/1000).toFixed(1);
+    return cmds.command_char + `help, ${Number.isNaN(n)?0:n}k chars`;
   };
 
+<<<<<<< HEAD
+=======
+/* * *
+ * getTotalCharacterCount()
+ *
+ * Gets the total char count of servers
+ * * */
+  getTotalCharacterCount() {
+    var c = 0;
+    for ( var server in this.servers )
+      if (this.servers[server].stats && !isNaN(this.servers[server].stats.characterCount) && typeof this.servers[server].stats.characterCount == 'number')
+        c += this.servers[server].stats.characterCount;
+    return c;
+  }
+>>>>>>> plugable_tts
 
 /* * *
  * saveAll()
@@ -158,8 +183,13 @@ class World {
       setTimeout(reboot_timer, 60 * 60 * 1000);
     };
 
+<<<<<<< HEAD
     // kick off in 12 hours
     setTimeout(reboot_timer, 12 * 60 * 60 * 1000);
+=======
+    // kick off in 96 hours
+    setTimeout(reboot_timer, 96 * 60 * 60 * 1000);
+>>>>>>> plugable_tts
   };
 
 /* * *

@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var path = require('path'),
   dirSplit = __dirname.split(path.sep),
   dir = dirSplit.pop() && dirSplit.join(path.sep);
@@ -41,6 +42,8 @@ var paths = {
   helpers: make('src/helpers'),
   commands: make('src/commands'),
   models: make('src/models'),
+  services: make('src/services'),
+  tts: make('src/services/tts'),
 
   //utils
   join: join,

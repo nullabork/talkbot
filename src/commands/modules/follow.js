@@ -1,6 +1,7 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand'),
-  botStuff = require('@helpers/bot-stuff');
+  auth = require("@auth");
 
 /* * *
  * Command: follow
@@ -14,24 +15,39 @@ var BotCommand = require('@models/BotCommand'),
  * * */
 function follow(msg) {
   var server = msg.server;
+  var member = msg.message.member;
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
+  if (server.switching_channel) return msg.il8nResponse('follow.switching');
   if (server.isBound()) {
-    if (!server.isMaster(msg.message.member)) {
+    if (!server.isMaster(member)) {
       msg.il8nResponse('follow.nope', { name: server.bound_to.displayName });
     } else {
       msg.il8nResponse('follow.huh');
     }
   } else {
-    if (msg.message.member.voiceChannel) {
-      server.setMaster(msg.message.member);
-      server.joinVoiceChannel(msg.message.member.voiceChannel)
+    if (member.voiceChannel) {
+
+      if ( !member.voiceChannel.joinable) 
+        return msg.il8nResponse('follow.permissions');
+
+      // using it alot - consider donating!
+      if ( auth.pester_threshold && server.stats.characterCount > auth.pester_threshold && !server.pestered) {
+        msg.il8nResponse('follow.pester');
+        server.pestered = true;
+      }
+
+      server.setMaster(member);
+      server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
-        msg.il8nResponse('follow.okay');
         
+        server.addMemberSetting(member,'toLanguage', 'default');
+        commands.notify('follow', {member: member, server: server});
+        msg.il8nResponse('follow.okay');
+
         // unmute them if they're muted
-        if (server.getMemberSetting(msg.message.member, 'muted')) {
-          server.addMemberSetting(msg.message.member,'muted',false);
+        if (server.getMemberSetting(member, 'muted')) {
+          server.addMemberSetting(member,'muted',false);
           msg.il8nResponse('mute.unmuted');
         }
       });
@@ -40,7 +56,8 @@ function follow(msg) {
     }
   }
 
-};
+}
+
 
 /* * *
  * Command: unfollow
@@ -55,7 +72,8 @@ function unfollow(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
-  
+  if (server.switching_channel) return msg.il8nResponse('unfollow.switching');
+
   if (!server.isBound()) {
     msg.il8nResponse('unfollow.none');
     return;
@@ -67,6 +85,7 @@ function unfollow(msg) {
   }
 
   server.release(function() {
+    commands.notify('unfollow', {member: msg.message.member, server: server});
     msg.il8nResponse('unfollow.okay');
   });
 };
@@ -84,7 +103,8 @@ function sidle(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
-  
+  if (server.switching_channel) return msg.il8nResponse('sidle.switching');
+
   if (!server.isBound()) {
     msg.il8nResponse('sidle.none');
     return;
@@ -100,15 +120,16 @@ function sidle(msg) {
     msg.il8nResponse('sidle.membernoexist');
     return;
   }
-  
-  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+
+  if ( !newMaster.voiceChannel || newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
     msg.il8nResponse('sidle.novoice');
     return;
   }
-  
+
   server.setMaster(newMaster);
+  server.addMemberSetting(newMaster,'toLanguage', 'default');
   msg.il8nResponse('sidle.okay');
-  
+
   if (server.getMemberSetting(newMaster, 'muted')) {
     server.addMemberSetting(newMaster,'muted',false);
     msg.il8nResponse('mute.unmuted');
@@ -129,8 +150,9 @@ function transfer(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('transfer.connecting');
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
+  if (server.switching_channel) return msg.il8nResponse('transfer.switching');
 
-  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer()) {
+  if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer() && server.isBound()) {
     msg.il8nResponse('transfer.nopermissions');
     return;
   }
@@ -150,15 +172,38 @@ function transfer(msg) {
     msg.il8nResponse('transfer.membernoexist');
     return;
   }
-  
-  if ( newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
-    msg.il8nResponse('transfer.novoice');
+
+  if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.voiceConnection.channel.id )) {
+    msg.il8nResponse('transfer.samevoice');
     return;
   }
-  
+
+  if ( !newMaster.voiceChannel.joinable) {
+    msg.il8nResponse('transfer.channelpermissions');
+    return;
+  }
+
   server.setMaster(newMaster);
-  msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
-};
+  if (server.voiceConnection)
+  {
+    msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+  }
+  else
+  {      
+    server.joinVoiceChannel(newMaster.voiceChannel)
+    .then(() => {
+      msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
+
+      server.addMemberSetting(newMaster,'toLanguage', 'default');
+
+      // unmute them if they're muted
+      if (server.getMemberSetting(newMaster, 'muted')) {
+        server.addMemberSetting(newMaster,'muted',false);
+        msg.il8nResponse('mute.unmuted');
+      }
+    });    
+  }
+}
 
 var command_follow = new BotCommand({
   command_name: 'follow',
@@ -193,7 +238,7 @@ var command_transfer = new BotCommand({
   long_help: 'transfer.longhelp',
   group: "control",
   order : 3,
-  parameters: "user"
+  // parameters: "user"
 });
 
 exports.register = function (commands) {

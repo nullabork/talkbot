@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 
@@ -15,7 +16,7 @@ var BotCommand = require('@models/BotCommand');
 function mygender(msg) {
   var server = msg.server;
   if (msg.args.length == 0) {
-    msg.il8nResponse('mygender.noargs');
+    msg.il8nResponse('mygender.usage', {gender: server.getMemberSetting(msg.message.member, 'gender') || 'default' });
     return;
   }
 
@@ -53,7 +54,7 @@ var command = new BotCommand({
   short_help: 'mygender.shorthelp',
   long_help: 'mygender.longhelp',
   group: "personalization",
-  parameters: "<gender>"
+  // parameters: "<gender>"
 });
 
 exports.register = function (commands) {

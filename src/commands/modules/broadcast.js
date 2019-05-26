@@ -1,15 +1,11 @@
-/**
- * Command: stats
- * shows some stuff
- */
-
-
+/*jshint esversion: 9 */
 var Command = require('@models/Command')
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
+  GoogleTextToSpeechAPI = require('@services/tts/GoogleTextToSpeechAPI'),
   Common = require('@helpers/common');
 
-class Broadcast extends Command {
+class Broadcast extends Command { 
 
   constructor() {
     super();
@@ -18,15 +14,25 @@ class Broadcast extends Command {
 
   setConfirmation({ broadcastMessage }) {
     this.broadcastMessage = broadcastMessage;
-    setTimeout(() => {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
       this.broadcastMessage = "";
-    }, 40000);
+    }, 140000);
   }
 
   static speakMessageToServer({server, broadcastMessage}) {
     if(server && server.bound_to){
       let beeps = Common.alertBeepsSSML();
-      server.talk( "<speak> " + beeps + broadcastMessage + " </speak>", null, null);
+       
+      server.talk( "<speak> " + beeps + broadcastMessage + " </speak>", {
+        voice_provider: GoogleTextToSpeechAPI.shortname,
+        name : 'default',
+        gender : 'default',
+        language : 'default',
+        napitchme : 'default',
+        speed : 'default'
+      }, null);
+
     }
   }
 
@@ -41,18 +47,24 @@ class Broadcast extends Command {
     }
   }
 
-  execute ({input, server, world}) {
+  execute ({input}) {
+
+    let server = input.server;
+    let world = input.world;
+
     if (!input.ownerIsDev()) return;
-    let message = input.getMessage();
+    // if (server.isBound()) return input.il8nResponse('broadcast.notinvoice');
+    let message = input.content;
 
     if(
-      input.args
-      && input.args.length == 1
-      && input.args[0].length
-      && /(confirm|yes|y)/gi.test(input.args[0])
-      && this.broadcastMessage
-      && this.broadcastMessage.length > 15)
+      input.args &&
+      input.args.length == 1 &&
+      input.args[0].length &&
+      /(confirm|yes|y)/gi.test(input.args[0]) &&
+      this.broadcastMessage &&
+      this.broadcastMessage.length > 15)
     {
+
       Broadcast.broadcast({
         world,
         broadcastMessage : this.broadcastMessage
@@ -64,7 +76,14 @@ class Broadcast extends Command {
     {
       input.il8nResponse("broadcast.confirmation");
       this.setConfirmation({ broadcastMessage :  message });
-      server.talk("<speak> This will be the message broadcast <break time='700ms'/> </speak>");
+      server.talk("<speak> This will be the message broadcast <break time='700ms'/> </speak>", {
+        voice_provider: GoogleTextToSpeechAPI.shortname,
+        name : 'default',
+        gender : 'default',
+        language : 'default',
+        napitchme : 'default',
+        speed : 'default'
+      });
 
       Broadcast.speakMessageToServer({
         server,

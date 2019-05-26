@@ -1,4 +1,6 @@
-var config = require("@auth");
+/*jshint esversion: 9 */
+var config = require("@auth"),
+  util = require('util');
 
 class Common {
   //clean string so its usable in RegExp
@@ -64,11 +66,7 @@ class Common {
     }
 
     if (config.logging && config.logging.out) {
-      console.log(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.log(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -79,13 +77,13 @@ class Common {
     if (typeof message == 'object' && message.stack) {
       message = message.stack;
     }
+    else if ( typeof message == 'object' )
+    {
+      message = util.inspect(message);
+    }
 
     if (config.logging && config.logging.err) {
-      console.error(
-        "\n" +
-        new Date() + "\n" +
-        message
-      );
+      console.error(new Date().toISOString() + " " +  message + (message.indexOf && message.indexOf('\n') > -1 ? "\n" : ""));
     }
   }
 
@@ -98,6 +96,22 @@ class Common {
   //clamp a number between two range
   static numberClamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
+  }
+
+    /**
+   *
+   *
+   * @static
+   * @param {number} [n=0] actual input number you want remapped to the lower and upper range mapping values
+   * @param {number} [r1=0] actual input number min
+   * @param {number} [r2=1] actual input number max
+   * @param {number} [m1=0] lower number range mapping: defaults 0
+   * @param {number} [m2=100] upper number range mapping: defaults 100
+   * @memberof Common
+   */
+  static numberMap(n = 0, r1 = 0, r2 = 1, m1 = 0, m2 = 100){
+    n = Common.numberClamp(n,r1,r2);
+    return (n - r1) / (r2 - r1) * (m2 - m1) + m1;
   }
 
   //map input number from one range to another range
@@ -127,29 +141,6 @@ class Common {
     if ( pos < 0 ) return str;
     return str.substring(0,pos) + replacement + str.substring(pos+strToReplace.length);
   };
-
-  //const element = string[char];
-  //   if(element != "-"){
-  //     continue;
-  //   }
-
-  //   var index = 0;
-  //   var p = Common.peek(string, char, function(v, c, i){
-  //     if(c == " " || c == "-") {
-  //       return false;
-  //     }
-
-  //     if(/[a-z]/i.test(c)) {
-  //       return true;
-  //     }
-  //   });
-
-  //   if(p){
-
-  //   }
-
-
-  // }
 
   static arg() {
     return {
@@ -239,14 +230,15 @@ class Common {
     return message.replace(/\n|\r/gi, "");
   }
 
-  //truncate message to 200 characters should be used before all the other things
-  //TODO: define length in config
+  //truncate message to 2000 characters should be used before all the other things
   static truncateMessage(message) {
-    if (message.length > 1000) {
-      message = message.substring(0, 1000);
+    if (message.length > 2000 ) {
+      message = message.substring(0, 2000 );
     }
     return message;
   }
+
+
 
   //cleant a message ready for speaking
   static cleanMessage(message) {
@@ -258,13 +250,28 @@ class Common {
     return message;
   }
 
+  static makeCsv(collection, selector) {
+    var csv = '';
+    if (collection.size == 0) return '';
+    collection.forEach(item => {
+      csv += selector(item) + ', ';
+    });
+    csv = csv.substring(0, csv.length-2);
+
+    return csv;
+  }
+
+  static makeNiceCsv(collection, selector) {
+    return Common.replaceLast(Common.makeCsv(collection, selector), ', ', ' and ');
+  }
+
   //make some sfx audio tag
   static makeAudioSSML(url) {
     var ssml = "<audio src='" + url + "' />";
     return ssml;
   };
 
-  static alertBeepsSSML(){
+  static alertBeepsSSML() {
     return ' <audio src="https://sfx.nullabork.dev/definite.mp3" clipEnd="0.5s" repeatCount="3" /> <break time="500ms"/> ';
   }
 

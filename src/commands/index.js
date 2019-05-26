@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var path = require("path"),
   auth = require('@auth');
 
@@ -13,7 +14,13 @@ function Commands() {
   this.commands = {};
   this.listeners = {
     token: [],
-    message: []
+    message: [],
+    validate: [],
+    joinVoice: [],
+    leaveVoice: [],
+    follow: [],
+    unfollow: [],
+    configureSettings: []
   };
 
   this.command_char = auth.command_char || '!';
@@ -28,7 +35,7 @@ function Commands() {
     //no listeners, then stop/
     if (!command.listeners) return;
 
-    //add the listerners
+    //add the listeners
     for (var type in command.listeners) {
       //check if listener is good
       if (!command.listeners.hasOwnProperty(type) || !command.listeners[type]) continue;
@@ -44,7 +51,7 @@ function Commands() {
     for (const command of commands) {
       this.add(command);
     }
-  }
+  };
 
   this.registerAllCommands = function () {
     require("fs").readdirSync("./src/commands/modules/").forEach(function (file) {
@@ -52,7 +59,7 @@ function Commands() {
       var command = require("./" + filename.replace('.js', ''));
       command.register(self);
     });
-  }
+  };
 
 
 
@@ -66,20 +73,20 @@ function Commands() {
       arg = command.command_arg.toLowerCase();
       delete this.commands[arg];
     }
-  }
+  };
 
   this.removeAll = function (commands) {
     for (const command of commands) {
       this.remove(command);
     }
-  }
+  };
 
   // for commands that have startup tests
   this.runAllStartupTests = function() {
     for (var test in this.commands)
       if (this.commands[test].startup)
         this.commands[test].startup();
-  }
+  };
 
   this.get = function (key) {
     key = key.toLowerCase();
@@ -88,7 +95,7 @@ function Commands() {
       return null;
     }
     return this.commands[key];
-  }
+  };
 
   this.run = function (key, args) {
     key = key.toLowerCase();
@@ -106,7 +113,7 @@ function Commands() {
       Common.error(ex);
       return null;
     }
-  }
+  };
 
     //add
   this.on = function (type, cb, sequence) {
@@ -117,7 +124,7 @@ function Commands() {
       cb,
       sequence : sequence || 0
     });
-  }
+  };
 
   this.notify = function (type, args) {
 
@@ -128,7 +135,7 @@ function Commands() {
 
     funcs.sort((a, b) => {
       return a.sequence - b.sequence;
-    })
+    });
 
     var ret = null;
     //eat exceptions so poorly written commands dont bork
@@ -136,16 +143,14 @@ function Commands() {
       for (let i = 0; i < funcs.length; i++) {
         var func = funcs[i].cb;
 
-
         if (typeof func == 'function') {
           args = {
             ...args,
             modified : ret
-          }
+          };
 
           var resp = func.apply(this, [args]);
-
-          if (resp) {
+          if (resp !== null) {
             ret = resp;
           }
         }
@@ -161,7 +166,7 @@ function Commands() {
   // is this Message a command message?
   this.isCommand = function(message) {
     return (message.content.substring(0, this.command_char.length) == this.command_char);
-  }
+  };
   
   // process a message coming in from the real world
   this.process = function(message, server, world) {
@@ -195,10 +200,12 @@ function Commands() {
       content: cmdContent
     });
 
+    Common.out((server? server.guild.id : 'DM') + ': ' + msgDets.cmd + ' ' + msgDets.content);
+
     var command = this.get(msgDets.cmd);
     if(!command) return;
 
-    server.resetNeglectTimeout();
+    if ( server ) server.resetNeglectTimeout();
 
     //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {

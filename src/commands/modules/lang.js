@@ -1,22 +1,23 @@
+/*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
+var BotCommand = require('@models/BotCommand'),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  Common = require('@helpers/common');
 
-var langMap = require("@helpers/langmap");
-
-var lang = function (msg, server, world) {
+var lang = function (msg) {
+  var server = msg.server;
   if (!msg.args.length) return;
 
-  if (!msg.ownerIsMaster()) {
+  if (!msg.ownerCanManageTheServer()) {
     msg.il8nResponse('lang.nope');
     return;
   }
-  var doc = langMap.get(msg.getMessage());
 
-  if (doc && doc.code) {
-    server.language = doc.code;
-  } else {
-    server.language = lang;
-  }
+  var voices = TextToSpeechService.getVoiceRecords(msg.content);
+  if (voices.length == 0) 
+    server.language = server.fallbackLang;
+  else 
+    server.language = voices[0].translate;
 
   msg.il8nResponse('lang.okay', { lang: server.language });
   server.save();

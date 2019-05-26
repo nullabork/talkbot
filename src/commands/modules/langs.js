@@ -1,58 +1,44 @@
+/*jshint esversion: 9 */
 
-var tablr = require("tablr");
-var langMap = require("@helpers/voiceMap");
-var Common = require('@helpers/common');
-var auth = require("@auth");
+var tt = require("text-table"),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  Common = require('@helpers/common'),
+  auth = require("@auth");
 
 // models
 var BotCommand = require('@models/BotCommand');
 
 /**
- * Command: mylang
+ * Command: langs
  * sets language user config
  *
- * usage !mylang au
- *
- * US
- * NL
- * AU
- * GB
- * FR
- * CA
- * DE
- * IT
- * JP
- * KR
- * BR
- * ES
- * SE
- * TR
+ * usage !langs
  *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  *
  * @return  {[undefined]}
  */
 function langVoices(msg) {
-  var docs = langMap.voices;
   var have = {};
-  var data = docs.filter(function(obj){
-    if(have[obj.code]){
-      return false;
-    }
+  var data = [['LANGUAGE', 'CODE']];
+  for ( var k in TextToSpeechService.providers)
+  {
+    var provider = TextToSpeechService.providers[k];
 
-    have[obj.code] = true;
-    return true;
+    var voices = provider.getVoices();
+    voices.map(voice => {
+      if ( !have[voice.code] ) {
+        var l = [
+          voice.language,
+          voice.code
+        ];
+        data.push(l);
+        have[voice.code] = true;
+      }
+    });
+  }
 
-  }).map(function(lang){
-    return [
-      lang.language,
-      lang.code.toLowerCase(),
-      lang.code.toLowerCase().split('-')[1]
-    ]
-  });
-
-  var table = tablr.headed(data, ['Lang', 'Code', 'Alt']);
-  table = table.replace(/--/g, '━━');
+  var table = tt(data);
 
   msg.il8nResponse('langs.okay', {table : table, example : auth.command_arg + 'mylang au'});
 };

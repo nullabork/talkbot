@@ -1,4 +1,4 @@
-'use strict';
+/*jshint esversion: 9 */
 var botStuff = require("@helpers/bot-stuff"),
   Common = require("@helpers/common"),
   auth = require("@auth");
@@ -18,10 +18,35 @@ class MessageDetails {
   }
 
   response(message, params) {
+<<<<<<< HEAD
     var chan = this.message.channel;
     chan.startTyping(1);
     chan.send(message)
         .then(chan.stopTyping());
+=======
+    var _this = this;
+    var chan = _this.message.channel;
+    if ( message.length > 2000 ) {
+      Common.error(new Error("message too long for discord"));
+      message = message.substring(0,2000);
+    }
+    chan.startTyping(1);
+    chan.send(message)
+        .then(chan.stopTyping());
+  }
+
+  getNonSnowflakeRoles(){
+    if(!this.args) {
+      return [];
+    }
+
+    this.args.map((e) => e.toLowerCase());
+
+    let roles = this.server.guild.roles;
+    return roles.filter((item) => {
+      return item.name && this.args.indexOf(item.name.toLowerCase()) > -1;
+    });
+>>>>>>> plugable_tts
   }
 
   getResolvedMessage() {
@@ -69,6 +94,7 @@ class MessageDetails {
     return this.message.guild.members.find( x => x.id == this.server.bound_to).nick;
   }
 
+<<<<<<< HEAD
   getOwnersVoiceChannel() {
     var server_id = this.server.server_id;
     return botStuff.getUserVoiceChannel(server_id, this.message.member.id);
@@ -96,6 +122,11 @@ class MessageDetails {
 
   // gets all the IDs as names
   getDisplayNamesAsCSV() {
+=======
+  // gets all the IDs as names
+  getDisplayNamesAsCSV() {
+    var msg = this;
+>>>>>>> plugable_tts
     var names = '';
     this.message.mentions.members.forEach(member => {
       names += member.displayName + ', ';

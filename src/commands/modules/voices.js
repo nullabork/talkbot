@@ -1,8 +1,9 @@
+/*jshint esversion: 9 */
 
-var tablr = require("tablr");
-var langMap = require("@helpers/voiceMap");
-var Common = require('@helpers/common');
-var auth = require("@auth");
+var tt = require("text-table"),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  Common = require('@helpers/common'),
+  auth = require("@auth");
 
 // models
 var BotCommand = require('@models/BotCommand');
@@ -13,57 +14,40 @@ var BotCommand = require('@models/BotCommand');
  *
  * usage !mylang au
  *
- * US
- * NL
- * AU
- * GB
- * FR
- * CA
- * DE
- * IT
- * JP
- * KR
- * BR
- * ES
- * SE
- * TR
- *
  * @param   {[MessageDetails]}  msg     [message releated helper functions]
  *
  * @return  {[undefined]}
  */
 function listVoices(msg) {
-  
-    var server = msg.server;
 
     if(!msg.args || !msg.args.length){
       msg.il8nResponse('voices.more');
       return;
     }
 
-    var docs = langMap.getLang(msg.args[0]);
+    var lang_code = msg.args[0].toLowerCase();
 
-    if(!docs || !docs.length) {
-      //what dont know???? why? you should by now...
-      msg.il8nResponse('mylang.no', { lang: msg.args[0]});
-      return;
+    var data = [['VOICE', 'ALIAS', 'M/F']];
+    for ( var k in TextToSpeechService.providers)
+    {
+      var provider = TextToSpeechService.providers[k];
+
+      var voices = provider.getVoices();
+      voices.map(voice => {
+        if (voice.code.toLowerCase().indexOf(lang_code) > -1) 
+          data.push([
+            voice.provider + '/' + voice.voice,
+            !voice.voice_alias ? "(none)" : voice.voice_alias,
+            voice.gender.substring(0,1).toLowerCase()
+          ]);
+      });
     }
 
-    var data = docs.map(function(lang){
-      return [
-        lang.voice,
-        lang.voice_alias,
-        lang.gender,
-        lang.type == "WaveNet"? "😎" : "🤢"
-      ]
-    });
-
-    var table = tablr.headed(data, ['Voice', 'Alias', 'Gender', "???"]);
-    table = table.replace(/--/g, '━━');
+    var table = tt(data);
 
     msg.il8nResponse('voices.okay', {
       table : table,
-      example : auth.command_arg + 'myvoice au'
+      example : auth.command_arg + 'myvoice en-au'
     });
 
 };
@@ -74,8 +58,7 @@ var command = new BotCommand({
   execute: listVoices,
   short_help: 'voices.shorthelp',
   long_help: 'voices.longhelp',
-  group: "info",
-  parameters: "<lang>"
+  group: "info"
 });
 
 

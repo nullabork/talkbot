@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 
 class RuntimeTesting {
 
@@ -24,24 +25,27 @@ class RuntimeTesting {
     }
   }
   
-  static TestIfGoogleEnvironmentVarIsSet() {
-    if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) { 
-      console.log('GOOGLE_APPLICATION_CREDENTIALS environment variable is not set. It should be set to a file path containing the Google API key.'); 
-      process.exit();
-    }
-    
-    var auth = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    
-    if ( !auth.type || !auth.project_id || !auth.private_key_id || !auth.private_key || !auth.client_email || !auth.client_id || !auth.auth_uri || !auth.token_uri || !auth.auth_provider_x509_cert_url || !auth.client_x509_cert_url )
-    {
-      console.log("The Google API authentication file at " + process.env.GOOGLE_APPLICATION_CREDENTIALS + " appears to be malformed");
-      process.exit();
-    }    
-    
-    console.log("Loaded the Google TTS API credentials OK.");    
+  static async TestIfTTSAPIServicesAreConfigured() {
+    await require("@services/TextToSpeechService").setupProviders();
   }
   
   static TestIfNodeOpusIsInstalled() {
+
+    try {
+      var opus = require('node-opus');
+    }
+    catch(ex)
+    {
+      console.log('WARN: The good opus is not installed: node-opus');
+      try {
+        var opus = require('opusscript');
+      }
+      catch(ex2) {
+        console.log('Cant find any opus installed');
+        process.exit();
+      }
+    }
+
     console.log("Loaded Node OPUS OK.");
   }
 };

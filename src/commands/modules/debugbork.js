@@ -1,8 +1,7 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 var Common = require('@helpers/common');
-var botStuff = require('@helpers/bot-stuff');
-var bot = botStuff.bot;
 
 /**
  * Command: debugbork
@@ -51,7 +50,10 @@ function debug(msg) {
     var server = msg.world.servers[id];
     if (server.isBound()) {
       active_server_count++;
-      active_server_names += server.server_name + " - " + build_permitted_string(server) + "\n";
+      var chansize = 'no connection';
+      if ( server.voiceConnection)
+        chansize = server.voiceConnection.channel.members.size;
+      active_server_names += server.server_name + "(" + chansize + "): " + build_permitted_string(server) + "\n";
     }
     member_count += server.guild.members.size;
   }
@@ -59,6 +61,7 @@ function debug(msg) {
   var r = "Active: " + active_server_count + "\n";
   r += "Servers: " + msg.message.client.guilds.size + "\n";
   r += "Total members: " + member_count + "\n";  
+  r += "Total characters: " + msg.world.getTotalCharacterCount() + "\n";  
   r += "\nActive Servers:\n" + active_server_names;
 
   msg.response(r);
@@ -68,12 +71,15 @@ function build_permitted_string(server) {
   var members = '';
   for( var id in server.permitted ) {
     if ( server.permitted[id] ) {
-      prefix = id == server.bound_to.id ? '(master)' : '';
+      var prefix = id == server.bound_to.id ? '(master)' : "";
       var member = server.guild.members.find(x => x.id == id);
-      if ( member ) members += ', ' + prefix + member.displayName;
+      if ( member ) {
+        prefix += member.user.bot ? '(bot)' : '';
+        members += ', ' + prefix + member.displayName;
+      }
       else {
         var role = server.guild.roles.find(x => x.id == id);
-        if ( role ) members += ', ' + role.name;
+        if ( role ) members += ', (role)' + role.name;
         else members += ', ' + id;
       }
     }

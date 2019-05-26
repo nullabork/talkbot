@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 var MessageParser = require('@models/MessageParser'),
   ssmlConfig = require('@helpers/ssml-dictionary'),
   Common = require('@helpers/common');
@@ -88,7 +89,7 @@ class MessageSSML extends MessageParser {
       compiled.push(element.closeString());
     });
 
-    return '<speak>' + compiled.join(" ") + this.messageBuffer() + '</speak>';
+    return '<speak>' + compiled.join(" ").trim() + this.messageBuffer() + '</speak>';
   }
 }
 

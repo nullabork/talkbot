@@ -1,3 +1,4 @@
+/*jshint esversion: 9 */
 // models
 var BotCommand = require('@models/BotCommand');
 
@@ -11,6 +12,7 @@ var BotCommand = require('@models/BotCommand');
  */
 function defaults(msg) {
 
+  var server = msg.server;
   server.clearMemberSettings(msg.message.member);
 
   msg.il8nResponse('defaults.okay');
