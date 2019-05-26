@@ -8,7 +8,9 @@ const Common = require('@helpers/common'),
 class GoogleTextToSpeechAPI extends TextToSpeechService {
 
   static get client() {
-    return this.c = this.c || new tts.TextToSpeechClient();
+    if ( !GoogleTextToSpeechAPI.c )
+      GoogleTextToSpeechAPI.c = new tts.TextToSpeechClient();
+    return GoogleTextToSpeechAPI.c; 
   }
 
   static get voices () {

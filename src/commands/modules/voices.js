@@ -34,7 +34,7 @@ function listVoices(msg) {
 
       var voices = provider.getVoices();
       voices.map(voice => {
-        if (voice.code.toLowerCase().indexOf(lang_code) > -1) 
+        if (voice.code.toLowerCase().indexOf(lang_code) > -1 || voice.language.toLowerCase().indexOf(lang_code) > -1) 
           data.push([
             voice.provider + '/' + voice.voice,
             !voice.voice_alias ? "(none)" : voice.voice_alias,

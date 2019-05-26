@@ -512,6 +512,7 @@ class Server {
     else {
       Common.error('Unknown format: '+ format);
     }
+
     server.voiceDispatcher.passes = 3;
   }
 

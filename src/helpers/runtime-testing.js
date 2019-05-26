@@ -36,7 +36,8 @@ class RuntimeTesting {
     }
     catch(ex)
     {
-      console.log('WARN: The good opus is not installed: node-opus');
+      console.log('WARN: npm package "node-opus" is not installed');
+      console.log('      This means the bot will use opusscript which runs much slower than node-opus');
       try {
         var opus = require('opusscript');
       }
