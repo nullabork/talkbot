@@ -11,6 +11,14 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     return this.c = this.c || new tts.TextToSpeechClient();
   }
 
+  static get voices () {
+    return this._voices = this._voices || [];
+  }
+
+  static set voices (voicelist) {
+    this._voices = voicelist;
+  }
+
   // name of the service - eg. google, amazon, azure, watson
   get shortname() {
     return "google";
@@ -33,32 +41,32 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
    *
    * Should exit the process if this is not configured correctly
    */
-  startupTests() {
-    if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) { 
-      console.log('GOOGLE_APPLICATION_CREDENTIALS environment variable is not set. It should be set to a file path containing the Google API key.'); 
+  async startupTests() {
+    if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.log('GOOGLE_APPLICATION_CREDENTIALS environment variable is not set. It should be set to a file path containing the Google API key.');
       process.exit();
     }
-    
+
     var auth = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    
+
     // configured?
     if ( !auth.type || !auth.project_id || !auth.private_key_id || !auth.private_key || !auth.client_email || !auth.client_id || !auth.auth_uri || !auth.token_uri || !auth.auth_provider_x509_cert_url || !auth.client_x509_cert_url )
     {
       console.log("The Google API authentication file at " + process.env.GOOGLE_APPLICATION_CREDENTIALS + " appears to be malformed");
       process.exit();
-    }    
+    }
 
     // test all the fields are correctly coming out of the voices
     try {
-      GoogleTextToSpeechAPI.voices = this.buildVoices();
+      GoogleTextToSpeechAPI.voices = await this.buildVoices();
       TextToSpeechService.checkVoiceStructure(GoogleTextToSpeechAPI.voices);
     }
     catch(err) {
       console.log(err);
       process.exit();
     }
-    
-    console.log("Loaded the Google TTS API credentials OK.");    
+
+    console.log("Loaded the Google TTS API credentials OK.");
   }
 
   /**
@@ -116,11 +124,38 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     return 'en-AU-Standard-D';
   }
 
+
+  async fetchAndMapVoices (mapFunction) {
+    let map = new Map();
+    const [result] = await GoogleTextToSpeechAPI.client.listVoices({});
+    const voices = result.voices;
+
+    voices.forEach(item => {
+
+      var voice = {
+        "type": /wavenet/gi.test(item.name) ? "Wavenet" : "Standard",
+        "code": item.languageCodes.length && item.languageCodes[0],
+        "codes" : item.languageCodes,
+        "voice": item.name,
+        "gender": item.ssmlGender
+      };
+
+      if(typeof mapFunction == 'function') {
+        voice = mapFunction(voice);
+      }
+
+      map.set(voice.voice, voice);
+    });
+
+    return map;
+  }
+
+
   getVoices() {
     return GoogleTextToSpeechAPI.voices;
   }
 
-  buildVoices() {
+  async buildVoices() {
     var voices = [
       {
         "language": "Danish (Denmark)",
@@ -140,7 +175,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Heidi",
         "gender": "FEMALE"
       },
-  
+
       {
         "language": "Dutch (Netherlands)",
         "type": "Standard",
@@ -151,7 +186,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Dutch (Netherlands)",
         "type": "WaveNet",
         "code": "nl-NL",
@@ -160,9 +195,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Mila",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "English (Australia)",
         "type": "Standard",
         "code": "en-AU",
@@ -172,7 +207,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "Standard",
         "code": "en-AU",
@@ -182,7 +217,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "Standard",
         "code": "en-AU",
@@ -192,7 +227,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "Standard",
         "code": "en-AU",
@@ -202,7 +237,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "WaveNet",
         "code": "en-AU",
@@ -212,7 +247,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "WaveNet",
         "code": "en-AU",
@@ -222,7 +257,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "WaveNet",
         "code": "en-AU",
@@ -232,7 +267,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (Australia)",
         "type": "WaveNet",
         "code": "en-AU",
@@ -241,9 +276,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "James",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "English (UK)",
         "type": "Standard",
         "code": "en-GB",
@@ -253,7 +288,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "Standard",
         "code": "en-GB",
@@ -263,7 +298,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "Standard",
         "code": "en-GB",
@@ -273,7 +308,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "Standard",
         "code": "en-GB",
@@ -283,7 +318,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "WaveNet",
         "code": "en-GB",
@@ -293,7 +328,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "WaveNet",
         "code": "en-GB",
@@ -303,7 +338,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "WaveNet",
         "code": "en-GB",
@@ -313,7 +348,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (UK)",
         "type": "WaveNet",
         "code": "en-GB",
@@ -323,7 +358,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "Standard",
         "code": "en-US",
@@ -332,9 +367,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Liam",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "English (US)",
         "type": "Standard",
         "code": "en-US",
@@ -344,7 +379,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "Standard",
         "code": "en-US",
@@ -354,7 +389,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "Standard",
         "code": "en-US",
@@ -364,7 +399,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -374,7 +409,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -384,7 +419,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -394,7 +429,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -404,7 +439,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -414,7 +449,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "English (US)",
         "type": "WaveNet",
         "code": "en-US",
@@ -425,7 +460,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
       },
       /*
       {
-        
+
         "language": "French (France)",
         "type": "Standard",
         "code": "fr-FR",
@@ -435,7 +470,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },*/
       {
-        
+
         "language": "French (France)",
         "type": "Standard",
         "code": "fr-FR",
@@ -445,7 +480,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "Standard",
         "code": "fr-FR",
@@ -455,7 +490,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "Standard",
         "code": "fr-FR",
@@ -465,7 +500,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "WaveNet",
         "code": "fr-FR",
@@ -475,7 +510,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "WaveNet",
         "code": "fr-FR",
@@ -485,7 +520,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "WaveNet",
         "code": "fr-FR",
@@ -495,7 +530,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (France)",
         "type": "WaveNet",
         "code": "fr-FR",
@@ -504,9 +539,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Arthur",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "French (Canada)",
         "type": "Standard",
         "code": "fr-CA",
@@ -516,7 +551,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "Standard",
         "code": "fr-CA",
@@ -526,7 +561,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "Standard",
         "code": "fr-CA",
@@ -536,7 +571,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "Standard",
         "code": "fr-CA",
@@ -546,7 +581,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "WaveNet",
         "code": "fr-CA",
@@ -556,7 +591,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "WaveNet",
         "code": "fr-CA",
@@ -566,7 +601,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "WaveNet",
         "code": "fr-CA",
@@ -576,7 +611,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "French (Canada)",
         "type": "WaveNet",
         "code": "fr-CA",
@@ -585,9 +620,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "George",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "German",
         "type": "Standard",
         "code": "de-DE",
@@ -597,7 +632,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "German",
         "type": "Standard",
         "code": "de-DE",
@@ -607,7 +642,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "German",
         "type": "WaveNet",
         "code": "de-DE",
@@ -617,7 +652,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "German",
         "type": "WaveNet",
         "code": "de-DE",
@@ -627,7 +662,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "German",
         "type": "WaveNet",
         "code": "de-DE",
@@ -637,7 +672,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "German",
         "type": "WaveNet",
         "code": "de-DE",
@@ -646,10 +681,10 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Jonas",
         "gender": "MALE"
       },
-  
-      
+
+
       {
-        
+
         "language": "Italian",
         "type": "Standard",
         "code": "it-IT",
@@ -659,7 +694,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Italian",
         "type": "WaveNet",
         "code": "it-IT",
@@ -668,9 +703,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Giulia",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Japanese",
         "type": "Standard",
         "code": "ja-JP",
@@ -680,7 +715,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Japanese",
         "type": "WaveNet",
         "code": "ja-JP",
@@ -689,9 +724,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Rio",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Korean",
         "type": "Standard",
         "code": "ko-KR",
@@ -701,7 +736,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "Standard",
         "code": "ko-KR",
@@ -711,7 +746,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "Standard",
         "code": "ko-KR",
@@ -721,7 +756,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "Standard",
         "code": "ko-KR",
@@ -731,7 +766,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "WaveNet",
         "code": "ko-KR",
@@ -741,7 +776,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "WaveNet",
         "code": "ko-KR",
@@ -751,7 +786,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "WaveNet",
         "code": "ko-KR",
@@ -761,7 +796,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Korean",
         "type": "WaveNet",
         "code": "ko-KR",
@@ -770,9 +805,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Gun-woo",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "Norwegian",
         "type": "Standard",
         "code": "nb-NO",
@@ -782,7 +817,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Norwegian",
         "type": "WaveNet",
         "code": "nb-NO",
@@ -791,9 +826,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Liv",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Polish",
         "type": "Standard",
         "code": "pl-PL",
@@ -803,7 +838,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "Standard",
         "code": "pl-PL",
@@ -813,7 +848,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "Standard",
         "code": "pl-PL",
@@ -823,7 +858,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "Standard",
         "code": "pl-PL",
@@ -833,7 +868,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "Standard",
         "code": "pl-PL",
@@ -842,9 +877,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Danka",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Polish",
         "type": "WaveNet",
         "code": "pl-PL",
@@ -854,7 +889,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "WaveNet",
         "code": "pl-PL",
@@ -864,7 +899,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "WaveNet",
         "code": "pl-PL",
@@ -874,7 +909,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "WaveNet",
         "code": "pl-PL",
@@ -884,7 +919,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Polish",
         "type": "WaveNet",
         "code": "pl-PL",
@@ -893,9 +928,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Wanda",
         "gender": "FEMALE"
       },
-      
+
       {
-        
+
         "language": "Portugese (Brazil)",
         "type": "Standard",
         "code": "pt-BR",
@@ -905,7 +940,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Portugese (Brazil)",
         "type": "WaveNet",
         "code": "pt-BR",
@@ -914,9 +949,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Helena",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "Standard",
         "code": "pt-PT",
@@ -926,7 +961,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "Standard",
         "code": "pt-PT",
@@ -936,7 +971,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "Standard",
         "code": "pt-PT",
@@ -946,7 +981,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "Standard",
         "code": "pt-PT",
@@ -956,7 +991,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "WaveNet",
         "code": "pt-PT",
@@ -966,7 +1001,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "WaveNet",
         "code": "pt-PT",
@@ -976,7 +1011,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "WaveNet",
         "code": "pt-PT",
@@ -986,7 +1021,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Portugese (Portugal)",
         "type": "WaveNet",
         "code": "pt-PT",
@@ -995,9 +1030,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Russian",
         "type": "Standard",
         "code": "ru-RU",
@@ -1007,7 +1042,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "Standard",
         "code": "ru-RU",
@@ -1017,7 +1052,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "Standard",
         "code": "ru-RU",
@@ -1027,7 +1062,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "Standard",
         "code": "ru-RU",
@@ -1036,9 +1071,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Luca",
         "gender": "MALE"
       },
-      
+
       {
-        
+
         "language": "Russian",
         "type": "WaveNet",
         "code": "ru-RU",
@@ -1048,7 +1083,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "WaveNet",
         "code": "ru-RU",
@@ -1058,7 +1093,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "WaveNet",
         "code": "ru-RU",
@@ -1068,7 +1103,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Russian",
         "type": "WaveNet",
         "code": "ru-RU",
@@ -1077,9 +1112,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Ivan",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "Slovak",
         "type": "Standard",
         "code": "sk-SK",
@@ -1089,7 +1124,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Slovak",
         "type": "WaveNet",
         "code": "sk-SK",
@@ -1098,9 +1133,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Spanish",
         "type": "Standard",
         "code": "es-ES",
@@ -1109,9 +1144,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Camila",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Swedish",
         "type": "Standard",
         "code": "sv-SE",
@@ -1121,7 +1156,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Swedish",
         "type": "WaveNet",
         "code": "sv-SE",
@@ -1130,9 +1165,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "Agnes",
         "gender": "FEMALE"
       },
-  
+
       {
-        
+
         "language": "Turkish",
         "type": "Standard",
         "code": "tr-TR",
@@ -1142,7 +1177,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "Standard",
         "code": "tr-TR",
@@ -1152,7 +1187,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "Standard",
         "code": "tr-TR",
@@ -1162,7 +1197,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "Standard",
         "code": "tr-TR",
@@ -1172,7 +1207,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "Standard",
         "code": "tr-TR",
@@ -1181,9 +1216,9 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "",
         "gender": "MALE"
       },
-  
+
       {
-        
+
         "language": "Turkish",
         "type": "WaveNet",
         "code": "tr-TR",
@@ -1193,7 +1228,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "WaveNet",
         "code": "tr-TR",
@@ -1203,7 +1238,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "MALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "WaveNet",
         "code": "tr-TR",
@@ -1213,7 +1248,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "WaveNet",
         "code": "tr-TR",
@@ -1223,7 +1258,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Turkish",
         "type": "WaveNet",
         "code": "tr-TR",
@@ -1232,10 +1267,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "voice_alias" : "",
         "gender": "MALE"
       },
-  
-  
       {
-        
         "language": "Ukranian",
         "type": "Standard",
         "code": "uk-UA",
@@ -1245,19 +1277,35 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        
+
         "language": "Ukranian",
         "type": "WaveNet",
         "code": "uk-UA",
         "translate" : 'uk',
         "voice": "uk-UA-Wavenet-A",
-        "voice_alias" : "Elina",
-        "gender": "FEMALE"
+        "voice_alias" : "Elina"
       }
-    ];   
-    
-    voices.forEach(voice => voice.provider = this.shortname);
-    return voices;
+    ];
+
+    var voiceMap = new Map();
+
+    voices.forEach(voice => {
+      voice.provider = this.shortname;
+      voiceMap.set(voice.voice, voice);
+    });
+
+    let fetchMap = await this.fetchAndMapVoices( voice => {
+      if(voiceMap.has(voice.voice)){
+        return {
+          ...voice,
+          ...voiceMap.get(voice.voice)
+        }
+      }
+      return voice;
+    });
+
+    console.log(fetchMap.values());
+    return fetchMap.values();
   }
 }
 
