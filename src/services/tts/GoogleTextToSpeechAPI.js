@@ -160,7 +160,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
   async buildVoices() {
     var voices = [
       {
-        "language": "Danish (Denmark)",
+        "language": "Danish",
         "type": "Standard",
         "code": "da-DK",
         "translate" : 'da',
@@ -169,7 +169,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "gender": "FEMALE"
       },
       {
-        "language": "Danish (Denmark)",
+        "language": "Danish",
         "type": "WaveNet",
         "code": "da-DK",
         "translate" : 'da',
@@ -179,7 +179,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
       },
 
       {
-        "language": "Dutch (Netherlands)",
+        "language": "Dutch",
         "type": "Standard",
         "code": "nl-NL",
         "translate" : 'nl',
@@ -189,7 +189,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
       },
       {
 
-        "language": "Dutch (Netherlands)",
+        "language": "Dutch",
         "type": "WaveNet",
         "code": "nl-NL",
         "translate" : 'nl',

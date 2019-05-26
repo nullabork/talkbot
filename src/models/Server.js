@@ -422,7 +422,7 @@ class Server {
 
     server.resetNeglectTimeout();
 
-    var service = TextToSpeechService.getService(settings.voice_provider);
+    var service = TextToSpeechService.getService(settings.voice_provider) || TextToSpeechService.defaultProvider();
     var request = service.buildRequest(message, settings);
 
     // Performs the Text-to-Speech request

@@ -163,6 +163,7 @@ class TextToSpeechService {
    */
   static getService(provider) {
 
+    if (!provider) return null;
     provider = provider.toLowerCase();
 
     var service = TextToSpeechService.providers[provider];
