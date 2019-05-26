@@ -79,11 +79,11 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
   buildRequest (ssml, settings) {
     var request = {
       input: { text: null, ssml: ssml },
-      // Select the language and SSML Voice Gender (optional)
+
       voice: {
-        languageCode: settings.language || '',
-        ssmlGender: settings.gender || 'NEUTRAL',
-        name: settings.name || ''
+        languageCode: settings.language || 'en-US', // all done by the voice code
+        ssmlGender: settings.gender || 'NEUTRAL', // all done by the voice code
+        name: settings.name || this.getDefaultVoice(settings.gender, settings.code)
       },
       // Select the type of audio encoding
       audioConfig: {
@@ -113,7 +113,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
 
   getDefaultVoice(gender, lang_code) {
     // guess a default based on lang and gender or just give htem the standard
-    var voices = GoogleTextToSpeechAPI.voices.filter(voice => voice.language == lang_code && voice.gender == gender);
+    var voices = GoogleTextToSpeechAPI.voices.filter(voice => voice.code == lang_code && voice.gender == gender);
     var standard = voices.filter(voice => voice.type == "Standard");
     // standard voices are cheaper
     if ( standard.length > 0 ) return standard[0].voice;

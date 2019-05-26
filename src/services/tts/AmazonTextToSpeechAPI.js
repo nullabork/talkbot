@@ -66,7 +66,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     let options = {
       text: ssml, // if textType is ssml, than here needs to be the ssml string
       textType: "ssml", // marks if it is ssml, text etc. - optional
-      voiceId: settings.name || self.getDefaultVoice(settings), // Polly Voice -> also determines the language - optional settings.voice ||
+      voiceId: settings.name || self.getDefaultVoice(settings.gender, settings.language), // Polly Voice -> also determines the language - optional settings.voice ||
       outputFormat: "ogg_vorbis", // all polly output formats like mp3, pcm etc. - optional
       sampleRate: 16000 // use default unless PCM
     };
@@ -85,7 +85,6 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     var self = this;
 
     self.doBookkeeping(request);
-
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
       console.log(audioStream);
       if (err) {
@@ -109,7 +108,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
   }
 
   getDefaultVoice(gender, lang_code) {
-    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.language == lang_code && voice.gender == gender);
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == lang_code && voice.gender == gender);
     if ( voices.length > 0 ) return voices[0].voice;
     return 'Vicki';
   }
