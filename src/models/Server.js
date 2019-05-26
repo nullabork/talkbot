@@ -129,6 +129,7 @@ class Server {
   }
 
   addMemberSetting(member, name, value) {
+    if (!member) return;
     if (!this.memberSettings) this.memberSettings = {};
     if (!this.memberSettings[member.id]) {
       this.memberSettings[member.id] = {};
@@ -141,22 +142,26 @@ class Server {
 
 
   clearMemberSettings(member) {
+    if (!member) return;
     if (!this.memberSettings) this.memberSettings = {};
     this.memberSettings[member.id] = {};
     this.save();
   };
 
   getMemberSetting(member, name) {
+    if (!member) return null;
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return null;
     return this.memberSettings[member.id][name];
   };
 
   deleteMemberSetting(member, name) {
+    if (!member) return;
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return;
     delete this.memberSettings[member.id][name];
   };
 
   getMemberSettings(member) {
+    if (!member) return {};
     if (!this.memberSettings || !this.memberSettings[member.id]) return {};
     return this.memberSettings[member.id];
   };
