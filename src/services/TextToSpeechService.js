@@ -97,19 +97,33 @@ class TextToSpeechService {
     for ( var index in voices )
     {
       var voice = voices[index];
-      //if ( !voice.voice_alias ) throw new Error('No voice_alias property:' + voice.voice);
-      if ( !voice.gender ) throw new Error('No gender property');
-      if ( !voice.provider ) {
-        console.log(voice);
-        throw new Error('No provider property');
-      }
+      if ( !voice.voice_alias ) throw new Error('No voice_alias property:' + voice.voice);
+      if ( voice.gender != 'MALE' && voice.gender != 'FEMALE' ) throw new Error('Invalid gender property: ' + voice.gender);
+      if ( !voice.provider ) throw new Error('No provider property');
       if ( !voice.language ) throw new Error('No language property');
       if ( !voice.translate ) throw new Error('No translate property');
-      if ( !voice.voice ) throw new Error('No translate property');
+      if ( !voice.voice ) throw new Error('No voice property');
       if ( !voice.code ) throw new Error('No code property');
     }
   }
 
+  /**
+   * Checks the provider meets the contract
+   * 
+   * @param {[TextToSpeechService]} provider 
+   */
+  static checkProviderContract(provider) {
+    if ( provider.format != 'pcm' && provider.format != 'ogg') throw new Error('Unknown provider format');
+    if ( !provider.shortname ) throw new Error('Provider shortname needs to be set');
+
+    var voices = provider.getVoices();
+    if ( voices.filter(voice => voice.provider != provider.shortname).length > 0) throw new Error('A voice has an incorrect provider string');
+    TextToSpeechService.checkVoiceStructure(voices);
+
+    // run a bunch of tests of the methods to see if we can fail them
+    provider.getDefaultVoice('FEMALE', 'en-US');
+    provider.buildRequest('', {});
+  }
 
   // get the first provider
   static get defaultProvider() {
@@ -123,6 +137,7 @@ class TextToSpeechService {
       var obj = new api();
       if ( obj.enabled ) {
         await obj.startupTests();
+        TextToSpeechService.checkProviderContract(obj);
         TextToSpeechService.providers[obj.shortname] = obj;
       }
     });

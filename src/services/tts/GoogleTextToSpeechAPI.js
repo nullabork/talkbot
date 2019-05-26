@@ -59,7 +59,6 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     // test all the fields are correctly coming out of the voices
     try {
       GoogleTextToSpeechAPI.voices = await this.buildVoices();
-      TextToSpeechService.checkVoiceStructure(GoogleTextToSpeechAPI.voices);
     }
     catch(err) {
       console.log(err);
@@ -1304,6 +1303,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
       }
 
       voice.provider = this.shortname;
+      voice.voice_alias = voice.voice_alias || voice.voice;
       return voice;
     });
 

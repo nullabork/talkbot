@@ -45,7 +45,6 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       AmazonTextToSpeechAPI.polly = new amazon({accessKeyId: accessKeyId, secretAccessKey: secretAccessKey});    
       AmazonTextToSpeechAPI.voices = AmazonTextToSpeechAPI.buildVoices();
       //var v = await self.getVoicesFromAzure(self.accessToken);
-      TextToSpeechService.checkVoiceStructure(AmazonTextToSpeechAPI.voices);
     } catch (err) {
       console.log(`Something went wrong: ${err}`);
       process.exit(1);

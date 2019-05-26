@@ -56,7 +56,6 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
       self.accessToken = await self.getAccessToken(subscriptionKey);
       var v = await self.getVoicesFromAzure(self.accessToken);
       AzureTextToSpeechAPI.voices = self.processVoices(v);
-      TextToSpeechService.checkVoiceStructure(AzureTextToSpeechAPI.voices);
     } catch (err) {
       console.log(`Something went wrong: ${err}`);
       process.exit(1);
@@ -164,8 +163,8 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
         voice:       voice.ShortName,
         code:        voice.Locale,
         translate:   map ? map.translate : voice.Locale.substring(0,2),
-        gender:      map ? map.gender : voice.Gender.substring(0,1),
-        voice_alias: map ? map.alias : '',
+        gender:      map ? map.gender : this.standardiseGender(voice.Gender),
+        voice_alias: map ? map.alias : voice.ShortName,
         language:    map ? map.language : voice.Locale
       };
 
@@ -173,6 +172,13 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
     }
 
     return v;
+  }
+
+  standardiseGender(token) {
+    if ( !token) return '';
+    if ( token.substring(0,1) == 'F') return 'FEMALE';
+    if ( token.substring(0,1) == 'M') return 'MALE';
+    return '';
   }
 
   async getAccessToken(subscriptionKey) {
