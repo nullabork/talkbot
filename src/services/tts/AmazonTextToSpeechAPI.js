@@ -87,7 +87,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     self.doBookkeeping(request);
 
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
-      console.log(audioStream);
+      // console.log(audioStream);
       if (err) {
         Common.error(err);
         callback(new Error(err), null);
