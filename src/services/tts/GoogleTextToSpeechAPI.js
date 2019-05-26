@@ -137,7 +137,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
         "code": item.languageCodes.length && item.languageCodes[0],
         "codes" : item.languageCodes,
         "voice": item.name,
-        "translate" : item.languageCodes.length && item.languageCodes[0],
+        "translate" : item.languageCodes.length && item.languageCodes[0].split('-')[0].substring(0,2),
         "language": item.name,
         "gender": item.ssmlGender
       };

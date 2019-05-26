@@ -126,7 +126,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     var v = [
       {"language":"Arabic","code":"ar-AR","translate":"ar","voice":"Zeina","gender":"FEMALE"},      
       
-      {"language":"Chinese, Mandarin","code":"cmn-CN","translate":"cn","voice":"Zhiyu","gender":"FEMALE"},     
+      {"language":"Chinese, Mandarin","code":"zh-CN","translate":"zh","voice":"Zhiyu","gender":"FEMALE"},     
 
       {"language":"Danish","code":"da-DK","translate":"da","voice":"Naja","gender":"FEMALE"},      
       {"language":"Danish","code":"da-DK","translate":"da","voice":"Mads","gender":"MALE"},      
@@ -172,8 +172,8 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       {"language":"Italian","code":"it-IT","translate":"it","voice":"Bianca","gender":"FEMALE"},      
       {"language":"Italian","code":"it-IT","translate":"it","voice":"Giorgio","gender":"MALE"},    
 
-      {"language":"Japanese","code":"ja-JP","translate":"jp","voice":"Mizuki","gender":"FEMALE"},      
-      {"language":"Japanese","code":"ja-JP","translate":"jp","voice":"Takumi","gender":"MALE"},      
+      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Mizuki","gender":"FEMALE"},      
+      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Takumi","gender":"MALE"},      
 
       {"language":"Korean","code":"ko-KR","translate":"ko","voice":"Seoyeon","gender":"FEMALE"},      
 

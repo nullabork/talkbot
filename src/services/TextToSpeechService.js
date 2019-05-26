@@ -2,6 +2,7 @@
 // class for all the details of a command
 const Common = require('@helpers/common'),
   fs = require('fs'),
+  iso639 = require('iso-639'),
   paths = require('@paths');
 
 // base class for building specific TTS APIs over
@@ -102,8 +103,10 @@ class TextToSpeechService {
       if ( !voice.provider ) throw new Error('No provider property');
       if ( !voice.language ) throw new Error('No language property');
       if ( !voice.translate ) throw new Error('No translate property');
+      if ( !iso639.iso_639_1[voice.translate]) throw new Error('Invalid translate ISO-639-1 code: "' + voice.translate + '"');
       if ( !voice.voice ) throw new Error('No voice property');
       if ( !voice.code ) throw new Error('No code property');
+      if ( !iso639.iso_639_1[voice.code.substring(0,2)]) throw new Error('Invalid code part ISO-639-1 code: "' + voice.code.substring(0,2) + '". Expected Form: [ISO-639-1 code]-[ISO-3166-1 country code]');
     }
   }
 
@@ -132,13 +135,21 @@ class TextToSpeechService {
 
   static async setupProviders() {
     TextToSpeechService.providers = {};
-    await fs.readdirSync(paths.tts).forEach(async file => {
-      var api = require(paths.tts + '\\' + file);
-      var obj = new api();
-      if ( obj.enabled ) {
-        await obj.startupTests();
-        TextToSpeechService.checkProviderContract(obj);
-        TextToSpeechService.providers[obj.shortname] = obj;
+    await fs.readdirSync(paths.tts)
+    .forEach(async file => {
+      try {
+        var api = require(paths.tts + '\\' + file);
+        var obj = new api();
+        if ( obj.enabled ) {
+          await obj.startupTests();
+          TextToSpeechService.checkProviderContract(obj);
+          TextToSpeechService.providers[obj.shortname] = obj;
+        }
+      }
+      catch(err) {
+        Common.error('Error loading: ' + file);
+        Common.error(err);
+        process.exit(1);
       }
     });
   }
