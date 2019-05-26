@@ -27,6 +27,7 @@
   var bot = botStuff.bot;
 
   // runtime testing
+  testing.TestIfChildProcessIsWorkingHowDiscordJSNeedsItTo();
   await testing.TestIfTTSAPIServicesAreConfigured();
   testing.TestIfNodeOpusIsInstalled();
 

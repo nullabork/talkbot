@@ -278,11 +278,12 @@ class Server {
 
     server.voiceConnection.on(
       'disconnect',
-      () => server.joinVoiceChannel(voiceChannel).then(() => {
-        server.switching_channels = false;
-        if ( server.switchQueue && server.switchQueue.length > 0 )
-          server.switchVoiceChannel(server.switchQueue.shift());
-      })
+      () => server.joinVoiceChannel(voiceChannel)
+            .then(() => {
+              server.switching_channels = false;
+              if ( server.switchQueue && server.switchQueue.length > 0 )
+                server.switchVoiceChannel(server.switchQueue.shift());
+            })
     );
     server.voiceConnection.disconnect();
   }
