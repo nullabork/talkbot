@@ -2,9 +2,10 @@
 var Command = require('@models/Command')
   CommentBuilder = require('@models/CommentBuilder'),
   auth = require('@auth'),
+  GoogleTextToSpeechAPI = require('@services/tts/GoogleTextToSpeechAPI'),
   Common = require('@helpers/common');
 
-class Broadcast extends Command {
+class Broadcast extends Command { 
 
   constructor() {
     super();
@@ -22,7 +23,16 @@ class Broadcast extends Command {
   static speakMessageToServer({server, broadcastMessage}) {
     if(server && server.bound_to){
       let beeps = Common.alertBeepsSSML();
-      server.talk( "<speak> " + beeps + broadcastMessage + " </speak>", null, null);
+       
+      server.talk( "<speak> " + beeps + broadcastMessage + " </speak>", {
+        voice_provider: GoogleTextToSpeechAPI.shortname,
+        name : 'default',
+        gender : 'default',
+        language : 'default',
+        napitchme : 'default',
+        speed : 'default'
+      }, null);
+
     }
   }
 
@@ -43,7 +53,7 @@ class Broadcast extends Command {
     let world = input.world;
 
     if (!input.ownerIsDev()) return;
-    if (server.isBound()) return input.il8nResponse('broadcast.notinvoice');
+    // if (server.isBound()) return input.il8nResponse('broadcast.notinvoice');
     let message = input.content;
 
     if(
@@ -66,7 +76,14 @@ class Broadcast extends Command {
     {
       input.il8nResponse("broadcast.confirmation");
       this.setConfirmation({ broadcastMessage :  message });
-      server.talk("<speak> This will be the message broadcast <break time='700ms'/> </speak>");
+      server.talk("<speak> This will be the message broadcast <break time='700ms'/> </speak>", {
+        voice_provider: GoogleTextToSpeechAPI.shortname,
+        name : 'default',
+        gender : 'default',
+        language : 'default',
+        napitchme : 'default',
+        speed : 'default'
+      });
 
       Broadcast.speakMessageToServer({
         server,
