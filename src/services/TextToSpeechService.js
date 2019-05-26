@@ -138,7 +138,7 @@ class TextToSpeechService {
     await fs.readdirSync(paths.tts)
     .forEach(async file => {
       try {
-        var api = require(paths.tts + '\\' + file);
+        var api = require(paths.tts + '/' + file);
         var obj = new api();
         if ( obj.enabled ) {
           await obj.startupTests();
