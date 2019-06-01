@@ -116,7 +116,7 @@ class TextToSpeechService {
    * @param {[TextToSpeechService]} provider 
    */
   static checkProviderContract(provider) {
-    if ( provider.format != 'pcm' && provider.format != 'ogg') throw new Error('Unknown provider format');
+    if ( provider.format != 'pcm' && provider.format != 'ogg' && provider.format != 'ogg_vorbis' && provider.format != 'mp3' && provider.format != 'opus') throw new Error('Unknown provider format');
     if ( !provider.shortname ) throw new Error('Provider shortname needs to be set');
 
     var voices = provider.getVoices();
@@ -138,7 +138,7 @@ class TextToSpeechService {
     await fs.readdirSync(paths.tts)
     .forEach(async file => {
       try {
-        var api = require(paths.tts + '\\' + file);
+        var api = require(paths.tts + '/' + file);
         var obj = new api();
         if ( obj.enabled ) {
           await obj.startupTests();

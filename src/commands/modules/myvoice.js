@@ -63,7 +63,7 @@ function myVoice(msg) {
     server.addMemberSetting(member,'language', voice_info.code);
     server.addMemberSetting(member,'gender', voice_info.gender);
     server.deleteMemberSetting(member,'toLanguage');
-    msg.il8nResponse('myvoice.okay', { voice: msg.args[0] });
+    msg.il8nResponse('myvoice.okay', { voice: voice_info.voice_alias || voice_info.voice, provider: voice_info.provider });
   } else {
     msg.il8nResponse('myvoice.no', { voice: msg.args[0] });
     return;

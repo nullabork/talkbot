@@ -3,6 +3,9 @@
 const Common = require('@helpers/common'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
+  lame = require('lame'),
+  samplerate = require('node-libsamplerate'),
+  prism = require('prism-media'),
   amazon = require('polly-tts');  
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
@@ -24,7 +27,9 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
   // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg 
   // google works fine!
-  get format() { return "pcm"; }
+  get format() { return "opus"; }
+
+  get rate() { return 22050; }
 
   /**
    * [startupTests to check things this API needs to operate]
@@ -67,8 +72,8 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       text: ssml, // if textType is ssml, than here needs to be the ssml string
       textType: "ssml", // marks if it is ssml, text etc. - optional
       voiceId: settings.name || self.getDefaultVoice(settings.gender, settings.language), // Polly Voice -> also determines the language - optional settings.voice ||
-      outputFormat: "ogg_vorbis", // all polly output formats like mp3, pcm etc. - optional
-      sampleRate: 16000 // use default unless PCM
+      outputFormat: "mp3", // all polly output formats like mp3, pcm etc. - optional
+      sampleRate: self.rate // use default unless PCM
     };
 
     return options;
@@ -86,14 +91,38 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
     self.doBookkeeping(request);
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
-      // console.log(audioStream);
       if (err) {
         Common.error(err);
         callback(new Error(err), null);
         return;
       }
       try {
-        callback(null, audioStream);
+        var ld = new lame.Decoder({
+          sampleRate: 22050,       
+          channels: lame.MONO,  
+          signed: true,         
+          float: false,         
+          bitDepth: 16,    
+        });
+        
+        var resample = new samplerate({
+          // Value can be from 0 to 4 or using enum. 0 is the best quality and the slowest.
+          type: samplerate.SRC_SINC_MEDIUM_QUALITY,
+          // Stereo
+          channels: 1,
+          // Sample rate of source
+          fromRate: 22050,
+          // bit depth of source. Valid values: 16 or 32
+          fromDepth: 16,
+          // Desired sample rate
+          toRate: 48000,
+          // Desired bit depth. Valid values: 16 or 32
+          toDepth: 16
+        });
+
+        ld.on('format', format => console.log(format));
+
+        callback(null, audioStream.pipe(ld).pipe(resample).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
       }
       catch(ex)
       {
