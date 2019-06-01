@@ -464,6 +464,7 @@ class Server {
     var readable = audioContent;
 
     var endFunc = reason => {
+      console.log('Got end: ' + reason);
       clearTimeout(server.voice_timeout);
       server.playing = false;
       server.voiceDispatcher = null;
@@ -502,7 +503,19 @@ class Server {
         .on('end', endFunc)
         .on('error', error => Common.error(error));
 
+    else if ( format == 'opus') 
+      server.voiceDispatcher = server.voiceConnection
+      .playOpusStream(readable)
+      .on('end', endFunc)
+      .on('error', error => Common.error(error));
+
     else if ( format == 'pcm' ) {
+      server.voiceDispatcher = server.voiceConnection
+        .playConvertedStream(readable)
+        .on('end', endFunc)
+        .on('error', error => Common.error(error));
+    }
+    else if ( format == 'mp3' || format == 'ogg_vorbis' ) {
       server.voiceDispatcher = server.voiceConnection
         .playStream(readable)
         .on('end', endFunc)

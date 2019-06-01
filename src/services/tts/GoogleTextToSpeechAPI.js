@@ -36,7 +36,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     return auth.tts.google.limit;
   }
 
-  get format() { return "ogg"; }
+  get format() { return "ogg_vorbis"; }
 
   /**
    * [startupTests to check things this API needs to operate]
