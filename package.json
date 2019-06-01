@@ -27,7 +27,7 @@
     "nampg123": "^1.2.4",
     "node-addon-api": "^1.6.3",
     "node-fetch": "^2.6.0",
-    "node-libsamplerate": "^1.0.0",
+    "node-libsamplerate": "git://github.com/nullabork/node-libsamplerate#master",
     "ogg": "^1.2.6",
     "opus-encode": "^2.0.2",
     "opusscript": "0.0.6",
