@@ -8,9 +8,7 @@ var Lang = require("lang.js"),
   Common = require('@helpers/common'),
   auth = require('@auth'),
   fs = require('fs'),
-  streamifier = require('streamifier'),
-  TextToSpeechService = require('@services/TextToSpeechService'),
-  prism = require('prism-media');
+  TextToSpeechService = require('@services/TextToSpeechService');
 
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
@@ -463,8 +461,11 @@ class Server {
     var server = this;
     var readable = audioContent;
 
+    if (!readable.pipe) {
+      return Common.error(new Error('playAudioContent: Received audioContent that was not a readable stream'));
+    }
+
     var endFunc = reason => {
-      console.log('Got end: ' + reason);
       clearTimeout(server.voice_timeout);
       server.playing = false;
       server.voiceDispatcher = null;
@@ -474,10 +475,6 @@ class Server {
       var nextAudio = server.audioQueue.shift();
       if ( nextAudio ) nextAudio();
     };
-
-    if (!readable.pipe) {
-      readable = new streamifier.createReadStream(audioContent);
-    }
 
     // queue it up if there's something playing
     // queueFunc is a call containing both the callback and the content
@@ -497,18 +494,12 @@ class Server {
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
-    if ( format == 'ogg')
+    if ( format == 'opus') {
       server.voiceDispatcher = server.voiceConnection
-        .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
+        .playOpusStream(readable)
         .on('end', endFunc)
         .on('error', error => Common.error(error));
-
-    else if ( format == 'opus') 
-      server.voiceDispatcher = server.voiceConnection
-      .playOpusStream(readable)
-      .on('end', endFunc)
-      .on('error', error => Common.error(error));
-
+    }
     else if ( format == 'pcm' ) {
       server.voiceDispatcher = server.voiceConnection
         .playConvertedStream(readable)

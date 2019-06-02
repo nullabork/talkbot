@@ -123,6 +123,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         ld.on('format', format => console.log(format));
 
         callback(null, audioStream.pipe(ld).pipe(resample).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
+        //callback(null, audioStream.pipe(ld).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
       }
       catch(ex)
       {

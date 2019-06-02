@@ -3,6 +3,8 @@
 const Common = require('@helpers/common'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
+  streamifier = require('streamifier'),
+  prism = require('prism-media'),
   tts = require('@google-cloud/text-to-speech');
 
 class GoogleTextToSpeechAPI extends TextToSpeechService {
@@ -36,7 +38,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     return auth.tts.google.limit;
   }
 
-  get format() { return "ogg_vorbis"; }
+  get format() { return "opus"; }
 
   /**
    * [startupTests to check things this API needs to operate]
@@ -110,7 +112,11 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
    */
   getAudioContent (request, callback) {
     var client = GoogleTextToSpeechAPI.client; // singleton instance
-    return client.synthesizeSpeech(request, (err, response) => callback(err, response ? response.audioContent : null));
+    return client.synthesizeSpeech(request, (err, response) => {
+      if ( !response ) return callback(err,null);
+      var stm = new streamifier.createReadStream(response.audioContent);
+      callback(err, stm.pipe(new prism.opus.OggDemuxer()));
+    });
   }
 
   getDefaultVoice(gender, lang_code) {
