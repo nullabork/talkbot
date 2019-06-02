@@ -173,8 +173,8 @@ class World {
       setTimeout(reboot_timer, 60 * 60 * 1000);
     };
 
-    // kick off in 12 hours
-    setTimeout(reboot_timer, 12 * 60 * 60 * 1000);
+    // kick off in 96 hours
+    setTimeout(reboot_timer, 96 * 60 * 60 * 1000);
   };
 
 /* * *

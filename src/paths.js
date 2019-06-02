@@ -42,6 +42,8 @@ var paths = {
   helpers: make('src/helpers'),
   commands: make('src/commands'),
   models: make('src/models'),
+  services: make('src/services'),
+  tts: make('src/services/tts'),
 
   //utils
   join: join,

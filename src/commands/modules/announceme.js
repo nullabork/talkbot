@@ -2,6 +2,7 @@
 
 var Command = require('@models/Command'),
   Common = require('@helpers/common'),
+  MessageSSML = require('@models/MessageSSML'),
   CommentBuilder = require('@models/CommentBuilder');
 
 class AnnounceMe extends Command {
@@ -33,16 +34,22 @@ class AnnounceMe extends Command {
 
     onFollow({member, server}) {
         var title = server.getMemberSetting(member, 'mytitle') || server.world.default_title;
-        if (server.getMemberSetting(member, 'announceme') == "on")
-            server.talk(server.lang('announceme.announcejoin', {title: title, name: member.displayName, verb: 'arrived'}));
+        if (server.getMemberSetting(member, 'announceme') == "on") {
+            var msg = server.lang('announceme.announcejoin', {title: title, name: member.displayName, verb: 'arrived'});
+            var ssml = new MessageSSML(msg, { server: server }).build();            
+            server.talk(ssml);
+        }
     }
 
     onUnfollow({member, server}) {
         // this currently doesn't read out because it leaves voice before speaking, we need someway to delay the leave until the speaking has ended
         // await?
         var title = server.getMemberSetting(member, 'mytitle') || server.world.default_title;
-        if (server.getMemberSetting(member, 'announceme') == "on")
-            server.talk(server.lang('announceme.announceleave', {title: title, name: member.displayName, verb: 'departed'}));
+        if (server.getMemberSetting(member, 'announceme') == "on") {
+            var msg = server.lang('announceme.announceleave', {title: title, name: member.displayName, verb: 'departed'});
+            var ssml = new MessageSSML(msg, { server: server }).build();            
+            server.talk(ssml);
+        }
     }
 }
 

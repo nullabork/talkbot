@@ -6,47 +6,85 @@ var Lang = require("lang.js"),
   botStuff = require('@helpers/bot-stuff'),
   MessageSSML = require('@models/MessageSSML'),
   Common = require('@helpers/common'),
-  langmap = require('@helpers/langmap'),
   auth = require('@auth'),
   fs = require('fs'),
-  stream = require('stream'),
-  streamifier = require('streamifier'),
-  prism = require('prism-media');
+  TextToSpeechService = require('@services/TextToSpeechService');
 
 var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
 
 class Server {
 
+  // create the server object
   constructor(guild, world) {
+
+    // the id of this server, note this needs to be before loadState();
     this.server_id = guild.id;
 
+    // get the state file from the disk
     var state_data = this.loadState() || {};
 
+    // name of the server
     this.server_name = guild.name;
+
+    // a list of the audioEmojis for !sfx command
     this.audioEmojis = state_data.audioEmojis || {};
+
+    // general member settings, used in quite a few commands
     this.memberSettings = state_data.memberSettings || state_data.userSettings || {};
+
+    // list of text rules for !textrule, default settings as well
     this.textrules = state_data.textrules || { "o\\/": "wave", "\\\\o": "wave ack", "\\\\o\\/": "hooray", "\\(y\\)": "thumbs up", "\\(n\\)": "thumbs down" };
+
+    // set if the server is bound to a master
     this.bound_to = null;
-    this.voiceConnection = null;
+
+    // when bound this will include the master, !permit to add others
     this.permitted = {};
+
+    // set if the server is in a voice channel
+    this.voiceConnection = null;
+
+    // created to timeout the !follow if the bot is not used
     this.neglect_timeout = null;
+
+    // language of the server
     this.language = state_data.language || 'en-AU';
+
+    // restrict talkbot to a specific server
     this.restrictions = state_data.restrictions || [];
+
+    // queue for !keep
     this.keepMessages = state_data.keepMessages || {};
+
+    // statistics on this server
     this.stats = state_data.stats || {};
-    this.dailyStats = state_data.dailyStats || [];
-    this.fallbackLang = 'en';
+
+    // when was the server originally created
     this.created = state_data.created || new Date();
+
+    // when was this server last created in memory
     this.updated = new Date();
+
+    // max number of chars this server can speak - to avoid spamming the APIs
+    this.charLimit = state_data.charLimit || 100000;
+
+    // a reference to the world object
     this.world = world;
+
+    // a reference to the discord js guild object
     this.guild = guild;
 
+    // idk?
+    this.fallbackLang = 'en';
+
+    // access the lang file
     this.commandResponses = new Lang({
       messages: require('@src/lang.json'),
-      locale: langmap.get(this.language).root,
-      fallback: this.fallbackLang
+      locale: TextToSpeechService.getVoiceRecords(this.language)[0].translate, // switch the locale to the one they use for translate
+      fallback: this.fallbackLang = 'en'
     });
 
+    // idk??
     this.messages = {};
   };
 
@@ -89,6 +127,7 @@ class Server {
   }
 
   addMemberSetting(member, name, value) {
+    if (!member) return;
     if (!this.memberSettings) this.memberSettings = {};
     if (!this.memberSettings[member.id]) {
       this.memberSettings[member.id] = {};
@@ -101,22 +140,26 @@ class Server {
 
 
   clearMemberSettings(member) {
+    if (!member) return;
     if (!this.memberSettings) this.memberSettings = {};
     this.memberSettings[member.id] = {};
     this.save();
   };
 
   getMemberSetting(member, name) {
+    if (!member) return null;
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return null;
     return this.memberSettings[member.id][name];
   };
 
   deleteMemberSetting(member, name) {
+    if (!member) return;
     if (!this.memberSettings || !this.memberSettings[member.id] || !this.memberSettings[member.id][name]) return;
     delete this.memberSettings[member.id][name];
   };
 
   getMemberSettings(member) {
+    if (!member) return {};
     if (!this.memberSettings || !this.memberSettings[member.id]) return {};
     return this.memberSettings[member.id];
   };
@@ -238,11 +281,12 @@ class Server {
 
     server.voiceConnection.on(
       'disconnect',
-      () => server.joinVoiceChannel(voiceChannel).then(() => {
-        server.switching_channels = false;
-        if ( server.switchQueue && server.switchQueue.length > 0 )
-          server.switchVoiceChannel(server.switchQueue.shift());
-      })
+      () => server.joinVoiceChannel(voiceChannel)
+            .then(() => {
+              server.switching_channels = false;
+              if ( server.switchQueue && server.switchQueue.length > 0 )
+                server.switchVoiceChannel(server.switchQueue.shift());
+            })
     );
     server.voiceConnection.disconnect();
   }
@@ -377,41 +421,25 @@ class Server {
       language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
-    if (options.name != 'default') settings.name = options.name;
+    if (options.name != 'default')  settings.name = options.name;
     if (options.pitch != 'default') settings.pitch = options.pitch;
     if (options.speed != 'default') settings.speed = options.speed;
+    if (options.voice_provider)     settings.voice_provider = options.voice_provider;
 
     server.resetNeglectTimeout();
 
-    var request = {
-      input: { text: null, ssml: message },
-      // Select the language and SSML Voice Gender (optional)
-      voice: {
-        languageCode: settings.language || '',
-        ssmlGender: settings.gender || 'NEUTRAL',
-        name: settings.name || ''
-      },
-      // Select the type of audio encoding
-      audioConfig: {
-        audioEncoding: 'OGG_OPUS',
-        //audioEncoding: 'MP3',
-        pitch: settings.pitch || 0.0,
-        speakingRate: settings.speed || 1.0,
-        volume_gain_db: -6.0,
-        //sample_rate_hertz: 12000,
-        //effects_profile_id: ['telephony-class-application']
-      },
-    };
+    var service = TextToSpeechService.getService(settings.voice_provider) || TextToSpeechService.defaultProvider;
+    var request = service.buildRequest(message, settings);
 
     // Performs the Text-to-Speech request
-    botStuff.tts().synthesizeSpeech(request, (err, response) => {
+    service.getAudioContent(request, (err, audio) => {
       if (err) {
         Common.error(err);
         return;
       }
       try {
         // might have to queue the content if its playing currently
-        server.playAudioContent(response.audioContent, callback);
+        server.playAudioContent(audio, service.format, callback);
       }
       catch (e) {
         Common.error(e);
@@ -428,45 +456,68 @@ class Server {
   };
 
   // internal function for playing audio content returned from the TTS API and queuing it
-  playAudioContent(audioContent, callback) {
+  playAudioContent(audioContent, format, callback) {
 
     var server = this;
     var readable = audioContent;
 
-    if (!( readable instanceof stream.Readable) ) {
-      readable = new streamifier.createReadStream(audioContent);
+    if (!readable.pipe) {
+      return Common.error(new Error('playAudioContent: Received audioContent that was not a readable stream'));
     }
+
+    var endFunc = reason => {
+      clearTimeout(server.voice_timeout);
+      server.playing = false;
+      server.voiceDispatcher = null;
+      server.voice_timeout = null;
+      try { callback(); } catch(ex) { Common.error(ex); }
+      if ( !server.audioQueue ) return;
+      var nextAudio = server.audioQueue.shift();
+      if ( nextAudio ) nextAudio();
+    };
 
     // queue it up if there's something playing
     // queueFunc is a call containing both the callback and the content
     if ( server.playing ) {
       if ( !server.audioQueue ) server.audioQueue = [];
-      var queueFunc = () => server.playAudioContent(readable, callback);
+      var queueFunc = () => server.playAudioContent(readable, format, callback);
       server.audioQueue.push(queueFunc);
       return;
     }
 
     if ( server.leaving ) return;
-    if ( !server.voiceConnection ) return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
+    if ( !server.voiceConnection )
+      return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
 
     // play the content
     server.playing = true;
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
-    server.voiceDispatcher = server.voiceConnection
-      .playOpusStream(readable.pipe(new prism.opus.OggDemuxer()))
-      .on('end', reason => {
-        clearTimeout(server.voice_timeout);
-        server.playing = false;
-        server.voiceDispatcher = null;
-        server.voice_timeout = null;
-        try { callback(); } catch(ex) { Common.error(ex); }
-        if ( !server.audioQueue ) return;
-        var nextAudio = server.audioQueue.shift();
-        if ( nextAudio ) nextAudio();
-      })
-      .on('error', error => Common.error(error))
-      server.voiceDispatcher.passes = 3;
+
+    if ( format == 'opus') {
+      server.voiceDispatcher = server.voiceConnection
+        .playOpusStream(readable)
+        .on('end', endFunc)
+        .on('error', error => Common.error(error));
+    }
+    else if ( format == 'pcm' ) {
+      server.voiceDispatcher = server.voiceConnection
+        .playConvertedStream(readable)
+        .on('end', endFunc)
+        .on('error', error => Common.error(error));
+    }
+    else if ( format == 'mp3' || format == 'ogg_vorbis' ) {
+      server.voiceDispatcher = server.voiceConnection
+        .playStream(readable)
+        .on('end', endFunc)
+        .on('error', error => Common.error(error));
+
+    }
+    else {
+      Common.error('Unknown format: '+ format);
+    }
+
+    server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation
