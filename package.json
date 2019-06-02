@@ -24,7 +24,6 @@
     "lang.js": "^1.1.14",
     "minimist": "^1.2.0",
     "module-alias": "^2.2.0",
-    "nampg123": "^1.2.4",
     "node-addon-api": "^1.6.3",
     "node-fetch": "^2.6.0",
     "node-libsamplerate": "git://github.com/nullabork/node-libsamplerate#master",
@@ -44,7 +43,6 @@
     "streaming-cache": "^0.5.5",
     "sync-request": "^6.1.0",
     "text-table": "^0.2.0",
-    "vorbis": "^0.2.2",
     "winston": "^2.4.4",
     "xmlbuilder": "^12.0.1",
     "yargs": "^13.2.4"
