@@ -47,6 +47,9 @@ class Server {
     // created to timeout the !follow if the bot is not used
     this.neglect_timeout = null;
 
+    // default provider for voices
+    this.defaultProvider = state_data.defaultProvider || '';
+
     // language of the server
     this.language = state_data.language || 'en-AU';
 
@@ -86,7 +89,19 @@ class Server {
 
     // idk??
     this.messages = {};
-  };
+
+    this.addDefaultProviderToProductionSettings();
+  }
+
+  // SUNSET: This can be removed after this code is first run on production
+  addDefaultProviderToProductionSettings()
+  {
+    if ( this.created > new Date(2019,5,31)) return;
+    for ( var id in this.memberSettings)
+      if ( !this.memberSettings[id].voice_provider )
+        if ( this.memberSettings[id].name && this.memberSettings[id].name != 'default' && this.memberSettings[id].name != '' )
+          this.memberSettings[id].voice_provider = 'google';
+  }
 
   // GuildMember
   setMaster(member) {
@@ -428,7 +443,7 @@ class Server {
 
     server.resetNeglectTimeout();
 
-    var service = TextToSpeechService.getService(settings.voice_provider) || TextToSpeechService.defaultProvider;
+    var service = TextToSpeechService.getService(settings.voice_provider || server.defaultProvider) || TextToSpeechService.defaultProvider;
     var request = service.buildRequest(message, settings);
 
     // Performs the Text-to-Speech request
@@ -494,28 +509,10 @@ class Server {
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
-    if ( format == 'opus') {
-      server.voiceDispatcher = server.voiceConnection
-        .playOpusStream(readable)
-        .on('end', endFunc)
-        .on('error', error => Common.error(error));
-    }
-    else if ( format == 'pcm' ) {
-      server.voiceDispatcher = server.voiceConnection
-        .playConvertedStream(readable)
-        .on('end', endFunc)
-        .on('error', error => Common.error(error));
-    }
-    else if ( format == 'mp3' || format == 'ogg_vorbis' ) {
-      server.voiceDispatcher = server.voiceConnection
-        .playStream(readable)
-        .on('end', endFunc)
-        .on('error', error => Common.error(error));
-
-    }
-    else {
-      Common.error('Unknown format: '+ format);
-    }
+    server.voiceDispatcher = server.voiceConnection
+      .playOpusStream(readable)
+      .on('end', endFunc)
+      .on('error', error => Common.error(error));
 
     server.voiceDispatcher.passes = 3;
   }

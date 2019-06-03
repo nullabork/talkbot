@@ -140,7 +140,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
   getDefaultVoice(gender, lang_code) {
     var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == lang_code && voice.gender == gender);
     if ( voices.length > 0 ) return voices[0].voice;
-    return 'Vicki';
+    return 'Kimberly';
   }
 
   doBookkeeping(request) {
