@@ -70,7 +70,7 @@ class Stats extends Command {
 
     if ( server.dailyStats && server.dailyStats.length ) {
       for (let i = 0; i < Math.min(server.dailyStats.length, 5); i++) {
-        daily.push(server.dailyStats[i].characterCount);
+        daily.push(server.dailyStats[server.dailyStats.length - i - 1].characterCount);
       }
     }
 
