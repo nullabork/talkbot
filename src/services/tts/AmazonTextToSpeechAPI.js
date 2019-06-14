@@ -120,10 +120,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
           toDepth: 16
         });
 
-        ld.on('format', format => console.log(format));
-
         callback(null, audioStream.pipe(ld).pipe(resample).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
-        //callback(null, audioStream.pipe(ld).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
       }
       catch(ex)
       {
@@ -173,10 +170,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Aditi","gender":"FEMALE"},      
       {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Raveena","gender":"FEMALE"},  
 
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Joanna","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Kendra","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Kimberly","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Salli","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Joey","gender":"MALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Justin","gender":"MALE"},      
