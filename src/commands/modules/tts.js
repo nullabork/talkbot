@@ -24,7 +24,7 @@ class TTS extends Command {
     if (!input.message.member)
       return input.il8nResponse('tts.mustbeinchannel');
 
-    server.speak(input.content, input.message.channel, input.message.member);
+    server.speak(input.message);
   }
 }
 

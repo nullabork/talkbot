@@ -74,11 +74,11 @@
     "more" : "You must specify a language code. You can find codes with `:command_charlangs`"
   },
   "en.myvoice": {
-    "okay": "OK, your personal voice is now :voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
+    "okay": "OK, your personal voice is now :provider/:voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
     "no": "Sorry, I cant find the voice :voice.",
     "shorthelp": "Change accent or style.",
     "auto" : "Now the bot will choose the best voice and use your lang and gender settings.",
-    "more" : "Your current voice is :voice. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
+    "more" : "Your current voice is :provider/:voice. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
     "noped" : "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
   },
   "en.tolang": {
@@ -150,12 +150,12 @@
     "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
   },
   "en.langs" : {
-    "okay" : "```css\n :table \n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
+    "okay" : "```css\n:table\n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
     "shorthelp" : "List of languages",
     "longhelp" : "List of languages"
   },
   "en.voices" : {
-    "okay" : "```css\n :table \n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
+    "okay" : "```css\n:table\n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
     "shorthelp" : "List of voices, `:command_charvoices au`",
     "longhelp" : "List of voices, `:command_charvoices au`",
     "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
