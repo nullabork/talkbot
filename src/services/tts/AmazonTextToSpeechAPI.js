@@ -107,9 +107,6 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       }
       try {
 
-        var mp3 = fs.createWriteStream('voice.mp3');
-        audioStream.pipe(mp3);
-
         var ld = new lame.Decoder({
           sampleRate: 22050,       
           channels: lame.MONO,  

@@ -62,7 +62,7 @@ function follow(msg) {
 
 function exceeded_daily_limit(server) {
   if ( !server.dailyStats ) return false;
-  var char_count = server.dailyStats[server.dailyStats.length - i - 1].characterCount;
+  var char_count = server.dailyStats[server.dailyStats.length - 1].characterCount;
   if (!char_count) return false;
   if (!auth.servers || !auth.servers[server.server_id] || !auth.servers[server.server_id].daily_char_limit) return false;
   if (auth.servers[server.server_id].daily_char_limit <= 0) return false;
