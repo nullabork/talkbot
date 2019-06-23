@@ -126,6 +126,7 @@ class TextToSpeechService {
     // run a bunch of tests of the methods to see if we can fail them
     provider.getDefaultVoice('FEMALE', 'en-US');
     provider.buildRequest('', {}, {});
+    fs.writeFileSync(provider.shortname + '.json', JSON.stringify(voices), 'utf-8');
   }
 
   // get the first provider
