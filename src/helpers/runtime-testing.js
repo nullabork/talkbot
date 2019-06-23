@@ -6,7 +6,7 @@ class RuntimeTesting {
     // run this to test if you need a different version of node
 
     var ChildProc = require('child_process');
-    var players = ["ffmpeg", "avconv"];
+    var players = ["ffmpeg"];
 
     function chooseAudioEncoder(players) {
       if (!players[0]) return null;
@@ -15,8 +15,8 @@ class RuntimeTesting {
     }
 
     if (!chooseAudioEncoder(players)) {
-      console.log("Failed to load either ffmpeg or avconv");
-      console.log("Either these aren't installed OR");
+      console.log("Failed to load ffmpeg");
+      console.log("Either this isn't installed OR");
       console.log("You need a different version of nodejs. The module child_process may doesn't play well with your node version. This software was developed using node v8.11.0");
       process.exit();
     }
