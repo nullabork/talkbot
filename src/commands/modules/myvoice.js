@@ -26,7 +26,8 @@ function myVoice(msg) {
   if(!msg.args || !msg.args.length){
     msg.il8nResponse('myvoice.more', {
       provider: settings.voice_provider || 'default', 
-      voice:    settings.name           || 'default'
+      voice:    settings.name           || 'default',
+      alias:    settings.alias          || 'default'
     });
     return;
   }
@@ -34,6 +35,7 @@ function myVoice(msg) {
   if(msg.args[0] == 'default'){
     server.addMemberSetting(member, 'voice_provider', 'default');
     server.addMemberSetting(member, 'name', 'default');
+    server.addMemberSetting(member, 'alias', 'default');
     msg.il8nResponse('general.auto', {key: "myvoice"});
     return;
   }
@@ -60,6 +62,7 @@ function myVoice(msg) {
   if(voice_info) {
     server.addMemberSetting(member,'voice_provider', voice_info.provider);
     server.addMemberSetting(member,'name', voice_info.voice);
+    server.addMemberSetting(member,'alias', voice_info.voice_alias);
     server.addMemberSetting(member,'language', voice_info.code);
     server.addMemberSetting(member,'gender', voice_info.gender);
     server.deleteMemberSetting(member,'toLanguage');

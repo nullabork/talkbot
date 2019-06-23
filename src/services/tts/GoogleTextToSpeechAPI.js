@@ -5,6 +5,7 @@ const Common = require('@helpers/common'),
   auth = require("@auth"),
   streamifier = require('streamifier'),
   prism = require('prism-media'),
+  MessageSSML = require('@models/MessageSSML'),
   tts = require('@google-cloud/text-to-speech');
 
 class GoogleTextToSpeechAPI extends TextToSpeechService {
@@ -80,7 +81,8 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
    *
    * @return  {[type]}  [return request object for this API]
    */
-  buildRequest (ssml, settings) {
+  buildRequest (msg, settings, server) {
+    var ssml = new MessageSSML(msg, { server: server }).build();
     var request = {
       input: { text: null, ssml: ssml },
 

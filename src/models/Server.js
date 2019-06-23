@@ -4,7 +4,6 @@ var Lang = require("lang.js"),
   paths = require('@paths'),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
-  MessageSSML = require('@models/MessageSSML'),
   Common = require('@helpers/common'),
   auth = require('@auth'),
   fs = require('fs'),
@@ -444,7 +443,7 @@ class Server {
     server.resetNeglectTimeout();
 
     var service = TextToSpeechService.getService(settings.voice_provider || server.defaultProvider) || TextToSpeechService.defaultProvider;
-    var request = service.buildRequest(message, settings);
+    var request = service.buildRequest(message, settings, server);
 
     // Performs the Text-to-Speech request
     service.getAudioContent(request, (err, audio) => {
@@ -483,12 +482,17 @@ class Server {
     var endFunc = reason => {
       clearTimeout(server.voice_timeout);
       server.playing = false;
+      if ( server.voiceDispatcher ) server.voiceDispatcher.setSpeaking(false);
       server.voiceDispatcher = null;
       server.voice_timeout = null;
       try { callback(); } catch(ex) { Common.error(ex); }
       if ( !server.audioQueue ) return;
       var nextAudio = server.audioQueue.shift();
-      if ( nextAudio ) nextAudio();
+      if ( reason != 'stream' ) {
+        server.audioQueue = [];
+        Common.error('Cancelled queue: ' + reason);
+      } 
+      else if ( nextAudio ) nextAudio();
     };
 
     // queue it up if there's something playing
@@ -509,10 +513,16 @@ class Server {
     if ( server.voice_timeout) clearTimeout(server.voice_timeout);
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
+    try {
     server.voiceDispatcher = server.voiceConnection
       .playOpusStream(readable)
       .on('end', endFunc)
       .on('error', error => Common.error(error));
+      
+    }
+    catch(ex) {
+      Common.error(ex); 
+    }
 
     server.voiceDispatcher.passes = 3;
   }
@@ -546,8 +556,7 @@ class Server {
     if (ret) settings = ret;
 
     function _speak(msg, settings) {
-      var ssml = new MessageSSML(msg, { server: server }).build();
-      server.talk(ssml, settings, () => commands.notify('messageDelivered', { message: message, content: message.message, server: server }));
+      server.talk(msg, settings, () => commands.notify('messageDelivered', { message: message, content: message.message, server: server }));
     }
 
     var tolang = server.getMemberSetting(message.member, 'toLanguage');

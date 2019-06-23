@@ -125,7 +125,7 @@ class TextToSpeechService {
 
     // run a bunch of tests of the methods to see if we can fail them
     provider.getDefaultVoice('FEMALE', 'en-US');
-    provider.buildRequest('', {});
+    provider.buildRequest('', {}, {});
   }
 
   // get the first provider

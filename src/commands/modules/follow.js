@@ -31,8 +31,11 @@ function follow(msg) {
       if ( !member.voiceChannel.joinable) 
         return msg.il8nResponse('follow.permissions');
 
+      if ( exceeded_daily_limit(server))
+        return msg.il8nResponse('follow.limitexceeded');
+
       // using it alot - consider donating!
-      if ( auth.pester_threshold && server.stats.characterCount > auth.pester_threshold && !server.pestered) {
+      if ( auth.pester_threshold && should_pester(server)) {
         msg.il8nResponse('follow.pester');
         server.pestered = true;
       }
@@ -55,9 +58,25 @@ function follow(msg) {
       msg.il8nResponse('follow.join');
     }
   }
-
 }
 
+function exceeded_daily_limit(server) {
+  if ( !server.dailyStats ) return false;
+  var char_count = server.dailyStats[server.dailyStats.length - i - 1].characterCount;
+  if (!char_count) return false;
+  if (!auth.servers || !auth.servers[server.server_id] || !auth.servers[server.server_id].daily_char_limit) return false;
+  if (auth.servers[server.server_id].daily_char_limit <= 0) return false;
+  return char_count < auth.servers[server.server_id].daily_char_limit;
+}
+
+function should_pester(server) {
+
+  var threshold = auth.pester_threshold;
+  if (auth.servers && auth.servers[server.server_id] && auth.servers[server.server_id].pester_threshold) 
+    threshold = auth.servers[server.server_id].pester_threshold;
+
+  return (server.stats.characterCount > threshold && threshold > 0 && !server.pestered);
+}
 
 /* * *
  * Command: unfollow

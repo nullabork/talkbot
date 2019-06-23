@@ -6,6 +6,9 @@ const Common = require('@helpers/common'),
   lame = require('lame'),
   samplerate = require('node-libsamplerate'),
   prism = require('prism-media'),
+  MessageSSML = require('@models/MessageSSML'),
+  fs = require('fs'),
+  xmlentities = require('xml-entities'),
   amazon = require('polly-tts');  
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
@@ -65,8 +68,14 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
    *
    * @return  {[type]}  [return request object for this API]
    */
-  buildRequest (ssml, settings) {
+  buildRequest (msg, settings, server) {
 
+    if ( !settings['amazon-xml-encode-disabled'])
+      msg = xmlentities.encode(msg);
+    if ( !settings['amazon-breaths-disabled'] )
+      msg  = '<amazon:auto-breaths volume="x-loud" frequency="x-high" duration="x-long">' + msg + '</amazon:auto-breaths>';
+    
+    var ssml = new MessageSSML(msg, { server: server }).build();
     var self = this;
     let options = {
       text: ssml, // if textType is ssml, than here needs to be the ssml string
@@ -97,6 +106,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         return;
       }
       try {
+
+        var mp3 = fs.createWriteStream('voice.mp3');
+        audioStream.pipe(mp3);
+
         var ld = new lame.Decoder({
           sampleRate: 22050,       
           channels: lame.MONO,  
@@ -120,10 +133,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
           toDepth: 16
         });
 
-        ld.on('format', format => console.log(format));
-
         callback(null, audioStream.pipe(ld).pipe(resample).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
-        //callback(null, audioStream.pipe(ld).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
       }
       catch(ex)
       {
@@ -173,10 +183,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Aditi","gender":"FEMALE"},      
       {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Raveena","gender":"FEMALE"},  
 
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Joanna","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Kendra","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Kimberly","gender":"FEMALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Salli","gender":"FEMALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Joey","gender":"MALE"},      
       {"language":"English (US)","code":"en-US","translate":"en","voice":"Justin","gender":"MALE"},      
