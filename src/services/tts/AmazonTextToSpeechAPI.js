@@ -9,6 +9,7 @@ const Common = require('@helpers/common'),
   MessageSSML = require('@models/MessageSSML'),
   fs = require('fs'),
   xmlentities = require('xml-entities'),
+  ssmlvalid = require('ssml-validator'),
   amazon = require('polly-tts');  
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
@@ -71,7 +72,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
   buildRequest (msg, settings, server) {
 
     if ( !settings['amazon-xml-encode-disabled'])
-      msg = xmlentities.encode(msg);
+      msg = ssmlvalid.correct(msg);
     if ( !settings['amazon-breaths-disabled'] )
       msg  = '<amazon:auto-breaths volume="x-loud" frequency="x-high" duration="x-long">' + msg + '</amazon:auto-breaths>';
     
