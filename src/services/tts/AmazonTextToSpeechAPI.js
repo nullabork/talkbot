@@ -6,6 +6,8 @@ const Common = require('@helpers/common'),
   lame = require('lame'),
   samplerate = require('node-libsamplerate'),
   prism = require('prism-media'),
+  MessageSSML = require('@models/MessageSSML'),
+  fs = require('fs'),
   amazon = require('polly-tts');  
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
@@ -65,8 +67,11 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
    *
    * @return  {[type]}  [return request object for this API]
    */
-  buildRequest (ssml, settings) {
+  buildRequest (msg, settings, server) {
 
+    if ( !settings['amazon-breaths-disabled'] )
+      msg  = '<amazon:auto-breaths volume="x-loud" frequency="x-high" duration="x-long">' + msg + '</amazon:auto-breaths>';
+    var ssml = new MessageSSML(msg, { server: server }).build();
     var self = this;
     let options = {
       text: ssml, // if textType is ssml, than here needs to be the ssml string
@@ -97,6 +102,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         return;
       }
       try {
+
+        var mp3 = fs.createWriteStream('voice.mp3');
+        audioStream.pipe(mp3);
+
         var ld = new lame.Decoder({
           sampleRate: 22050,       
           channels: lame.MONO,  

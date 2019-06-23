@@ -4,6 +4,7 @@ const Common = require('@helpers/common'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
   rp = require('request-promise'),
+  MessageSSML = require('@models/MessageSSML'),
   xmlbuilder = require('xmlbuilder');  
 
 class AzureTextToSpeechAPI extends TextToSpeechService {
@@ -71,16 +72,16 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
    *
    * @return  {[type]}  [return request object for this API]
    */
-  buildRequest (ssml, settings) {
+  buildRequest (msg, settings, server) {
 
     // Create the SSML request.
     let xml_body = xmlbuilder.create('speak')
         .att('version', '1.0')
-        .att('xml:lang', 'en-us')
+        .att('xml:lang', settings.language || 'en-us')
         .ele('voice')
-        .att('xml:lang', 'en-us')
-        .att('name', 'Microsoft Server Speech Text to Speech Voice (en-US, Guy24KRUS)')
-        .txt(ssml)
+        .att('xml:lang', settings.language || 'en-us')
+        .att('name', settings.name )
+        .txt(msg)
         .end();
     // Convert the XML into a string to send in the TTS request.
     let request = xml_body.toString();

@@ -199,6 +199,7 @@ class SFX extends Command {
     //other onToken event can overwrite the token before speaking and before other onTokens
     token = modified || token;
 
+    if (!server.audioEmojis) return null;
     if (server.audioEmojis[token] && server.audioEmojis.hasOwnProperty(token)) {
       return Common.makeAudioSSML(server.audioEmojis[token]);
     }
