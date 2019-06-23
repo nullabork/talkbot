@@ -108,7 +108,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
             'Authorization': 'Bearer ' + self.accessToken,
             'cache-control': 'no-cache',
             'User-Agent': 'AzureTextToSpeechAPI',
-            'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
+            'X-Microsoft-OutputFormat': 'audio-24khz-128kbitrate-mono-mp3',
             'Content-Type': 'application/ssml+xml'
         },
         body: request
