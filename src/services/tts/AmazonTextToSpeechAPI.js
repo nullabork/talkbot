@@ -74,7 +74,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     if ( !settings['amazon-xml-encode-disabled'])
       msg = ssmlvalid.correct(msg);
     if ( !settings['amazon-breaths-disabled'] )
-      msg  = '<amazon:auto-breaths volume="x-loud" frequency="x-high" duration="x-long">' + msg + '</amazon:auto-breaths>';
+      msg  = '<amazon:auto-breaths>' + msg + '</amazon:auto-breaths>';
     
     var ssml = new MessageSSML(msg, { server: server }).build();
     var self = this;
