@@ -228,7 +228,23 @@ class Server {
     if (callback) server.voiceConnection.on('disconnect', callback);
     commands.notify('leaveVoice', {server: server});
     server.voiceConnection.disconnect();
-  };
+  }
+
+  // HACK: there's some wierd issue where the voice connection drops and you can't
+  // use !follow to rejoin the voice channel. This leaves 'no connection' hanging
+  // bots in voice. This call attempts to identify this issue and correct for it
+  // ultimately the source issue needs to be found however.
+  unbork() {
+    var server = this;
+    if (!server.connecting) return false;
+    if (!server.connect_start) return false;
+    if ((new Date()).getTime() - server.connect_start.getTime() > 30000) {
+      server.connecting = false;
+      server.connect_start = null;
+      return true;
+    }
+    return false;
+  }
 
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
@@ -238,9 +254,12 @@ class Server {
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
     server.connecting = true;
+    server.connect_start = new Date();
 
-    var p = voiceChannel.join()
+    var p = voiceChannel
+      .join()
       .then(connection => {
+        // success
         connection.on('closing', () => {
           server.leaving = true;
           if (!server.switching_channels)
@@ -251,21 +270,25 @@ class Server {
           server.stop('voiceClosing'); // stop playing
           clearTimeout(server.neglect_timeout);
         });
+
         connection.on('error', error => {
           server.leaving = false;
           server.connecting = false; // this might cause a race condition
           server.voiceConnection = null;
           Common.error(error);
         });
+        
         connection.on('disconnect', () => {
           server.voiceConnection = null;
           server.leaving = false;
           //callback();
         });
+        
         server.voiceConnection = connection;
         server.save();
         server.world.setPresence();
         server.connecting = false;
+        server.connect_start = null;
         commands.notify('joinVoice', {server: server});
       }, error => {
         server.stop('joinError');
@@ -274,7 +297,7 @@ class Server {
       });
 
     return p;
-  };
+  }
 
   // switch from whatever the current voice channel is to this voice channel
   switchVoiceChannel(voiceChannel) {
@@ -514,17 +537,15 @@ class Server {
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
     try {
-    server.voiceDispatcher = server.voiceConnection
-      .playOpusStream(readable)
-      .on('end', endFunc)
-      .on('error', error => Common.error(error));
+      server.voiceDispatcher = server.voiceConnection
+        .playOpusStream(readable)
+        .on('end', endFunc)
+        .on('error', error => Common.error(error));
       
     }
     catch(ex) {
       Common.error(ex); 
     }
-
-    server.voiceDispatcher.passes = 3;
   }
 
   // call this if you want to check a msg content is valid and run it through translation

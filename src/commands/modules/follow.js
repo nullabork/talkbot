@@ -16,6 +16,7 @@ var BotCommand = require('@models/BotCommand'),
 function follow(msg) {
   var server = msg.server;
   var member = msg.message.member;
+  if (server.unbork()) msg.il8nResponse('follow.unborking');
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
   if (server.switching_channel) return msg.il8nResponse('follow.switching');
@@ -53,6 +54,11 @@ function follow(msg) {
           server.addMemberSetting(member,'muted',false);
           msg.il8nResponse('mute.unmuted');
         }
+      })
+      .catch(err => {
+        msg.il8nResponse('follow.error');
+        Common.error(err);
+        server.release();
       });
     } else {
       msg.il8nResponse('follow.join');
@@ -220,8 +226,13 @@ function transfer(msg) {
         server.addMemberSetting(newMaster,'muted',false);
         msg.il8nResponse('mute.unmuted');
       }
-    });    
-  }
+    })
+    .catch(err => {
+      msg.il8nResponse('transfer.error');
+      Common.error(err);
+      server.release();
+    });
+}
 }
 
 var command_follow = new BotCommand({

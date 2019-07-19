@@ -5,6 +5,7 @@ const Common = require('@helpers/common'),
   auth = require("@auth"),
   streamifier = require('streamifier'),
   prism = require('prism-media'),
+  fs = require('fs'),
   MessageSSML = require('@models/MessageSSML'),
   tts = require('@google-cloud/text-to-speech');
 
@@ -116,6 +117,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     var client = GoogleTextToSpeechAPI.client; // singleton instance
     return client.synthesizeSpeech(request, (err, response) => {
       if ( !response ) return callback(err,null);
+
       var stm = new streamifier.createReadStream(response.audioContent);
       callback(err, stm.pipe(new prism.opus.OggDemuxer()));
     });

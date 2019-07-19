@@ -5,6 +5,7 @@ const Common = require('@helpers/common'),
   auth = require("@auth"),
   rp = require('request-promise'),
   prism = require('prism-media'),
+  fs = require('fs'),
   lame = require('lame'),
   samplerate = require('node-libsamplerate'),
   xmlbuilder = require('xmlbuilder');  

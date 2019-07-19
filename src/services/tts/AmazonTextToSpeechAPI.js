@@ -1,15 +1,16 @@
 /*jshint esversion: 9 */
 // class for all the details of a command
 const Common = require('@helpers/common'),
-  TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
   lame = require('lame'),
   samplerate = require('node-libsamplerate'),
   prism = require('prism-media'),
-  MessageSSML = require('@models/MessageSSML'),
-  fs = require('fs'),
+  commands = require('@commands'),
+  fs = require('fs'),  
   xmlentities = require('xml-entities'),
   ssmlvalid = require('ssml-validator'),
+  TextToSpeechService = require('@services/TextToSpeechService'),
+  MessageSSML = require('@models/MessageSSML'),
   amazon = require('polly-tts');  
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
@@ -102,12 +103,13 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     self.doBookkeeping(request);
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
       if (err) {
-        Common.error(err);
+        Common.error(request);
+        Common.error(err);        
         callback(new Error(err), null);
         return;
       }
       try {
-
+  
         var ld = new lame.Decoder({
           sampleRate: 22050,       
           channels: lame.MONO,  

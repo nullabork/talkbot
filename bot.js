@@ -37,6 +37,7 @@
   // when the server is ready to go
   bot.on('ready', () => {
     Common.out('Logged in as: ' + bot.user.username + ' - (' + bot.user.id + ')');
+    Common.error('LOG CHECKPOINT: THE BOT STARTED. THIS IS NOT AN ERROR MESSAGE');
     world.startup();
   });
 

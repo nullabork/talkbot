@@ -1,6 +1,7 @@
 /*jshint esversion: 9 */
-var MessageParser = require('@models/MessageParser'),
+const MessageParser = require('@models/MessageParser'),
   ssmlConfig = require('@helpers/ssml-dictionary'),
+  commands = require('@commands'),
   Common = require('@helpers/common');
 
 class MessageSSML extends MessageParser {
@@ -21,9 +22,11 @@ class MessageSSML extends MessageParser {
   compile(token) {
     token = token || "";
 
-    var alt = commands.notify('token', {token, server: this.server});
-    if (alt) {
-      return alt;
+    if ( commands.notify ) {
+      var alt = commands.notify('token', {token, server: this.server});
+      if (alt) {
+        return alt;
+      }
     }
 
     var tag = MessageSSML.getRelatedTagInfo(token);
