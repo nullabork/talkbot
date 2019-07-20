@@ -126,6 +126,7 @@ function unfollow(msg) {
  * * */
 function sidle(msg) {
   var server = msg.server;
+  if (server.unbork()) msg.il8nResponse('follow.unborking');
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
   if (server.switching_channel) return msg.il8nResponse('sidle.switching');
@@ -146,7 +147,7 @@ function sidle(msg) {
     return;
   }
 
-  if ( !newMaster.voiceChannel || newMaster.voiceChannel.id != server.voiceConnection.channel.id ) {
+  if ( !newMaster.voiceChannel || newMaster.voiceChannel.id != server.guild.voiceConnection.channel.id ) {
     msg.il8nResponse('sidle.novoice');
     return;
   }
@@ -198,7 +199,7 @@ function transfer(msg) {
     return;
   }
 
-  if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.voiceConnection.channel.id )) {
+  if ( !newMaster.voiceChannel || (server.voiceChannel && newMaster.voiceChannel.id != server.guild.voiceConnection.channel.id )) {
     msg.il8nResponse('transfer.samevoice');
     return;
   }
@@ -209,7 +210,7 @@ function transfer(msg) {
   }
 
   server.setMaster(newMaster);
-  if (server.voiceConnection)
+  if (server.guild.voiceConnection)
   {
     msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
   }
