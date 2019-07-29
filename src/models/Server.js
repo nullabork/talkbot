@@ -40,9 +40,6 @@ class Server {
     // when bound this will include the master, !permit to add others
     this.permitted = {};
 
-    // set if the server is in a voice channel
-    this.voiceConnection = null;
-
     // created to timeout the !follow if the bot is not used
     this.neglect_timeout = null;
 
@@ -218,29 +215,32 @@ class Server {
 
   // does this server think it's in a voice channel
   inChannel() {
-    return this.voiceConnection != null;
+    return this.guild.voiceConnection != null;
   };
 
   release(callback) {
     var server = this;
-    if (!server.voiceConnection) return;
+    if (!server.guild.voiceConnection) return;
     if (server.leaving) return; // dont call it twice dude
-    if (callback) server.voiceConnection.on('disconnect', callback);
+    if (callback) server.guild.voiceConnection.on('disconnect', callback);
     commands.notify('leaveVoice', {server: server});
-    server.voiceConnection.disconnect();
+    server.guild.voiceConnection.disconnect();
   }
 
   // HACK: there's some wierd issue where the voice connection drops and you can't
   // use !follow to rejoin the voice channel. This leaves 'no connection' hanging
-  // bots in voice. This call attempts to identify this issue and correct for it
-  // ultimately the source issue needs to be found however.
+  // bots in voice. This call attempts to identify this issue and correct for it.
+  // However ultimately the source issue needs to be found.
   unbork() {
     var server = this;
+    if (server.guild.voiceConnection) return false;
     if (!server.connecting) return false;
     if (!server.connect_start) return false;
     if ((new Date()).getTime() - server.connect_start.getTime() > 30000) {
       server.connecting = false;
       server.connect_start = null;
+      server.release(() => {
+      });
       return true;
     }
     return false;
@@ -252,7 +252,7 @@ class Server {
 
     var server = this;
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
-    if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.voiceConnection.channel.id + '!');
+    if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.guild.voiceConnection.channel.id + '!');
     server.connecting = true;
     server.connect_start = new Date();
 
@@ -274,17 +274,14 @@ class Server {
         connection.on('error', error => {
           server.leaving = false;
           server.connecting = false; // this might cause a race condition
-          server.voiceConnection = null;
           Common.error(error);
         });
         
         connection.on('disconnect', () => {
-          server.voiceConnection = null;
+          Common.out('disconnect');
           server.leaving = false;
-          //callback();
         });
         
-        server.voiceConnection = connection;
         server.save();
         server.world.setPresence();
         server.connecting = false;
@@ -311,12 +308,12 @@ class Server {
       return;
     }
     if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
-    if (!server.voiceConnection) return Common.error(new Error("server.voiceConnection is null"));
-    if (voiceChannel.id == server.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
+    if (!server.guild.voiceConnection) return Common.error(new Error("server.guild.voiceConnection is null"));
+    if (voiceChannel.id == server.guild.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
 
     server.switching_channels = true;
 
-    server.voiceConnection.on(
+    server.guild.voiceConnection.on(
       'disconnect',
       () => server.joinVoiceChannel(voiceChannel)
             .then(() => {
@@ -325,7 +322,7 @@ class Server {
                 server.switchVoiceChannel(server.switchQueue.shift());
             })
     );
-    server.voiceConnection.disconnect();
+    server.guild.voiceConnection.disconnect();
   }
 
   // permit another user to speak
@@ -418,7 +415,6 @@ class Server {
     function replacer(key, value) {
       if (key.endsWith("_timeout")) return undefined; // these keys are internal timers that we dont want to save
       if (key == "commandResponses") return undefined;
-      if (key == "voiceConnection") return undefined;
       if (key == "bound_to") return undefined;
       if (key == "world") return undefined;
       if (key == "guild") return undefined;
@@ -528,7 +524,7 @@ class Server {
     }
 
     if ( server.leaving ) return;
-    if ( !server.voiceConnection )
+    if ( !server.guild.voiceConnection )
       return Common.error("Tried to play audio content when there's no voice connection. " + (new Error()).stack);
 
     // play the content
@@ -537,11 +533,10 @@ class Server {
     server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
 
     try {
-      server.voiceDispatcher = server.voiceConnection
+      server.voiceDispatcher = server.guild.voiceConnection
         .playOpusStream(readable)
         .on('end', endFunc)
-        .on('error', error => Common.error(error));
-      
+        .on('error', error => Common.error(error));      
     }
     catch(ex) {
       Common.error(ex); 

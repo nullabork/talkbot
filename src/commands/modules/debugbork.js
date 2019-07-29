@@ -51,8 +51,8 @@ function debug(msg) {
     if (server.isBound()) {
       active_server_count++;
       var chansize = 'no connection';
-      if ( server.voiceConnection)
-        chansize = server.voiceConnection.channel.members.size;
+      if ( server.guild.voiceConnection)
+        chansize = server.guild.voiceConnection.channel.members.size;
       active_server_names += server.server_name + "(" + chansize + "): " + build_permitted_string(server) + "\n";
     }
     member_count += server.guild.members.size;
@@ -79,7 +79,7 @@ function build_permitted_string(server) {
       }
       else {
         var role = server.guild.roles.find(x => x.id == id);
-        if ( role ) members += ', (role)' + role.name;
+        if ( role ) members += ', (role)' + (role.name[0] == '@' ? role.name.substring(1) : role.name);
         else members += ', ' + id;
       }
     }
