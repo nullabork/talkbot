@@ -147,7 +147,7 @@ function sidle(msg) {
     return;
   }
 
-  if ( !newMaster.voiceChannel || newMaster.voiceChannel.id != server.guild.voiceConnection.channel.id ) {
+  if ( !newMaster.voiceChannel || !server.guild.voiceConnection || newMaster.voiceChannel.id != server.guild.voiceConnection.channel.id ) {
     msg.il8nResponse('sidle.novoice');
     return;
   }
