@@ -54,8 +54,11 @@ Each of these services can be turned on and off in the configuration of the bot.
 ## Software requirements
 - node js 
 - npm - https://www.npmjs.com/get-npm
+
+Several of the in use NPM packages may require the following:
 - ffmpeg - https://www.ffmpeg.org/download.html
 - cmake - https://cmake.org/download/
+- python - https://www.python.org/downloads/
 - Visual Studio C++ build tools or Visual Studio with full C++ support
 
 ## Install, setup and run
