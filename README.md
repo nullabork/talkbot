@@ -46,34 +46,29 @@ The bot requires a master to control it. Once you're its master it'll convert yo
  !help server :: server help commands
 ```
 # Setup your own bot
-Use this to setup your own bot on your own server. Note you will require a google cloud account to use their TTS API.
+Use this to setup your own bot on your own server. 
+Note you will require a Google Cloud account to use their TTS API and an Amazon Polly account to use Amazon TTS voices.
+Both of these services have free tiers but may cost you money if you exceed their free caps. 
+Each of these services can be turned on and off in the configuration of the bot.
 
 ## Software requirements
-- node js
-- npm
-- ffmpeg
+- node js 
+- npm - https://www.npmjs.com/get-npm
+- ffmpeg - https://www.ffmpeg.org/download.html
+- cmake - https://cmake.org/download/
+- Visual Studio C++ build tools or Visual Studio with full C++ support
 
-## Install and setup
+## Install, setup and run
 1. Clone this respository
 2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key. 
     - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
-3. Setup your google API credentials. 
+3. Setup your Google API credentials. 
     * To learn how to do this [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
-4. Install nvm and run 
-    ```
-      nvm install
-      nvm use
-    ```
-    * [windows](https://github.com/coreybutler/nvm-windows/releases)
-    * [mac/linux](https://github.com/creationix/nvm)
+4. Install cmake, ffmpeg and Visual Studio C++ build tools 
+    * See the URLs in the software requirements for how to do this
 5. Install NPM dependencies
-    * `npm install` or `yarn install`
-6. Install ffmpeg 
-    * To learn how to do this [go here](https://www.ffmpeg.org/download.html)
-7. To run: `node bot.js`
-
-## To run
-node bot.js
+    * `npm install` 
+6. To run: `node bot.js`
 
 # Troubleshooting 
 
@@ -83,11 +78,16 @@ node bot.js
 
 Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. [See Google cloud docs here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries) 
 
+## npm install issues
+
+Some of the packages are difficult to install particularly on Windows.
+Usually you'll need to check your PATH environment variable and confirm Visual Studio C++ build tools are available.
+
 # Props to
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
-* Kingk22 - bugfinder/shitposter
+* Kingk22 - bugfinder/shitposter/questionanswerer
 * Kelinmiriel - bugfinder/shitposter
 
 [Want to shitpost also?](https://discord.gg/NxrPp8g)
