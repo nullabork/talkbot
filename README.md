@@ -54,6 +54,7 @@ Each of these services can be turned on and off in the configuration of the bot.
 ## Software requirements
 - node js 
 - npm - https://www.npmjs.com/get-npm
+- git 
 
 Several of the in use NPM packages may require the following:
 - ffmpeg - https://www.ffmpeg.org/download.html
@@ -62,16 +63,18 @@ Several of the in use NPM packages may require the following:
 - Visual Studio C++ build tools or Visual Studio with full C++ support
 
 ## Install, setup and run
-1. Clone this respository
+1. Clone this respository 
+    * `git clone https://github.com/nullabork/talkbot talkbot`  
 2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key. 
-    - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
+    * To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 3. Setup your Google API credentials. 
     * To learn how to do this [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
 4. Install cmake, ffmpeg and Visual Studio C++ build tools 
     * See the URLs in the software requirements for how to do this
 5. Install NPM dependencies
     * `npm install` 
-6. To run: `node bot.js`
+6. Run the bot! 
+    * `node bot.js`
 
 # Troubleshooting 
 
@@ -86,11 +89,12 @@ Confirm you've put the path to your API credentials file in the env var GOOGLE_A
 Some of the packages are difficult to install particularly on Windows.
 Usually you'll need to check your PATH environment variable and confirm Visual Studio C++ build tools are available.
 
-# Props to
+# Acknowledgements
 * WootoSmash - coder/bugmaker/shitposter
 * FaxWang - coder/bugfinder/shitposter
 * GreenLionVoltronPilot - bugfinder/shitposter
 * Kingk22 - bugfinder/shitposter/questionanswerer
 * Kelinmiriel - bugfinder/shitposter
+* All the npm package builders! 
 
 [Want to shitpost also?](https://discord.gg/NxrPp8g)
