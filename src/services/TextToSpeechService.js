@@ -97,16 +97,18 @@ class TextToSpeechService {
 
     for ( var index in voices )
     {
+
+      // the two iso639 codes need a map to 3166 we can't enable these tests on production until this works
       var voice = voices[index];
       if ( !voice.voice_alias ) throw new Error('No voice_alias property:' + voice.voice);
       if ( voice.gender != 'MALE' && voice.gender != 'FEMALE' ) throw new Error('Invalid gender property: ' + voice.gender);
       if ( !voice.provider ) throw new Error('No provider property');
       if ( !voice.language ) throw new Error('No language property');
       if ( !voice.translate ) throw new Error('No translate property');
-      if ( !iso639.iso_639_1[voice.translate]) throw new Error('Invalid translate ISO-639-1 code: "' + voice.translate + '"');
+      //if ( !iso639.iso_639_1[voice.translate]) throw new Error('Invalid translate ISO-639-1 code: "' + voice.translate + '"');
       if ( !voice.voice ) throw new Error('No voice property');
       if ( !voice.code ) throw new Error('No code property');
-      if ( !iso639.iso_639_1[voice.code.substring(0,2)]) throw new Error('Invalid code part ISO-639-1 code: "' + voice.code.substring(0,2) + '". Expected Form: [ISO-639-1 code]-[ISO-3166-1 country code]');
+      //if ( !iso639.iso_639_1[voice.code.substring(0,2)]) throw new Error('Invalid code part ISO-639-1 code: "' + voice.code.substring(0,2) + '". Expected Form: [ISO-639-1 code]-[ISO-3166-1 country code]');
     }
   }
 
