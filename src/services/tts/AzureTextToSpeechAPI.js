@@ -145,6 +145,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
           callback(null, p.pipe(ld).pipe(resample).pipe(new prism.opus.Encoder({rate: 48000, channels: 1, frameSize: 960 })));
         }
         else {
+          Common.error(response);
           callback(new Error('HTTP ERROR: ' + response.statusCode));
         }
       })

@@ -137,7 +137,6 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       }
       catch(ex)
       {
-        Common.error(ex);
         callback(ex, null);
       }
     });
