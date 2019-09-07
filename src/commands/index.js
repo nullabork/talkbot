@@ -169,21 +169,32 @@ function Commands() {
     return (message.content.substring(0, char.length) === char || message.content.substring(5) === this.command_char +'help'); // help will always work this way
   };
 
+  this.isHelpCommand = function(message, server) {
+    return (message.content === '!help');
+  };
+
   // get the command char from the server or default
   this.getCommandChar = function(server) {
     if ( server ) return server.command_char || this.command_char;
     else return this.command_char;
-  }
+  };
   
   // process a message coming in from the real world
   this.process = function(message, server, world) {
     
+    var parts = [];
     const command_char = this.command_char;
     if ( !this.isCommand(message, server)) return;
-    
-    var parts = message.content.match(
-      new RegExp("(" + Common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
-    );
+
+    if ( this.isHelpCommand(message, server)) 
+    {
+      parts = [command_char, 'help'];
+    }
+    else {
+      parts = message.content.match(
+        new RegExp("(" + Common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
+      );
+    }    
     
     if (!parts || parts.length < 2) {
       return;

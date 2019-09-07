@@ -28,14 +28,14 @@ class Twitch extends Command {
 
           if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.permitwho', {twitch_channel: twitch_channel});
-
+          
           if (!this.isLinked(server, twitch_channel))
             this.openTwitchChatLink(server, twitch_channel);
 
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = true;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = true;
           else if (who == 'all') server.twitch[twitch_channel].permitted._all = true;
-          else server.twitch[twitch_channel].permitted[who] = true;
+          else server.twitch[twitch_channel].permitted[who.toLowerCase()] = true;
 
           return input.il8nResponse('twitch.permitokay', {who: who, twitch_channel: twitch_channel});
         }
@@ -47,10 +47,13 @@ class Twitch extends Command {
           if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.unpermitwho', {twitch_channel: twitch_channel});
 
+          if (!server.twitch[twitch_channel]) return;
+          if (!server.twitch[twitch_channel].permitted) return;
+
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = false;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = false;
           else if (who == 'all') server.twitch[twitch_channel].permitted = {};
-          else server.twitch[twitch_channel].permitted[who] = false;
+          else server.twitch[twitch_channel].permitted[who.toLowerCase()] = false;
           
           return input.il8nResponse('twitch.unpermitokay', {who: who, twitch_channel: twitch_channel});
         }
@@ -89,7 +92,7 @@ class Twitch extends Command {
         if ( userstate.mod) permitted = true;
       }
 
-      if (server.twitch[channel].permitted[userstate.username])
+      if (server.twitch[channel].permitted[userstate.username.toLowerCase()])
       {
         permitted = true;
       }
