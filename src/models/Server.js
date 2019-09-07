@@ -189,7 +189,7 @@ class Server {
 
     if ( !params ) params = {};
 
-    var command_char = auth.command_char;
+    var command_char = commands.getCommandChar(this);
     var title = params.title || this.world.default_title;
 
     params = {
