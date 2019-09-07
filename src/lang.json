@@ -263,5 +263,16 @@
     "setokay": "Yes :title. I've set your suffix to :setting",
     "on": "Ok :title, your voice will now suffix with :setting",
     "off": "Ok :title, your voice will not be suffixed"
+  },
+  "en.twitch": {
+    "usage": ":command_chartwitch link [twitch_channel]\n:command_chartwitch permit [all, subs, mods, _username_]\n:command_chartwitch unlink [twitch_channel]\n:command_chartwitch unpermit [all, subs, mods, _username_]",
+    "notbound": ":command_charfollow first before linking",
+    "notmaster": "Only my :title can link to twitch",
+    "linked": "Linked to twitch channel <https://www.twitch.tv/:twitch_channel>",
+    "unlinked": "Unlinked from twitch channel <https://www.twitch.tv/:twitch_channel>",
+    "permitwho": "Please provide a person or group to permit eg. [all, subs, mods, _username]",
+    "permitokay": "Permitted :who okay",
+    "unpermitokay": "Unpermitted :who okay",
+    "unpermitwho": "Please provide a person or group to unpermit eg. [all, subs, mods, _username]"
   }
 }
