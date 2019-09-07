@@ -98,6 +98,16 @@ class Common {
     return Math.min(Math.max(number, min), max);
   }
 
+  // generates a java compatible hashcode from a string
+  static hashCode(s) {
+
+    let h = 0;
+    for(let i = 0; i < s.length; i++)
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+    return h;
+  }    
+
+
     /**
    *
    *

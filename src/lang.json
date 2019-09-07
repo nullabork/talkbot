@@ -265,14 +265,14 @@
     "off": "Ok :title, your voice will not be suffixed"
   },
   "en.twitch": {
-    "usage": ":command_chartwitch link [twitch_channel]\n:command_chartwitch permit [all, subs, mods, _username_]\n:command_chartwitch unlink [twitch_channel]\n:command_chartwitch unpermit [all, subs, mods, _username_]",
+    "usage": ":command_chartwitch link [twitch_channel]\n:command_chartwitch permit [twitch_channel] [all, subs, mods, _username_]\n:command_chartwitch unlink [twitch_channel]\n:command_chartwitch unpermit [twitch_channel] [all, subs, mods, _username_]",
     "notbound": ":command_charfollow first before linking",
     "notmaster": "Only my :title can link to twitch",
-    "linked": "Linked to twitch channel <https://www.twitch.tv/:twitch_channel>",
-    "unlinked": "Unlinked from twitch channel <https://www.twitch.tv/:twitch_channel>",
+    "permitchannel": "Please provide a twitch_channel eg. myselfwhat",
     "permitwho": "Please provide a person or group to permit eg. [all, subs, mods, _username]",
-    "permitokay": "Permitted :who okay",
-    "unpermitokay": "Unpermitted :who okay",
+    "permitokay": "Permitted :who on <https://www.twitch.tv/:twitch_channel>",
+    "unpermitokay": "Unpermitted :who on <https://www.twitch.tv/:twitch_channel>",
+    "unpermitchanenl": "Please provide a twitch_channel eg. myselfwhat",
     "unpermitwho": "Please provide a person or group to unpermit eg. [all, subs, mods, _username]"
   }
 }
