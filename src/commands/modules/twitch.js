@@ -1,5 +1,6 @@
 /*jshint esversion: 9 */
 const Command = require('@models/Command'),
+  config = require("@auth"),
   Common = require('@helpers/common'),
   CommentBuilder = require('@models/CommentBuilder'),
   TextToSpeechService = require('@services/TextToSpeechService'),
@@ -25,7 +26,7 @@ class Twitch extends Command {
           var twitch_channel = input.args[1];
           var who = input.args[2];
 
-          if (!twitch_channel) return input.il8nResponse('twitch.permitnochannel');          
+          if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.permitwho', {twitch_channel: twitch_channel});
 
           if (!this.isLinked(server, twitch_channel))
@@ -43,7 +44,9 @@ class Twitch extends Command {
           var twitch_channel = input.args[1];
           var who = input.args[2];
 
+          if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.unpermitwho', {twitch_channel: twitch_channel});
+
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = false;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = false;
           else if (who == 'all') server.twitch[twitch_channel].permitted = {};
@@ -111,15 +114,26 @@ class Twitch extends Command {
 
 
       chatChannel.addListener('message', (channel, userstate, message, self) => {
-        console.log(userstate);
         var cleanup_channel = channel.substring(1);
         var voice = twitch.getVoice(userstate);
-        if (twitch.isPermitted(server, cleanup_channel, userstate)) server.talk(message, voice);
+        if (twitch.isPermitted(server, cleanup_channel, userstate)) {
+          if (!twitch.shouldRateLimit(server))
+            server.talk(message, voice);
+          else 
+            Common.out("Dropping: ", message);
+        }
       });
 
       chatChannel.connect();
 
       server.twitch[twitch_channel] = {link: chatChannel, permitted: {}};
+    }
+
+    shouldRateLimit(server) {
+      var limit = config.twitch_audioQueue_limit || 10;
+      if ( config.servers && config.servers[server.server_id]) limit = config.servers[server.server_id].twitch_audioQueue_limit;
+      if ( server.audioQueue && server.audioQueue.length > limit) return true;
+      return false;
     }
 
     // deterministically gets a random voice for a specific user
@@ -128,9 +142,6 @@ class Twitch extends Command {
 
       var ks = Object.keys(TextToSpeechService.providers);
       var provider = ks[hashcode % ks.length]; 
-      console.log(hashcode);
-      console.log(hashcode % ks.length);
-      console.log(ks[hashcode % ks.length]);
       return {name: TextToSpeechService.providers[provider].getRandomVoice(hashcode, null, "en-US"), voice_provider: provider };
     }
 
