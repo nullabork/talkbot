@@ -166,33 +166,33 @@ function Commands() {
   // is this Message a command message?
   this.isCommand = function(message, server) {
     var char = this.getCommandChar(server);
-    return (message.content.substring(0, char.length) === char || message.content.substring(5) === this.command_char +'help'); // help will always work this way
+    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') > -1); // help will always work this way
   };
 
-  this.isHelpCommand = function(message, server) {
-    return (message.content === '!help');
+  this.isHelpCommand = function(message) {
+    return ( message.content.indexOf(this.command_char +'help') > -1);
   };
 
   // get the command char from the server or default
   this.getCommandChar = function(server) {
-    if ( server ) return server.command_char || this.command_char;
-    else return this.command_char;
+    if ( server ) return (server.command_char || this.command_char || '!');
+    else return (this.command_char || '!');
   };
   
   // process a message coming in from the real world
   this.process = function(message, server, world) {
     
     var parts = [];
-    const command_char = this.command_char;
+    const command_char = this.getCommandChar(server);
     if ( !this.isCommand(message, server)) return;
 
-    if ( this.isHelpCommand(message, server)) 
+    if ( this.isHelpCommand(message)) 
     {
-      parts = [command_char, 'help'];
+      parts = [command_char+'help', command_char, 'help'];
     }
     else {
       parts = message.content.match(
-        new RegExp("(" + Common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
+        new RegExp("(" + Common.escapeRegExp(this.getCommandChar(server)) + ")([^ ]+)(.*)", "i")
       );
     }    
     

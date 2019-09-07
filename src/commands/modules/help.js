@@ -20,11 +20,12 @@ var Command = require('@models/Command'),
 
 class Help extends Command {
 
-  get base() {
+  base(server) {
+    const cmds = require("@commands");
     return {
       "Quickstart" : [
         "1. join a voice channel",
-        "2. type " + auth.command_char + "follow",
+        "2. type " + cmds.getCommandChar(server) + "follow",
         "3. Type 'Hello World' to hear the bot speak"
       ],
 
@@ -57,7 +58,7 @@ class Help extends Command {
       if(cmd.parameters) cmdParamenters = ` ${cmd.parameters}`;
 
     return {
-      [cmds.command_char + cmd.command_name + cmdParamenters] : server.lang(cmd.short_help) + "\n"
+      [cmds.getCommandChar(server) + cmd.command_name + cmdParamenters] : server.lang(cmd.short_help) + "\n"
     }
   }
 
@@ -91,10 +92,10 @@ class Help extends Command {
     if(!c) {
       return {
        'Available help groups' : [
-        cmds.command_char + self.command_name + ' personalization',
-        cmds.command_char + self.command_name + ' control',
-        cmds.command_char + self.command_name + ' info',
-        cmds.command_char + self.command_name + ' server'
+        cmds.getCommandChar(server) + self.command_name + ' personalization',
+        cmds.getCommandChar(server) + self.command_name + ' control',
+        cmds.getCommandChar(server) + self.command_name + ' info',
+        cmds.getCommandChar(server) + self.command_name + ' server'
        ]
       }
     }
@@ -111,7 +112,7 @@ class Help extends Command {
     var other = input.args[0],
       self = this,
       cmds = require("@commands"),
-      data = this.base;
+      data = this.base(server);
 
     if(other){
 
@@ -134,11 +135,11 @@ class Help extends Command {
 
         let cmdParamenters = "";
         if(cmd.parameters) cmdParamenters = ` ${cmd.parameters}`;
-        data[group][cmds.command_char + cmd.command_name + cmdParamenters] = server.lang(cmd.short_help) + "\n";
+        data[group][cmds.getCommandChar(server) + cmd.command_name + cmdParamenters] = server.lang(cmd.short_help) + "\n";
       }
       else
       {
-        data['More'][cmds.command_char + this.command_name + " " + group] = group + " help commands";
+        data['More'][cmds.getCommandChar(server) + this.command_name + " " + group] = group + " help commands";
       }
     }
 

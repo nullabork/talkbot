@@ -61,6 +61,9 @@ class Server {
     // when was the server originally created
     this.created = state_data.created || new Date();
 
+    // command char override for this server
+    this.command_char = state_data.command_char;
+
     // when was this server last created in memory
     this.updated = new Date();
 
