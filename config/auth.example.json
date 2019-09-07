@@ -6,6 +6,7 @@
     "err" : true,
     "out" : true
   },
+  "advertise_streamer": "myselfwhat",
   "supportServer":{
     "id": "490087447758241793"
   },
