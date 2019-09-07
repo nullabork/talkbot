@@ -6,14 +6,17 @@
     "err" : true,
     "out" : true
   },
+  "advertise_streamer": "myselfwhat",
   "supportServer":{
     "id": "490087447758241793"
   },
   "pester_threshold": 100000,
+  "twitch_audioQueue_limit": 10,
   "servers": {
     "-1": {
       "pester_threshold": 100000,
-      "daily_char_limit": 10000
+      "daily_char_limit": 10000,
+      "twitch_audioQueue_limit": 10
     }
   },
   "tts": {

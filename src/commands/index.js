@@ -115,7 +115,7 @@ function Commands() {
     }
   };
 
-    //add
+  //add
   this.on = function (type, cb, sequence) {
     if (!this.listeners[type]) {
       this.listeners[type] = [];
@@ -164,18 +164,37 @@ function Commands() {
   };
   
   // is this Message a command message?
-  this.isCommand = function(message) {
-    return (message.content.substring(0, this.command_char.length) == this.command_char);
+  this.isCommand = function(message, server) {
+    var char = this.getCommandChar(server);
+    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') > -1); // help will always work this way
+  };
+
+  this.isHelpCommand = function(message) {
+    return ( message.content.indexOf(this.command_char +'help') > -1);
+  };
+
+  // get the command char from the server or default
+  this.getCommandChar = function(server) {
+    if ( server ) return (server.command_char || this.command_char || '!');
+    else return (this.command_char || '!');
   };
   
   // process a message coming in from the real world
   this.process = function(message, server, world) {
     
-    if ( !this.isCommand(message)) return;
-    
-    var parts = message.content.match(
-      new RegExp("(" + Common.escapeRegExp(this.command_char) + ")([^ ]+)(.*)", "i")
-    );
+    var parts = [];
+    const command_char = this.getCommandChar(server);
+    if ( !this.isCommand(message, server)) return;
+
+    if ( this.isHelpCommand(message)) 
+    {
+      parts = [command_char+'help', command_char, 'help'];
+    }
+    else {
+      parts = message.content.match(
+        new RegExp("(" + Common.escapeRegExp(this.getCommandChar(server)) + ")([^ ]+)(.*)", "i")
+      );
+    }    
     
     if (!parts || parts.length < 2) {
       return;

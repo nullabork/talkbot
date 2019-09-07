@@ -161,6 +161,13 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
     return AzureTextToSpeechAPI.voices[0].voice;
   }
 
+  getRandomVoice(randnum, gender, lang_code) {
+    if ( !randnum ) randnum = Math.random() * 1000000; 
+    var voices = AzureTextToSpeechAPI.voices.filter(voice => (!lang_code || voice.code == lang_code) && (!gender || voice.gender == gender));
+
+    return voices[randnum % voices.length].voice;
+  }
+
   getVoicesFromAzure(accessToken) {
     let options = {
       method: 'GET',
