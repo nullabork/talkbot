@@ -126,6 +126,10 @@ class Server {
     }
   }
 
+  deleteSettings(key) {
+    delete this[key];    
+  }
+
   getSettingObject (name) {
     if (!this[name] || typeof this[name] !== 'object') return {};
     return this[name]
@@ -421,6 +425,7 @@ class Server {
       if (key == "voiceDispatcher") return undefined;
       if (key == "keepQueue") return undefined;
       if (key == "switchQueue") return undefined;
+      if (key == "twitch") return undefined;
 
       else return value;
     };
