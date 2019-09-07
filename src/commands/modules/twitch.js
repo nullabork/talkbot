@@ -26,7 +26,7 @@ class Twitch extends Command {
           var twitch_channel = input.args[1];
           var who = input.args[2];
 
-          if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});          
+          if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});
           if (!who ) return input.il8nResponse('twitch.permitwho', {twitch_channel: twitch_channel});
 
           if (!this.isLinked(server, twitch_channel))
@@ -44,19 +44,41 @@ class Twitch extends Command {
           var twitch_channel = input.args[1];
           var who = input.args[2];
 
-          if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});          
+          if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});
           if (!who ) return input.il8nResponse('twitch.unpermitwho', {twitch_channel: twitch_channel});
 
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = false;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = false;
           else if (who == 'all') server.twitch[twitch_channel].permitted = {};
           else server.twitch[twitch_channel].permitted[who] = false;
-          
+
           return input.il8nResponse('twitch.unpermitokay', {who: who, twitch_channel: twitch_channel});
         }
         else {
           return input.il8nResponse('twitch.usage');
         }
+    }
+
+    removeEmotes(message, emotes)
+    {
+        var emoteList = [];
+
+        for (var id in emotes) {
+            if ( emotes.hasOwnProperty(id) && emotes[id] ) {
+              var indexes = emotes[id][0].split("-");
+              emoteList.push([+indexes[0], +indexes[1] + 1]);
+            }
+        }
+
+        emoteList = emoteList.sort(function(a,b){
+          return a[0] - b[0];
+        });
+
+        for (let i = emoteList.length - 1; i >= 0; i--) {
+          message =  message.substr(0, emoteList[i][0]) + message.substr(emoteList[i][1],message.length - 1);
+        }
+
+        return message;
     }
 
     isLinked(server, twitch_channel) {
@@ -115,11 +137,13 @@ class Twitch extends Command {
 
       chatChannel.addListener('message', (channel, userstate, message, self) => {
         var cleanup_channel = channel.substring(1);
+        message = twitch.removeEmotes(message, userstate.emotes);
+        if(!message) return;
         var voice = twitch.getVoice(userstate);
         if (twitch.isPermitted(server, cleanup_channel, userstate)) {
           if (!twitch.shouldRateLimit(server))
             server.talk(message, voice);
-          else 
+          else
             Common.out("Dropping: ", message);
         }
       });
@@ -141,7 +165,7 @@ class Twitch extends Command {
       var hashcode = Math.abs(Common.hashCode(userstate.username));
 
       var ks = Object.keys(TextToSpeechService.providers);
-      var provider = ks[hashcode % ks.length]; 
+      var provider = ks[hashcode % ks.length];
       return {name: TextToSpeechService.providers[provider].getRandomVoice(hashcode, null, "en-US"), voice_provider: provider };
     }
 
@@ -160,11 +184,11 @@ exports.register =  (commands) => {
         Twitch.command
     ]);
 };
-  
+
 exports.unRegister = (commands) => {
     commands.removeAll([
         Twitch.command,
     ]);
 };
-  
+
 exports.Twitch = Twitch;
