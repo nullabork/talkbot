@@ -100,6 +100,28 @@ class Twitch extends Command {
       return permitted;
     }
 
+    removeEmotes(message, emotes)
+    {
+        var emoteList = [];
+
+        for (var id in emotes) {
+            if ( emotes.hasOwnProperty(id) && emotes[id] ) {
+              var indexes = emotes[id][0].split("-");
+              emoteList.push([+indexes[0], +indexes[1] + 1]);
+            }
+        }
+
+        emoteList = emoteList.sort(function(a,b){
+          return a[0] - b[0];
+        });
+
+        for (let i = emoteList.length - 1; i >= 0; i--) {
+          message =  message.substr(0, emoteList[i][0]) + message.substr(emoteList[i][1],message.length - 1);
+        }
+
+        return message;
+    }
+
     closeTwitchChatLink(server, twitch_channel) {
       var link = server.twitch[twitch_channel].link;
       link.disconnect();
@@ -119,6 +141,8 @@ class Twitch extends Command {
       chatChannel.addListener('message', (channel, userstate, message, self) => {
         var cleanup_channel = channel.substring(1);
         var voice = twitch.getVoice(userstate);
+        message = twitch.removeEmotes(message, userstate.emotes);
+        if(!message) return;
         if (twitch.isPermitted(server, cleanup_channel, userstate)) {
           if (!twitch.shouldRateLimit(server))
             server.talk(message, voice);
