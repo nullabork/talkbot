@@ -89,6 +89,20 @@ class TextToSpeechService {
   }
 
   /**
+   * [getDefaultVoice gets the default voice name for this service]
+   *
+   * @param {string} seed - any string to hash
+   * @param {string} gender - eg. FEMALE
+   * @param {string} lang_code eg. en-AU
+   *
+   * @return {string} voice name
+   */
+  getRandomVoice(seed, gender, lang_code) {
+    Common.error('Please implement the getRandomVoice function');
+    process.exit();
+  }
+
+  /**
    * [checkVoiceStructure confirm the voices array is formed correctly]
    *
    * @param  {*}  voices
@@ -201,6 +215,11 @@ class TextToSpeechService {
       }
       return v;
     }
+  }
+
+  static getRandomProvider() {
+    var r = Math.random() * 100000;
+    return TextToSpeechService.providers[r % Object.keys(TextToSpeechService.providers).length];
   }
 
   static getVoice(voice_name, provider)

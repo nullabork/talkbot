@@ -152,6 +152,13 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return 'Kimberly';
   }
 
+  getRandomVoice(randnum, gender, lang_code) {
+    if ( !randnum ) randnum = Math.random() * 1000000; 
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => (!lang_code || voice.code == lang_code) && (!gender || voice.gender == gender));
+
+    return voices[randnum % voices.length].voice;
+  }
+
   doBookkeeping(request) {
     if ( !AmazonTextToSpeechAPI.count ) AmazonTextToSpeechAPI.count = 0;
     AmazonTextToSpeechAPI.count += request.text.length;
