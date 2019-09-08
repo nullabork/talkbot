@@ -43,7 +43,7 @@ function Commands() {
       var sequence = command.sequence && command.sequence[type] || 0;
 
       var func = command.listeners[type];
-      this.on(type, func, sequence);
+      this.on(type, func, sequence, command);
     }
   };
 
@@ -116,13 +116,14 @@ function Commands() {
   };
 
   //add
-  this.on = function (type, cb, sequence) {
+  this.on = function (type, cb, sequence, command) {
     if (!this.listeners[type]) {
       this.listeners[type] = [];
     }
     this.listeners[type].push({
       cb,
-      sequence : sequence || 0
+      sequence : sequence || 0,
+      command
     });
   };
 
@@ -142,11 +143,13 @@ function Commands() {
     try {
       for (let i = 0; i < funcs.length; i++) {
         var func = funcs[i].cb;
+        var command = funcs[i].command;
 
         if (typeof func == 'function') {
           args = {
             ...args,
-            modified : ret
+            modified : ret,
+            command
           };
 
           var resp = func.apply(this, [args]);
@@ -166,24 +169,35 @@ function Commands() {
   // is this Message a command message?
   this.isCommand = function(message, server) {
     var char = this.getCommandChar(server);
-    return (message.content.substring(0, char.length) === char || message.content.substring(5) === this.command_char +'help'); // help will always work this way
+    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') > -1); // help will always work this way
+  };
+
+  this.isHelpCommand = function(message) {
+    return ( message.content.indexOf(this.command_char +'help') > -1);
   };
 
   // get the command char from the server or default
   this.getCommandChar = function(server) {
-    if ( server ) return server.command_char || this.command_char;
-    else return this.command_char;
-  }
+    if ( server ) return (server.command_char || this.command_char || '!');
+    else return (this.command_char || '!');
+  };
   
   // process a message coming in from the real world
   this.process = function(message, server, world) {
     
-    const command_char = this.command_char;
+    var parts = [];
+    const command_char = this.getCommandChar(server);
     if ( !this.isCommand(message, server)) return;
-    
-    var parts = message.content.match(
-      new RegExp("(" + Common.escapeRegExp(command_char) + ")([^ ]+)(.*)", "i")
-    );
+
+    if ( this.isHelpCommand(message)) 
+    {
+      parts = [command_char+'help', command_char, 'help'];
+    }
+    else {
+      parts = message.content.match(
+        new RegExp("(" + Common.escapeRegExp(this.getCommandChar(server)) + ")([^ ]+)(.*)", "i")
+      );
+    }    
     
     if (!parts || parts.length < 2) {
       return;

@@ -2,7 +2,6 @@
 const Command = require('@models/Command'),
   config = require("@auth"),
   Common = require('@helpers/common'),
-  CommentBuilder = require('@models/CommentBuilder'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   Chat = require('tmi.js');
 
@@ -21,66 +20,52 @@ class Twitch extends Command {
         if (!input.ownerIsMaster()) return input.il8nResponse('twitch.notmaster');
 
         var subcommand = input.args[0];
+        var twitch_channel = input.args[1];
+        var who = input.args[2];
 
+        // !twitch permit [twitch_channel] [who]
+        // allow someone in that twitch channel to speak using talkbot
         if (/^(permit)$/i.test(subcommand)) {
-          var twitch_channel = input.args[1];
-          var who = input.args[2];
 
-          if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});
+          if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.permitwho', {twitch_channel: twitch_channel});
-
+          
           if (!this.isLinked(server, twitch_channel))
             this.openTwitchChatLink(server, twitch_channel);
 
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = true;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = true;
           else if (who == 'all') server.twitch[twitch_channel].permitted._all = true;
-          else server.twitch[twitch_channel].permitted[who] = true;
+          else server.twitch[twitch_channel].permitted[who.toLowerCase()] = true;
 
           return input.il8nResponse('twitch.permitokay', {who: who, twitch_channel: twitch_channel});
         }
 
+        // !twitch unpermit [twitch_channel] [who]
+        // stop someone in that twitch channel from using talkbot
         else if (/^(unpermit)$/i.test(subcommand)) {
-          var twitch_channel = input.args[1];
-          var who = input.args[2];
 
-          if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});
+          if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.unpermitwho', {twitch_channel: twitch_channel});
+
+          if (!server.twitch[twitch_channel]) return;
+          if (!server.twitch[twitch_channel].permitted) return;
 
           if (who == 'mods') server.twitch[twitch_channel].permitted._mods = false;
           else if (who == 'subs') server.twitch[twitch_channel].permitted._subs = false;
           else if (who == 'all') server.twitch[twitch_channel].permitted = {};
-          else server.twitch[twitch_channel].permitted[who] = false;
-
+          else server.twitch[twitch_channel].permitted[who.toLowerCase()] = false;
+          
           return input.il8nResponse('twitch.unpermitokay', {who: who, twitch_channel: twitch_channel});
         }
+
+        // unknown command show usage
         else {
           return input.il8nResponse('twitch.usage');
         }
     }
 
-    removeEmotes(message, emotes)
-    {
-        var emoteList = [];
-
-        for (var id in emotes) {
-            if ( emotes.hasOwnProperty(id) && emotes[id] ) {
-              var indexes = emotes[id][0].split("-");
-              emoteList.push([+indexes[0], +indexes[1] + 1]);
-            }
-        }
-
-        emoteList = emoteList.sort(function(a,b){
-          return a[0] - b[0];
-        });
-
-        for (let i = emoteList.length - 1; i >= 0; i--) {
-          message =  message.substr(0, emoteList[i][0]) + message.substr(emoteList[i][1],message.length - 1);
-        }
-
-        return message;
-    }
-
+    // checks if a channel is already linked
     isLinked(server, twitch_channel) {
       if (!server.twitch) return false;
       if (!server.twitch[twitch_channel]) return false;
@@ -111,7 +96,7 @@ class Twitch extends Command {
         if ( userstate.mod) permitted = true;
       }
 
-      if (server.twitch[channel].permitted[userstate.username])
+      if (server.twitch[channel].permitted[userstate.username.toLowerCase()])
       {
         permitted = true;
       }
@@ -119,6 +104,30 @@ class Twitch extends Command {
       return permitted;
     }
 
+    // string out emotes from a message
+    removeEmotes(message, emotes)
+    {
+        var emoteList = [];
+
+        for (var id in emotes) {
+            if ( emotes.hasOwnProperty(id) && emotes[id] ) {
+              var indexes = emotes[id][0].split("-");
+              emoteList.push([+indexes[0], +indexes[1] + 1]);
+            }
+        }
+
+        emoteList = emoteList.sort(function(a,b){
+          return a[0] - b[0];
+        });
+
+        for (let i = emoteList.length - 1; i >= 0; i--) {
+          message =  message.substr(0, emoteList[i][0]) + message.substr(emoteList[i][1],message.length - 1);
+        }
+
+        return message;
+    }
+
+    // close a twitch channel link
     closeTwitchChatLink(server, twitch_channel) {
       var link = server.twitch[twitch_channel].link;
       link.disconnect();
@@ -137,13 +146,13 @@ class Twitch extends Command {
 
       chatChannel.addListener('message', (channel, userstate, message, self) => {
         var cleanup_channel = channel.substring(1);
+        var voice = twitch.getVoice(userstate);
         message = twitch.removeEmotes(message, userstate.emotes);
         if(!message) return;
-        var voice = twitch.getVoice(userstate);
         if (twitch.isPermitted(server, cleanup_channel, userstate)) {
           if (!twitch.shouldRateLimit(server))
             server.talk(message, voice);
-          else
+          else 
             Common.out("Dropping: ", message);
         }
       });
@@ -153,6 +162,7 @@ class Twitch extends Command {
       server.twitch[twitch_channel] = {link: chatChannel, permitted: {}};
     }
 
+    // returns true if we should rate limit a twitch stream
     shouldRateLimit(server) {
       var limit = config.twitch_audioQueue_limit || 10;
       if ( config.servers && config.servers[server.server_id]) limit = config.servers[server.server_id].twitch_audioQueue_limit;
@@ -165,14 +175,14 @@ class Twitch extends Command {
       var hashcode = Math.abs(Common.hashCode(userstate.username));
 
       var ks = Object.keys(TextToSpeechService.providers);
-      var provider = ks[hashcode % ks.length];
+      var provider = ks[hashcode % ks.length]; 
       return {name: TextToSpeechService.providers[provider].getRandomVoice(hashcode, null, "en-US"), voice_provider: provider };
     }
 
     // nerf all the links if any on unfollow
-    onUnfollow({server}) {
+    onUnfollow({server, command}) {
         for( var key in server.twitch ) {
-          this.closeTwitchChatLink(server, key);
+          command.closeTwitchChatLink(server, key);
         }
     }
 
@@ -184,11 +194,11 @@ exports.register =  (commands) => {
         Twitch.command
     ]);
 };
-
+  
 exports.unRegister = (commands) => {
     commands.removeAll([
         Twitch.command,
     ]);
 };
-
+  
 exports.Twitch = Twitch;

@@ -274,5 +274,9 @@
     "unpermitokay": "Unpermitted :who on <https://www.twitch.tv/:twitch_channel>",
     "unpermitchannel": "Please provide a twitch_channel eg. :advertise_streamer",
     "unpermitwho": "Please provide a person or group to unpermit eg. [all, subs, mods, _username]"
+  },
+  "en.commandchar": {
+    "usage": ":command_charcommandchar [char] eg. !commandchar *",
+    "okay": "Command character changed to :command_char"
   }
 }

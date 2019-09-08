@@ -107,7 +107,7 @@
       }
       
       // is the message a command?
-      if (commands.isCommand(message)) {
+      if (commands.isCommand(message, server)) {
         commands.process(message, server, world);
       } else if ( message.member ) {
         // say it out loud
