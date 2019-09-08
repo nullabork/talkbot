@@ -43,7 +43,7 @@ function Commands() {
       var sequence = command.sequence && command.sequence[type] || 0;
 
       var func = command.listeners[type];
-      this.on(type, func, sequence);
+      this.on(type, func, sequence, command);
     }
   };
 
@@ -116,13 +116,14 @@ function Commands() {
   };
 
   //add
-  this.on = function (type, cb, sequence) {
+  this.on = function (type, cb, sequence, command) {
     if (!this.listeners[type]) {
       this.listeners[type] = [];
     }
     this.listeners[type].push({
       cb,
-      sequence : sequence || 0
+      sequence : sequence || 0,
+      command
     });
   };
 
@@ -142,11 +143,13 @@ function Commands() {
     try {
       for (let i = 0; i < funcs.length; i++) {
         var func = funcs[i].cb;
+        var command = funcs[i].command;
 
         if (typeof func == 'function') {
           args = {
             ...args,
-            modified : ret
+            modified : ret,
+            command
           };
 
           var resp = func.apply(this, [args]);

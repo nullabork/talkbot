@@ -2,7 +2,6 @@
 const Command = require('@models/Command'),
   config = require("@auth"),
   Common = require('@helpers/common'),
-  CommentBuilder = require('@models/CommentBuilder'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   Chat = require('tmi.js');
 
@@ -21,10 +20,12 @@ class Twitch extends Command {
         if (!input.ownerIsMaster()) return input.il8nResponse('twitch.notmaster');
 
         var subcommand = input.args[0];
+        var twitch_channel = input.args[1];
+        var who = input.args[2];
 
+        // !twitch permit [twitch_channel] [who]
+        // allow someone in that twitch channel to speak using talkbot
         if (/^(permit)$/i.test(subcommand)) {
-          var twitch_channel = input.args[1];
-          var who = input.args[2];
 
           if (!twitch_channel) return input.il8nResponse('twitch.permitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.permitwho', {twitch_channel: twitch_channel});
@@ -40,9 +41,9 @@ class Twitch extends Command {
           return input.il8nResponse('twitch.permitokay', {who: who, twitch_channel: twitch_channel});
         }
 
+        // !twitch unpermit [twitch_channel] [who]
+        // stop someone in that twitch channel from using talkbot
         else if (/^(unpermit)$/i.test(subcommand)) {
-          var twitch_channel = input.args[1];
-          var who = input.args[2];
 
           if (!twitch_channel) return input.il8nResponse('twitch.unpermitchannel', {advertise_streamer: config.advertise_streamer});          
           if (!who ) return input.il8nResponse('twitch.unpermitwho', {twitch_channel: twitch_channel});
@@ -57,11 +58,14 @@ class Twitch extends Command {
           
           return input.il8nResponse('twitch.unpermitokay', {who: who, twitch_channel: twitch_channel});
         }
+
+        // unknown command show usage
         else {
           return input.il8nResponse('twitch.usage');
         }
     }
 
+    // checks if a channel is already linked
     isLinked(server, twitch_channel) {
       if (!server.twitch) return false;
       if (!server.twitch[twitch_channel]) return false;
@@ -100,6 +104,7 @@ class Twitch extends Command {
       return permitted;
     }
 
+    // string out emotes from a message
     removeEmotes(message, emotes)
     {
         var emoteList = [];
@@ -122,6 +127,7 @@ class Twitch extends Command {
         return message;
     }
 
+    // close a twitch channel link
     closeTwitchChatLink(server, twitch_channel) {
       var link = server.twitch[twitch_channel].link;
       link.disconnect();
@@ -156,6 +162,7 @@ class Twitch extends Command {
       server.twitch[twitch_channel] = {link: chatChannel, permitted: {}};
     }
 
+    // returns true if we should rate limit a twitch stream
     shouldRateLimit(server) {
       var limit = config.twitch_audioQueue_limit || 10;
       if ( config.servers && config.servers[server.server_id]) limit = config.servers[server.server_id].twitch_audioQueue_limit;
@@ -173,9 +180,9 @@ class Twitch extends Command {
     }
 
     // nerf all the links if any on unfollow
-    onUnfollow({server}) {
+    onUnfollow({server, command}) {
         for( var key in server.twitch ) {
-          this.closeTwitchChatLink(server, key);
+          command.closeTwitchChatLink(server, key);
         }
     }
 
