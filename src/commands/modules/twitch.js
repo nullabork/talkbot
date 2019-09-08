@@ -189,7 +189,7 @@ class Twitch extends Command {
 }
 
 //registration
-exports.register =  (commands) => {
+exports.register = (commands) => {
     commands.addAll([
         Twitch.command
     ]);
