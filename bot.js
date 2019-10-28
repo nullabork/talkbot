@@ -73,20 +73,20 @@
   // handle voice state updates
   bot.on('voiceStateUpdate', (oldMember, newMember) => {
     if (!oldMember) return;
-    
+
     try {
       var server = world.servers[oldMember.guild.id];
       if (!server.isMaster(oldMember))
         return;
-      
-      // they've changed voice channels 
+
+      // they've changed voice channels
       if ( oldMember.voiceChannel && (!newMember.voiceChannel || !newMember.voiceChannel.joinable)) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
         server.release();
       }
       else if ( oldMember.voiceChannel && newMember.voiceChannel && oldMember.voiceChannel.id != newMember.voiceChannel.id )
       {
         server.switchVoiceChannel(newMember.voiceChannel);
-      }      
+      }
     }
     catch(ex) { Common.error(ex); }
   });
@@ -105,7 +105,7 @@
           return null;
         }
       }
-      
+
       // is the message a command?
       if (commands.isCommand(message, server)) {
         commands.process(message, server, world);
@@ -114,7 +114,9 @@
         server.speak(message);
       }
     }
-    catch(ex) { Common.error(ex); }
+    catch(ex) {
+      Common.error(ex);
+    }
   });
 
   // when messages are edited
@@ -156,6 +158,8 @@
   bot.on('reconnecting',     ()       => Common.error('reconnecting'));
   bot.on('resume',           replayed => Common.error('resume: ' + replayed));
   bot.on('warn',             info     => Common.error('warn:' + info));
+
+  bot.on('disconnect',             info     => Common.error('disconnect:' + info));
 
   // ctrl-c
   process.on('SIGINT', () => world.kill('SIGINT'));

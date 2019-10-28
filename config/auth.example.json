@@ -28,6 +28,7 @@
        "enabled": false
      },
      "amazon": {
+      "region": "us-east-1",
       "accessKeyId":"",
       "secretAccessKey": "",
       "enforce_limit": true,
@@ -37,6 +38,6 @@
      "watson": {
       "enabled": false
      }
-  
+
   }
 }

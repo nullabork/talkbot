@@ -130,7 +130,7 @@ class Server {
   }
 
   deleteSettings(key) {
-    delete this[key];    
+    delete this[key];
   }
 
   getSettingObject (name) {
@@ -283,12 +283,12 @@ class Server {
           server.connecting = false; // this might cause a race condition
           Common.error(error);
         });
-        
+
         connection.on('disconnect', () => {
           Common.out('disconnect');
           server.leaving = false;
         });
-        
+
         server.save();
         server.world.setPresence();
         server.connecting = false;
@@ -518,7 +518,7 @@ class Server {
       if ( reason != 'stream' ) {
         server.audioQueue = [];
         Common.error('Cancelled queue: ' + reason);
-      } 
+      }
       else if ( nextAudio ) nextAudio();
     };
 
@@ -544,10 +544,29 @@ class Server {
       server.voiceDispatcher = server.guild.voiceConnection
         .playOpusStream(readable)
         .on('end', endFunc)
-        .on('error', error => Common.error(error));      
+        .on('error', error => Common.error(error));
     }
     catch(ex) {
-      Common.error(ex); 
+      Common.error(ex);
+    }
+  }
+
+  fixChannelMoveError(){
+
+    try {
+      //Hack
+      if(this.guild.voiceConnection &&
+        this.guild.voiceConnection.authentication &&
+        !this.guild.voiceConnection.authentication.secretKey) {
+
+        var token = this.guild.voiceConnection.authentication.token;
+        var ep = this.guild.voiceConnection.authentication.endpoint;
+        this.guild.voiceConnection.reconnect(token || void 0, ep || void 0);
+        this.guild.voiceConnection.on('error', Common.error);
+      }
+
+    } catch(ex) {
+      Common.error(ex);
     }
   }
 

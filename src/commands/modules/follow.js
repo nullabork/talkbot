@@ -14,7 +14,12 @@ var BotCommand = require('@models/BotCommand'),
  * @return  {[undefined]}
  * * */
 function follow(msg) {
+
   var server = msg.server;
+
+  //Hack
+  server.fixChannelMoveError();
+
   var member = msg.message.member;
   if (server.unbork()) msg.il8nResponse('follow.unborking');
   if (server.connecting) return msg.il8nResponse('follow.connecting');
@@ -29,7 +34,7 @@ function follow(msg) {
   } else {
     if (member.voiceChannel) {
 
-      if ( !member.voiceChannel.joinable) 
+      if ( !member.voiceChannel.joinable)
         return msg.il8nResponse('follow.permissions');
 
       if ( exceeded_daily_limit(server))
@@ -44,7 +49,7 @@ function follow(msg) {
       server.setMaster(member);
       server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
-        
+
         server.addMemberSetting(member,'toLanguage', 'default');
         commands.notify('follow', {member: member, server: server});
         msg.il8nResponse('follow.okay');
@@ -78,7 +83,7 @@ function exceeded_daily_limit(server) {
 function should_pester(server) {
 
   var threshold = auth.pester_threshold;
-  if (auth.servers && auth.servers[server.server_id] && auth.servers[server.server_id].pester_threshold) 
+  if (auth.servers && auth.servers[server.server_id] && auth.servers[server.server_id].pester_threshold)
     threshold = auth.servers[server.server_id].pester_threshold;
 
   return (server.stats.characterCount > threshold && threshold > 0 && !server.pestered);
@@ -95,6 +100,11 @@ function should_pester(server) {
  * * */
 function unfollow(msg) {
   var server = msg.server;
+
+
+  server.fixChannelMoveError();
+
+
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
   if (server.switching_channel) return msg.il8nResponse('unfollow.switching');
@@ -215,7 +225,7 @@ function transfer(msg) {
     msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
   }
   else
-  {      
+  {
     server.joinVoiceChannel(newMaster.voiceChannel)
     .then(() => {
       msg.il8nResponse('transfer.okay', { name : newMaster.displayName });

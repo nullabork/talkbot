@@ -6,12 +6,12 @@ const Common = require('@helpers/common'),
   samplerate = require('node-libsamplerate'),
   prism = require('prism-media'),
   commands = require('@commands'),
-  fs = require('fs'),  
+  fs = require('fs'),
   xmlentities = require('xml-entities'),
   ssmlvalid = require('ssml-validator'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   MessageSSML = require('@models/MessageSSML'),
-  amazon = require('polly-tts');  
+  amazon = require('polly-tts');
 
 class AmazonTextToSpeechAPI extends TextToSpeechService {
 
@@ -30,7 +30,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     return auth.tts.amazon.limit;
   }
 
-  // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg 
+  // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg
   // google works fine!
   get format() { return "opus"; }
 
@@ -45,21 +45,26 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
     const accessKeyId = auth.tts.amazon.accessKeyId;
     const secretAccessKey = auth.tts.amazon.secretAccessKey;
-    
+    const region = auth.tts.amazon.region;
+
     if (!secretAccessKey || !accessKeyId) {
       console.log('Config variable tts.amazon.accessKeyId or tts.amazon.secretAccessKey is not set.');
       process.exit(1);
     }
 
     try {
-      AmazonTextToSpeechAPI.polly = new amazon({accessKeyId: accessKeyId, secretAccessKey: secretAccessKey});    
+      AmazonTextToSpeechAPI.polly = new amazon({
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
+        region: region || "us-east-1"
+      });
       AmazonTextToSpeechAPI.voices = AmazonTextToSpeechAPI.buildVoices();
       //var v = await self.getVoicesFromAzure(self.accessToken);
     } catch (err) {
       console.log(`Something went wrong: ${err}`);
       process.exit(1);
-    }    
-    console.log("Loaded the Amazon TTS API credentials OK.");    
+    }
+    console.log("Loaded the Amazon TTS API credentials OK.");
   }
 
   /**
@@ -76,7 +81,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       msg = ssmlvalid.correct(msg);
     if ( !settings['amazon-breaths-disabled'] )
       msg  = '<amazon:auto-breaths>' + msg + '</amazon:auto-breaths>';
-    
+
     var ssml = new MessageSSML(msg, { server: server }).build();
     var self = this;
     let options = {
@@ -104,20 +109,20 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     AmazonTextToSpeechAPI.polly.textToSpeech(request, (err, audioStream) => {
       if (err) {
         Common.error(request);
-        Common.error(err);        
+        Common.error(err);
         callback(new Error(err), null);
         return;
       }
       try {
-  
+
         var ld = new lame.Decoder({
-          sampleRate: 22050,       
-          channels: lame.MONO,  
-          signed: true,         
-          float: false,         
-          bitDepth: 16,    
+          sampleRate: 22050,
+          channels: lame.MONO,
+          signed: true,
+          float: false,
+          bitDepth: 16,
         });
-        
+
         var resample = new samplerate({
           // Value can be from 0 to 4 or using enum. 0 is the best quality and the slowest.
           type: samplerate.SRC_SINC_MEDIUM_QUALITY,
@@ -153,7 +158,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
   }
 
   getRandomVoice(randnum, gender, lang_code) {
-    if ( !randnum ) randnum = Math.random() * 1000000; 
+    if ( !randnum ) randnum = Math.random() * 1000000;
     var voices = AmazonTextToSpeechAPI.voices.filter(voice => (!lang_code || voice.code == lang_code) && (!gender || voice.gender == gender));
 
     return voices[randnum % voices.length].voice;
@@ -169,91 +174,91 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
   static buildVoices() {
     var v = [
-      {"language":"Arabic","code":"ar-AR","translate":"ar","voice":"Zeina","gender":"FEMALE"},      
-      
-      {"language":"Chinese (Mandarin)","code":"zh-CN","translate":"zh","voice":"Zhiyu","gender":"FEMALE"},     
+      {"language":"Arabic","code":"ar-AR","translate":"ar","voice":"Zeina","gender":"FEMALE"},
 
-      {"language":"Danish","code":"da-DK","translate":"da","voice":"Naja","gender":"FEMALE"},      
-      {"language":"Danish","code":"da-DK","translate":"da","voice":"Mads","gender":"MALE"},      
-      
-      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Lotte","gender":"FEMALE"},      
-      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Ruben","gender":"MALE"},      
+      {"language":"Chinese (Mandarin)","code":"zh-CN","translate":"zh","voice":"Zhiyu","gender":"FEMALE"},
 
-      {"language":"English (Australian)","code":"en-AU","translate":"en","voice":"Nicole","gender":"FEMALE"},      
-      {"language":"English (Australian)","code":"en-AU","translate":"en","voice":"Russell","gender":"MALE"},  
+      {"language":"Danish","code":"da-DK","translate":"da","voice":"Naja","gender":"FEMALE"},
+      {"language":"Danish","code":"da-DK","translate":"da","voice":"Mads","gender":"MALE"},
 
-      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Amy","gender":"FEMALE"},      
-      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Emma","gender":"FEMALE"},      
-      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Brian","gender":"MALE"},     
+      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Lotte","gender":"FEMALE"},
+      {"language":"Dutch","code":"nl-NL","translate":"nl","voice":"Ruben","gender":"MALE"},
 
-      {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Aditi","gender":"FEMALE"},      
-      {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Raveena","gender":"FEMALE"},  
+      {"language":"English (Australian)","code":"en-AU","translate":"en","voice":"Nicole","gender":"FEMALE"},
+      {"language":"English (Australian)","code":"en-AU","translate":"en","voice":"Russell","gender":"MALE"},
 
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joanna","gender":"FEMALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kendra","gender":"FEMALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kimberly","gender":"FEMALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Salli","gender":"FEMALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joey","gender":"MALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Justin","gender":"MALE"},      
-      {"language":"English (US)","code":"en-US","translate":"en","voice":"Matthew","gender":"MALE"},      
+      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Amy","gender":"FEMALE"},
+      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Emma","gender":"FEMALE"},
+      {"language":"English (British)","code":"en-GB","translate":"en","voice":"Brian","gender":"MALE"},
 
-      {"language":"English (Welsh)","code":"en-GB-WLS","translate":"en","voice":"Geraint","gender":"MALE"},      
+      {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Aditi","gender":"FEMALE"},
+      {"language":"English (Indian)","code":"en-IN","translate":"en","voice":"Raveena","gender":"FEMALE"},
 
-      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Celine","gender":"FEMALE"},      
-      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Léa","gender":"FEMALE"},      
-      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Mathieu","gender":"MALE"},      
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joanna","gender":"FEMALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kendra","gender":"FEMALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Kimberly","gender":"FEMALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Ivy","gender":"FEMALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Salli","gender":"FEMALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Joey","gender":"MALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Justin","gender":"MALE"},
+      {"language":"English (US)","code":"en-US","translate":"en","voice":"Matthew","gender":"MALE"},
 
-      {"language":"French (Canada)","code":"fr-CA","translate":"fr","voice":"Chantal","gender":"FEMALE"},      
+      {"language":"English (Welsh)","code":"en-GB-WLS","translate":"en","voice":"Geraint","gender":"MALE"},
 
-      {"language":"German","code":"de-DE","translate":"de","voice":"Marlene","gender":"FEMALE"},      
-      {"language":"German","code":"de-DE","translate":"de","voice":"Vicki","gender":"FEMALE"},      
-      {"language":"German","code":"de-DE","translate":"de","voice":"Hans","gender":"MALE"},  
+      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Celine","gender":"FEMALE"},
+      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Léa","gender":"FEMALE"},
+      {"language":"French (France)","code":"fr-FR","translate":"fr","voice":"Mathieu","gender":"MALE"},
 
-      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Dora","gender":"FEMALE"},      
-      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Karl","gender":"MALE"},     
+      {"language":"French (Canada)","code":"fr-CA","translate":"fr","voice":"Chantal","gender":"FEMALE"},
 
-      {"language":"Italian","code":"it-IT","translate":"it","voice":"Carla","gender":"FEMALE"},      
-      {"language":"Italian","code":"it-IT","translate":"it","voice":"Bianca","gender":"FEMALE"},      
-      {"language":"Italian","code":"it-IT","translate":"it","voice":"Giorgio","gender":"MALE"},    
+      {"language":"German","code":"de-DE","translate":"de","voice":"Marlene","gender":"FEMALE"},
+      {"language":"German","code":"de-DE","translate":"de","voice":"Vicki","gender":"FEMALE"},
+      {"language":"German","code":"de-DE","translate":"de","voice":"Hans","gender":"MALE"},
 
-      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Mizuki","gender":"FEMALE"},      
-      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Takumi","gender":"MALE"},      
+      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Dora","gender":"FEMALE"},
+      {"language":"Icelandic","code":"is-IS","translate":"is","voice":"Karl","gender":"MALE"},
 
-      {"language":"Korean","code":"ko-KR","translate":"ko","voice":"Seoyeon","gender":"FEMALE"},      
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Carla","gender":"FEMALE"},
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Bianca","gender":"FEMALE"},
+      {"language":"Italian","code":"it-IT","translate":"it","voice":"Giorgio","gender":"MALE"},
 
-      {"language":"Norwegian","code":"nb-NO","translate":"nb","voice":"Liv","gender":"FEMALE"},      
+      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Mizuki","gender":"FEMALE"},
+      {"language":"Japanese","code":"ja-JP","translate":"ja","voice":"Takumi","gender":"MALE"},
 
-      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Ewa","gender":"FEMALE"},      
-      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Maja","gender":"FEMALE"},      
-      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jacek","gender":"MALE"},      
-      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jan","gender":"MALE"},      
+      {"language":"Korean","code":"ko-KR","translate":"ko","voice":"Seoyeon","gender":"FEMALE"},
 
-      {"language":"Portuguese (Brazil)","code":"pt-BR","translate":"pt","voice":"Vitoria","gender":"FEMALE"},      
-      {"language":"Portuguese (Brazil)","code":"pt-BR","translate":"pt","voice":"Ricardo","gender":"MALE"},      
+      {"language":"Norwegian","code":"nb-NO","translate":"nb","voice":"Liv","gender":"FEMALE"},
 
-      {"language":"Portuguese (Portugal)","code":"pt-PT","translate":"pt","voice":"Ines","gender":"FEMALE"},      
-      {"language":"Portuguese (Portugal)","code":"pt-PT","translate":"pt","voice":"Cristiano","gender":"MALE"},      
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Ewa","gender":"FEMALE"},
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Maja","gender":"FEMALE"},
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jacek","gender":"MALE"},
+      {"language":"Polish","code":"pl-PL","translate":"pl","voice":"Jan","gender":"MALE"},
 
-      {"language":"Romanian","code":"ro-RO","translate":"ro","voice":"Carmen","gender":"FEMALE"},      
+      {"language":"Portuguese (Brazil)","code":"pt-BR","translate":"pt","voice":"Vitoria","gender":"FEMALE"},
+      {"language":"Portuguese (Brazil)","code":"pt-BR","translate":"pt","voice":"Ricardo","gender":"MALE"},
 
-      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Tatyana","gender":"FEMALE"},      
-      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Maxim","gender":"MALE"},      
+      {"language":"Portuguese (Portugal)","code":"pt-PT","translate":"pt","voice":"Ines","gender":"FEMALE"},
+      {"language":"Portuguese (Portugal)","code":"pt-PT","translate":"pt","voice":"Cristiano","gender":"MALE"},
 
-      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Conchita","gender":"FEMALE"},      
-      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Enrique","gender":"MALE"},      
-      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Lucia","gender":"FEMALE"},      
+      {"language":"Romanian","code":"ro-RO","translate":"ro","voice":"Carmen","gender":"FEMALE"},
 
-      {"language":"Spanish (Mexico)","code":"es-MX","translate":"es","voice":"Mia","gender":"FEMALE"},    
+      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Tatyana","gender":"FEMALE"},
+      {"language":"Russian","code":"ru-RU","translate":"ru","voice":"Maxim","gender":"MALE"},
 
-      {"language":"Spanish (US)","code":"es-US","translate":"es","voice":"Penelope","gender":"FEMALE"},     
-      {"language":"Spanish (US)","code":"es-US","translate":"es","voice":"Miguel","gender":"MALE"},      
+      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Conchita","gender":"FEMALE"},
+      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Enrique","gender":"MALE"},
+      {"language":"Spanish (Spain)","code":"es-ES","translate":"es","voice":"Lucia","gender":"FEMALE"},
 
-      {"language":"Swedish","code":"sv-SE","translate":"sv","voice":"Astrid","gender":"FEMALE"},  
+      {"language":"Spanish (Mexico)","code":"es-MX","translate":"es","voice":"Mia","gender":"FEMALE"},
 
-      {"language":"Turkish","code":"tr-TR","translate":"tr","voice":"Filiz","gender":"FEMALE"},    
+      {"language":"Spanish (US)","code":"es-US","translate":"es","voice":"Penelope","gender":"FEMALE"},
+      {"language":"Spanish (US)","code":"es-US","translate":"es","voice":"Miguel","gender":"MALE"},
 
-      {"language":"Welsh","code":"cy-GB","translate":"cy","voice":"Gwyneth","gender":"FEMALE"}      
+      {"language":"Swedish","code":"sv-SE","translate":"sv","voice":"Astrid","gender":"FEMALE"},
+
+      {"language":"Turkish","code":"tr-TR","translate":"tr","voice":"Filiz","gender":"FEMALE"},
+
+      {"language":"Welsh","code":"cy-GB","translate":"cy","voice":"Gwyneth","gender":"FEMALE"}
     ];
 
     // set the provider
