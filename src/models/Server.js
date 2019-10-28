@@ -559,9 +559,7 @@ class Server {
         this.guild.voiceConnection.authentication &&
         !this.guild.voiceConnection.authentication.secretKey) {
 
-        var token = this.guild.voiceConnection.authentication.token;
-        var ep = this.guild.voiceConnection.authentication.endpoint;
-        this.guild.voiceConnection.reconnect(token || void 0, ep || void 0);
+        this.guild.voiceConnection.reconnect();
         this.guild.voiceConnection.on('error', Common.error);
       }
 
