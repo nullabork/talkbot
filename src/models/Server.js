@@ -225,7 +225,7 @@ class Server {
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
   joinVoiceChannel(voiceChannel) {
-
+  
     var server = this;
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.guild.voiceConnection.channel.id + '!');
@@ -244,6 +244,8 @@ class Server {
 
         connection.on('disconnect', () => {
           server.stop('disconnect'); // stop playing
+          server.bound_to = null;
+          server.permitted = {};
           server.leaving = false;
         });
         
