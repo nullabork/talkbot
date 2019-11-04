@@ -88,18 +88,6 @@ class Server {
 
     // idk??
     this.messages = {};
-
-    this.addDefaultProviderToProductionSettings();
-  }
-
-  // SUNSET: This can be removed after this code is first run on production
-  addDefaultProviderToProductionSettings()
-  {
-    if ( this.created > new Date(2019,5,31)) return;
-    for ( var id in this.memberSettings)
-      if ( !this.memberSettings[id].voice_provider )
-        if ( this.memberSettings[id].name && this.memberSettings[id].name != 'default' && this.memberSettings[id].name != '' )
-          this.memberSettings[id].voice_provider = 'google';
   }
 
   // GuildMember
@@ -234,25 +222,6 @@ class Server {
     server.guild.voiceConnection.disconnect();
   }
 
-  // HACK: there's some wierd issue where the voice connection drops and you can't
-  // use !follow to rejoin the voice channel. This leaves 'no connection' hanging
-  // bots in voice. This call attempts to identify this issue and correct for it.
-  // However ultimately the source issue needs to be found.
-  unbork() {
-    var server = this;
-    if (server.guild.voiceConnection) return false;
-    if (!server.connecting) return false;
-    if (!server.connect_start) return false;
-    if ((new Date()).getTime() - server.connect_start.getTime() > 30000) {
-      server.connecting = false;
-      server.connect_start = null;
-      server.release(() => {
-      });
-      return true;
-    }
-    return false;
-  }
-
   // get the server to join a voice channel
   // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
   joinVoiceChannel(voiceChannel) {
@@ -261,38 +230,33 @@ class Server {
     if (server.connecting) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
     if (server.inChannel()) return Common.error('joinVoiceChannel(' + voiceChannel.id + '): already joined to ' + server.guild.voiceConnection.channel.id + '!');
     server.connecting = true;
-    server.connect_start = new Date();
-
+    
+    // join the voice channel and setup all the listeners to deal with events
     var p = voiceChannel
       .join()
       .then(connection => {
         // success
         connection.on('closing', () => {
           server.leaving = true;
-          if (!server.switching_channels)
-          {
-            server.bound_to = null;
-            server.permitted = {};
-          }
           server.stop('voiceClosing'); // stop playing
           clearTimeout(server.neglect_timeout);
         });
 
+        connection.on('disconnect', () => {
+          server.stop('disconnect'); // stop playing
+          server.leaving = false;
+        });
+        
         connection.on('error', error => {
           server.leaving = false;
           server.connecting = false; // this might cause a race condition
           Common.error(error);
+          connection.disconnect(); // nerf the connection because we got an error
         });
 
-        connection.on('disconnect', () => {
-          Common.out('disconnect');
-          server.leaving = false;
-        });
-
+        server.connecting = false;
         server.save();
         server.world.setPresence();
-        server.connecting = false;
-        server.connect_start = null;
         commands.notify('joinVoice', {server: server});
       }, error => {
         server.stop('joinError');
@@ -306,30 +270,11 @@ class Server {
   // switch from whatever the current voice channel is to this voice channel
   switchVoiceChannel(voiceChannel) {
     var server = this;
-    if (server.switching_channels || server.connecting || server.leaving) {
-      if ( !server.switchQueue ) server.switchQueue = [];
-      server.switchQueue.push(voiceChannel);
-
-      // drop it if the queue gets too large
-      if ( server.switchQueue.length > 3 ) server.switchQueue.shift();
-      return;
-    }
     if (!voiceChannel) return Common.error(new Error("null voiceChannel passed"));
-    if (!server.guild.voiceConnection) return Common.error(new Error("server.guild.voiceConnection is null"));
+    if (!server.guild.voiceConnection) return server.joinVoiceChannel(voiceChannel).then(null, Common.error).catch(Common.error);
     if (voiceChannel.id == server.guild.voiceConnection.channel.id ) return Common.error('voiceChannel already joined');
-
-    server.switching_channels = true;
-
-    server.guild.voiceConnection.on(
-      'disconnect',
-      () => server.joinVoiceChannel(voiceChannel)
-            .then(() => {
-              server.switching_channels = false;
-              if ( server.switchQueue && server.switchQueue.length > 0 )
-                server.switchVoiceChannel(server.switchQueue.shift());
-            })
-    );
-    server.guild.voiceConnection.disconnect();
+    
+    server.guild.voiceConnection.updateChannel(voiceChannel);    
   }
 
   // permit another user to speak
@@ -425,7 +370,6 @@ class Server {
       if (key == "bound_to") return undefined;
       if (key == "world") return undefined;
       if (key == "guild") return undefined;
-      if (key == "voiceDispatcher") return undefined;
       if (key == "keepQueue") return undefined;
       if (key == "switchQueue") return undefined;
       if (key == "twitch") return undefined;
@@ -488,12 +432,13 @@ class Server {
     });
   };
 
-  // stop all currently playing audio and empty the audio queue
+  // stop currently playing audio and empty the audio queue (all=true)
   stop(reason, all) {
     if(all){
       this.audioQueue = [];
     }
-    if ( this.voiceDispatcher ) this.voiceDispatcher.end(reason);
+    if ( this.guild.voiceConnection &&
+         this.guild.voiceConnection.dispatcher ) this.guild.voiceConnection.dispatcher.end(reason);
   };
 
   // internal function for playing audio content returned from the TTS API and queuing it
@@ -509,13 +454,12 @@ class Server {
     var endFunc = reason => {
       clearTimeout(server.voice_timeout);
       server.playing = false;
-      if ( server.voiceDispatcher ) server.voiceDispatcher.setSpeaking(false);
-      server.voiceDispatcher = null;
+      if ( server.guild.voiceConnection.dispatcher ) server.guild.voiceConnection.dispatcher.setSpeaking(false);
       server.voice_timeout = null;
       try { callback(); } catch(ex) { Common.error(ex); }
       if ( !server.audioQueue ) return;
       var nextAudio = server.audioQueue.shift();
-      if ( reason != 'stream' ) {
+      if ( reason != 'stream' ) {  // if the stream hasn't ended normally
         server.audioQueue = [];
         Common.error('Cancelled queue: ' + reason);
       }
@@ -537,33 +481,18 @@ class Server {
 
     // play the content
     server.playing = true;
-    if ( server.voice_timeout) clearTimeout(server.voice_timeout);
-    server.voice_timeout = setTimeout(() => server.voiceDispatcher ? server.voiceDispatcher.end('timeout') : null, 60000);
+    clearTimeout(server.voice_timeout);
+    server.voice_timeout = setTimeout(() => server.guild.voiceConnection.dispatcher ? 
+                                            server.guild.voiceConnection.dispatcher.end('timeout') : 
+                                            null, 60000);
 
     try {
-      server.voiceDispatcher = server.guild.voiceConnection
+      server.guild.voiceConnection
         .playOpusStream(readable)
         .on('end', endFunc)
-        .on('error', error => Common.error(error));
+        .on('error', Common.error);
     }
     catch(ex) {
-      Common.error(ex);
-    }
-  }
-
-  fixChannelMoveError(){
-
-    try {
-      //Hack
-      if(this.guild.voiceConnection &&
-        this.guild.voiceConnection.authentication &&
-        !this.guild.voiceConnection.authentication.secretKey) {
-
-        this.guild.voiceConnection.reconnect();
-        this.guild.voiceConnection.on('error', Common.error);
-      }
-
-    } catch(ex) {
       Common.error(ex);
     }
   }
