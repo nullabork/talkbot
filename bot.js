@@ -73,20 +73,20 @@
   // handle voice state updates
   bot.on('voiceStateUpdate', (oldMember, newMember) => {
     if (!oldMember) return;
-    
+
     try {
       var server = world.servers[oldMember.guild.id];
       if (!server.isMaster(oldMember))
         return;
-      
-      // they've changed voice channels 
+
+      // they've changed voice channels
       if ( oldMember.voiceChannel && (!newMember.voiceChannel || !newMember.voiceChannel.joinable)) { // || oldMember.voiceChannel.id != newMember.voiceChannel.id
         server.release();
       }
       else if ( oldMember.voiceChannel && newMember.voiceChannel && oldMember.voiceChannel.id != newMember.voiceChannel.id )
       {
         server.switchVoiceChannel(newMember.voiceChannel);
-      }      
+      }
     }
     catch(ex) { Common.error(ex); }
   });
@@ -94,9 +94,12 @@
   // when messages come in
   bot.on('message', message => {
     try {
+      // ignore message from myself
       if ( message.member && message.member.id == bot.user.id ) return;
 
       var server = null;
+      
+      // if its in a server and not a DM
       if ( message.guild ) {
         server = world.servers[message.guild.id];
 
@@ -105,7 +108,7 @@
           return null;
         }
       }
-      
+
       // is the message a command?
       if (commands.isCommand(message, server)) {
         commands.process(message, server, world);
@@ -114,28 +117,10 @@
         server.speak(message);
       }
     }
-    catch(ex) { Common.error(ex); }
+    catch(ex) {
+      Common.error(ex);
+    }
   });
-
-  // when messages are edited
-  /*bot.on('messageUpdate', (oldMessage, newMessage) => {
-    if ( newMessage.member.id == bot.user.id ) return;
-
-    var server = world.servers[newMessage.guild.id];
-
-    if (server == null) {
-      Common.error("Can't find server for guild id: " + newMessage.guild.id);
-      return null;
-    }
-
-    // is the message a command?
-    if (commands.isCommand(newMessage)) {
-      commands.process(newMessage, server, world);
-    } else {
-      // say it out loud
-      server.speak(newMessage);
-    }
-  });*/
 
   // if we get disconnected???
   bot.on('disconnect', evt => {
@@ -157,6 +142,8 @@
   bot.on('resume',           replayed => Common.error('resume: ' + replayed));
   bot.on('warn',             info     => Common.error('warn:' + info));
 
+  bot.on('disconnect',             info     => Common.error('disconnect:' + info));
+  
   // ctrl-c
   process.on('SIGINT', () => world.kill('SIGINT'));
 

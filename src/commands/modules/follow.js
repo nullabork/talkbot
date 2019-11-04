@@ -14,12 +14,12 @@ var BotCommand = require('@models/BotCommand'),
  * @return  {[undefined]}
  * * */
 function follow(msg) {
+
   var server = msg.server;
+
   var member = msg.message.member;
-  if (server.unbork()) msg.il8nResponse('follow.unborking');
   if (server.connecting) return msg.il8nResponse('follow.connecting');
   if (server.leaving) return msg.il8nResponse('follow.leaving');
-  if (server.switching_channel) return msg.il8nResponse('follow.switching');
   if (server.isBound()) {
     if (!server.isMaster(member)) {
       msg.il8nResponse('follow.nope', { name: server.bound_to.displayName });
@@ -29,7 +29,7 @@ function follow(msg) {
   } else {
     if (member.voiceChannel) {
 
-      if ( !member.voiceChannel.joinable) 
+      if ( !member.voiceChannel.joinable)
         return msg.il8nResponse('follow.permissions');
 
       if ( exceeded_daily_limit(server))
@@ -40,11 +40,17 @@ function follow(msg) {
         msg.il8nResponse('follow.pester');
         server.pestered = true;
       }
+      
+      var errorFunc = (error) => {
+        msg.il8nResponse('follow.error');
+        Common.error(err);
+        server.release();
+      };
 
       server.setMaster(member);
       server.joinVoiceChannel(member.voiceChannel)
       .then(() => {
-        
+
         server.addMemberSetting(member,'toLanguage', 'default');
         commands.notify('follow', {member: member, server: server});
         msg.il8nResponse('follow.okay');
@@ -54,12 +60,9 @@ function follow(msg) {
           server.addMemberSetting(member,'muted',false);
           msg.il8nResponse('mute.unmuted');
         }
-      })
-      .catch(err => {
-        msg.il8nResponse('follow.error');
-        Common.error(err);
-        server.release();
-      });
+      }, 
+      errorFunc)
+      .catch(errorFunc);
     } else {
       msg.il8nResponse('follow.join');
     }
@@ -78,7 +81,7 @@ function exceeded_daily_limit(server) {
 function should_pester(server) {
 
   var threshold = auth.pester_threshold;
-  if (auth.servers && auth.servers[server.server_id] && auth.servers[server.server_id].pester_threshold) 
+  if (auth.servers && auth.servers[server.server_id] && auth.servers[server.server_id].pester_threshold)
     threshold = auth.servers[server.server_id].pester_threshold;
 
   return (server.stats.characterCount > threshold && threshold > 0 && !server.pestered);
@@ -95,9 +98,9 @@ function should_pester(server) {
  * * */
 function unfollow(msg) {
   var server = msg.server;
+
   if (server.connecting) return msg.il8nResponse('unfollow.connecting');
   if (server.leaving) return msg.il8nResponse('unfollow.leaving');
-  if (server.switching_channel) return msg.il8nResponse('unfollow.switching');
 
   if (!server.isBound()) {
     msg.il8nResponse('unfollow.none');
@@ -109,7 +112,7 @@ function unfollow(msg) {
     return;
   }
 
-  server.release(function() {
+  server.release(() => {
     commands.notify('unfollow', {member: msg.message.member, server: server});
     msg.il8nResponse('unfollow.okay');
   });
@@ -126,10 +129,8 @@ function unfollow(msg) {
  * * */
 function sidle(msg) {
   var server = msg.server;
-  if (server.unbork()) msg.il8nResponse('follow.unborking');
   if (server.connecting) return msg.il8nResponse('sidle.connecting');
   if (server.leaving) return msg.il8nResponse('sidle.leaving');
-  if (server.switching_channel) return msg.il8nResponse('sidle.switching');
 
   if (!server.isBound()) {
     msg.il8nResponse('sidle.none');
@@ -176,7 +177,6 @@ function transfer(msg) {
   var server = msg.server;
   if (server.connecting) return msg.il8nResponse('transfer.connecting');
   if (server.leaving) return msg.il8nResponse('transfer.leaving');
-  if (server.switching_channel) return msg.il8nResponse('transfer.switching');
 
   if (!msg.ownerIsMaster() && !msg.ownerCanManageTheServer() && server.isBound()) {
     msg.il8nResponse('transfer.nopermissions');
@@ -215,7 +215,13 @@ function transfer(msg) {
     msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
   }
   else
-  {      
+  {
+    var errorFunc = () => {
+      msg.il8nResponse('transfer.error');
+      Common.error(err);
+      server.release();
+    };
+  
     server.joinVoiceChannel(newMaster.voiceChannel)
     .then(() => {
       msg.il8nResponse('transfer.okay', { name : newMaster.displayName });
@@ -227,13 +233,10 @@ function transfer(msg) {
         server.addMemberSetting(newMaster,'muted',false);
         msg.il8nResponse('mute.unmuted');
       }
-    })
-    .catch(err => {
-      msg.il8nResponse('transfer.error');
-      Common.error(err);
-      server.release();
-    });
-}
+    }, 
+    errorFunc)
+    .catch(errorFunc);
+  }
 }
 
 var command_follow = new BotCommand({

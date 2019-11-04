@@ -6,12 +6,12 @@ class RuntimeTesting {
     // run this to test if you need a different version of node
 
     var ChildProc = require('child_process');
-    var players = ["ffmpeg"];
+    var players = ["ffmpeg", "./ffmpeg"];
 
     function chooseAudioEncoder(players) {
       if (!players[0]) return null;
-      var s = ChildProc.spawnSync(players.shift());
-      return s.error ? chooseAudioEncoder(players) : s.file;
+      var s = ChildProc.spawnSync(players.shift(), ['-h']);
+      return s.error ? chooseAudioEncoder(players) : true;
     }
 
     if (!chooseAudioEncoder(players)) {
@@ -24,11 +24,11 @@ class RuntimeTesting {
       console.log("Loaded FFMPEG OK.");
     }
   }
-  
+
   static async TestIfTTSAPIServicesAreConfigured() {
     await require("@services/TextToSpeechService").setupProviders();
   }
-  
+
   static TestIfNodeOpusIsInstalled() {
 
     try {
