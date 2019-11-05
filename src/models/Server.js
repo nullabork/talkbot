@@ -236,12 +236,15 @@ class Server {
       .join()
       .then(connection => {
         // success
+        
+        // when closing stop the voices and clear the neglect timeout
         connection.on('closing', () => {
           server.leaving = true;
           server.stop('voiceClosing'); // stop playing
           clearTimeout(server.neglect_timeout);
         });
 
+        // when disconnect clear the master - note that d/c may happen without a closing event
         connection.on('disconnect', () => {
           server.stop('disconnect'); // stop playing
           server.bound_to = null;
@@ -249,7 +252,11 @@ class Server {
           server.leaving = false;
         });
         
+        // if an error occurs treat it like a d/c but capture the error
+        // reset the state to as if there was no connection
         connection.on('error', error => {
+          server.bound_to = null;
+          server.permitted = {};
           server.leaving = false;
           server.connecting = false; // this might cause a race condition
           Common.error(error);
@@ -260,8 +267,13 @@ class Server {
         server.save();
         server.world.setPresence();
         commands.notify('joinVoice', {server: server});
+
       }, error => {
+        
+        // on an error treat it like a error on the connection
         server.stop('joinError');
+        server.bound_to = null;
+        server.permitted = {};
         server.connecting = false;
         Common.error(error);
       });
@@ -408,7 +420,7 @@ class Server {
       language: options.language == 'default' ? 'en-AU' : options.language || server.language
     }
 
-    if (options.name != 'default')  settings.name = options.name;
+    if (options.name  != 'default') settings.name =  options.name;
     if (options.pitch != 'default') settings.pitch = options.pitch;
     if (options.speed != 'default') settings.speed = options.speed;
     if (options.voice_provider)     settings.voice_provider = options.voice_provider;
