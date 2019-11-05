@@ -115,8 +115,8 @@ class Stats extends Command {
     switch(sortMethod) {
       case "daily":
         sort = (a,b) => {
-          var bds = b.dailyStats[b.dailyStats.length - 1].characterCount;
-          var ads = a.dailyStats[a.dailyStats.length - 1].characterCount;
+          var bds = b.dailyStats && b.dailyStats.length? b.dailyStats[b.dailyStats.length - 1].characterCount : 0;
+          var ads = a.dailyStats && a.dailyStats.length? a.dailyStats[a.dailyStats.length - 1].characterCount : 0;
           return  bds - ads;
         }
         break;

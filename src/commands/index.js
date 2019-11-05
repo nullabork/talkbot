@@ -169,11 +169,11 @@ function Commands() {
   // is this Message a command message?
   this.isCommand = function(message, server) {
     var char = this.getCommandChar(server);
-    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') > -1); // help will always work this way
+    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') == 0); // help will always work this way
   };
 
   this.isHelpCommand = function(message) {
-    return ( message.content.indexOf(this.command_char +'help') > -1);
+    return ( message.content.indexOf(this.command_char +'help') == 0);
   };
 
   // get the command char from the server or default
