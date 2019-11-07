@@ -156,7 +156,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     if ( voices.length > 0 ) return voices[0].voice;
     var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == lang_code);
     if ( voices.length > 0 ) return voices[0].voice;    
-    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == 'en-US' && voice.gender = gender);
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == 'en-US' && voice.gender == gender);
     if ( voices.length > 0 ) return voices[0].voice;    
     return 'Kimberly';
   }
