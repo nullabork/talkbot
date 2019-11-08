@@ -81,7 +81,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       msg = ssmlvalid.correct(msg);
     if ( !settings['amazon-breaths-disabled'] )
       msg  = '<amazon:auto-breaths>' + msg + '</amazon:auto-breaths>';
-
+      
     var ssml = new MessageSSML(msg, { server: server }).build();
     var self = this;
     let options = {
@@ -154,6 +154,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
   getDefaultVoice(gender, lang_code) {
     var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == lang_code && voice.gender == gender);
     if ( voices.length > 0 ) return voices[0].voice;
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == lang_code);
+    if ( voices.length > 0 ) return voices[0].voice;    
+    var voices = AmazonTextToSpeechAPI.voices.filter(voice => voice.code == 'en-US' && voice.gender == gender);
+    if ( voices.length > 0 ) return voices[0].voice;    
     return 'Kimberly';
   }
 
