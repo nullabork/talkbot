@@ -19,11 +19,12 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function listVoices(msg) {
+  const cmds = require("@commands");
 
   const exampleEmbed = {
     color: 0x0099ff,
     title: `Click to find voices${msg.content ? " for: " +msg.content + "." : "."}`,
-    url: `https://voices.talkbot.dev/?chr=${encodeURI(msg.server.command_char)}&find=${encodeURI(msg.content)}`,
+    url: `https://voices.talkbot.dev/?chr=${encodeURI(cmds.getCommandChar(msg.server))}&find=${encodeURI(msg.content)}`,
     description: 'talkbot voice and voice sample database.',
     thumbnail: {
       url: 'https://voices.talkbot.dev/img/face_200.png',
