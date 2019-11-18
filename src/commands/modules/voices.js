@@ -20,37 +20,18 @@ var BotCommand = require('@models/BotCommand');
  */
 function listVoices(msg) {
 
-    if(!msg.args || !msg.args.length){
-      msg.il8nResponse('voices.more');
-      return;
+  const exampleEmbed = {
+    color: 0x0099ff,
+    title: `Click to find voices${msg.content ? " for: " +msg.content + "." : "."}`,
+    url: `https://voices.talkbot.dev/?chr=${encodeURI(msg.server.command_char)}&find=${encodeURI(msg.content)}`,
+    description: 'talkbot voice and voice sample database.',
+    thumbnail: {
+      url: 'https://voices.talkbot.dev/img/face_200.png',
     }
+  };
 
-    var lang_code = msg.args[0].toLowerCase();
-
-    var data = [['VOICE', 'ALIAS', 'M/F']];
-    for ( var k in TextToSpeechService.providers)
-    {
-      var provider = TextToSpeechService.providers[k];
-
-      var voices = provider.getVoices();
-      voices.map(voice => {
-        if (voice.code.toLowerCase().indexOf(lang_code) > -1 || voice.language.toLowerCase().indexOf(lang_code) > -1) 
-          data.push([
-            voice.provider + '/' + voice.voice,
-            !voice.voice_alias ? "(none)" : voice.voice_alias,
-            voice.gender.substring(0,1).toLowerCase()
-          ]);
-      });
-    }
-
-    var table = tt(data);
-
-    msg.il8nResponse('voices.okay', {
-      table : table,
-      example : auth.command_arg + 'myvoice en-au'
-    });
-
-};
+  msg.richResponse(exampleEmbed);
+}
 
 var command = new BotCommand({
   command_name: 'voices',

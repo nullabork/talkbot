@@ -29,6 +29,15 @@ class MessageDetails {
         .then(chan.stopTyping());
   }
 
+  richResponse(embobj){
+
+    var _this = this;
+    var chan = _this.message.channel;
+    chan.startTyping(1);
+    chan.send({ embed: embobj })
+        .then(chan.stopTyping());
+  }
+
   getNonSnowflakeRoles(){
     if(!this.args) {
       return [];

@@ -4,6 +4,9 @@
   "description": "Text to speech bot",
   "main": "bot.js",
   "author": "YOUR-NAME-HERE",
+  "scripts": {
+    "postinstall": "patch-package"
+  },
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.3.0",
     "@google-cloud/translate": "^2.1.4",
@@ -33,6 +36,7 @@
     "opus-encode": "^2.0.2",
     "opusscript": "0.0.6",
     "pad": "^2.3.0",
+    "patch-package": "^6.2.0",
     "polly-tts": "^1.0.4",
     "prism-media": "^1.1.0",
     "query-objects": "0.0.6",
