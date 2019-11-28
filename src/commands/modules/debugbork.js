@@ -55,7 +55,7 @@ function debug(msg) {
         chansize = server.guild.voiceConnection.channel.members.size;
       active_server_names += server.server_name + "(" + chansize + "): " + build_permitted_string(server) + "\n";
     }
-    member_count += server.guild.members.size;
+    member_count += server.guild.memberCount;
   }
 
   var r = "Active: " + active_server_count + "\n";
