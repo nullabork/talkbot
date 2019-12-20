@@ -9,7 +9,7 @@ var Lang = require("lang.js"),
   fs = require('fs'),
   TextToSpeechService = require('@services/TextToSpeechService');
 
-var TIMEOUT_NEGLECT = 120 * 60 * 1000; // 2 hours
+var TIMEOUT_NEGLECT = 480 * 60 * 1000; // 2 hours
 
 class Server {
 
@@ -346,7 +346,7 @@ class Server {
     };
 
     if (server.inChannel()) {
-      server.talk("I feel neglected, I'm leaving", null, neglectedrelease);
+      server.talk("talkbot inactivity timeout", null, neglectedrelease);
     } else {
       Common.out('neglected: server.release() not in chan');
       server.release();

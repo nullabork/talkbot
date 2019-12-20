@@ -1,12 +1,13 @@
 /*jshint esversion: 9 */
 
-var tt = require("text-table"),
+const tt = require("text-table"),
   TextToSpeechService = require('@services/TextToSpeechService'),
   Common = require('@helpers/common'),
+  commands = require('@commands'),
   auth = require("@auth");
 
 // models
-var BotCommand = require('@models/BotCommand');
+const BotCommand = require('@models/BotCommand');
 
 /**
  * Command: mylang
@@ -23,7 +24,11 @@ function listVoices(msg) {
   const exampleEmbed = {
     color: 0x0099ff,
     title: `Click to find voices${msg.content ? " for: " +msg.content + "." : "."}`,
+<<<<<<< HEAD
     url: `https://voices.talkbot.dev/?chr=${encodeURI(msg.server.command_char || auth.command_char)}&find=${encodeURI(msg.content)}`,
+=======
+    url: `https://voices.talkbot.dev/?chr=${encodeURI(commands.getCommandChar(msg.server))}&find=${encodeURI(msg.content)}`,
+>>>>>>> 1e9ff8e879520be6f8ac9b71742d3950c446b1d4
     description: 'talkbot voice and voice sample database.',
     thumbnail: {
       url: 'https://voices.talkbot.dev/img/face_200.png',
