@@ -20,6 +20,7 @@ const BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function listVoices(msg) {
+  const commands = require('@commands');  
   const exampleEmbed = {
     color: 0x0099ff,
     title: `Click to find voices${msg.content ? " for: " +msg.content + "." : "."}`,
