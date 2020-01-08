@@ -58,6 +58,9 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
 
     try {
       self.accessToken = await self.getAccessToken(subscriptionKey);
+      
+      // accessToken expires after an hour so we need to renew it
+      setInterval(() => self.getAccessToken(auth.tts.azure.subscriptionKey).then((token) => { self.accessToken = token }), 10 * 60 * 1000);
       var v = await self.getVoicesFromAzure(self.accessToken);
       AzureTextToSpeechAPI.voices = self.processVoices(v);
     } catch (err) {
