@@ -71,7 +71,8 @@ Several of the in use NPM packages may require the following:
 4. Install cmake, python v2.7 and Visual Studio C++ build tools 
     * See the URLs in the software requirements for how to do this
 5. Install NPM dependencies
-    * ```npm install
+    * ```
+    npm install
     npm rebuild
     npx patch-package```
 6. Run the bot! 
