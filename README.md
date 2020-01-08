@@ -57,7 +57,6 @@ Each of these services can be turned on and off in the configuration of the bot.
 - git 
 
 Several of the in use NPM packages may require the following:
-- ffmpeg - https://www.ffmpeg.org/download.html
 - cmake - https://cmake.org/download/
 - python - https://www.python.org/downloads/ - v2.7.* is usually required
 - Visual Studio C++ build tools or Visual Studio with full C++ support
@@ -69,10 +68,12 @@ Several of the in use NPM packages may require the following:
     * To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 3. Setup your Google API credentials. 
     * To learn how to do this [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
-4. Install cmake, ffmpeg, python v2.7 and Visual Studio C++ build tools 
+4. Install cmake, python v2.7 and Visual Studio C++ build tools 
     * See the URLs in the software requirements for how to do this
 5. Install NPM dependencies
-    * `npm install` 
+    * ```npm install
+    npm rebuild
+    npx patch-package```
 6. Run the bot! 
     * `node bot.js`
 
