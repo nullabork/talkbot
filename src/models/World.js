@@ -11,7 +11,7 @@ class World {
   constructor() {
     this.servers = {};
     this.presence_timeout = null;
-    this.default_title = auth.default_title;
+    this.default_title = auth.default_title || 'master';
   }
 
 /* * *
