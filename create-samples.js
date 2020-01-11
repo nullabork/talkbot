@@ -9,11 +9,23 @@
         prism = require("prism-media"),
         lame = require("lame"),
         fs = require("fs"),
+        auth = require("@auth"),
+        polly = require("./src/services/tts/PollyTTS.js"),
         msg = "You are hearing me talk";
 
     process.on('uncaughtException', console.log);
 
     await tts.setupProviders();
+
+    const accessKeyId = auth.tts.amazon.accessKeyId;
+    const secretAccessKey = auth.tts.amazon.secretAccessKey;
+    const region = auth.tts.amazon.region;
+    let voices = await new polly({accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
+        region: region || "us-east-1"}).describeVoices();
+
+    console.log(voices);
+    return;
 
     for ( let provider_name in tts.providers ) {
 
