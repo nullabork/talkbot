@@ -183,7 +183,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
       language: voice.LanguageName,
       code: voice.LanguageCode,
       translate: voice.LanguageCode.substr(0,2),
-      voice: voice.Name,
+      voice: voice.Id,
       gender: voice.Gender.toUpperCase(),
       provider: "amazon",
       voice_alias: voice.Name
