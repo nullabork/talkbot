@@ -4,32 +4,21 @@ require('module-alias/register');
 /* make voice samples with `node create-samples.js` */
 (async () => {
 
-
     const tts = require("@services/TextToSpeechService.js"),
         delay = require("delay"),
         prism = require("prism-media"),
         lame = require("lame"),
         fs = require("fs"),
-        auth = require("@auth"),
-        polly = require("@services/tts/PollyTTS.js"),
         msg = "You are hearing me talk";
 
     process.on('uncaughtException', console.log);
 
     await tts.setupProviders();
 
-    const accessKeyId = auth.tts.amazon.accessKeyId;
-    const secretAccessKey = auth.tts.amazon.secretAccessKey;
-    const region = auth.tts.amazon.region;
-    let voices = await new polly({accessKeyId: accessKeyId,
-        secretAccessKey: secretAccessKey,
-        region: region || "us-east-1"}).describeVoices();
-
-
     var dir = './samples';
 
     if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
+      fs.mkdirSync(dir);
     }
 
     for ( let provider_name in tts.providers ) {
