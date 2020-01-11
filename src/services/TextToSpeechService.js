@@ -152,8 +152,9 @@ class TextToSpeechService {
 
   static async setupProviders() {
     TextToSpeechService.providers = {};
-    await fs.readdirSync(paths.tts)
-    .forEach(async file => {
+    let files = await fs.readdirSync(paths.tts);
+
+    for ( let file of files ) {
       try {
         var api = require(paths.tts + '/' + file);
         var obj = new api();
@@ -168,7 +169,7 @@ class TextToSpeechService {
         Common.error(err);
         process.exit(1);
       }
-    });
+    }
   }
 
   /**
