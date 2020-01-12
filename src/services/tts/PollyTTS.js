@@ -48,12 +48,13 @@ class PollyTTS {
     })
   }
 
-  async textToSpeech(options, callback) {
+  async textToSpeech(options) {
 
     return new Promise((resolve, reject) => {
 
         if (!options) {
-            return reject("Options are missing");
+            reject("Options are missing");
+            return;
         }
         let qs = {
             Text: options.text,
@@ -73,13 +74,13 @@ class PollyTTS {
         aws4.sign(opts, this.credentials);
         https.get(opts, res => {
             if (res.statusCode !== 200) {
-                throw new Error(`Request Failed. Status Code: ${res.statusCode}`)
+                reject(`Request Failed. Status Code: ${res.statusCode}`);
             }
-            resolve(res);
+            else {
+                resolve(res);
+            }
         })
-        .on("error", e => {
-            reject(e);
-        });
+        .on("error", reject);
     })
   }
 }
