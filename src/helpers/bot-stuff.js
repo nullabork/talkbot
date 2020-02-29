@@ -39,6 +39,13 @@ class BotStuff {
     return rtn;
   };
 
+  // determines if a member can manage the bot
+  canManageTheBot(server, member) {
+    if (!server.adminrole) return false;
+    const rtn = member.roles.has(server.adminrole);
+    return rtn;
+  };
+
   botHasManageMessagePermissions(server)
   {
     var botMember = server.guild.members.find( x => x.id == this.bot.user.id);
