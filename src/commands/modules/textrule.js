@@ -100,7 +100,7 @@ class TextRule extends Command {
      */
     if(/^(set|add)$/i.test( rule_command ))
     {
-      if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
+      if (!input.ownerCanManageTheServer() && !input.memberCanManageBot())    return input.il8nResponse('textrule.nope');
       if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });
       if (replacement === null || typeof replacement == 'undefined') return input.il8nResponse('textrule.needsReplacement', { find });
 
@@ -117,7 +117,7 @@ class TextRule extends Command {
      */
     if(/^(addRegex|setRegex|setPattern)$/i.test( rule_command ))
     {
-      if (!input.ownerCanManageTheServer())    return input.il8nResponse('textrule.nope');
+      if (!input.ownerCanManageTheServer() && !input.memberCanManageBot())    return input.il8nResponse('textrule.nope');
       if (!find) return input.il8nResponse('textrule.needsFind', { rule_command });
       if (replacement === null || typeof replacement == 'undefined') return input.il8nResponse('textrule.needsReplacement', { find });
 
@@ -156,7 +156,7 @@ class TextRule extends Command {
      */
     else if(/^(del|delete|rm|remove)/i.test( rule_command ))
     {
-      if (!input.ownerCanManageTheServer()) return input.il8nResponse('textrule.nope');
+      if (!input.ownerCanManageTheServer() && !input.memberCanManageBot()) return input.il8nResponse('textrule.nope');
       if (!rules[find])                     return input.il8nResponse('textrule.none', { find });
 
       TextRule.deleteRule({server, find});
@@ -168,7 +168,7 @@ class TextRule extends Command {
      */
     else if(/^(clearall)/i.test( rule_command ))
     {
-      if (!input.ownerCanManageTheServer()) return input.il8nResponse('textrule.nope');
+      if (!input.ownerCanManageTheServer() && !input.memberCanManageBot()) return input.il8nResponse('textrule.nope');
 
       TextRule.clearAll(server);
       return input.il8nResponse('textrule.clearallokay', { find });
