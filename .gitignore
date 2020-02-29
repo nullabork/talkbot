@@ -4,3 +4,4 @@ state.json
 /config/*.server
 /config/ohshit*
 talkbot.code-workspace
+samples
