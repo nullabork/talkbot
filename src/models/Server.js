@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 
-var Lang = require("lang.js"),
+const Lang = require("lang.js"),
   paths = require('@paths'),
   commands = require('@commands'),
   botStuff = require('@helpers/bot-stuff'),
@@ -9,7 +9,7 @@ var Lang = require("lang.js"),
   fs = require('fs'),
   TextToSpeechService = require('@services/TextToSpeechService');
 
-var TIMEOUT_NEGLECT = 480 * 60 * 1000; // 2 hours
+const TIMEOUT_NEGLECT = 480 * 60 * 1000; // 2 hours
 
 class Server {
 
@@ -48,6 +48,9 @@ class Server {
 
     // language of the server
     this.language = state_data.language || 'en-AU';
+
+    // what role can admin this server
+    this.adminrole = state_data.adminrole || ''; 
 
     // restrict talkbot to a specific server
     this.restrictions = state_data.restrictions || [];
