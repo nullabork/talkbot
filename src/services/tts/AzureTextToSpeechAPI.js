@@ -1,11 +1,9 @@
 /*jshint esversion: 9 */
-// class for all the details of a command
 const Common = require('@helpers/common'),
   TextToSpeechService = require('@services/TextToSpeechService'),
   auth = require("@auth"),
   rp = require('request-promise'),
   prism = require('prism-media'),
-  fs = require('fs'),
   lame = require('lame'),
   samplerate = require('node-libsamplerate'),
   xmlbuilder = require('xmlbuilder');  
@@ -221,6 +219,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
     return '';
   }
 
+  // gets a temporary token that lasts a short while to access the service
   async getAccessToken(subscriptionKey) {
     let options = {
       method: 'POST',

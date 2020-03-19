@@ -1,8 +1,9 @@
 /*jshint esversion: 9 */
 
-var botStuff = require("@helpers/bot-stuff"),
+const botStuff = require("@helpers/bot-stuff"),
   Server = require("@models/Server"),
   Common = require("@helpers/common"),
+  auth = require("@auth"),
   bot = botStuff.bot;
 
 class World {
@@ -10,7 +11,7 @@ class World {
   constructor() {
     this.servers = {};
     this.presence_timeout = null;
-    this.default_title = 'master';
+    this.default_title = auth.default_title || 'master';
   }
 
 /* * *

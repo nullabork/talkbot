@@ -137,7 +137,7 @@ function sidle(msg) {
     return;
   }
 
-  if (!msg.ownerCanManageTheServer()) {
+  if (!msg.ownerCanManageTheServer() && !msg.memberCanManageTheBot()) {
     msg.il8nResponse('sidle.nope');
     return;
   }

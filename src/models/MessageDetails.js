@@ -76,6 +76,11 @@ class MessageDetails {
     return rtn;
   }
 
+  memberCanManageTheBot() {
+    var rtn = botStuff.canManageTheBot(this.server, this.message.member);
+    return rtn;
+  }
+
   il8nResponse(key, params) {
     var _this = this;
     var server = this.server;
