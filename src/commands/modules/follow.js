@@ -34,12 +34,6 @@ function follow(msg) {
 
       if ( exceeded_daily_limit(server))
         return msg.il8nResponse('follow.limitexceeded');
-
-      // using it alot - consider donating!
-      if ( auth.pester_threshold && should_pester(server)) {
-        msg.il8nResponse('follow.pester');
-        server.pestered = true;
-      }
       
       var errorFunc = (error) => {
         msg.il8nResponse('follow.error');
@@ -114,7 +108,15 @@ function unfollow(msg) {
 
   server.release(() => {
     commands.notify('unfollow', {member: msg.message.member, server: server});
-    msg.il8nResponse('unfollow.okay');
+
+    // using it alot - consider donating!
+    if ( auth.pester_threshold && should_pester(server)) {
+      msg.il8nResponse('unfollow.okaypester');
+      server.pestered = true;
+    }
+    else {
+      msg.il8nResponse('unfollow.okay');
+    }
   });
 };
 
