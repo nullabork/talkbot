@@ -33,7 +33,7 @@
     "jshint": "^2.10.3",
     "lame": "^1.2.4",
     "lang.js": "^1.1.14",
-    "minimist": "^1.2.2",
+    "minimist": "^1.2.3",
     "module-alias": "^2.2.2",
     "morgan": "^1.9.1",
     "node-addon-api": "^1.7.1",
