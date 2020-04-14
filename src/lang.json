@@ -18,7 +18,7 @@
     "shorthelp": "Test the bot is up"
   },
   "en.follow": {
-    "join": "You need to join a channel before I can follow you!",
+    "join": "You need to join a voice channel before I can follow you!",
     "okay": "Yes, :title!",
     "huh": "Yes, :title?",
     "nope": "Sorry, :name is my :title today. Get them to :command_charpermit you",
@@ -34,6 +34,7 @@
   },
   "en.unfollow": {
     "okay": "Goodbye :title",
+    "okaypester": "Goodbye :title. This bot is growing faster than COVID19 - consider contributing the running costs here so we can upgrade the server: <https://www.patreon.com/talkbot>",
     "nope": "Sorry, you're not my :title.",
     "none": "I have no :title... would you like to be my :title?",
     "shorthelp": "Release the bot",
