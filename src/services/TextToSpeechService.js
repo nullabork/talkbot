@@ -147,7 +147,7 @@ class TextToSpeechService {
 
   // get the first provider
   static get defaultProvider() {
-    return TextToSpeechService.providers[Object.keys(TextToSpeechService.providers)[0]];
+    return TextToSpeechService.providers[Object.keys(TextToSpeechService.providers.filter(x => x.enabled))[0]];
   }
 
   static async setupProviders() {
