@@ -63,10 +63,9 @@
     "none": "You're not in a voice channel?"
   },
   "en.myvoice": {
-    "okay": "OK, your personal voice is now :provider/:voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
+    "okay": "OK, your personal voice is now :provider/:voice.",
     "no": "Sorry, I cant find the voice :voice.",
     "shorthelp": "Change accent or style.",
-    "auto": "Now the bot will choose the best voice and use your lang and gender settings.",
     "more": "Your current voice is :provider/:voice. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
     "noped": "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
   },

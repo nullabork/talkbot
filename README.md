@@ -4,7 +4,7 @@
 
 # Talkbot
 
-Discord bot for natural voice text-to-speech and language translation
+Discord bot for text-to-speech and language translation
 
 Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 
@@ -54,39 +54,42 @@ Note you will require a Google Cloud account to use their TTS API and an Amazon 
 Both of these services have free tiers but may cost you money if you exceed their free caps.
 Each of these services can be turned on and off in the configuration of the bot.
 
-## Software requirements
+## Win 10 Software requirements
 
-- node js - v14+
-- npm - https://www.npmjs.com/get-npm
+- node js - v12
 - git
-
-Several of the in use NPM packages may require the following:
-
 - cmake - https://cmake.org/download/
-- python - https://www.python.org/downloads/ - v2.7.\* is usually required
-- Visual Studio C++ build tools or Visual Studio with full C++ support
+- python - https://www.python.org/downloads/ - v2.7.\* is required
+- Visual Studio C++ build tools or Visual Studio with full C++ support. The Build Tools are here: https://download.microsoft.com/download/5/F/7/5F7ACAEB-8363-451F-9425-68A90F98B238/visualcppbuildtools_full.exe
 
-Do this to get Python and VS Build Tools
+You can also try getting Python and VS Build Tools this way
 `npm install --global --production --vs2015 --add-python-to-path windows-build-tools`
 
 ## Install, setup and run
 
-1. Clone this respository
-   - `git clone https://github.com/nullabork/talkbot talkbot`
-2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
-   - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
-3. Setup your Google API credentials.
-   - To learn how to do this [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
-4. Install cmake, python v2.7 and Visual Studio C++ build tools
+1. Install node v12, git, cmake, python v2.7 and Visual Studio C++ build tools
    - See the URLs in the software requirements for how to do this
+2. Clone this respository
+   - `git clone https://github.com/nullabork/talkbot talkbot`
+   - `git
+3. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
+   - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
+4. Setup your prefered API provider - Google, Amazon AWS Polly or Azure or any combination of those.
+   - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
+   - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
+   - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
 5. Install NPM dependencies
    ```yaml
    npm install
    npm rebuild
-   npx patch-package
    ```
 6. Run the bot!
    - `node bot.js`
+
+# Updating to the latest code
+
+To update to the latest code run:
+`git pull`
 
 # Troubleshooting
 
