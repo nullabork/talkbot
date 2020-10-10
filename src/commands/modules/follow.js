@@ -27,7 +27,7 @@ function follow(msg) {
       msg.il8nResponse("follow.huh");
     }
   } else {
-    if (member.voice) {
+    if (member.voice && member.voice.channel) {
       if (!member.voice.channel.joinable)
         return msg.il8nResponse("follow.permissions");
 

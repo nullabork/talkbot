@@ -75,11 +75,14 @@
   });
 
   // handle voice state updates
-  bot.on("voiceStateUpdate", (oldMember, newMember) => {
-    if (!oldMember) return;
+  bot.on("voiceStateUpdate", (oldState, newState) => {
+    if (!oldState) return;
+
+    const oldMember = oldState.member;
+    const newMember = newState.member;
 
     try {
-      var server = world.servers[oldMember.guild.id];
+      const server = world.servers[oldState.guild.id];
       if (!server.isMaster(oldMember)) return;
 
       // they've changed voice channels
@@ -87,12 +90,11 @@
         oldMember.voice.channel &&
         (!newMember.voice.channel || !newMember.voice.channel.joinable)
       ) {
-        // || oldMember.voiceChannel.id != newMember.voiceChannel.id
         server.release();
       } else if (
         oldMember.voice.channel &&
         newMember.voice.channel &&
-        oldMember.voice.channel.id != newMember.voice.channel.id
+        oldState.channelID != newState.channelID
       ) {
         server.switchVoiceChannel(newMember.voice.channel);
       }
@@ -132,11 +134,11 @@
   });
 
   // if we get disconnected???
-  bot.on("disconnect", (evt) => {
+  bot.on("shardDisconnect", (evt, shardID) => {
     try {
       world.saveAll();
       world.dispose();
-      Common.out("Disconnected, reconnecting");
+      Common.out(`Shard ${shardID} Disconnected, reconnecting`);
       Common.out(evt);
       botStuff.connect();
     } catch (ex) {
@@ -153,11 +155,14 @@
     Common.error("rate limited");
     Common.error(info);
   });
-  bot.on("reconnecting", () => Common.error("reconnecting"));
-  bot.on("resume", (replayed) => Common.error("resume: " + replayed));
+  bot.on("shardResume", (replayed, shardID) =>
+    Common.error(`resume ${shardID}: ` + replayed)
+  );
   bot.on("warn", (info) => Common.error("warn:" + info));
 
-  bot.on("disconnect", (info) => Common.error("disconnect:" + info));
+  bot.on("shardReconnecting", (id) =>
+    Common.error(`Shard with ID ${id} reconnected.`)
+  );
 
   // ctrl-c
   process.on("SIGINT", () => world.kill("SIGINT"));

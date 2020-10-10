@@ -134,6 +134,7 @@ class TextToSpeechService {
       provider.format != "ogg" &&
       provider.format != "ogg_vorbis" &&
       provider.format != "mp3" &&
+      provider.format != "ogg/opus" &&
       provider.format != "opus"
     )
       throw new Error("Unknown provider format");
@@ -168,7 +169,7 @@ class TextToSpeechService {
 
   static async setupProviders() {
     TextToSpeechService.providers = {};
-    let files = await fs.readdirSync(paths.tts);
+    let files = fs.readdirSync(paths.tts);
 
     for (let file of files) {
       try {
@@ -255,7 +256,6 @@ class TextToSpeechService {
 
     if (service) {
       const voices = service.getVoices();
-      console.log(voices);
       for (let key in voices) {
         v = voices[key];
         if (

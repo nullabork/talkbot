@@ -230,6 +230,7 @@ class Server {
 
   release(callback) {
     const server = this;
+    if (!server.guild.voice) return;
     if (!server.guild.voice.connection) return;
     if (server.leaving) return; // dont call it twice dude
     if (callback) server.guild.voice.connection.on("disconnect", callback);
@@ -457,8 +458,6 @@ class Server {
       ) || TextToSpeechService.defaultProvider;
     let request = service.buildRequest(message, settings, server);
 
-    console.log(request);
-
     // Performs the Text-to-Speech request
     service.getAudioContent(request, (err, audio) => {
       if (err) {
@@ -545,8 +544,8 @@ class Server {
 
     try {
       server.guild.voice.connection
-        .play(readable, { type: "ogg/opus" })
-        .on("end", endFunc)
+        .play(readable, { type: format })
+        .on("finish", endFunc)
         .on("error", Common.error);
     } catch (ex) {
       Common.error(ex);

@@ -4,8 +4,8 @@ const Common = require("@helpers/common"),
   auth = require("@auth"),
   rp = require("request-promise"),
   prism = require("prism-media"),
-  //lame = require('lame'),
-  //samplerate = require('node-libsamplerate'),
+  lame = require("@suldashi/lame"),
+  samplerate = require("node-libsamplerate"),
   xmlbuilder = require("xmlbuilder");
 
 class AzureTextToSpeechAPI extends TextToSpeechService {

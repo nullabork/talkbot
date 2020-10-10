@@ -1,5 +1,6 @@
 // models
 const CommentBuilder = require("@models/CommentBuilder"),
+  Command = require("@models/Command"),
   Common = require("@helpers/common");
 
 /**

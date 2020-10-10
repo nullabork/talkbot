@@ -37,7 +37,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
   }
 
   get format() {
-    return "opus";
+    return "ogg/opus";
   }
 
   /**

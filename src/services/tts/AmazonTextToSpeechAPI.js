@@ -2,9 +2,9 @@
 // class for all the details of a command
 const Common = require("@helpers/common"),
   auth = require("@auth"),
-  //lame = require("lame"),
-  //samplerate = require("node-libsamplerate"),
-  //prism = require("prism-media"),
+  lame = require("@suldashi/lame"),
+  samplerate = require("node-libsamplerate"),
+  prism = require("prism-media"),
   ssmlvalid = require("ssml-validator"),
   TextToSpeechService = require("@services/TextToSpeechService"),
   MessageSSML = require("@models/MessageSSML"),
@@ -105,7 +105,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
     self.doBookkeeping(request);
     try {
       let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
-      /*    var ld = new lame.Decoder({
+      var ld = new lame.Decoder({
         sampleRate: 22050,
         channels: lame.MONO,
         signed: true,
@@ -126,16 +126,16 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         toRate: 48000,
         // Desired bit depth. Valid values: 16 or 32
         toDepth: 16,
-      });*/
+      });
 
       callback(
         null,
         audioStream
-        /*          .pipe(ld)
+          .pipe(ld)
           .pipe(resample)
           .pipe(
             new prism.opus.Encoder({ rate: 48000, channels: 1, frameSize: 960 })
-          )*/
+          )
       );
     } catch (err) {
       Common.error(request);
