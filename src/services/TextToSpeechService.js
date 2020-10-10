@@ -1,16 +1,14 @@
 /*jshint esversion: 9 */
 // class for all the details of a command
-const Common = require('@helpers/common'),
-  fs = require('fs'),
-  iso639 = require('iso-639'),
-  paths = require('@paths');
+const Common = require("@helpers/common"),
+  fs = require("fs"),
+  paths = require("@paths");
 
 // base class for building specific TTS APIs over
 class TextToSpeechService {
-
   // name of the service - eg. google, amazon, azure, watson
   get shortname() {
-    Common.error('Please implement the shortname property');
+    Common.error("Please implement the shortname property");
     process.exit();
     return "unset";
   }
@@ -34,8 +32,8 @@ class TextToSpeechService {
    *
    * Should exit the process if this is not configured correctly
    */
-  startupTests () {
-    Common.error('Please implement the startupTests function');
+  startupTests() {
+    Common.error("Please implement the startupTests function");
     process.exit();
   }
 
@@ -47,8 +45,8 @@ class TextToSpeechService {
    *
    * @return  {[type]}  [return request object for this API]
    */
-  buildRequest (message, settings) {
-    Common.error('Please implement the buildRequest function');
+  buildRequest(message, settings) {
+    Common.error("Please implement the buildRequest function");
     process.exit();
   }
 
@@ -60,8 +58,8 @@ class TextToSpeechService {
    *
    * @return  {[type]}  [return audioContent]
    */
-  getAudioContent (request, callback) {
-    Common.error('Please implement the getAudioContent function');
+  getAudioContent(request, callback) {
+    Common.error("Please implement the getAudioContent function");
     process.exit();
   }
 
@@ -71,7 +69,7 @@ class TextToSpeechService {
    * @return  {[type]}  [return audioContent]
    */
   getVoices() {
-    Common.error('Please implement the getVoices function');
+    Common.error("Please implement the getVoices function");
     process.exit();
   }
 
@@ -84,7 +82,7 @@ class TextToSpeechService {
    * @return {string} voice name
    */
   getDefaultVoice(gender, lang_code) {
-    Common.error('Please implement the getDefaultVoice function');
+    Common.error("Please implement the getDefaultVoice function");
     process.exit();
   }
 
@@ -98,7 +96,7 @@ class TextToSpeechService {
    * @return {string} voice name
    */
   getRandomVoice(seed, gender, lang_code) {
-    Common.error('Please implement the getRandomVoice function');
+    Common.error("Please implement the getRandomVoice function");
     process.exit();
   }
 
@@ -108,64 +106,81 @@ class TextToSpeechService {
    * @param  {*}  voices
    */
   static checkVoiceStructure(voices) {
-
-    for ( var index in voices )
-    {
-
+    for (var index in voices) {
       // the two iso639 codes need a map to 3166 we can't enable these tests on production until this works
       var voice = voices[index];
-      if ( !voice.voice_alias ) throw new Error('No voice_alias property:' + voice.voice);
-      if ( voice.gender != 'MALE' && voice.gender != 'FEMALE' ) throw new Error('Invalid gender property: ' + voice.gender);
-      if ( !voice.provider ) throw new Error('No provider property');
-      if ( !voice.language ) throw new Error('No language property');
-      if ( !voice.translate ) throw new Error('No translate property');
+      if (!voice.voice_alias)
+        throw new Error("No voice_alias property:" + voice.voice);
+      if (voice.gender != "MALE" && voice.gender != "FEMALE")
+        throw new Error("Invalid gender property: " + voice.gender);
+      if (!voice.provider) throw new Error("No provider property");
+      if (!voice.language) throw new Error("No language property");
+      if (!voice.translate) throw new Error("No translate property");
       //if ( !iso639.iso_639_1[voice.translate]) throw new Error('Invalid translate ISO-639-1 code: "' + voice.translate + '"');
-      if ( !voice.voice ) throw new Error('No voice property');
-      if ( !voice.code ) throw new Error('No code property');
+      if (!voice.voice) throw new Error("No voice property");
+      if (!voice.code) throw new Error("No code property");
       //if ( !iso639.iso_639_1[voice.code.substring(0,2)]) throw new Error('Invalid code part ISO-639-1 code: "' + voice.code.substring(0,2) + '". Expected Form: [ISO-639-1 code]-[ISO-3166-1 country code]');
     }
   }
 
   /**
    * Checks the provider meets the contract
-   * 
-   * @param {[TextToSpeechService]} provider 
+   *
+   * @param {[TextToSpeechService]} provider
    */
   static checkProviderContract(provider) {
-    if ( provider.format != 'pcm' && provider.format != 'ogg' && provider.format != 'ogg_vorbis' && provider.format != 'mp3' && provider.format != 'opus') throw new Error('Unknown provider format');
-    if ( !provider.shortname ) throw new Error('Provider shortname needs to be set');
+    if (
+      provider.format != "pcm" &&
+      provider.format != "ogg" &&
+      provider.format != "ogg_vorbis" &&
+      provider.format != "mp3" &&
+      provider.format != "opus"
+    )
+      throw new Error("Unknown provider format");
+    if (!provider.shortname)
+      throw new Error("Provider shortname needs to be set");
 
     var voices = provider.getVoices();
-    if ( voices.filter(voice => voice.provider != provider.shortname).length > 0) throw new Error('A voice has an incorrect provider string');
+    if (
+      voices.filter((voice) => voice.provider != provider.shortname).length > 0
+    )
+      throw new Error("A voice has an incorrect provider string");
     TextToSpeechService.checkVoiceStructure(voices);
 
     // run a bunch of tests of the methods to see if we can fail them
-    provider.getDefaultVoice('FEMALE', 'en-US');
-    provider.buildRequest('', {}, {});
-    fs.writeFileSync(provider.shortname + '.json', JSON.stringify(voices), 'utf-8');
+    provider.getDefaultVoice("FEMALE", "en-US");
+    provider.buildRequest("", {}, {});
+    fs.writeFileSync(
+      provider.shortname + ".json",
+      JSON.stringify(voices),
+      "utf-8"
+    );
   }
 
   // get the first provider
   static get defaultProvider() {
-    return TextToSpeechService.providers[Object.keys(TextToSpeechService.providers.filter(x => x.enabled))[0]];
+    return TextToSpeechService.providers[
+      Object.keys(TextToSpeechService.providers).filter(
+        (x) => TextToSpeechService.providers[x].enabled
+      )[0]
+    ];
   }
 
   static async setupProviders() {
     TextToSpeechService.providers = {};
     let files = await fs.readdirSync(paths.tts);
 
-    for ( let file of files ) {
+    for (let file of files) {
       try {
-        var api = require(paths.tts + '/' + file);
+        var api = require(paths.tts + "/" + file);
         var obj = new api();
-        if ( obj.enabled ) {
+        if (obj.enabled) {
           await obj.startupTests();
           TextToSpeechService.checkProviderContract(obj);
           TextToSpeechService.providers[obj.shortname] = obj;
         }
-      }
-      catch(err) {
-        Common.error('Error loading: ' + file);
+      } catch (err) {
+        Common.error("Error loading: " + file);
         Common.error(err);
         process.exit(1);
       }
@@ -180,7 +195,6 @@ class TextToSpeechService {
    * @return  {[TextToSpeechService]}  [return an API object to serve TTS requests]
    */
   static getService(provider) {
-
     if (!provider) return null;
     provider = provider.toLowerCase();
 
@@ -200,19 +214,26 @@ class TextToSpeechService {
     return TextToSpeechService.getVoiceRecords(lang_code, provider).length > 0;
   }
 
-  static getVoiceRecords(lang_code, provider)
-  {
-    if ( provider ) {
+  static getVoiceRecords(lang_code, provider) {
+    if (provider) {
       service = TextToSpeechService.getService(provider);
-      var voices = service.getVoices().filter(voice => voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1);
+      var voices = service
+        .getVoices()
+        .filter(
+          (voice) =>
+            voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1
+        );
       return voices;
-    }
-    else {
+    } else {
       var v = [];
-      for( var provider in TextToSpeechService.providers) {
-        TextToSpeechService.providers[provider].getVoices()
-        .filter(voice => voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1)
-        .forEach(voice => v.push(voice));
+      for (var provider in TextToSpeechService.providers) {
+        TextToSpeechService.providers[provider]
+          .getVoices()
+          .filter(
+            (voice) =>
+              voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1
+          )
+          .forEach((voice) => v.push(voice));
       }
       return v;
     }
@@ -220,36 +241,38 @@ class TextToSpeechService {
 
   static getRandomProvider() {
     var r = Math.random() * 100000;
-    return TextToSpeechService.providers[r % Object.keys(TextToSpeechService.providers).length];
+    return TextToSpeechService.providers[
+      r % Object.keys(TextToSpeechService.providers).length
+    ];
   }
 
-  static getVoice(voice_name, provider)
-  {
+  static getVoice(voice_name, provider) {
     var v = null;
     var service = null;
     voice_name = voice_name.toLowerCase();
 
-    if ( provider )
-      service = TextToSpeechService.getService(provider);
+    if (provider) service = TextToSpeechService.getService(provider);
 
-    if ( service )
-    {
-      var voices = service.getVoices();
-      for ( var key in voices)
-      {
+    if (service) {
+      const voices = service.getVoices();
+      console.log(voices);
+      for (let key in voices) {
         v = voices[key];
-        if ( v.voice.toLowerCase() == voice_name || v.voice_alias.toLowerCase() == voice_name )
+        if (
+          v.voice.toLowerCase() == voice_name ||
+          v.voice_alias.toLowerCase() == voice_name
+        )
           return v;
       }
-    }
-    else {
-      for( var service in TextToSpeechService.providers )
-      {
-        var voices = TextToSpeechService.providers[service].getVoices();
-        for ( var key in voices)
-        {
+    } else {
+      for (let service in TextToSpeechService.providers) {
+        let voices = TextToSpeechService.providers[service].getVoices();
+        for (let key in voices) {
           v = voices[key];
-          if ( v.voice.toLowerCase() == voice_name || v.voice_alias.toLowerCase() == voice_name)
+          if (
+            v.voice.toLowerCase() == voice_name ||
+            v.voice_alias.toLowerCase() == voice_name
+          )
             return v;
         }
       }

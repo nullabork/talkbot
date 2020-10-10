@@ -1,53 +1,56 @@
 /*jshint esversion: 9 */
 
-var Command = require('@models/Command')
-  CommentBuilder = require('@models/CommentBuilder'),
-  auth = require('@auth'),
-  Common = require('@helpers/common');
+var Command = require("@models/Command");
+(CommentBuilder = require("@models/CommentBuilder")),
+  (auth = require("@auth")),
+  (Common = require("@helpers/common"));
 
 class Restrict extends Command {
-
   // core COMMAND getters
-  get group () {
-    return 'server';
+  get group() {
+    return "server";
   }
 
-  get hidden () {
+  get hidden() {
     return false;
   }
 
   getRestrictionString(server) {
-    var csv = '';
-    if ( !server.restrictions || server.restrictions.length == 0) return 'none';
+    let csv = "";
+    if (!server.restrictions || server.restrictions.length == 0) return "none";
     for (var index in server.restrictions) {
-      var chan = server.guild.channels.find(x => x.id == server.restrictions[index]);
-      if ( chan) csv += ', #' + chan.name;
+      let chan = server.guild.channels.cache.find(
+        (x) => x.id == server.restrictions[index]
+      );
+      if (chan) csv += ", #" + chan.name;
     }
     return csv.substring(2);
   }
 
   usage(input, server) {
-    let usage = server.lang('restrictusage.title');
-    var command = auth.command_char + this.command_name;
+    let usage = server.lang("restrictusage.title");
+    let command = auth.command_char + this.command_name;
 
     return input.response(
       CommentBuilder.create({
-        data : {
-          [usage] :  [
-            server.lang('restrictusage.description', {restrictions: this.getRestrictionString(server)})
-          ],          
-          "commands" : {
-            [command]                 : server.lang('restrictusage.noargs'),
-            [command + " none"]       : server.lang('restrictusage.none'),
-            [command + " #channel1"]  : server.lang('restrictusage.channels')
-          }
-        }
+        data: {
+          [usage]: [
+            server.lang("restrictusage.description", {
+              restrictions: this.getRestrictionString(server),
+            }),
+          ],
+          commands: {
+            [command]: server.lang("restrictusage.noargs"),
+            [command + " none"]: server.lang("restrictusage.none"),
+            [command + " #channel1"]: server.lang("restrictusage.channels"),
+          },
+        },
       })
     );
   }
 
-  execute ({input}) {
-    var server = input.server;
+  execute({ input }) {
+    const server = input.server;
 
     if (input.args.length == 0) {
       this.usage(input, server);
@@ -55,23 +58,27 @@ class Restrict extends Command {
     }
 
     if (!input.ownerCanManageTheServer()) {
-      input.il8nResponse('restrict.nopermissions');
+      input.il8nResponse("restrict.nopermissions");
       return;
     }
 
-    var restriction_identifier = input.args[0];
+    let restriction_identifier = input.args[0];
 
-    if(/^(none|default)$/i.test( restriction_identifier )) {
+    if (/^(none|default)$/i.test(restriction_identifier)) {
       server.restrictions = [];
-      input.il8nResponse('restrict.setdefault');
-    }
-    else if ( input.message.mentions.channels.size == 0 ) {
-      input.il8nResponse('restrict.args');
-    } 
-    else {
-      input.message.mentions.channels.tap( chan => { if ( !server.restrictions.includes(chan.id) ) server.restrictions.push(chan.id); } );
-      var chans = Common.makeNiceCsv(input.message.mentions.channels, item => item.name);
-      input.il8nResponse('restrict.okay', {channels: chans});
+      input.il8nResponse("restrict.setdefault");
+    } else if (input.message.mentions.channels.size == 0) {
+      input.il8nResponse("restrict.args");
+    } else {
+      input.message.mentions.channels.tap((chan) => {
+        if (!server.restrictions.includes(chan.id))
+          server.restrictions.push(chan.id);
+      });
+      let chans = Common.makeNiceCsv(
+        input.message.mentions.channels,
+        (item) => item.name
+      );
+      input.il8nResponse("restrict.okay", { channels: chans });
     }
   }
 
@@ -85,8 +92,11 @@ class Restrict extends Command {
    *
    * @return  {[type]}            [return description]
    */
-  onValidate({message, server}) {
-    if ( server.restrictions.length > 0 && !server.restrictions.includes(message.channel.id) ) {
+  onValidate({ message, server }) {
+    if (
+      server.restrictions.length > 0 &&
+      !server.restrictions.includes(message.channel.id)
+    ) {
       return false; // nerf the message
     }
     return true; // accept the message
@@ -94,12 +104,12 @@ class Restrict extends Command {
 }
 
 //registration
-exports.register =  (commands) => {
-  commands.add(Restrict.command)
+exports.register = (commands) => {
+  commands.add(Restrict.command);
 };
 
 exports.unRegister = (commands) => {
-  commands.remove(Restrict.command)
+  commands.remove(Restrict.command);
 };
 
 exports.class = Restrict;

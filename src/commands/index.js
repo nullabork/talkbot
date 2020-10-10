@@ -1,16 +1,14 @@
 /*jshint esversion: 9 */
-var path = require("path"),
-  auth = require('@auth');
+const path = require("path"),
+  auth = require("@auth");
 
 // models
-var BotCommand = require('@models/BotCommand'),
-  MessageDetails = require('@models/MessageDetails'),
-  Command = require('@models/Command'),
-  Common = require('@helpers/common');
-
+const MessageDetails = require("@models/MessageDetails"),
+  Command = require("@models/Command"),
+  Common = require("@helpers/common");
 
 function Commands() {
-  var self = this;
+  const self = this;
   this.commands = {};
   this.listeners = {
     token: [],
@@ -20,13 +18,13 @@ function Commands() {
     leaveVoice: [],
     follow: [],
     unfollow: [],
-    configureSettings: []
+    configureSettings: [],
   };
 
-  this.command_char = auth.command_char || '!';
+  this.command_char = auth.command_char || "!";
 
   this.add = function (command, force) {
-    var key = command.command_name.toLowerCase();
+    let key = command.command_name.toLowerCase();
     //if is there and the force argument is false
     if (this.commands[key] && !force) return;
     //add the command to the the map
@@ -36,38 +34,38 @@ function Commands() {
     if (!command.listeners) return;
 
     //add the listeners
-    for (var type in command.listeners) {
+    for (let type in command.listeners) {
       //check if listener is good
-      if (!command.listeners.hasOwnProperty(type) || !command.listeners[type]) continue;
+      if (!command.listeners.hasOwnProperty(type) || !command.listeners[type])
+        continue;
 
-      var sequence = command.sequence && command.sequence[type] || 0;
+      let sequence = (command.sequence && command.sequence[type]) || 0;
 
-      var func = command.listeners[type];
+      let func = command.listeners[type];
       this.on(type, func, sequence, command);
     }
   };
 
-  this.addAll = function(commands){
+  this.addAll = (commands) => {
     for (const command of commands) {
       this.add(command);
     }
   };
 
-  this.registerAllCommands = function () {
-    require("fs").readdirSync("./src/commands/modules/").forEach(function (file) {
-      var filename = path.join("modules/", file);
-      var command = require("./" + filename.replace('.js', ''));
-      command.register(self);
-    });
+  this.registerAllCommands = () => {
+    require("fs")
+      .readdirSync("./src/commands/modules/")
+      .forEach((file) => {
+        let filename = path.join("modules/", file);
+        let command = require("./" + filename.replace(".js", ""));
+        command.register(self);
+      });
   };
 
-
-
-  this.remove = function (command) {
+  this.remove = (command) => {
     key = command.command_name.toLowerCase();
     //var command = this.commands[key]
     delete this.commands[key];
-
 
     if (command.command_arg) {
       arg = command.command_arg.toLowerCase();
@@ -75,20 +73,19 @@ function Commands() {
     }
   };
 
-  this.removeAll = function (commands) {
+  this.removeAll = (commands) => {
     for (const command of commands) {
       this.remove(command);
     }
   };
 
   // for commands that have startup tests
-  this.runAllStartupTests = function() {
-    for (var test in this.commands)
-      if (this.commands[test].startup)
-        this.commands[test].startup();
+  this.runAllStartupTests = () => {
+    for (const test in this.commands)
+      if (this.commands[test].startup) this.commands[test].startup();
   };
 
-  this.get = function (key) {
+  this.get = (key) => {
     key = key.toLowerCase();
 
     if (!this.commands[key]) {
@@ -97,19 +94,17 @@ function Commands() {
     return this.commands[key];
   };
 
-  this.run = function (key, args) {
+  this.run = (key, args) => {
     key = key.toLowerCase();
 
     if (!this.commands[key]) {
-      return function () { };
+      return () => {};
     }
 
     // eat exceptions so poorly written commands don't take down the bot
     try {
       return this.commands[key].execute.apply(this, args);
-    }
-    catch(ex)
-    {
+    } catch (ex) {
       Common.error(ex);
       return null;
     }
@@ -122,14 +117,13 @@ function Commands() {
     }
     this.listeners[type].push({
       cb,
-      sequence : sequence || 0,
-      command
+      sequence: sequence || 0,
+      command,
     });
   };
 
   this.notify = function (type, args) {
-
-    var funcs = this.listeners[type];
+    let funcs = this.listeners[type];
     if (!funcs || !funcs.length) {
       return;
     }
@@ -138,100 +132,109 @@ function Commands() {
       return a.sequence - b.sequence;
     });
 
-    var ret = null;
+    let ret = null;
     //eat exceptions so poorly written commands dont bork
     try {
       for (let i = 0; i < funcs.length; i++) {
-        var func = funcs[i].cb;
-        var command = funcs[i].command;
+        let func = funcs[i].cb;
+        let command = funcs[i].command;
 
-        if (typeof func == 'function') {
+        if (typeof func == "function") {
           args = {
             ...args,
-            modified : ret,
-            command
+            modified: ret,
+            command,
           };
 
-          var resp = func.apply(this, [args]);
+          let resp = func.apply(this, [args]);
           if (resp !== null) {
             ret = resp;
           }
         }
       }
-    }
-    catch(ex)
-    {
+    } catch (ex) {
       Common.error(ex);
     }
     return ret;
   };
-  
+
   // is this Message a command message?
-  this.isCommand = function(message, server) {
-    var char = this.getCommandChar(server);
-    return (message.content.substring(0, char.length) === char || message.content.indexOf(this.command_char +'help') == 0); // help will always work this way
+  this.isCommand = function (message, server) {
+    let char = this.getCommandChar(server);
+    return (
+      message.content.substring(0, char.length) === char ||
+      message.content.indexOf(this.command_char + "help") == 0
+    ); // help will always work this way
   };
 
-  this.isHelpCommand = function(message) {
-    return ( message.content.indexOf(this.command_char +'help') == 0);
+  this.isHelpCommand = function (message) {
+    return message.content.indexOf(this.command_char + "help") == 0;
   };
 
   // get the command char from the server or default
-  this.getCommandChar = function(server) {
-    if ( server ) return (server.command_char || this.command_char || '!');
-    else return (this.command_char || '!');
+  this.getCommandChar = function (server) {
+    if (server) return server.command_char || this.command_char || "!";
+    else return this.command_char || "!";
   };
-  
-  // process a message coming in from the real world
-  this.process = function(message, server, world) {
-    
-    var parts = [];
-    const command_char = this.getCommandChar(server);
-    if ( !this.isCommand(message, server)) return;
 
-    if ( this.isHelpCommand(message)) 
-    {
-      parts = [command_char+'help', command_char, 'help'];
-    }
-    else {
+  // process a message coming in from the real world
+  this.process = function (message, server, world) {
+    let parts = [];
+    const command_char = this.getCommandChar(server);
+    if (!this.isCommand(message, server)) return;
+
+    if (this.isHelpCommand(message)) {
+      parts = [command_char + "help", command_char, "help"];
+    } else {
       parts = message.content.match(
-        new RegExp("(" + Common.escapeRegExp(this.getCommandChar(server)) + ")([^ ]+)(.*)", "i")
+        new RegExp(
+          "(" +
+            Common.escapeRegExp(this.getCommandChar(server)) +
+            ")([^ ]+)(.*)",
+          "i"
+        )
       );
-    }    
-    
+    }
+
     if (!parts || parts.length < 2) {
       return;
     }
 
-    var cmdChar = parts[1];
-    var cmdVerb = parts[2] || null;
-    var cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
-    var cmdContent = (parts[3] || "").trim();
+    let cmdChar = parts[1];
+    let cmdVerb = parts[2] || null;
+    let cmdArgs = (parts[3] && parts[3].trim().split(/\s+/)) || [];
+    let cmdContent = (parts[3] || "").trim();
 
     if (!cmdVerb || !cmdChar) {
       return;
     }
 
-    var msgDets = new MessageDetails({
+    let msgDets = new MessageDetails({
       world: world,
       server: server,
       message: message,
       cmdChar: cmdChar,
       cmd: cmdVerb,
       args: cmdArgs,
-      content: cmdContent
+      content: cmdContent,
     });
 
-    Common.out((server? server.guild.id : 'DM') + ': ' + msgDets.cmd + ' ' + msgDets.content);
+    Common.out(
+      (server ? server.guild.id : "DM") +
+        ": " +
+        msgDets.cmd +
+        " " +
+        msgDets.content
+    );
 
-    var command = this.get(msgDets.cmd);
-    if(!command) return;
+    let command = this.get(msgDets.cmd);
+    if (!command) return;
 
-    if ( server ) server.resetNeglectTimeout();
+    if (server) server.resetNeglectTimeout();
 
     //this is for the new way... v3 of writing commands, so we can use argument destructoring
     if (command instanceof Command) {
-      command.execute({input : msgDets});
+      command.execute({ input: msgDets });
     } else {
       command.execute.apply(this, [msgDets]);
     }
@@ -242,4 +245,4 @@ commands = new Commands();
 commands.registerAllCommands();
 commands.runAllStartupTests();
 
-module.exports = commands;//commands;
+module.exports = commands; //commands;

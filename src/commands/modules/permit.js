@@ -1,7 +1,7 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
-var Common = require('@helpers/common');
+const BotCommand = require("@models/BotCommand"),
+  Common = require("@helpers/common");
 
 /**
  * Command: permit
@@ -14,26 +14,28 @@ var Common = require('@helpers/common');
  * @return  {[undefined]}
  */
 function permit(msg) {
-  var server = msg.server;
+  const server = msg.server;
 
   if (!msg.ownerIsMaster()) {
-    msg.il8nResponse('permit.nope');
+    msg.il8nResponse("permit.nope");
     return;
   }
 
   let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
-  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
-    msg.il8nResponse('permit.none');
+  if (msg.message.mentions.members.size == 0 && roles.size == 0) {
+    msg.il8nResponse("permit.none");
     return;
   }
 
-  msg.message.mentions.members.tap( member => server.permit(member.id));
-  roles.tap( role => server.permit(role.id));
+  msg.message.mentions.members.tap((member) => server.permit(member.id));
+  roles.tap((role) => server.permit(role.id));
 
-  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
-  msg.il8nResponse('permit.okay', { name: nicks });
-};
-
+  var nicks = Common.makeNiceCsv(
+    msg.message.mentions.members.concat(roles),
+    (e) => e.displayName || e.name
+  );
+  msg.il8nResponse("permit.okay", { name: nicks });
+}
 
 /**
  * Command: unpermit
@@ -47,62 +49,63 @@ function permit(msg) {
  * @return  {[undefined]}
  */
 function unpermit(msg) {
-
   var server = msg.server;
 
   if (!msg.ownerIsPermitted()) {
-    msg.il8nResponse('unpermit.deny');
+    msg.il8nResponse("unpermit.deny");
     return;
   }
 
   let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
-  roles.tap( role => server.unpermit(role.id));
+  roles.tap((role) => server.unpermit(role.id));
 
-  if ( msg.message.mentions.members.size == 0 && roles.size == 0) {
+  if (msg.message.mentions.members.size == 0 && roles.size == 0) {
     server.unpermit(msg.message.member.id);
   }
 
-  msg.message.mentions.members.tap( member => {
+  msg.message.mentions.members.tap((member) => {
     if (member.id != msg.message.member.id && !msg.ownerIsMaster()) {
-      msg.il8nResponse('unpermit.deny');
+      msg.il8nResponse("unpermit.deny");
       return;
     }
 
     server.unpermit(member.id);
   });
 
-  msg.message.mentions.roles.tap( role => {
+  msg.message.mentions.roles.tap((role) => {
     if (!msg.ownerIsMaster()) {
-      msg.il8nResponse('unpermit.deny');
+      msg.il8nResponse("unpermit.deny");
       return;
     }
 
     server.unpermit(role.id);
   });
 
-  var nicks = Common.makeNiceCsv(msg.message.mentions.members.concat(roles), e => e.displayName || e.name);
-  msg.il8nResponse('unpermit.okay', { name: nicks });
-};
+  var nicks = Common.makeNiceCsv(
+    msg.message.mentions.members.concat(roles),
+    (e) => e.displayName || e.name
+  );
+  msg.il8nResponse("unpermit.okay", { name: nicks });
+}
 
 var command_permit = new BotCommand({
-  command_name: 'permit',
+  command_name: "permit",
   execute: permit,
-  short_help: 'permit.shorthelp',
-  long_help: 'permit.longhelp',
+  short_help: "permit.shorthelp",
+  long_help: "permit.longhelp",
   group: "control",
   // parameters: "[<user>]",
-  order : 5
-
+  order: 5,
 });
 
 var command_unpermit = new BotCommand({
-  command_name: 'unpermit',
+  command_name: "unpermit",
   execute: unpermit,
-  short_help: 'unpermit.shorthelp',
-  long_help: 'unpermit.longhelp',
+  short_help: "unpermit.shorthelp",
+  long_help: "unpermit.longhelp",
   group: "control",
   // parameters: "[<user>]",
-  order : 6
+  order: 6,
 });
 
 exports.register = function (commands) {
@@ -114,4 +117,3 @@ exports.unRegister = function (commands) {
   commands.remove(command_permit);
   commands.remove(command_unpermit);
 };
-

@@ -1,9 +1,7 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
-
-
-var Common = require("@helpers/common");
+const BotCommand = require("@models/BotCommand"),
+  Common = require("@helpers/common");
 /**
  * Command: mypitch
  * sets pitch user config
@@ -20,33 +18,34 @@ function mypitch(msg) {
   var server = msg.server;
 
   if (msg.args.length == 0) {
-    msg.il8nResponse('mypitch.usage', {pitch: server.getMemberSetting(msg.message.member, 'pitch') });
+    msg.il8nResponse("mypitch.usage", {
+      pitch: server.getMemberSetting(msg.message.member, "pitch"),
+    });
     return;
   }
 
-  if(msg.args[0] == 'default'){
-    server.addMemberSetting(msg.message.member, 'pitch', 'default');
-    msg.il8nResponse('general.auto', {key: "mypitch"});
+  if (msg.args[0] == "default") {
+    server.addMemberSetting(msg.message.member, "pitch", "default");
+    msg.il8nResponse("general.auto", { key: "mypitch" });
     return;
   }
 
   var pitch = parseFloat(msg.content),
-      pitch = Common.numberClamp(pitch, -20, 20);
+    pitch = Common.numberClamp(pitch, -20, 20);
 
-  server.addMemberSetting(msg.message.member,'pitch',pitch);
-  msg.il8nResponse('mypitch.okay', { pitch: pitch });
-};
+  server.addMemberSetting(msg.message.member, "pitch", pitch);
+  msg.il8nResponse("mypitch.okay", { pitch: pitch });
+}
 
 var command = new BotCommand({
-  command_name: 'mypitch',
-  command_arg: 'p',
+  command_name: "mypitch",
+  command_arg: "p",
   execute: mypitch,
-  short_help: 'mypitch.shorthelp',
-  long_help: 'mypitch.longhelp',
+  short_help: "mypitch.shorthelp",
+  long_help: "mypitch.longhelp",
   group: "personalization",
   // parameters: "<pitch>"
 });
-
 
 exports.register = function (commands) {
   commands.add(command);
