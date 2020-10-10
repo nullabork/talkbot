@@ -179,7 +179,13 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
   }
 
   getDefaultVoice(gender, lang_code) {
-    return AzureTextToSpeechAPI.voices[0].voice;
+    if (!AzureTextToSpeechAPI.voices || !AzureTextToSpeechAPI.voices.length)
+      return "en-GB-Susan";
+    var voices = AzureTextToSpeechAPI.voices.filter(
+      (v) => v.code == lang_code && v.gender == gender
+    );
+    if (voices.length) return voices[0].voice;
+    return "en-GB-Susan";
   }
 
   getRandomVoice(randnum, gender, lang_code) {

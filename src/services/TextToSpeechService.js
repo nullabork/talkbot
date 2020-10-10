@@ -176,7 +176,7 @@ class TextToSpeechService {
         var obj = new api();
         if (obj.enabled) {
           await obj.startupTests();
-          TextToSpeechService.checkProviderContract(obj);
+          await TextToSpeechService.checkProviderContract(obj);
           TextToSpeechService.providers[obj.shortname] = obj;
         }
       } catch (err) {

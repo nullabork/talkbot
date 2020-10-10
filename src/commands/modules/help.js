@@ -1,9 +1,5 @@
-/*jshint esversion: 9 */
 // models
-const Command = require("@models/Command"),
-  auth = require("@auth"),
-  CommentBuilder = require("@models/CommentBuilder"),
-  botStuff = require("@helpers/bot-stuff"),
+const CommentBuilder = require("@models/CommentBuilder"),
   Common = require("@helpers/common");
 
 /**
