@@ -30,13 +30,7 @@ class Server {
       state_data.memberSettings || state_data.userSettings || {};
 
     // list of text rules for !textrule, default settings as well
-    this.textrules = state_data.textrules || {
-      "o\\/": "wave",
-      "\\\\o": "wave ack",
-      "\\\\o\\/": "hooray",
-      "\\(y\\)": "thumbs up",
-      "\\(n\\)": "thumbs down",
-    };
+    this.textrules = state_data.textrules || require("@config/default.textrules.json");
 
     // set if the server is bound to a master
     this.bound_to = null;
@@ -88,7 +82,7 @@ class Server {
 
     // access the lang file
     this.commandResponses = new Lang({
-      messages: require("@src/lang.json"),
+      messages: Object.assign(require("@src/lang.json"), require("@config/lang.json")),
       locale: "en",
       fallback: (this.fallbackLang = "en"),
     });
