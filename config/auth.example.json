@@ -21,12 +21,16 @@
   },
   "tts": {
     "google": {
-      "enabled": true
-    },
+      "enabled": true,
+      "enforce_limit": false,
+      "limit": 5000000
+   },
      "azure": {
        "subscriptionKey":"",
-       "enabled": false
-     },
+       "enabled": false,
+       "enforce_limit": false,
+       "limit": 5000000
+      },
      "amazon": {
       "region": "us-east-1",
       "accessKeyId":"",
@@ -36,7 +40,11 @@
       "enabled": true
      },
      "watson": {
-      "enabled": false
+      "enabled": false,
+      "apikey": "",
+      "serviceUrl": "",
+      "enforce_limit": false,
+      "limit": 5000000
      }
 
   }
