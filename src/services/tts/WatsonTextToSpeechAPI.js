@@ -135,8 +135,6 @@ class WatsonTextToSpeechAPI extends TextToSpeechService {
   static async buildVoices() {
     let voices = await WatsonTextToSpeechAPI.watson.listVoices();
 
-    console.log(voices);
-
     return voices.result.voices.map((voice) => {
       return {
         language: voice.language,
