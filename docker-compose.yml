@@ -1,0 +1,12 @@
+version: "2"
+services:
+  node:
+    image: "faxwang/talkbot:1.1"
+    command: /usr/src/app/command.sh
+    volumes:
+      - ./config:/usr/src/app/config
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/app/config/google-auth.json
+    expose:
+      - "80"
+      - "443"

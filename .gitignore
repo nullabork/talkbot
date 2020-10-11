@@ -5,3 +5,4 @@ state.json
 /config/ohshit*
 talkbot.code-workspace
 samples
+/config/google-auth.json
