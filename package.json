@@ -20,7 +20,6 @@
     "node-fetch": "^2.6.1",
     "node-libsamplerate": "git://github.com/nullabork/node-libsamplerate.git",
     "pad": "^3.2.0",
-    "prettier": "^2.1.2",
     "prism-media": "^1.2.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",

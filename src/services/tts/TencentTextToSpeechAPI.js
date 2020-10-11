@@ -1,163 +1,151 @@
 /*jshint esversion: 9 */
 // class for all the details of a command
-const auth = require("@auth"),
-  tencent = require("tencentcloud-sdk-nodejs"),
-  TextToSpeechService = require("@services/TextToSpeechService");
+const auth = require('@auth'),
+    tencent = require('tencentcloud-sdk-nodejs'),
+    TextToSpeechService = require('@services/TextToSpeechService');
 
 const ttsClient = tencent.tts.v20190823.Client;
 const models = tencent.tts.v20190823.Models;
 
 class TencentTextToSpeechAPI extends TextToSpeechService {
-  // name of the service - eg. google, amazon, azure, watson
-  get shortname() {
-    return "tencent";
-  }
-
-  // is this API enabled
-  get enabled() {
-    return auth.tts && auth.tts.tencent && auth.tts.tencent.enabled; // turn if off by not specifying it in the tts object
-  }
-
-  // get the char limit for this service
-  get limit() {
-    return auth.tts.tencent.limit;
-  }
-
-  // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg
-  // google works fine!
-  get format() {
-    return "opus";
-  }
-
-  get rate() {
-    return 22050;
-  }
-
-  /**
-   * [startupTests to check things this API needs to operate]
-   *
-   * Should exit the process if this is not configured correctly
-   */
-  async startupTests() {
-    const accessKeyId = auth.tts.tencent.accessKeyId;
-    const secretAccessKey = auth.tts.tencent.secretAccessKey;
-
-    if (!secretAccessKey || !accessKeyId) {
-      console.log(
-        "Config variable tts.tencent.accessKeyId or tts.tencent.secretAccessKey is not set."
-      );
-      process.exit(1);
+    // name of the service - eg. google, amazon, azure, watson
+    get shortname() {
+        return 'tencent';
     }
 
-    try {
-
-        let cred = new Credential(accessKeyId, secretAccessKey);
-        let httpProfile = new HttpProfile();
-        httpProfile.reqMethod = "POST";
-        httpProfile.reqTimeout = 30;
-        httpProfile.endpoint = "tts.tencentcloudapi.com";
-
-        let clientProfile = new ClientProfile();
-        clientProfile.signMethod = "HmacSHA256";
-        clientProfile.httpProfile = httpProfile;
-        let client = new ttsClient(cred, "ap-guangzhou", clientProfile);        
-
-        TencentTextToSpeechAPI.tencent = client;
-        TencentTextToSpeechAPI.voices = await TencentTextToSpeechAPI.buildVoices();
-    } catch (err) {
-      console.log(`Something went wrong: ${err}`);
-      process.exit(1);
+    // is this API enabled
+    get enabled() {
+        return auth.tts && auth.tts.tencent && auth.tts.tencent.enabled; // turn if off by not specifying it in the tts object
     }
-    console.log("Loaded the Tencent TTS API credentials OK.");
-  }
 
-  /**
-   * [buildRequest to the underlying API]
-   *
-   * @param {*} ssml
-   * @param {*} settings
-   *
-   * @return  {[type]}  [return request object for this API]
-   */
-  buildRequest(msg, settings, server) {
+    // get the char limit for this service
+    get limit() {
+        return auth.tts.tencent.limit;
+    }
 
-    let req = new models.TextToVoiceRequest();
-    req.Text = msg;
-    req.SessionId = "";
-    req.ModelType = 1;
-    req.Volume = 5;
-    req.Speed = 1;
-    req.ProjectId = 0;
-    req.VoiceType = settings.name || self.getDefaultVoice("FEMALE", "en-US");
-    req.PrimaryLanguage = 1;
-    req.SampleRate = 16000;
-    req.Codec = "opus";
+    // i know this is PCM and we're using ogg_vorbis with play stream, but it doesn't work if I switch to ogg
+    // google works fine!
+    get format() {
+        return 'opus';
+    }
 
-    return req;
-  }
+    get rate() {
+        return 22050;
+    }
 
-  /**
-   * [getAudioContent from the underlying API]
-   *
-   * @param {*} request
-   * @param {*} callback (err, audio) => {...}
-   */
-  async getAudioContent(request, callback) {
-    var self = this;
+    /**
+     * [startupTests to check things this API needs to operate]
+     *
+     * Should exit the process if this is not configured correctly
+     */
+    async startupTests() {
+        const accessKeyId = auth.tts.tencent.accessKeyId;
+        const secretAccessKey = auth.tts.tencent.secretAccessKey;
 
-    self.doBookkeeping(request);
-    const cb = (err, audioStream) => {
+        if (!secretAccessKey || !accessKeyId) {
+            console.log('Config variable tts.tencent.accessKeyId or tts.tencent.secretAccessKey is not set.');
+            process.exit(1);
+        }
 
-        callback(err, audioStream.Audio);
-    };
+        try {
+            let cred = new Credential(accessKeyId, secretAccessKey);
+            let httpProfile = new HttpProfile();
+            httpProfile.reqMethod = 'POST';
+            httpProfile.reqTimeout = 30;
+            httpProfile.endpoint = 'tts.tencentcloudapi.com';
 
-    TencentTextToSpeechAPI.tencent.TextToVoice(request, cb);
-  }
+            let clientProfile = new ClientProfile();
+            clientProfile.signMethod = 'HmacSHA256';
+            clientProfile.httpProfile = httpProfile;
+            let client = new ttsClient(cred, 'ap-guangzhou', clientProfile);
 
-  getVoices() {
-    return TencentTextToSpeechAPI.voices;
-  }
+            TencentTextToSpeechAPI.tencent = client;
+            TencentTextToSpeechAPI.voices = await TencentTextToSpeechAPI.buildVoices();
+        } catch (err) {
+            console.log(`Something went wrong: ${err}`);
+            process.exit(1);
+        }
+        console.log('Loaded the Tencent TTS API credentials OK.');
+    }
 
-  getDefaultVoice(gender, lang_code) {
-    var voices = TencentTextToSpeechAPI.voices.filter(
-      (voice) => voice.code == lang_code && voice.gender == gender
-    );
-    if (voices.length > 0) return voices[0].voice;
-    var voices = TencentTextToSpeechAPI.voices.filter(
-      (voice) => voice.code == lang_code
-    );
-    if (voices.length > 0) return voices[0].voice;
-    var voices = TencentTextToSpeechAPI.voices.filter(
-      (voice) => voice.code == "en-US" && voice.gender == gender
-    );
-    if (voices.length > 0) return voices[0].voice;
-    return "0";
-  }
+    /**
+     * [buildRequest to the underlying API]
+     *
+     * @param {*} ssml
+     * @param {*} settings
+     *
+     * @return  {[type]}  [return request object for this API]
+     */
+    buildRequest(msg, settings, server) {
+        let req = new models.TextToVoiceRequest();
+        req.Text = msg;
+        req.SessionId = '';
+        req.ModelType = 1;
+        req.Volume = 5;
+        req.Speed = 1;
+        req.ProjectId = 0;
+        req.VoiceType = settings.name || self.getDefaultVoice('FEMALE', 'en-US');
+        req.PrimaryLanguage = 1;
+        req.SampleRate = 16000;
+        req.Codec = 'opus';
 
-  getRandomVoice(randnum, gender, lang_code) {
-    if (!randnum) randnum = Math.random() * 1000000;
-    var voices = TencentTextToSpeechAPI.voices.filter(
-      (voice) =>
-        (!lang_code || voice.code == lang_code) &&
-        (!gender || voice.gender == gender)
-    );
+        return req;
+    }
 
-    return voices[randnum % voices.length].voice;
-  }
+    /**
+     * [getAudioContent from the underlying API]
+     *
+     * @param {*} request
+     * @param {*} callback (err, audio) => {...}
+     */
+    async getAudioContent(request, callback) {
+        var self = this;
 
-  doBookkeeping(request) {
-    if (!TencentTextToSpeechAPI.count) TencentTextToSpeechAPI.count = 0;
-    TencentTextToSpeechAPI.count += request.text.length;
+        self.doBookkeeping(request);
+        const cb = (err, audioStream) => {
+            callback(err, audioStream.Audio);
+        };
 
-    if (
-      auth.tts.tencent.enforce_limit &&
-      TencentTextToSpeechAPI.count > this.limit
-    )
-      throw "Tencent limit reached";
-  }
+        TencentTextToSpeechAPI.tencent.TextToVoice(request, cb);
+    }
 
-  static async buildVoices() {
-/*
+    getVoices() {
+        return TencentTextToSpeechAPI.voices;
+    }
+
+    getDefaultVoice(gender, lang_code) {
+        var voices = TencentTextToSpeechAPI.voices.filter(
+            (voice) => voice.code == lang_code && voice.gender == gender,
+        );
+        if (voices.length > 0) return voices[0].voice;
+        var voices = TencentTextToSpeechAPI.voices.filter((voice) => voice.code == lang_code);
+        if (voices.length > 0) return voices[0].voice;
+        var voices = TencentTextToSpeechAPI.voices.filter(
+            (voice) => voice.code == 'en-US' && voice.gender == gender,
+        );
+        if (voices.length > 0) return voices[0].voice;
+        return '0';
+    }
+
+    getRandomVoice(randnum, gender, lang_code) {
+        if (!randnum) randnum = Math.random() * 1000000;
+        var voices = TencentTextToSpeechAPI.voices.filter(
+            (voice) => (!lang_code || voice.code == lang_code) && (!gender || voice.gender == gender),
+        );
+
+        return voices[randnum % voices.length].voice;
+    }
+
+    doBookkeeping(request) {
+        if (!TencentTextToSpeechAPI.count) TencentTextToSpeechAPI.count = 0;
+        TencentTextToSpeechAPI.count += request.text.length;
+
+        if (auth.tts.tencent.enforce_limit && TencentTextToSpeechAPI.count > this.limit)
+            throw 'Tencent limit reached';
+    }
+
+    static async buildVoices() {
+        /*
     0-Yun Xiaoning, female voice with affinity (default)
     1-Yun Xiaoqi, male voice with affinity
     2-Yun Xiaowan, mature male voice
@@ -191,16 +179,18 @@ class TencentTextToSpeechAPI extends TextToSpeechService {
     102002-Bei Zi, Cantonese female voice
     102003-Bei Xue, news female voice*/
 
-    return [{
-        language: "Chinese",
-        code: "cnn",
-        translate: "cnn",
-        voice: 0,
-        gender: "FEMALE",
-        provider: "tencent",
-        voice_alias: "Yun Xiaoning",
-      }];
-  }
+        return [
+            {
+                language: 'Chinese',
+                code: 'cnn',
+                translate: 'cnn',
+                voice: 0,
+                gender: 'FEMALE',
+                provider: 'tencent',
+                voice_alias: 'Yun Xiaoning',
+            },
+        ];
+    }
 }
 
 module.exports = TencentTextToSpeechAPI;
