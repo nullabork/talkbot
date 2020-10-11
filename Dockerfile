@@ -28,7 +28,7 @@ RUN npm install node-gyp -g
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-RUN git clone git@github.com:nullabork/talkbot.git .
+RUN git clone -b betabot --single-branch https://github.com/nullabork/talkbot.git .
 
 RUN npm install
 RUN npm rebuild
