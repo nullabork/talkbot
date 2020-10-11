@@ -8,6 +8,23 @@ Discord bot for text-to-speech and language translation
 
 Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 
+# Docker
+
+1. If your on windows10, Install wsl2 https://docs.microsoft.com/en-us/windows/wsl/install-win10 else go to step two ;)
+2. Install docker https://docs.docker.com/get-docker/
+3. Clone this repo or [Download the talkbot files](https://github.com/nullabork/talkbot/archive/betabot.zip) and extract them.
+4. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
+   - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
+   - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
+   - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
+5. Add a file, `config/google-auth.json` with the google credentials
+   - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
+6. In the command line run `docker pull faxwang/talkbot:1.1` this will take a while.
+7. In the command line run change directory to the project root and run
+   - `docker-compose up -d` to run talkbot in the background
+   - `docker-compose up` to run talkbot in the foreground
+8. It should be running now.
+
 # Quick start
 
 1. [Click here to add the bot to your discord](https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0): https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0
