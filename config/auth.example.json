@@ -45,7 +45,22 @@
       "serviceUrl": "",
       "enforce_limit": false,
       "limit": 5000000
-     }
+     },
+     "tencent": {
+      "enabled": false,
+      "accessKeyId": "",
+      "secretAccessKey": "",
+      "enforce_limit": true,
+      "limit": 1000000
+    },
+     "alibaba": {
+       "enabled": false,
+       "appkey": "",
+       "token": "",
+       "endpoint": "https://nls-gateway-ap-southeast-1.aliyuncs.com/stream/v1/tts",
+       "enforce_limit": true,
+       "limit": 1000000
+     }     
 
   }
 }
