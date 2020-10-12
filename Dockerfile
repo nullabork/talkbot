@@ -4,7 +4,7 @@ LABEL Name="TalkbotLatest"
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # make sure apt is up to date
 RUN apt-get update --fix-missing
-RUN apt-get install -y git gunzip curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
+RUN apt-get install -y git unzip curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 12.13.0
@@ -35,8 +35,3 @@ RUN ls /usr/src/app
 
 RUN npm install
 RUN npm rebuild
-
-# EXPOSE 80
-# EXPOSE 443
-
-# CMD ["pm2-runtime", "start", "ecosystem.config.js", "--only", "docker"]
