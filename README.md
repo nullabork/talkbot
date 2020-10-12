@@ -1,6 +1,6 @@
-[logo]: https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png "Talkbot"
+[logo]: https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png 'Talkbot'
 
-![alt text](https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png "Talkbot")
+![alt text](https://raw.githubusercontent.com/nullabork/artwork/master/talkbot/face/png/face_200.png 'Talkbot')
 
 # Talkbot
 
@@ -14,15 +14,15 @@ Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 2. Install docker https://docs.docker.com/get-docker/
 3. Clone this repo or [Download the talkbot files](https://github.com/nullabork/talkbot/archive/betabot.zip) and extract them.
 4. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
-   - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
-   - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
-   - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
+    - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
+    - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
+    - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
 5. Add a file, `config/google-auth.json` with the google credentials
-   - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
-6. In the command line run `docker pull faxwang/talkbot:1.1` this will take a while.
+    - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
+6. In the command line run `docker pull faxwang/talkbot:latest` this will take a while.
 7. In the command line run change directory to the project root and run
-   - `docker-compose up -d` to run talkbot in the background
-   - `docker-compose up` to run talkbot in the foreground
+    - `docker-compose up -d` to run talkbot in the background
+    - `docker-compose up` to run talkbot in the foreground
 8. It should be running now.
 
 # Quick start
@@ -73,11 +73,11 @@ Each of these services can be turned on and off in the configuration of the bot.
 
 ## Win 10 Software requirements
 
-- node js - v12
-- git
-- cmake - https://cmake.org/download/
-- python - https://www.python.org/downloads/ - v2.7.\* is required
-- Visual Studio C++ build tools or Visual Studio with full C++ support. The Build Tools are here: https://download.microsoft.com/download/5/F/7/5F7ACAEB-8363-451F-9425-68A90F98B238/visualcppbuildtools_full.exe
+-   node js - v12
+-   git
+-   cmake - https://cmake.org/download/
+-   python - https://www.python.org/downloads/ - v2.7.\* is required
+-   Visual Studio C++ build tools or Visual Studio with full C++ support. The Build Tools are here: https://download.microsoft.com/download/5/F/7/5F7ACAEB-8363-451F-9425-68A90F98B238/visualcppbuildtools_full.exe
 
 You can also try getting Python and VS Build Tools this way
 `npm install --global --production --vs2015 --add-python-to-path windows-build-tools`
@@ -85,23 +85,23 @@ You can also try getting Python and VS Build Tools this way
 ## Install, setup and run
 
 1. Install node v12, git, cmake, python v2.7 and Visual Studio C++ build tools
-   - See the URLs in the software requirements for how to do this
+    - See the URLs in the software requirements for how to do this
 2. Clone this respository
-   - `git clone https://github.com/nullabork/talkbot talkbot`
-   - `git
+    - `git clone https://github.com/nullabork/talkbot talkbot`
+    - `git
 3. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
-   - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
+    - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 4. Setup your prefered API provider - Google, Amazon AWS Polly or Azure or any combination of those.
-   - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
-   - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
-   - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
+    - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
+    - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
+    - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
 5. Install NPM dependencies
-   ```yaml
-   npm install
-   npm rebuild
-   ```
+    ```yaml
+    npm install
+    npm rebuild
+    ```
 6. Run the bot!
-   - `node bot.js`
+    - `node bot.js`
 
 # Updating to the latest code
 
@@ -125,11 +125,11 @@ Check you have Python installed and that it is version 2.7.\*. It may have to be
 
 # Acknowledgements
 
-- WootoSmash - coder/bugmaker/shitposter
-- FaxWang - coder/bugfinder/shitposter
-- GreenLionVoltronPilot - bugfinder/shitposter
-- Kingk22 - bugfinder/shitposter/questionanswerer
-- Kelinmiriel - bugfinder/shitposter
-- All the npm package builders!
+-   WootoSmash - coder/bugmaker/shitposter
+-   FaxWang - coder/bugfinder/shitposter
+-   GreenLionVoltronPilot - bugfinder/shitposter
+-   Kingk22 - bugfinder/shitposter/questionanswerer
+-   Kelinmiriel - bugfinder/shitposter
+-   All the npm package builders!
 
 [Want to shitpost also?](https://discord.gg/NxrPp8g)
