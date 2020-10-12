@@ -1,7 +1,7 @@
 version: '2'
 services:
     node:
-        image: 'faxwang/talkbot:1.1'
+        image: 'faxwang/talkbot:latest'
         command: /usr/src/app/command.sh
         volumes:
             - ./config:/usr/src/app/config
