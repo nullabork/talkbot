@@ -4,7 +4,7 @@ LABEL Name="TalkbotLatest"
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # make sure apt is up to date
 RUN apt-get update --fix-missing
-RUN apt-get install -y git curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
+RUN apt-get install -y git gunzip curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 12.13.0
@@ -28,7 +28,10 @@ RUN npm install node-gyp -g
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-RUN git clone -b betabot --single-branch https://github.com/nullabork/talkbot.git /usr/src/app
+RUN curl -o latest.zip https://github.com/nullabork/talkbot/archive/betabot.zip
+RUN unzip latest.zip -d /usr/src/app
+
+RUN ls /usr/src/app
 
 RUN npm install
 RUN npm rebuild
