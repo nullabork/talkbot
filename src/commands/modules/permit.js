@@ -27,8 +27,8 @@ function permit(msg) {
         return;
     }
 
-    msg.message.mentions.members.tap((member) => server.permit(member.id));
-    roles.tap((role) => server.permit(role.id));
+    msg.message.mentions.members.forEach((member) => server.permit(member.id));
+    roles.forEach((role) => server.permit(role.id));
 
     var nicks = Common.makeNiceCsv(
         msg.message.mentions.members.concat(roles),
@@ -57,13 +57,13 @@ function unpermit(msg) {
     }
 
     let roles = msg.message.mentions.roles.concat(msg.getNonSnowflakeRoles());
-    roles.tap((role) => server.unpermit(role.id));
+    roles.forEach((role) => server.unpermit(role.id));
 
     if (msg.message.mentions.members.size == 0 && roles.size == 0) {
         server.unpermit(msg.message.member.id);
     }
 
-    msg.message.mentions.members.tap((member) => {
+    msg.message.mentions.members.forEach((member) => {
         if (member.id != msg.message.member.id && !msg.ownerIsMaster()) {
             msg.il8nResponse('unpermit.deny');
             return;
