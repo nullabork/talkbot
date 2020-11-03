@@ -70,7 +70,7 @@ class Restrict extends Command {
     } else if (input.message.mentions.channels.size == 0) {
       input.il8nResponse("restrict.args");
     } else {
-      input.message.mentions.channels.tap((chan) => {
+      input.message.mentions.channels.forEach((chan) => {
         if (!server.restrictions.includes(chan.id))
           server.restrictions.push(chan.id);
       });

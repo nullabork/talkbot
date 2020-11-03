@@ -1,10 +1,10 @@
 FROM python:2.7
-LABEL Name="TalkbotLatest"
+LABEL Name="Talkbotv12"
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # make sure apt is up to date
 RUN apt-get update --fix-missing
-RUN apt-get install -y git curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
+RUN apt-get install -y curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 12.13.0
@@ -28,12 +28,8 @@ RUN npm install node-gyp -g
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-RUN git clone -b betabot --single-branch https://github.com/nullabork/talkbot.git /usr/src/app
+COPY . /usr/src/app
+RUN chmod +x /usr/src/app/command.sh
 
 RUN npm install
 RUN npm rebuild
-
-# EXPOSE 80
-# EXPOSE 443
-
-# CMD ["pm2-runtime", "start", "ecosystem.config.js", "--only", "docker"]
