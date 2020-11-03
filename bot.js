@@ -61,7 +61,7 @@
     // when a member is removed unfollow
     bot.on('guildMemberRemove', (member) => {
         try {
-            var server = world.servers[member.guild.id];
+            const server = world.servers[member.guild.id];
             if (server.isMaster(member)) {
                 server.release();
             }
@@ -98,7 +98,7 @@
             // ignore message from myself
             if (message.member && message.member.id == bot.user.id) return;
 
-            var server = null;
+            let server = null;
 
             // if its in a server and not a DM
             if (message.guild) {
