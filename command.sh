@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec pm2-runtime start ecosystem.config.js
+exec pm2-runtime start ecosystem.config.js --only docker
