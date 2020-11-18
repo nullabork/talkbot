@@ -72,10 +72,11 @@
 
     // handle voice state updates
     bot.on('voiceStateUpdate', (oldState, newState) => {
-        if (!oldState) return;
-
         try {
             const server = world.servers[oldState.guild.id];
+            server.channelJoined(newState);
+
+            if (!oldState) return;
             if (!server.isMaster(oldState.guild.members.cache.get(oldState.id))) return;
 
             // they've changed voice channels

@@ -1,6 +1,7 @@
 {
   "dev_ids": ["279935071165743105"],
   "token": "yourdiscord.tokenhere",
+  "neglect_timeout": 3600000,
   "command_char" : "!",
   "logging" : {
     "err" : true,

@@ -8,7 +8,7 @@ const Lang = require('lang.js'),
     fs = require('fs'),
     TextToSpeechService = require('@services/TextToSpeechService');
 
-const TIMEOUT_NEGLECT = 480 * 60 * 1000; // 2 hours
+const TIMEOUT_NEGLECT = botStuff.auth.neglect_timeout || 480 * 60 * 1000; // 2 hours
 
 class Server {
     // create the server object
@@ -51,6 +51,12 @@ class Server {
 
         // restrict talkbot to a specific server
         this.restrictions = state_data.restrictions || [];
+
+        // bind talkbot to a autofollow joining people
+        this.bind = state_data.bind || [];
+
+        // allow people to be auto permitted
+        this.bindPermit = state_data.bindPermit || false;
 
         // queue for !keep
         this.keepMessages = state_data.keepMessages || {};
@@ -441,6 +447,14 @@ class Server {
             } catch (e) {
                 Common.error(e);
             }
+        });
+    }
+
+    channelJoined(channelState) {
+        var ret = commands.notify('userJoinedChannel', {
+            channelState: channelState,
+            member: channelState.member,
+            server: this,
         });
     }
 

@@ -203,6 +203,29 @@
         "okay": "I'll only listen on these channels now: :channels",
         "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
     },
+    
+    "en.bind": {
+        "current": "The bot is currently bound to auto follow people in :bound channels",
+        "usage": ":command_charbind none - turn off auto follow\n :command_charbind #channel - auto follow to people who join channels: #channel\n:command_charbind permit|unpermit - auto permit in bound channels",
+        "nopermissions": "You need have Manage Server permissions to alter the channels Talkbot is restricted to",
+        "setdefault": "Not bound to any channel",
+        "args": "Please include a channel eg. :command_charbind #channel",
+        "okay": "I'll auto follow on these channels: :channels",
+        "shorthelp": "Bind talkbot to auto follow people who join specific channels",
+        "permit": "Permit any user who joins bound channels",
+        "unpermit": "Only follow the first person to join a bound channel"
+    },
+
+    "en.bindusage": {
+        "title": "Auto follow people in specific channels",
+        "description": "Auto following people who join channels: :bound.\n Auto permitting additional people is :permit.",
+        "noargs": "This output",
+        "none": "Turn auto follow off",
+        "channels": "Auto follow people in specific channels",
+        "permit": "Permit any user who joins bound channels",
+        "unpermit": "Only follow the first person to join a bound channel"
+    },
+
     "en.restrictusage": {
         "title": "Restrict the channels to listen for text",
         "description": "The bot is currently restricted to these channels :restrictions",
