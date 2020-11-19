@@ -10,6 +10,8 @@ const Lang = require('lang.js'),
 
 const TIMEOUT_NEGLECT = botStuff.auth.neglect_timeout || 480 * 60 * 1000; // 2 hours
 
+const NEGLECT_TIMEOUT_MESSAGES = botStuff.auth.neglect_timeout_messages || ['talkbot inactivity timeout'];
+
 class Server {
     // create the server object
     constructor(guild, world) {
@@ -340,7 +342,7 @@ class Server {
         };
 
         clearTimeout(server.neglect_timeout);
-        server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
+        if (TIMEOUT_NEGLECT > 0) server.neglect_timeout = setTimeout(neglected_timeout, TIMEOUT_NEGLECT);
     }
 
     // called when the neglect timeout expires
@@ -357,7 +359,11 @@ class Server {
         };
 
         if (server.inChannel()) {
-            server.talk('talkbot inactivity timeout', null, neglectedrelease);
+            server.talk(
+                NEGLECT_TIMEOUT_MESSAGES[Math.floor(Math.random() * NEGLECT_TIMEOUT_MESSAGES.length)],
+                null,
+                neglectedrelease,
+            );
         } else {
             Common.out('neglected: server.release() not in chan');
             server.release();
