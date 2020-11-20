@@ -15,6 +15,30 @@ class Bind extends Command {
         return false;
     }
 
+    static getChannelNames(server, string) {
+        let obj = {};
+        const channelNames = (server.bind || []).map((id) => {
+            const channel = server.guild.channels.cache.get(id);
+            if (channel && channel.name) {
+                obj[channel.name] = id;
+                return ` ${channel.name} : ${id}`;
+            }
+
+            obj[id] = 'Channel Not Found';
+            return id;
+        });
+
+        if (!channelNames || !channelNames.length) {
+            obj = [' No Channels Bound!'];
+            return ' No Channels Bound!';
+        }
+
+        return {
+            string: '\n' + channelNames.join('\n') + '\n',
+            object: obj,
+        };
+    }
+
     usage(input, server) {
         let usage = server.lang('bindusage.title');
         let command = auth.command_char + this.command_name;
@@ -22,12 +46,8 @@ class Bind extends Command {
         return input.response(
             CommentBuilder.create({
                 data: {
-                    [usage]: [
-                        server.lang('bindusage.description', {
-                            bound: server.bind.join(', '),
-                            permit: server.bindPermit ? 'ON' : 'OFF',
-                        }),
-                    ],
+                    [usage]: Bind.getChannelNames(server).object,
+                    'Auto permitting': [server.bindPermit ? 'Turned ON' : ' Turned OFF'],
                     commands: {
                         [command]: server.lang('bindusage.noargs'),
                         [command + ' none']: server.lang('bindusage.none'),
@@ -72,15 +92,22 @@ class Bind extends Command {
                 }
             }
 
-            input.il8nResponse('bind.okay', { channels: server.bind.join(', ') });
+            let usage = server.lang('bindusage.title');
+            let command = auth.command_char + this.command_name;
+
+            input.response(
+                CommentBuilder.create({
+                    data: {
+                        [usage]: Bind.getChannelNames(server).object,
+                    },
+                }),
+            );
         } else {
-            input.il8nResponse('bind.current', { bound: server.bind.join(', ') });
+            input.il8nResponse('bind.current', { bound: Bind.getChannelNames(server).string });
         }
     }
 
     onUserJoinedChannel({ channelState, member, server }) {
-        console.log(server.bind.join(' - '));
-
         // throw out these states
         if (!member.voice.channelID) return;
         if (!server.bind.includes(channelState.channelID)) return;
