@@ -17,26 +17,21 @@ class Bind extends Command {
 
     static getChannelNames(server, string) {
         let obj = {};
-        const channelNames = (server.bind || []).map((id) => {
+        const channelNames = (server.bind || []).forEach((id) => {
             const channel = server.guild.channels.cache.get(id);
+
             if (channel && channel.name) {
                 obj[channel.name] = id;
-                return ` ${channel.name} : ${id}`;
             }
 
             obj[id] = 'Channel Not Found';
-            return id;
         });
 
         if (!channelNames || !channelNames.length) {
             obj = [' No Channels Bound!'];
-            return ' No Channels Bound!';
         }
 
-        return {
-            string: '\n' + channelNames.join('\n') + '\n',
-            object: obj,
-        };
+        return obj;
     }
 
     usage(input, server) {
@@ -46,7 +41,7 @@ class Bind extends Command {
         return input.response(
             CommentBuilder.create({
                 data: {
-                    [usage]: Bind.getChannelNames(server).object,
+                    [usage]: Bind.getChannelNames(server),
                     'Auto permitting': [server.bindPermit ? 'Turned ON' : ' Turned OFF'],
                     commands: {
                         [command]: server.lang('bindusage.noargs'),
@@ -98,12 +93,10 @@ class Bind extends Command {
             input.response(
                 CommentBuilder.create({
                     data: {
-                        [usage]: Bind.getChannelNames(server).object,
+                        [usage]: Bind.getChannelNames(server),
                     },
                 }),
             );
-        } else {
-            input.il8nResponse('bind.current', { bound: Bind.getChannelNames(server).string });
         }
     }
 
