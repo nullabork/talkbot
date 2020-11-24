@@ -13,7 +13,7 @@ var BotCommand = require('@models/BotCommand'),
  *
  * @return  {[undefined]}
  * * */
-function follow(msg) {
+async function follow(msg) {
     const server = msg.server;
 
     let member = msg.message.member;
@@ -39,20 +39,24 @@ function follow(msg) {
             };
 
             server.setMaster(member);
-            server
-                .joinVoiceChannel(member.voice.channel)
-                .then(() => {
-                    server.addMemberSetting(member, 'toLanguage', 'default');
-                    commands.notify('follow', { member: member, server: server });
-                    msg.il8nResponse('follow.okay');
 
-                    // unmute them if they're muted
-                    if (server.getMemberSetting(member, 'muted')) {
-                        server.addMemberSetting(member, 'muted', false);
-                        msg.il8nResponse('mute.unmuted');
-                    }
-                }, errorFunc)
-                .catch(errorFunc);
+            const connection = await server.joinVoiceChannel(member.voice.channel);
+
+            if (!connection) {
+                msg.il8nResponse('follow.error');
+                server.release();
+                return;
+            }
+
+            server.addMemberSetting(member, 'toLanguage', 'default');
+            commands.notify('follow', { member: member, server: server });
+            msg.il8nResponse('follow.okay');
+
+            // unmute them if they're muted
+            if (server.getMemberSetting(member, 'muted')) {
+                server.addMemberSetting(member, 'muted', false);
+                msg.il8nResponse('mute.unmuted');
+            }
         } else {
             msg.il8nResponse('follow.join');
         }
@@ -174,7 +178,7 @@ function sidle(msg) {
  *
  * @return  {[undefined]}
  * * */
-function transfer(msg) {
+async function transfer(msg) {
     var server = msg.server;
     if (server.connecting) return msg.il8nResponse('transfer.connecting');
     if (server.leaving) return msg.il8nResponse('transfer.leaving');
@@ -218,26 +222,25 @@ function transfer(msg) {
     if (server.guild.voice.connection) {
         msg.il8nResponse('transfer.okay', { name: newMaster.displayName });
     } else {
-        var errorFunc = (err) => {
+        var errorFunc = (err) => {};
+
+        $connection = await server.joinVoiceChannel(newMaster.voice.channel);
+
+        if (!$connection) {
             msg.il8nResponse('transfer.error');
-            Common.error(err);
             server.release();
-        };
+            return;
+        }
 
-        server
-            .joinVoiceChannel(newMaster.voice.channel)
-            .then(() => {
-                msg.il8nResponse('transfer.okay', { name: newMaster.displayName });
+        msg.il8nResponse('transfer.okay', { name: newMaster.displayName });
 
-                server.addMemberSetting(newMaster, 'toLanguage', 'default');
+        server.addMemberSetting(newMaster, 'toLanguage', 'default');
 
-                // unmute them if they're muted
-                if (server.getMemberSetting(newMaster, 'muted')) {
-                    server.addMemberSetting(newMaster, 'muted', false);
-                    msg.il8nResponse('mute.unmuted');
-                }
-            }, errorFunc)
-            .catch(errorFunc);
+        // unmute them if they're muted
+        if (server.getMemberSetting(newMaster, 'muted')) {
+            server.addMemberSetting(newMaster, 'muted', false);
+            msg.il8nResponse('mute.unmuted');
+        }
     }
 }
 

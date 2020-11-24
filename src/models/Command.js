@@ -65,6 +65,7 @@ class Command {
             userJoinedChannel: self.onUserJoinedChannel || null,
 
             messageDelivered: self.onMessageDelivered || null,
+            preValidate: self.onPreValidate || null,
             validate: self.onValidate || null,
 
             joinVoice: self.onJoinVoice || null,

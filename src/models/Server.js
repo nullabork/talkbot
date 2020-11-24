@@ -228,7 +228,7 @@ class Server {
 
     // get the server to join a voice channel
     // NOTE: this is async, so if you want to run a continuation use .then on the promise returned
-    joinVoiceChannel(voiceChannel) {
+    async joinVoiceChannel(voiceChannel) {
         var server = this;
         if (server.connecting)
             return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
@@ -242,53 +242,55 @@ class Server {
             );
         server.connecting = true;
 
-        // join the voice channel and setup all the listeners to deal with events
-        var p = voiceChannel.join().then(
-            (connection) => {
-                // success
+        let connection;
+        try {
+            // join the voice channel and setup all the listeners to deal with events
+            connection = await voiceChannel.join();
+        } catch (e) {
+            server.stop('joinError');
+            server.bound_to = null;
+            server.permitted = {};
+            server.connecting = false;
+            Common.error(e);
+            return false;
+        }
 
-                // when closing stop the voices and clear the neglect timeout
-                connection.on('closing', () => {
-                    server.leaving = true;
-                    server.stop('voiceClosing'); // stop playing
-                    clearTimeout(server.neglect_timeout);
-                });
+        // when closing stop the voices and clear the neglect timeout
+        connection.on('closing', () => {
+            server.leaving = true;
+            server.stop('voiceClosing'); // stop playing
+            clearTimeout(server.neglect_timeout);
+        });
 
-                // when disconnect clear the master - note that d/c may happen without a closing event
-                connection.on('disconnect', () => {
-                    server.stop('disconnect'); // stop playing
-                    server.bound_to = null;
-                    server.permitted = {};
-                    server.leaving = false;
-                });
+        // when disconnect clear the master - note that d/c may happen without a closing event
+        connection.on('disconnect', () => {
+            server.stop('disconnect'); // stop playing
+            server.bound_to = null;
+            server.permitted = {};
+            server.leaving = false;
+        });
 
-                // if an error occurs treat it like a d/c but capture the error
-                // reset the state to as if there was no connection
-                connection.on('error', (error) => {
-                    server.bound_to = null;
-                    server.permitted = {};
-                    server.leaving = false;
-                    server.connecting = false; // this might cause a race condition
-                    Common.error(error);
-                    connection.disconnect(); // nerf the connection because we got an error
-                });
+        // if an error occurs treat it like a d/c but capture the error
+        // reset the state to as if there was no connection
+        connection.on('error', (error) => {
+            server.bound_to = null;
+            server.permitted = {};
+            server.leaving = false;
+            server.connecting = false; // this might cause a race condition
+            Common.error(error);
+            connection.disconnect(); // nerf the connection because we got an error
+        });
 
-                server.connecting = false;
-                server.save();
-                server.world.setPresence();
-                commands.notify('joinVoice', { server: server });
-            },
-            (error) => {
-                // on an error treat it like a error on the connection
-                server.stop('joinError');
-                server.bound_to = null;
-                server.permitted = {};
-                server.connecting = false;
-                Common.error(error);
-            },
-        );
+        connection.on('ready', () => {
+            console.log('immmm readddy');
+        });
 
-        return p;
+        server.connecting = false;
+        server.save();
+        server.world.setPresence();
+        commands.notify('joinVoice', { server: server });
+
+        return connection;
     }
 
     // switch from whatever the current voice channel is to this voice channel
@@ -539,7 +541,14 @@ class Server {
         var server = this;
         var settings = server.getMemberSettings(message.member);
 
+        var ret = commands.notify('preValidate', {
+            message: message,
+            content: message.cleanContent,
+            server: server,
+        });
+
         if (
+            ret === false ||
             message.cleanContent.length < 1 ||
             Common.isMessageExcluded(message.cleanContent) ||
             !server.inChannel() ||
