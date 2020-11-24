@@ -22,12 +22,12 @@ class Bind extends Command {
 
             if (channel && channel.name) {
                 obj[channel.name] = id;
+            } else {
+                obj[id] = 'Channel Not Found';
             }
-
-            obj[id] = 'Channel Not Found';
         });
 
-        if (!channelNames || !channelNames.length) {
+        if (!server.bind || !server.bind) {
             obj = [' No Channels Bound!'];
         }
 
@@ -81,9 +81,16 @@ class Bind extends Command {
             server.bindPermit = true;
             input.il8nResponse('bind.permit');
         } else if (input.args.length > 0) {
-            for (const arg of input.args) {
-                if (arg.length > 15) {
-                    if (!server.bind.includes(arg)) server.bind.push(arg);
+            const mentions = input.message.mentions;
+            if (mentions.channels.first()) {
+                mentions.channels.forEach((chan) => {
+                    if (!server.bind.includes(chan.id)) server.bind.push(chan.id);
+                });
+            } else {
+                for (const arg of input.args) {
+                    if (arg.length > 15) {
+                        if (!server.bind.includes(arg)) server.bind.push(arg);
+                    }
                 }
             }
 
@@ -100,15 +107,38 @@ class Bind extends Command {
         }
     }
 
-    onUserJoinedChannel({ channelState, member, server }) {
+    async onUserJoinedChannel({ channelState, member, server }) {
         // throw out these states
         if (!member.voice.channelID) return;
-        if (!server.bind.includes(channelState.channelID)) return;
+        if (!server.bind || !server.bind.length || !server.bind.includes(channelState.channelID)) return;
 
         if (!server.isBound()) {
             server.setMaster(member);
-            server.joinVoiceChannel(member.voice.channel);
+            await server.joinVoiceChannel(member.voice.channel);
         } else if (server.bindPermit) {
+            server.permit(member.id);
+        }
+    }
+
+    async onPreValidate({ message, content, server }) {
+        const { member, channel, mentions } = message;
+        // throw out these states
+        if (!member.voice.channelID) return;
+        if (!server.bind || !server.bind.length || !server.bind.includes(channel.id)) return;
+        const settings = server.getMemberSettings(message.member);
+
+        if (!server.isBound()) {
+            server.setMaster(member);
+            const connection = await server.joinVoiceChannel(member.voice.channel);
+
+            if (!connection) {
+                return;
+            }
+
+            setTimeout(() => {
+                server.talk(content, settings);
+            }, 600);
+        } else if (server.bindPermit && !server.permitted[member.id]) {
             server.permit(member.id);
         }
     }
