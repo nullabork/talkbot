@@ -281,10 +281,6 @@ class Server {
             connection.disconnect(); // nerf the connection because we got an error
         });
 
-        connection.on('ready', () => {
-            console.log('immmm readddy');
-        });
-
         server.connecting = false;
         server.save();
         server.world.setPresence();
@@ -294,11 +290,10 @@ class Server {
     }
 
     // switch from whatever the current voice channel is to this voice channel
-    switchVoiceChannel(voiceChannel) {
+    async switchVoiceChannel(voiceChannel) {
         var server = this;
         if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
-        if (!server.guild.voice.connection)
-            return server.joinVoiceChannel(voiceChannel).then(null, Common.error).catch(Common.error);
+        if (!server.guild.voice.connection) return await server.joinVoiceChannel(voiceChannel);
         if (voiceChannel.id == server.guild.voice.connection.channel.id)
             return Common.error('voiceChannel already joined');
 

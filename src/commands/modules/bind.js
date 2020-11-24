@@ -135,12 +135,10 @@ class Bind extends Command {
                 return;
             }
 
-            server.talk(content, settings);
-
-            connection.on('ready', () => {
-                console.log('immmm readddy');
-            });
-        } else if (server.bindPermit && server.permitted[member.id]) {
+            setTimeout(() => {
+                server.talk(content, settings);
+            }, 600);
+        } else if (server.bindPermit && !server.permitted[member.id]) {
             server.permit(member.id);
         }
     }
