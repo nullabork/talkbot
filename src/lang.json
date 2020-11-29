@@ -221,7 +221,9 @@
         "description": "Auto following people who join channels: :bound.\n Auto permitting additional people is :permit.",
         "noargs": "This output",
         "none": "Turn auto follow off",
-        "channels": "Auto follow people in specific channels",
+        "channel": "Auto follow people who join specific channels",
+        "text_channel": "Auto follow people type in specific channels",
+        "username": "Auto follow specific people when they type in any channel",
         "permit": "Permit any user who joins bound channels",
         "unpermit": "Only follow the first person to join a bound channel"
     },
