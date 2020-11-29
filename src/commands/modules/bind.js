@@ -19,8 +19,10 @@ class Bind extends Command {
         let obj = {};
         const channelNames = (server.bind || []).forEach((id) => {
             const channel = server.guild.channels.cache.get(id);
-
-            if (channel && channel.name) {
+            const user = server.guild.members.cache.get(id);
+            if (user) {
+                obj[user.displayName] = id;
+            } else if (channel && channel.name) {
                 obj[channel.name] = id;
             } else {
                 obj[id] = 'Channel Not Found';
@@ -46,7 +48,9 @@ class Bind extends Command {
                     commands: {
                         [command]: server.lang('bindusage.noargs'),
                         [command + ' none']: server.lang('bindusage.none'),
-                        [command + ' #channel']: server.lang('bindusage.channels'),
+                        [command + ' voice_channel_id']: server.lang('bindusage.channel'),
+                        [command + ' #text_channel']: server.lang('bindusage.text_channel'),
+                        [command + ' @username']: server.lang('bindusage.username'),
                         [command + ' permit']: server.lang('bindusage.permit'),
                         [command + ' unpermit']: server.lang('bindusage.unpermit'),
                     },
@@ -81,16 +85,27 @@ class Bind extends Command {
             server.bindPermit = true;
             input.il8nResponse('bind.permit');
         } else if (input.args.length > 0) {
-            const mentions = input.message.mentions;
-            if (mentions.channels.first()) {
+            const { mentions } = input.message;
+
+            if (mentions.channels.size) {
                 mentions.channels.forEach((chan) => {
                     if (!server.bind.includes(chan.id)) server.bind.push(chan.id);
                 });
-            } else {
-                for (const arg of input.args) {
-                    if (arg.length > 15) {
-                        if (!server.bind.includes(arg)) server.bind.push(arg);
-                    }
+            }
+
+            if (mentions.users.size) {
+                mentions.users.forEach((user) => {
+                    if (!server.bind.includes(user.id)) server.bind.push(user.id);
+                });
+            }
+
+            for (const id of input.args) {
+                if (id.length > 15 && /^\d+$/.test(id.trim())) {
+                    const user = server.guild.members.cache.get(id);
+                    const channel = server.guild.channels.cache.get(id);
+                    if (user || (channel && channel.type != 'voice')) continue;
+
+                    if (!server.bind.includes(id)) server.bind.push(id);
                 }
             }
 
@@ -123,12 +138,25 @@ class Bind extends Command {
     async onPreValidate({ message, content, server }) {
         const { member, channel, mentions } = message;
         // throw out these states
-        if (!member.voice.channelID) return;
-        if (!server.bind || !server.bind.length || !server.bind.includes(channel.id)) return;
-        const settings = server.getMemberSettings(message.member);
+
+        if (
+            //user not in a voice channel
+            !member.voice.channelID ||
+            //bind does not exist
+            !server.bind ||
+            !server.bind.length ||
+            //not a channel
+            (!server.bind.includes(channel.id) &&
+                //not a user
+                !server.bind.includes(member.id))
+        ) {
+            return;
+        }
 
         if (!server.isBound()) {
             server.setMaster(member);
+
+            const settings = server.getMemberSettings(member);
             const connection = await server.joinVoiceChannel(member.voice.channel);
 
             if (!connection) {
