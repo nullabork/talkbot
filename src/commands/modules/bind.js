@@ -102,9 +102,10 @@ class Bind extends Command {
             for (const id of input.args) {
                 if (id.length > 15 && /^\d+$/.test(id.trim())) {
                     const user = server.guild.members.cache.get(id);
-                    if (!user) continue;
+                    const channel = server.guild.channels.cache.get(id);
+                    if (user || (channel && channel.type != 'voice')) continue;
 
-                    if (!server.bind.includes(arg)) server.bind.push(arg);
+                    if (!server.bind.includes(id)) server.bind.push(id);
                 }
             }
 
