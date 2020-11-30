@@ -168,7 +168,7 @@ class Bind extends Command {
                 !(
                     server.bind.includes(member.id) ||
                     // not a role
-                    server.bind.some((id) => mentions.roles.has(id))
+                    server.bind.some((id) => member.roles.cache.has(id))
                 ))
         ) {
             return;
