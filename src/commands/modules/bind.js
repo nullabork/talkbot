@@ -20,10 +20,13 @@ class Bind extends Command {
         const channelNames = (server.bind || []).forEach((id) => {
             const channel = server.guild.channels.cache.get(id);
             const user = server.guild.members.cache.get(id);
+            const role = server.guild.roles.cache.get(id);
             if (user) {
                 obj[user.displayName] = id;
             } else if (channel && channel.name) {
                 obj[channel.name] = id;
+            } else if (role) {
+                obj[role.name] = id;
             } else {
                 obj[id] = 'Channel Not Found';
             }
@@ -51,6 +54,7 @@ class Bind extends Command {
                         [command + ' voice_channel_id']: server.lang('bindusage.channel'),
                         [command + ' #text_channel']: server.lang('bindusage.text_channel'),
                         [command + ' @username']: server.lang('bindusage.username'),
+                        [command + ' @role']: server.lang('bindusage.role'),
                         [command + ' permit']: server.lang('bindusage.permit'),
                         [command + ' unpermit']: server.lang('bindusage.unpermit'),
                     },
@@ -99,11 +103,18 @@ class Bind extends Command {
                 });
             }
 
+            if (mentions.roles.size) {
+                mentions.roles.forEach((role) => {
+                    if (!server.bind.includes(role.id)) server.bind.push(role.id);
+                });
+            }
+
             for (const id of input.args) {
                 if (id.length > 15 && /^\d+$/.test(id.trim())) {
                     const user = server.guild.members.cache.get(id);
                     const channel = server.guild.channels.cache.get(id);
-                    if (user || (channel && channel.type != 'voice')) continue;
+                    const role = server.guild.roles.cache.get(id);
+                    if (user || (channel && channel.type != 'voice') || role) continue;
 
                     if (!server.bind.includes(id)) server.bind.push(id);
                 }
@@ -125,7 +136,13 @@ class Bind extends Command {
     async onUserJoinedChannel({ channelState, member, server }) {
         // throw out these states
         if (!member.voice.channelID) return;
-        if (!server.bind || !server.bind.length || !server.bind.includes(channelState.channelID)) return;
+        if (!server.bind || !server.bind.length) return;
+
+        if (
+            !server.bind.includes(channelState.channelID) &&
+            !server.bind.some((id) => member.roles.cache.has(id))
+        )
+            return;
 
         if (!server.isBound()) {
             server.setMaster(member);
@@ -148,7 +165,9 @@ class Bind extends Command {
             //not a channel
             (!server.bind.includes(channel.id) &&
                 //not a user
-                !server.bind.includes(member.id))
+                !server.bind.includes(member.id) &&
+                // not a role
+                !server.bind.some((id) => mentions.roles.has(id)))
         ) {
             return;
         }
