@@ -165,9 +165,11 @@ class Bind extends Command {
             //not a channel
             (!server.bind.includes(channel.id) &&
                 //not a user
-                !server.bind.includes(member.id) &&
-                // not a role
-                !server.bind.some((id) => mentions.roles.has(id)))
+                !(
+                    server.bind.includes(member.id) ||
+                    // not a role
+                    server.bind.some((id) => mentions.roles.has(id))
+                ))
         ) {
             return;
         }
