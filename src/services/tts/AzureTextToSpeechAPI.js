@@ -3,9 +3,6 @@ const Common = require('@helpers/common'),
     TextToSpeechService = require('@services/TextToSpeechService'),
     auth = require('@auth'),
     rp = require('request-promise'),
-    prism = require('prism-media'),
-    lame = require('@suldashi/lame'),
-    samplerate = require('node-libsamplerate'),
     xmlbuilder = require('xmlbuilder');
 
 class AzureTextToSpeechAPI extends TextToSpeechService {
@@ -30,7 +27,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
     }
 
     get format() {
-        return 'pcm';
+        return 'ogg/opus';
     }
 
     get accessToken() {
@@ -115,7 +112,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
                 Authorization: 'Bearer ' + self.accessToken,
                 'cache-control': 'no-cache',
                 'User-Agent': 'AzureTextToSpeechAPI',
-                'X-Microsoft-OutputFormat': 'audio-24khz-160kbitrate-mono-mp3',
+                'X-Microsoft-OutputFormat': 'ogg-24khz-16bit-mono-opus',
                 'Content-Type': 'application/ssml+xml',
             },
             body: request,
@@ -124,42 +121,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
         let p = rp(options)
             .on('response', (response) => {
                 if (response.statusCode === 200) {
-                    var ld = new lame.Decoder({
-                        sampleRate: 24000,
-                        channels: lame.MONO,
-                        signed: true,
-                        float: false,
-                        bitDepth: 16,
-                    });
-
-                    var resample = new samplerate({
-                        // Value can be from 0 to 4 or using enum. 0 is the best quality and the slowest.
-                        type: samplerate.SRC_SINC_MEDIUM_QUALITY,
-                        // Stereo
-                        channels: 1,
-                        // Sample rate of source
-                        fromRate: 24000,
-                        // bit depth of source. Valid values: 16 or 32
-                        fromDepth: 16,
-                        // Desired sample rate
-                        toRate: 48000,
-                        // Desired bit depth. Valid values: 16 or 32
-                        toDepth: 16,
-                    });
-
-                    callback(
-                        null,
-                        p
-                            .pipe(ld)
-                            .pipe(resample)
-                            .pipe(
-                                new prism.opus.Encoder({
-                                    rate: 48000,
-                                    channels: 1,
-                                    frameSize: 960,
-                                }),
-                            ),
-                    );
+                    callback(null, response);
                 } else {
                     Common.error(response);
                     callback(new Error('HTTP ERROR: ' + response.statusCode));
