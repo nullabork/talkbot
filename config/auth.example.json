@@ -31,7 +31,8 @@
             "subscriptionKey": "",
             "enabled": false,
             "enforce_limit": false,
-            "limit": 5000000
+            "limit": 5000000,
+            "endpoint": "https://eastus.tts.speech.microsoft.com/"
         },
         "amazon": {
             "region": "us-east-1",
