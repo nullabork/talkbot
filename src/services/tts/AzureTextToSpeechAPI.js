@@ -18,7 +18,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
 
     // url to access tts on azure
     get baseUrl() {
-        return 'https://eastus.tts.speech.microsoft.com/';
+        return auth.tts.azure.endpoint || 'https://eastus.tts.speech.microsoft.com/';
     }
 
     // get the char limit for this service
