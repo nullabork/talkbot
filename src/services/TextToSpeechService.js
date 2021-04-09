@@ -2,7 +2,6 @@
 // class for all the details of a command
 const Common = require("@helpers/common"),
   fs = require("fs"),
-  iso639 = require("iso-639"),
   paths = require("@paths");
 
 // base class for building specific TTS APIs over
@@ -129,12 +128,13 @@ class TextToSpeechService {
    *
    * @param {[TextToSpeechService]} provider
    */
-  static async checkProviderContract(provider) {
+  static checkProviderContract(provider) {
     if (
       provider.format != "pcm" &&
       provider.format != "ogg" &&
       provider.format != "ogg_vorbis" &&
       provider.format != "mp3" &&
+      provider.format != "ogg/opus" &&
       provider.format != "opus"
     )
       throw new Error("Unknown provider format");
@@ -160,14 +160,16 @@ class TextToSpeechService {
 
   // get the first provider
   static get defaultProvider() {
-    return Object.values(TextToSpeechService.providers).filter(
-      (x) => x.enabled === true
-    )[0];
+    return TextToSpeechService.providers[
+      Object.keys(TextToSpeechService.providers).filter(
+        (x) => TextToSpeechService.providers[x].enabled
+      )[0]
+    ];
   }
 
   static async setupProviders() {
     TextToSpeechService.providers = {};
-    let files = await fs.readdirSync(paths.tts);
+    let files = fs.readdirSync(paths.tts);
 
     for (let file of files) {
       try {
@@ -213,8 +215,7 @@ class TextToSpeechService {
     return TextToSpeechService.getVoiceRecords(lang_code, provider).length > 0;
   }
 
-  static getVoiceRecords(lang_code, provider = null) {
-    if (!lang_code) return console.error("No lang_code provided");
+  static getVoiceRecords(lang_code, provider) {
     if (provider) {
       service = TextToSpeechService.getService(provider);
       var voices = service
@@ -231,7 +232,6 @@ class TextToSpeechService {
           .getVoices()
           .filter(
             (voice) =>
-              voice.code &&
               voice.code.toLowerCase().indexOf(lang_code.toLowerCase()) > -1
           )
           .forEach((voice) => v.push(voice));
@@ -255,8 +255,8 @@ class TextToSpeechService {
     if (provider) service = TextToSpeechService.getService(provider);
 
     if (service) {
-      var voices = service.getVoices();
-      for (var key in voices) {
+      const voices = service.getVoices();
+      for (let key in voices) {
         v = voices[key];
         if (
           v.voice.toLowerCase() == voice_name ||
@@ -265,9 +265,9 @@ class TextToSpeechService {
           return v;
       }
     } else {
-      for (var service in TextToSpeechService.providers) {
-        var voices = TextToSpeechService.providers[service].getVoices();
-        for (var key in voices) {
+      for (let service in TextToSpeechService.providers) {
+        let voices = TextToSpeechService.providers[service].getVoices();
+        for (let key in voices) {
           v = voices[key];
           if (
             v.voice.toLowerCase() == voice_name ||

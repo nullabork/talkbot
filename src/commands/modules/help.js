@@ -1,8 +1,6 @@
-/*jshint esversion: 9 */
 // models
-var Command = require("@models/Command"),
-  auth = require("@auth"),
-  CommentBuilder = require("@models/CommentBuilder"),
+const CommentBuilder = require("@models/CommentBuilder"),
+  Command = require("@models/Command"),
   Common = require("@helpers/common");
 
 /**
@@ -25,7 +23,7 @@ class Help extends Command {
         "1. join a voice channel",
         "2. type " + cmds.getCommandChar(server) + "follow",
         "3. Type 'Hello World' to hear the bot speak",
-        "4. Choose a voice " + cmds.getCommandChar(server) + "voices",
+        "4. Choose a voice with " + cmds.getCommandChar(server) + "voices",
       ],
 
       Control: {},
@@ -36,10 +34,7 @@ class Help extends Command {
 
       Issues: [
         "Documentation:    https://nullabork.gitbook.io/talkbot/",
-        "Join our discord: https://discordapp.com/invite/NxrPp8g",
-        "Add Talkbot:      https://discordapp.com/oauth2/authorize?&client_id=428866923267358721&scope=bot&permissions=0",
-        "Support us:       https://www.patreon.com/talkbot",
-        "Setup your own:   https://github.com/nullabork/talkbot",
+        "Join our discord: https://discord.com/invite/NxrPp8g",
       ],
     };
   }
@@ -57,12 +52,12 @@ class Help extends Command {
   }
 
   groupHelp(g, server) {
-    var self = this,
+    const self = this,
       c = null,
       cmds = require("@commands");
 
-    for (var command in cmds.commands) {
-      var cmd = cmds.commands[command],
+    for (let command in cmds.commands) {
+      let cmd = cmds.commands[command],
         group = cmd.group;
 
       if (cmd.hidden) continue;
@@ -96,8 +91,8 @@ class Help extends Command {
   }
 
   execute({ input }) {
-    var server = input.server || input.world.servers[auth.supportServer.id]; // if no server, use the support server
-    var other = input.args[0],
+    let server = input.server || input.world.servers[auth.supportServer.id]; // if no server, use the support server
+    let other = input.args[0],
       self = this,
       cmds = require("@commands"),
       data = this.base(server);
@@ -110,11 +105,11 @@ class Help extends Command {
       );
     }
 
-    for (var command in cmds.commands) {
-      var cmd = cmds.commands[command];
+    for (let command in cmds.commands) {
+      let cmd = cmds.commands[command];
       if (cmd.hidden) continue;
 
-      var group = cmd.group;
+      let group = cmd.group;
       if (!group) continue;
       group = group.toLowerCase();
 

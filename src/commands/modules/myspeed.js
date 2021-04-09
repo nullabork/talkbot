@@ -1,42 +1,40 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
-
-
-var Common = require("@helpers/common");
+const BotCommand = require("@models/BotCommand"),
+  Common = require("@helpers/common");
 
 function speed(msg) {
-  var server = msg.server;
-  var member = msg.message.member;
+  const server = msg.server;
+  const member = msg.message.member;
 
   if (msg.args.length == 0) {
-    msg.il8nResponse('myspeed.usage', {speed: server.getMemberSetting(msg.message.member, 'speed') || 'default'});
+    msg.il8nResponse("myspeed.usage", {
+      speed: server.getMemberSetting(msg.message.member, "speed") || "default",
+    });
     return;
   }
 
-  if(msg.args[0] == 'default'){
-    server.addMemberSetting(member, 'speed', 'default');
-    msg.il8nResponse('general.auto', {key: "myspeed"});
+  if (msg.args[0] == "default") {
+    server.addMemberSetting(member, "speed", "default");
+    msg.il8nResponse("general.auto", { key: "myspeed" });
     return;
   }
 
-  var speed = parseFloat(msg.args[0]);
+  let speed = parseFloat(msg.args[0]);
   speed = Common.numberClamp(speed, 0.25, 4.0);
-  server.addMemberSetting(member,'speed',speed);
-  msg.il8nResponse('myspeed.okay', { speed: speed });
+  server.addMemberSetting(member, "speed", speed);
+  msg.il8nResponse("myspeed.okay", { speed: speed });
+}
 
-};
-
-var command = new BotCommand({
-  command_name: 'myspeed',
-  command_arg: 's',
+const command = new BotCommand({
+  command_name: "myspeed",
+  command_arg: "s",
   execute: speed,
-  short_help: 'myspeed.shorthelp',
-  long_help: 'myspeed.longhelp',
+  short_help: "myspeed.shorthelp",
+  long_help: "myspeed.longhelp",
   group: "personalization",
   // parameters: "<speed>"
 });
-
 
 exports.register = function (commands) {
   commands.add(command);

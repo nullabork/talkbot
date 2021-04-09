@@ -1,43 +1,68 @@
 {
-  "dev_ids": ["279935071165743105"],
-  "token": "yourdiscord.tokenhere",
-  "command_char" : "!",
-  "logging" : {
-    "err" : true,
-    "out" : true
-  },
-  "advertise_streamer": "myselfwhat",
-  "supportServer":{
-    "id": "490087447758241793"
-  },
-  "pester_threshold": 100000,
-  "twitch_audioQueue_limit": 10,
-  "servers": {
-    "-1": {
-      "pester_threshold": 100000,
-      "daily_char_limit": 10000,
-      "twitch_audioQueue_limit": 10
-    }
-  },
-  "tts": {
-    "google": {
-      "enabled": true
+    "dev_ids": ["279935071165743105"],
+    "token": "yourdiscord.tokenhere",
+    "neglect_timeout": 3600000,
+    "neglect_timeout_messages": ["Talkbot inactivity timeout"],
+    "command_char": "!",
+    "logging": {
+        "err": true,
+        "out": true
     },
-     "azure": {
-       "subscriptionKey":"",
-       "enabled": false
-     },
-     "amazon": {
-      "region": "us-east-1",
-      "accessKeyId":"",
-      "secretAccessKey": "",
-      "enforce_limit": true,
-      "limit": 5000000,
-      "enabled": true
-     },
-     "watson": {
-      "enabled": false
-     }
-
-  }
+    "advertise_streamer": "myselfwhat",
+    "supportServer": {
+        "id": "490087447758241793"
+    },
+    "pester_threshold": 100000,
+    "twitch_audioQueue_limit": 10,
+    "servers": {
+        "-1": {
+            "pester_threshold": 100000,
+            "daily_char_limit": 10000,
+            "twitch_audioQueue_limit": 10
+        }
+    },
+    "tts": {
+        "google": {
+            "enabled": true,
+            "enforce_limit": false,
+            "limit": 5000000
+        },
+        "azure": {
+            "subscriptionKey": "",
+            "enabled": false,
+            "enforce_limit": false,
+            "limit": 5000000,
+            "endpoint": "https://eastus.tts.speech.microsoft.com/"
+        },
+        "amazon": {
+            "region": "us-east-1",
+            "accessKeyId": "",
+            "secretAccessKey": "",
+            "enforce_limit": true,
+            "limit": 5000000,
+            "enabled": true
+        },
+        "watson": {
+            "enabled": false,
+            "apikey": "",
+            "serviceUrl": "",
+            "enforce_limit": false,
+            "limit": 5000000
+        },
+        "tencent": {
+            "enabled": false,
+            "accessKeyId": "",
+            "secretAccessKey": "",
+            "enforce_limit": true,
+            "limit": 1000000
+        },
+        "alibaba": {
+            "enabled": false,
+            "appkey": "",
+            "token": "",
+            "endpoint": "https://nls-gateway-ap-southeast-1.aliyuncs.com/stream/v1/tts",
+            "enforce_limit": true,
+            "limit": 1000000
+        }
+    }
 }

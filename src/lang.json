@@ -1,283 +1,284 @@
 {
-  "en.general" : {
-    "auto" : ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
-    "nope" : "Sorry, only a server admin or server manager can do this.",
-    "okay" : "Okay that worked! ☑"
-  },
-  "en.set": {
-    "okay": "Set message for :lang",
-    "none": "no"
-  },
-  "en.who": {
-    "okay": "My :title is :mymaster, :permitted",
-    "none": "I have no :title :~(",
-    "shorthelp": "Who is the current :title"
-  },
-  "en.ping": {
-    "okay": "pong",
-    "shorthelp": "Test the bot is up"
-  },
-  "en.follow": {
-    "join": "You need to join a voice channel before I can follow you!",
-    "okay": "Yes, :title!",
-    "huh": "Yes, :title?",
-    "nope": "Sorry, :name is my :title today. Get them to :command_charpermit you",
-    "shorthelp": "The bot will join your voice channel and speak what you write",
-    "connecting": "Cant follow, currently connecting to voice",
-    "leaving": "Cant follow until we've left voice",
-    "permissions": "I don't have permissions to join that voice channel",
-    "pester": "Hey! this server is using talkbot a lot, consider contributing the API costs here: <https://www.patreon.com/talkbot>"
-  },
-  "en.defaults": {
-    "okay": "Your voice settings have been reset :D",
-    "shorthelp": "Reset your default voice settings"
-  },
-  "en.unfollow": {
-    "okay": "Goodbye :title",
-    "okaypester": "Goodbye :title. This bot is growing faster than COVID19 - consider contributing to the running costs here so we can upgrade the server: <https://www.patreon.com/talkbot>",
-    "nope": "Sorry, you're not my :title.",
-    "none": "I have no :title... would you like to be my :title?",
-    "shorthelp": "Release the bot",
-    "connecting": "Cant unfollow, currently connecting to voice",
-    "leaving": "Cant unfollow, already leaving voice"
-  },
-  "en.permit": {
-    "okay": "I'll listen to :name now",
-    "nope": "Sorry I can't do that, you're not my :title.",
-    "none": "I don't see any legit names",
-    "huh": "I don't know who :name is?",
-    "shorthelp": "Permit someone else to use the bot whilst it's following you"
-  },
-  "en.unpermit": {
-    "okay": ":name talk to the hand",
-    "nope": "Sorry I can't do that, you're not my :title.",
-    "none": "I don't know who :name is?",
-    "deny": "Sorry I can't do that, you're not permitted.",
-    "shorthelp": "Unpermit someone else from using the bot"
-  },
-  "en.leave": {
-    "nope": "Sorry I can't do that, you're not my :title."
-  },
-  "en.join": {
-    "nope": "Sorry I can't do that, you're not my :title.",
-    "none": "You're not in a voice channel?"
-  },
-  "en.lang": {
-    "okay": "OK, The server default is :lang. You can override it with mylang",
-    "nope": "Sorry, you're not my :title",
-    "shorthelp": "Set the global server language. Use mylang for your personal language."
-  },
-  "en.mylang": {
-    "okay": "OK, your personal language is now :lang.",
-    "no": "Sorry, I cant find the language :lang.",
-    "deny": "Sorry, you're not permitted",
-    "shorthelp": "Set the language the bot will speak in. eg. en-AU, gb, en-US, fr, jp etc.",
-    "more" : "You must specify a language code. You can find codes with `:command_charlangs`"
-  },
-  "en.myvoice": {
-    "okay": "OK, your personal voice is now :provider/:voice. \n Notice! If you have set language and gender settings, they will be ignored until they are set again.",
-    "no": "Sorry, I cant find the voice :voice.",
-    "shorthelp": "Change accent or style.",
-    "auto" : "Now the bot will choose the best voice and use your lang and gender settings.",
-    "more" : "Your current voice is :provider/:voice. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
-    "noped" : "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
-  },
-  "en.tolang": {
-    "okay": "OK, now translating to :lang.",
-    "deny": "Sorry, you're not permitted",
-    "nope": "Sorry, I dont have a voice for :lang",
-    "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc.",
-    "more" : "You must specify a language code. You can find codes with `:command_charlangs`.\nTo stop translating use `:command_chartolang none`"
-  },
-  "en.mygender": {
-    "okay": "OK, your personal gender is now :gender.",
-    "deny": "Sorry, you're not permitted",
-    "shorthelp": "Set the gender the bot will speak with",
-    "usage": "Set the gender the bot will speak with. Your current gender is :gender"
-  },
-  "en.mypitch": {
-    "okay": "OK, your personal pitch is now :pitch.",
-    "deny": "Sorry, you're not permitted",
-    "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20",
-    "usage": "Set the pitch the bot will speak with. Your current pitch is :pitch"
-  },
-  "en.myspeed": {
-    "okay": "OK, your personal speed is now :speed.",
-    "deny": "Sorry, you're not permitted",
-    "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0",
-    "usage": "Set the speed the bot will speak with. Your current speed is :speed"
-  },
-  "en.sfx": {
-    "nope": "Sorry, only a server admin can set emojis",
-    "nosfx": "No SFX have been setup",
-    "okay": "Added sound effect for `:sfx_word`",
-    "notnotokay": "Removed sound effect for `:sfx_word`",
-    "clearallokay" : "Removed all sound effects",
-    "none": "Cannot find sfx word: `:sfx_word`",
-    "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
-    "needshttps": "Sound URLs can only be https urls",
-    "needsWord": "Requires a [word/emoji] after \":sfx_command\" action",
-    "needsURL": "Requires https url after the [word/emoji] \":sfx_word\"",
-    "shorthelp": "Associate words or emojis with sound effects. :command_charsfx set [emoji] [audio file url]",
-    "nodelete": "You need to specify an action to perform such as set or del",
-    "usage": "Associate words or emojis with sound effect files"
-  },
-  "en.sfxusage": {
-    "soundurl" : "Add https sound Url to a word",
-    "list" : "List all sounds on server",
-    "del" : "Delete sound assinged to <word|emoji>",
-    "sfx" : "Play Https Url without adding",
-    "clearall" : "Clear all SFX"
-  },
-  "en.sidle": {
-    "shorthelp": "Take control of the bot from someone else",
-    "nope": "You have to be an admin on this server to use this",
-    "okay": "Okay you're now the :title",
-    "none": "I have no :title",
-    "broken": "Something went wrong getting the voice channel, you might still have been made the :title"
-  },
-  "en.transfer": {
-    "okay": "Okay :name is now the :title",
-    "nopermissions" : "You need to have Manager Server permissions of be a server admin to do this.",
-    "args": "Doesnt look like you typed that command right",
-    "unknownnick" : "I dont know this person",
-    "novoice" : "I need to be in a voice channel first",
-    "samevoice" : "My new :title has to be in the same channel first",
-    "broken" : "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
-    "shorthelp": "Transfer control of the bot to another person",
-    "channelpermissions": "I don't have permission to join the voice channel for my new :title"
-  },
-  "en.help": {
-    "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
-  },
-  "en.langs" : {
-    "okay" : "```css\n:table\n```\n You can set your language with the `Code` or the `Alt` values.\nFor example:\n`:command_charmylang au`",
-    "shorthelp" : "List of languages",
-    "longhelp" : "List of languages"
-  },
-  "en.voices" : {
-    "okay" : "```css\n:table\n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
-    "shorthelp" : "List of voices, `:command_charvoices au`",
-    "longhelp" : "List of voices, `:command_charvoices au`",
-    "more" : "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
-  },
-  "en.textrule" : {
-    "needsFind" : "You need to provide a word to find",
-    "none" : "Cannot find :find,\nTry copying the rule name from `:command_chartextrule list`, even the `\\` characters if there are any.",
-    "needsReplacement" : "Your replacement value does not seem to be valid",
-    "nope" : "Sorry you don't have permission to manage this server",
-    "addokay" : "Rule for :find added",
-    "delokay" : "Rule for :find deleted",
-    "norules": "No text replacement rules have been setup",
-    "clearallokay": "All rules cleared",
-    "shorthelp": "Add text replacement rules"
-  },
-  "en.import": {
-    "imported" : "Import complete",
-    "error" : "Could not Import File. Try googling INI file fomat.",
-    "invalid" : "Cannot find any valid data. current supports, :supports"
-  },
-  "en.textruleusage": {
-    "title" : "Text replacement rules",
-    "command" : "Find <find> and replace it with <replacement>",
-    "command_regex" : "Find <find> and replace it with <replacement> using regular expressions",
-    "list" : "List all rules",
-    "del" : "Delete a rule by key",
-    "clearall" : "Clear all rules"
-  },
-  "en.details": {
-    "for" :  "voice settings for :user",
-    "none" : "No voice settings for :user",
-    "shorthelp": "Get your's or others voice details"
-  },
-  "en.mute": {
-    "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "I've muted :name",
-    "alreadymuted": ":name is already muted",
-    "shorthelp": "Mute yourself so your text is not read out"
-  },
-  "en.unmute": {
-    "unmuted": "Looks like you were muted, you have been unmuted.",
-    "okay": "I've unmuted :name",
-    "alreadyunmuted": ":name is already unmuted",
-    "shorthelp": "Unmute yourself so all your text is read out"
-  },
-  "en.tts": {
-    "notpermitted": "You have to be permitted to use this command",
-    "notinchannel": "Get the bot to follow you using :command_charfollow before using this command",
-    "shorthelp": "Speak when you're muted"
-  },
-  "en.mytitle": {
-    "read": "I call you :title",
-    "set": "I'll now call you :title",
-    "shorthelp": "Set your personal title"
-  },
-  "en.stop": {
-    "okay": "Stopped current message",
-    "okayAll": "Stopped **all** current messages",
-    "nope": "Sorry you need to be permitted or a server manager to stop voice",
-    "shorthelp": "Stop the current text from being read out"
-  },
-  "en.restrict": {
-    "current":"The bot is currently restricted to :restrictions",
-    "usage":":command_charrestrict none - allow talkbot to listen on all channels\n:command_charrestrict #channel - restrict talkbot to listen on #channel",
-    "nopermissions":"You need have Manage Server permissions to alter the channels Talkbot is restricted to",
-    "setdefault":"The bot will now listen on all channels",
-    "args":"Please include a channel eg. :command_charrestrict #channel",
-    "okay":"I'll only listen on these channels now: :channels",
-    "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
-  },
-  "en.restrictusage": {
-    "title": "Restrict the channels to listen for text",
-    "description": "The bot is currently restricted to these channels :restrictions",
-    "noargs" : "This output",
-    "none" : "Allow the bot to listen on all channels",
-    "channels" : "Restrict the bot to only listen on these channels"
-  },
-  "en.keep": {
-    "usage" : "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
-    "keepAll": "I am now not deleting any messages\nUse `:command_charkeep <number>` to delete older messages.",
-    "keepCount" : "I am now deleting messages older than the last **:count** messages.\nUse `:command_charkeep all` to not delete any messages.",
-    "all" : "Okay I will now keep all messages and not delete any! ;)",
-    "shorthelp" : "Specify how many messages to keep, the rest will be deleted.",
-    "nope": "You need have Manage Server permissions to alter the number of messages Talkbot keeps",
-    "msgpermissions": "The bot needs Manage Message permissions on the server to do this"
-  },
-  "en.broadcast": {
-    "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
-  },
-  "en.announceme": {
-    "usage": ":command_charannounceme on/off. Your setting is :setting",
-    "announcejoin": "My :title, :name has :verb",
-    "announceleave": "My :title, :name has :verb",
-    "on": "Ok :title, you will now be announced when joining voice",
-    "off": "Ok :title, you will not be announced when joining voice"
-  },
-  "en.myprefix": {
-    "usage": ":command_charmyprefix set [myprefix]\n:command_char myprefix on/off\nYour prefix is :setting",
-    "setokay": "Yes :title. I've set your prefix to :setting",
-    "on": "Ok :title, your voice will now prefix with :setting",
-    "off": "Ok :title, your voice will not be prefixed"
-  },
-  "en.mysuffix": {
-    "usage": ":command_charmysuffix set [mysuffix]\n:command_char mysuffix on/off\nYour suffix is :setting",
-    "setokay": "Yes :title. I've set your suffix to :setting",
-    "on": "Ok :title, your voice will now suffix with :setting",
-    "off": "Ok :title, your voice will not be suffixed"
-  },
-  "en.twitch": {
-    "usage": ":command_chartwitch permit [twitch_channel] [all, subs, mods, _username_]\n:command_chartwitch unpermit [twitch_channel] [all, subs, mods, _username_]",
-    "notbound": ":command_charfollow first before linking",
-    "notmaster": "Only my :title can link to twitch",
-    "permitchannel": "Please provide a twitch_channel eg. :advertise_streamer",
-    "permitwho": "Please provide a person or group to permit eg. [all, subs, mods, _username]",
-    "permitokay": "Permitted :who on <https://www.twitch.tv/:twitch_channel>",
-    "unpermitokay": "Unpermitted :who on <https://www.twitch.tv/:twitch_channel>",
-    "unpermitchannel": "Please provide a twitch_channel eg. :advertise_streamer",
-    "unpermitwho": "Please provide a person or group to unpermit eg. [all, subs, mods, _username]"
-  },
-  "en.commandchar": {
-    "usage": ":command_charcommandchar [char] eg. !commandchar *",
-    "okay": "Command character changed to :command_char"
-  }
+    "en.general": {
+        "auto": ":key is now set to `default`. Talk bot will use the best or default settings for :key.",
+        "nope": "Sorry, only a server admin or server manager can do this.",
+        "okay": "Okay that worked! ☑"
+    },
+    "en.set": {
+        "okay": "Set message for :lang",
+        "none": "no"
+    },
+    "en.who": {
+        "okay": "My :title is :mymaster, :permitted",
+        "none": "I have no :title :~(",
+        "shorthelp": "Who is the current :title"
+    },
+    "en.ping": {
+        "okay": "pong",
+        "shorthelp": "Test the bot is up"
+    },
+    "en.follow": {
+        "join": "You need to join a voice channel before I can follow you!",
+        "okay": "Yes, :title!",
+        "huh": "Yes, :title?",
+        "nope": "Sorry, :name is my :title today. Get them to :command_charpermit you",
+        "shorthelp": "The bot will join your voice channel and speak what you write",
+        "connecting": "Cant follow, currently connecting to voice",
+        "leaving": "Cant follow until we've left voice",
+        "permissions": "I don't have permissions to join that voice channel",
+        "pester": "This server is using talkbot alot - consider installing talkbot yourself at <https://www.github.com/nullabork/talkbot>"
+    },
+    "en.defaults": {
+        "okay": "Your voice settings have been reset :D",
+        "shorthelp": "Reset your default voice settings"
+    },
+    "en.unfollow": {
+        "okay": "Goodbye :title",
+        "okaypester": "Goodbye :title. This server is using talkbot alot - consider installing talkbot yourself at <https://www.github.com/nullabork/talkbot>",
+        "nope": "Sorry, you're not my :title.",
+        "none": "I have no :title... would you like to be my :title?",
+        "shorthelp": "Release the bot",
+        "connecting": "Cant unfollow, currently connecting to voice",
+        "leaving": "Cant unfollow, already leaving voice"
+    },
+    "en.permit": {
+        "okay": "I'll listen to :name now",
+        "nope": "Sorry I can't do that, you're not my :title.",
+        "none": "I don't see any legit names",
+        "huh": "I don't know who :name is?",
+        "shorthelp": "Permit someone else to use the bot whilst it's following you"
+    },
+    "en.unpermit": {
+        "okay": ":name talk to the hand",
+        "nope": "Sorry I can't do that, you're not my :title.",
+        "none": "I don't know who :name is?",
+        "deny": "Sorry I can't do that, you're not permitted.",
+        "shorthelp": "Unpermit someone else from using the bot"
+    },
+    "en.leave": {
+        "nope": "Sorry I can't do that, you're not my :title."
+    },
+    "en.join": {
+        "nope": "Sorry I can't do that, you're not my :title.",
+        "none": "You're not in a voice channel?"
+    },
+    "en.myvoice": {
+        "okay": "OK, your personal voice is now :provider/:voice.",
+        "no": "Sorry, I cant find the voice :voice.",
+        "shorthelp": "Change accent or style.",
+        "more": "Your current voice is :provider/:voice. Run `:command_charlangs` to see the available langs, `:command_charvoices lang` to see the voices.",
+        "noped": "Your :command_charmyvoice setting has been overriden and you must use the command again to enable."
+    },
+    "en.tolang": {
+        "okay": "OK, now translating to :lang.",
+        "deny": "Sorry, you're not permitted",
+        "nope": "Sorry, I dont have a voice for :lang",
+        "shorthelp": "Translate your text to a different language eg. en, fr, jp, de etc.",
+        "more": "You must specify a language code. You can find codes with `:command_charlangs`.\nTo stop translating use `:command_chartolang none`"
+    },
+    "en.mypitch": {
+        "okay": "OK, your personal pitch is now :pitch.",
+        "deny": "Sorry, you're not permitted",
+        "shorthelp": "Alter the pitch of the bot's voice. Valid values are -20 to 20",
+        "usage": "Set the pitch the bot will speak with. Your current pitch is :pitch"
+    },
+    "en.myspeed": {
+        "okay": "OK, your personal speed is now :speed.",
+        "deny": "Sorry, you're not permitted",
+        "shorthelp": "Alter the speed the bot talks. 1.0 is the default. Valid values are 0.25 to 4.0",
+        "usage": "Set the speed the bot will speak with. Your current speed is :speed"
+    },
+    "en.sfx": {
+        "nope": "Sorry, only a server admin can set emojis",
+        "nosfx": "No SFX have been setup",
+        "okay": "Added sound effect for `:sfx_word`",
+        "notnotokay": "Removed sound effect for `:sfx_word`",
+        "clearallokay": "Removed all sound effects",
+        "none": "Cannot find sfx word: `:sfx_word`",
+        "noper": "options: [URL: play sfx] | [command url: make an audio emoji]",
+        "needshttps": "Sound URLs can only be https urls",
+        "needsWord": "Requires a [word/emoji] after \":sfx_command\" action",
+        "needsURL": "Requires https url after the [word/emoji] \":sfx_word\"",
+        "shorthelp": "Associate words or emojis with sound effects. :command_charsfx set [emoji] [audio file url]",
+        "nodelete": "You need to specify an action to perform such as set or del",
+        "usage": "Associate words or emojis with sound effect files"
+    },
+    "en.sfxusage": {
+        "soundurl": "Add https sound Url to a word",
+        "list": "List all sounds on server",
+        "del": "Delete sound assinged to <word|emoji>",
+        "sfx": "Play Https Url without adding",
+        "clearall": "Clear all SFX"
+    },
+    "en.sidle": {
+        "shorthelp": "Take control of the bot from someone else",
+        "nope": "You have to be an admin on this server to use this",
+        "okay": "Okay you're now the :title",
+        "none": "I have no :title",
+        "broken": "Something went wrong getting the voice channel, you might still have been made the :title"
+    },
+    "en.transfer": {
+        "okay": "Okay :name is now the :title",
+        "nopermissions": "You need to have Manager Server permissions of be a server admin to do this.",
+        "args": "Doesnt look like you typed that command right",
+        "unknownnick": "I dont know this person",
+        "novoice": "I need to be in a voice channel first",
+        "samevoice": "My new :title has to be in the same channel first",
+        "broken": "Hmmm that didnt work on submit a bug on github at https://github.com/nullabork/talkbot",
+        "shorthelp": "Transfer control of the bot to another person",
+        "channelpermissions": "I don't have permission to join the voice channel for my new :title"
+    },
+    "en.help": {
+        "shorthelp": "Show all the available commands. Get detailed help information using :command_charhelp [command]"
+    },
+    "en.voices": {
+        "okay": "```css\n:table\n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
+        "shorthelp": "List of voices, `:command_charvoices au`",
+        "longhelp": "List of voices, `:command_charvoices au`",
+        "more": "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
+    },
+    "en.textrule": {
+        "needsFind": "You need to provide a word to find",
+        "none": "Cannot find :find,\nTry copying the rule name from `:command_chartextrule list`, even the `\\` characters if there are any.",
+        "needsReplacement": "Your replacement value does not seem to be valid",
+        "nope": "Sorry you don't have permission to manage this server",
+        "addokay": "Rule for :find added",
+        "delokay": "Rule for :find deleted",
+        "norules": "No text replacement rules have been setup",
+        "clearallokay": "All rules cleared",
+        "shorthelp": "Add text replacement rules"
+    },
+    "en.import": {
+        "imported": "Import complete",
+        "error": "Could not Import File. Try googling INI file fomat.",
+        "invalid": "Cannot find any valid data. current supports, :supports"
+    },
+    "en.textruleusage": {
+        "title": "Text replacement rules",
+        "command": "Find <find> and replace it with <replacement>",
+        "command_regex": "Find <find> and replace it with <replacement> using regular expressions",
+        "list": "List all rules",
+        "del": "Delete a rule by key",
+        "clearall": "Clear all rules"
+    },
+    "en.details": {
+        "for": "voice settings for :user",
+        "none": "No voice settings for :user",
+        "shorthelp": "Get your's or others voice details"
+    },
+    "en.mute": {
+        "unmuted": "Looks like you were muted, you have been unmuted.",
+        "okay": "I've muted :name",
+        "alreadymuted": ":name is already muted",
+        "shorthelp": "Mute yourself so your text is not read out"
+    },
+    "en.unmute": {
+        "unmuted": "Looks like you were muted, you have been unmuted.",
+        "okay": "I've unmuted :name",
+        "alreadyunmuted": ":name is already unmuted",
+        "shorthelp": "Unmute yourself so all your text is read out"
+    },
+    "en.tts": {
+        "notpermitted": "You have to be permitted to use this command",
+        "notinchannel": "Get the bot to follow you using :command_charfollow before using this command",
+        "shorthelp": "Speak when you're muted"
+    },
+    "en.mytitle": {
+        "read": "I call you :title",
+        "set": "I'll now call you :title",
+        "shorthelp": "Set your personal title"
+    },
+    "en.stop": {
+        "okay": "Stopped current message",
+        "okayAll": "Stopped **all** current messages",
+        "nope": "Sorry you need to be permitted or a server manager to stop voice",
+        "shorthelp": "Stop the current text from being read out"
+    },
+    "en.restrict": {
+        "current": "The bot is currently restricted to :restrictions",
+        "usage": ":command_charrestrict none - allow talkbot to listen on all channels\n:command_charrestrict #channel - restrict talkbot to listen on #channel",
+        "nopermissions": "You need have Manage Server permissions to alter the channels Talkbot is restricted to",
+        "setdefault": "The bot will now listen on all channels",
+        "args": "Please include a channel eg. :command_charrestrict #channel",
+        "okay": "I'll only listen on these channels now: :channels",
+        "shorthelp": "Restrict talkbot to listen for freetext on specific channels"
+    },
+    
+    "en.bind": {
+        "current": "The bot is currently bound to auto follow people in :bound channels",
+        "usage": ":command_charbind none - turn off auto follow\n :command_charbind #channel - auto follow to people who join channels: #channel\n:command_charbind permit|unpermit - auto permit in bound channels",
+        "nopermissions": "You need have Manage Server permissions to alter the channels Talkbot is restricted to",
+        "setdefault": "Not bound to any channel",
+        "args": "Please include a channel eg. :command_charbind #channel",
+        "okay": "I'll auto follow on these channels: :channels",
+        "shorthelp": "Bind talkbot to auto follow people who join specific channels",
+        "permit": "Permit any user who joins bound channels",
+        "unpermit": "Only follow the first person to join a bound channel"
+    },
+
+    "en.bindusage": {
+        "title": "Auto follow people in specific channels",
+        "description": "Auto following people who join channels: :bound.\n Auto permitting additional people is :permit.",
+        "noargs": "This output",
+        "none": "Turn auto follow off",
+        "channel": "Auto follow people who join specific channels",
+        "text_channel": "Auto follow people type in specific channels",
+        "username": "Auto follow specific people when they type in any channel",
+        "permit": "Permit any user who joins bound channels",
+        "unpermit": "Only follow the first person to join a bound channel"
+    },
+
+    "en.restrictusage": {
+        "title": "Restrict the channels to listen for text",
+        "description": "The bot is currently restricted to these channels :restrictions",
+        "noargs": "This output",
+        "none": "Allow the bot to listen on all channels",
+        "channels": "Restrict the bot to only listen on these channels"
+    },
+    "en.keep": {
+        "usage": "You must include the number of messages to delete.\nUse `:command_charkeep all` OR `:command_charkeep <number>`",
+        "keepAll": "I am now not deleting any messages\nUse `:command_charkeep <number>` to delete older messages.",
+        "keepCount": "I am now deleting messages older than the last **:count** messages.\nUse `:command_charkeep all` to not delete any messages.",
+        "all": "Okay I will now keep all messages and not delete any! ;)",
+        "shorthelp": "Specify how many messages to keep, the rest will be deleted.",
+        "nope": "You need have Manage Server permissions to alter the number of messages Talkbot keeps",
+        "msgpermissions": "The bot needs Manage Message permissions on the server to do this"
+    },
+    "en.broadcast": {
+        "confirmation": "Confirmation Needed, Use :command_charbroadcast confirm"
+    },
+    "en.announceme": {
+        "usage": ":command_charannounceme on/off. Your setting is :setting",
+        "announcejoin": "My :title, :name has :verb",
+        "announceleave": "My :title, :name has :verb",
+        "on": "Ok :title, you will now be announced when joining voice",
+        "off": "Ok :title, you will not be announced when joining voice"
+    },
+    "en.myprefix": {
+        "usage": ":command_charmyprefix set [myprefix]\n:command_char myprefix on/off\nYour prefix is :setting",
+        "setokay": "Yes :title. I've set your prefix to :setting",
+        "on": "Ok :title, your voice will now prefix with :setting",
+        "off": "Ok :title, your voice will not be prefixed"
+    },
+    "en.mysuffix": {
+        "usage": ":command_charmysuffix set [mysuffix]\n:command_char mysuffix on/off\nYour suffix is :setting",
+        "setokay": "Yes :title. I've set your suffix to :setting",
+        "on": "Ok :title, your voice will now suffix with :setting",
+        "off": "Ok :title, your voice will not be suffixed"
+    },
+    "en.twitch": {
+        "usage": ":command_chartwitch permit [twitch_channel] [all, subs, mods, _username_]\n:command_chartwitch unpermit [twitch_channel] [all, subs, mods, _username_]",
+        "notbound": ":command_charfollow first before linking",
+        "notmaster": "Only my :title can link to twitch",
+        "permitchannel": "Please provide a twitch_channel eg. :advertise_streamer",
+        "permitwho": "Please provide a person or group to permit eg. [all, subs, mods, _username]",
+        "permitokay": "Permitted :who on <https://www.twitch.tv/:twitch_channel>",
+        "unpermitokay": "Unpermitted :who on <https://www.twitch.tv/:twitch_channel>",
+        "unpermitchannel": "Please provide a twitch_channel eg. :advertise_streamer",
+        "unpermitwho": "Please provide a person or group to unpermit eg. [all, subs, mods, _username]"
+    },
+    "en.commandchar": {
+        "usage": ":command_charcommandchar [char] eg. !commandchar *",
+        "okay": "Command character changed to :command_char"
+    }
 }

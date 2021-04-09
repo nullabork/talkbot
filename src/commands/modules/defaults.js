@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 // models
-var BotCommand = require('@models/BotCommand');
+const BotCommand = require("@models/BotCommand");
 
 /**
  * Command: defaults
@@ -11,22 +11,20 @@ var BotCommand = require('@models/BotCommand');
  * @return  {[undefined]}
  */
 function defaults(msg) {
-
-  var server = msg.server;
+  const server = msg.server;
   server.clearMemberSettings(msg.message.member);
 
-  msg.il8nResponse('defaults.okay');
-};
+  msg.il8nResponse("defaults.okay");
+}
 
-var command = new BotCommand({
-  command_name: 'defaults',
-  command_arg: 'd',
+const command = new BotCommand({
+  command_name: "defaults",
+  command_arg: "d",
   execute: defaults,
-  short_help: 'defaults.shorthelp',
-  long_help: 'defaults.longhelp',
-  group: "personalization"
+  short_help: "defaults.shorthelp",
+  long_help: "defaults.longhelp",
+  group: "personalization",
 });
-
 
 exports.register = function (commands) {
   commands.add(command);
