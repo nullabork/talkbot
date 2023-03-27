@@ -1,51 +1,49 @@
 {
-  "name": "talkbot",
-  "version": "0.0.1",
-  "description": "Text to speech bot",
-  "main": "bot.js",
-  "author": "YOUR-NAME-HERE",
-  "scripts": {
-    "samples": "node bin/create-samples.js"
-  },
-  "dependencies": {
-    "@discordjs/opus": "^0.3.2",
-    "@google-cloud/text-to-speech": "^0.3.0",
-    "@google-cloud/translate": "^2.1.4",
-    "@suldashi/lame": "^1.2.5",
-    "discord.js": "^12.3.1",
-    "figlet": "^1.5.0",
-    "ibm-watson": "^5.7.1",
-    "lang.js": "^1.1.14",
-    "module-alias": "^2.2.2",
-    "node-fetch": "^2.6.1",
-    "node-libsamplerate": "git://github.com/nullabork/node-libsamplerate.git",
-    "pad": "^3.2.0",
-    "prism-media": "^1.2.2",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
-    "ssml-validator": "^0.1.0",
-    "streamifier": "^0.1.1",
-    "tencentcloud-sdk-nodejs": "^3.0.260",
-    "tmi.js": "^1.5.0",
-    "twitch-toolkit": "0.0.11",
-    "xmlbuilder": "^12.0.1"
-  },
-  "devDependencies": {
-    "jshint": "^2.12.0",
-    "nodemon": "^1.19.4",
-    "sprintf-js": "^1.1.2",
-    "sync-request": "^6.1.0"
-  },
-  "_moduleAliases": {
-    "@config": "config",
-    "@state": "config/state.json",
-    "@auth": "config/auth.json",
-    "@paths": "src/paths",
-    "@src": "src",
-    "@helpers": "src/helpers",
-    "@commands": "src/commands",
-    "@models": "src/models",
-    "@services": "src/services",
-    "@tts": "src/services/tts"
-  }
+    "name": "talkbot",
+    "version": "0.0.1",
+    "description": "Text to speech bot",
+    "main": "bot.js",
+    "author": "YOUR-NAME-HERE",
+    "scripts": {
+        "samples": "node bin/create-samples.js"
+    },
+    "dependencies": {
+        "@google-cloud/text-to-speech": "4.2.1",
+        "@google-cloud/translate": "2.1.4",
+        "@suldashi/lame": "^1.2.5",
+        "discord.js": "^14.8.0",
+        "figlet": "1.5.0",
+        "ibm-watson": "5.7.1",
+        "lang.js": "1.1.14",
+        "module-alias": "2.2.2",
+        "node-fetch": "2.6.1",
+        "pad": "3.2.0",
+        "prism-media": "^1.3.5",
+        "request": "2.88.2",
+        "request-promise": "4.2.6",
+        "ssml-validator": "0.1.0",
+        "streamifier": "0.1.1",
+        "tencentcloud-sdk-nodejs": "3.0.260",
+        "tmi.js": "1.5.0",
+        "twitch-toolkit": "0.0.11",
+        "xmlbuilder": "12.0.1"
+    },
+    "devDependencies": {
+        "jshint": "^2.12.0",
+        "nodemon": "^1.19.4",
+        "sprintf-js": "^1.1.2",
+        "sync-request": "^6.1.0"
+    },
+    "_moduleAliases": {
+        "@config": "config",
+        "@state": "config/state.json",
+        "@auth": "config/auth.json",
+        "@paths": "src/paths",
+        "@src": "src",
+        "@helpers": "src/helpers",
+        "@commands": "src/commands",
+        "@models": "src/models",
+        "@services": "src/services",
+        "@tts": "src/services/tts"
+    }
 }

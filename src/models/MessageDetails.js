@@ -23,14 +23,14 @@ class MessageDetails {
             Common.error(new Error('message too long for discord'));
             message = message.substring(0, 2000);
         }
-        chan.startTyping(1);
-        chan.send(message).then(chan.stopTyping());
+        //chan.startTyping(1);
+        chan.send(message); // .then(chan.stopTyping());
     }
 
     richResponse(embobj) {
         var _this = this;
         var chan = _this.message.channel;
-        chan.startTyping(1);
+        //chan.startTyping(1);
         chan.send({ embed: embobj }).then(chan.stopTyping());
     }
 
