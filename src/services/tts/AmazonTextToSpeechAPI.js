@@ -1,10 +1,7 @@
 /*jshint esversion: 9 */
 // class for all the details of a command
 const Common = require('@helpers/common'),
-    auth = require('@auth') /*
-  lame = require("@suldashi/lame"),
-  samplerate = require("node-libsamplerate"),*/,
-    prism = require('prism-media'),
+    auth = require('@auth'),    
     ssmlvalid = require('ssml-validator'),
     TextToSpeechService = require('@services/TextToSpeechService'),
     MessageSSML = require('@models/MessageSSML'),
@@ -104,28 +101,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         self.doBookkeeping(request);
         try {
             let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
-            var ld = new lame.Decoder({
-                sampleRate: 22050,
-                channels: lame.MONO,
-                signed: true,
-                float: false,
-                bitDepth: 16,
-            });
-
-            var resample = new samplerate({
-                // Value can be from 0 to 4 or using enum. 0 is the best quality and the slowest.
-                type: samplerate.SRC_SINC_MEDIUM_QUALITY,
-                // Stereo
-                channels: 1,
-                // Sample rate of source
-                fromRate: 22050,
-                // bit depth of source. Valid values: 16 or 32
-                fromDepth: 16,
-                // Desired sample rate
-                toRate: 48000,
-                // Desired bit depth. Valid values: 16 or 32
-                toDepth: 16,
-            });
+           
 
             callback(
                 null,

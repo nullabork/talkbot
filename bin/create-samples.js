@@ -6,8 +6,6 @@ require('module-alias/register');
 
     const tts = require("@services/TextToSpeechService.js"),
         delay = require("delay"),
-        prism = require("prism-media"),
-        lame = require("lame"),
         fs = require("fs"),
         msg = "You are hearing me talk";
 
@@ -45,19 +43,19 @@ require('module-alias/register');
                     return;
                 }
 
-                let decoder = new prism.opus.Decoder(48000, 1, 960);
-                let encoder = new lame.Encoder({
-                    channels: 1,
-                    bitDepth: 16,
-                    sampleRate: 48000,
+                // let decoder = new prism.opus.Decoder(48000, 1, 960);
+                // let encoder = new lame.Encoder({
+                //     channels: 1,
+                //     bitDepth: 16,
+                //     sampleRate: 48000,
 
-                    bitRate: 128,
-                    outSampleRate: 48000,
-                    mode: lame.STEREO
-                });
-                let stm = fs.createWriteStream(sample_file);
+                //     bitRate: 128,
+                //     outSampleRate: 48000,
+                //     mode: lame.STEREO
+                // });
+                // let stm = fs.createWriteStream(sample_file);
 
-                audio.pipe(decoder).pipe(encoder).pipe(stm);
+                // audio.pipe(decoder).pipe(encoder).pipe(stm);
             });
 
             await delay(10000);

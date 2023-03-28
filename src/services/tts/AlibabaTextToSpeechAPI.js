@@ -3,9 +3,6 @@
 const Common = require('@helpers/common'),
     auth = require('@auth'),
     fetch = require('node-fetch'),
-    lame = require('@suldashi/lame'),
-    samplerate = require('node-libsamplerate'),
-    prism = require('prism-media'),
     TextToSpeechService = require('@services/TextToSpeechService');
 
 class AlibabaTextToSpeechAPI extends TextToSpeechService {
