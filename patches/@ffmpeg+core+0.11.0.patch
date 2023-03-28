@@ -1,0 +1,37 @@
+diff --git a/node_modules/@ffmpeg/core/dist/ffmpeg-core.js b/node_modules/@ffmpeg/core/dist/ffmpeg-core.js
+index a81e2fd..f0239a9 100644
+--- a/node_modules/@ffmpeg/core/dist/ffmpeg-core.js
++++ b/node_modules/@ffmpeg/core/dist/ffmpeg-core.js
+@@ -1,7 +1,31 @@
+ 
+ var createFFmpegCore = (function() {
+   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
+-  if (typeof __filename !== 'undefined') _scriptDir = _scriptDir || __filename;
++ 
++  if (typeof __filename !== 'undefined') {
++    _scriptDir = _scriptDir || __filename;
++    const { once } = require('node:events');
++    const { createReadStream, fstatSync } = require('node:fs');
++    const globalFetch = globalThis.fetch;
++    const isUrl = /^\w+:\/\/.+/;
++    var fetch = async (uri, options) => {
++      if (isUrl.test(uri)) {
++        return globalFetch(uri, options);
++      }
++      const readStream = createReadStream(uri);
++      const [fd] = await once(readStream, 'open');
++      return new Response(readStream, {
++        headers: {
++          'Content-Length': `${fstatSync(fd).size}`,
++        },
++        status: 200,
++        statusText: 'OK',
++      });
++    };
++  }
++  
++
++
+   return (
+ function(createFFmpegCore) {
+   createFFmpegCore = createFFmpegCore || {};

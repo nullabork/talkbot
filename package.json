@@ -5,31 +5,35 @@
     "main": "bot.js",
     "author": "YOUR-NAME-HERE",
     "scripts": {
-        "samples": "node bin/create-samples.js"
+        "samples": "node bin/create-samples.js",
+        "postinstall": "patch-package"
     },
     "dependencies": {
+        "@ffmpeg/core": "^0.11.0",
+        "@ffmpeg/ffmpeg": "^0.11.6",
         "@google-cloud/text-to-speech": "4.2.1",
-        "@google-cloud/translate": "2.1.4",
+        "@google-cloud/translate": "^7.2.0",
         "@suldashi/lame": "^1.2.5",
         "discord.js": "^14.8.0",
         "figlet": "1.5.0",
-        "ibm-watson": "5.7.1",
+        "ibm-watson": "^8.0.0",
         "lang.js": "1.1.14",
         "module-alias": "2.2.2",
-        "node-fetch": "2.6.1",
+        "node-fetch": "^2.6.9",
         "pad": "3.2.0",
+        "patch-package": "^6.5.1",
         "request": "2.88.2",
         "request-promise": "4.2.6",
         "ssml-validator": "0.1.0",
         "streamifier": "0.1.1",
         "tencentcloud-sdk-nodejs": "3.0.260",
-        "tmi.js": "1.5.0",
+        "tmi.js": "^1.8.5",
         "twitch-toolkit": "0.0.11",
         "xmlbuilder": "12.0.1"
     },
     "devDependencies": {
         "jshint": "^2.12.0",
-        "nodemon": "^1.19.4",
+        "nodemon": "^2.0.22",
         "sprintf-js": "^1.1.2",
         "sync-request": "^6.1.0"
     },
