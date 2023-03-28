@@ -94,7 +94,7 @@
     });
 
     // when messages come in
-    bot.on('message', (message) => {
+    bot.on('messageCreate', (message) => {
         try {
             // ignore message from myself
             if (message.member && message.member.id == bot.user.id) return;

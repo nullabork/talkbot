@@ -1,6 +1,7 @@
 /*jshint esversion: 9 */
 // class for all the details of a command
 const Common = require('@helpers/common'),
+    ffmpegUtil = require('@helpers/ffmpeg'),
     auth = require('@auth'),    
     ssmlvalid = require('ssml-validator'),
     TextToSpeechService = require('@services/TextToSpeechService'),
@@ -105,10 +106,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
             callback(
                 null,
-                audioStream
-                    .pipe(ld)
-                    .pipe(resample)
-                    .pipe(new prism.opus.Encoder({ rate: 48000, channels: 1, frameSize: 960 })),
+                await ffmpegUtil.mp3ToAutoBuffer(audioStream),
             );
         } catch (err) {
             Common.error(request);

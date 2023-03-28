@@ -3,7 +3,7 @@
 const { Client, Events, GatewayIntentBits } = require('discord.js'),
     auth = require('@auth'),
     Common = require('@helpers/common'),
-    tl8 = require('@google-cloud/translate');
+    tl8 = require('@google-cloud/translate').v2;
 
 class BotStuff {
     constructor() {
