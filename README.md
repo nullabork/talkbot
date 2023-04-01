@@ -73,34 +73,26 @@ Each of these services can be turned on and off in the configuration of the bot.
 
 ## Win 10 Software requirements
 
--   node js - v12
+-   node js - v18
 -   git
--   cmake - https://cmake.org/download/
--   python - https://www.python.org/downloads/ - v2.7.\* is required
--   Visual Studio C++ build tools or Visual Studio with full C++ support. The Build Tools are here: https://download.microsoft.com/download/5/F/7/5F7ACAEB-8363-451F-9425-68A90F98B238/visualcppbuildtools_full.exe
-
-You can also try getting Python and VS Build Tools this way
-`npm install --global --production --vs2015 --add-python-to-path windows-build-tools`
+-   python - https://www.python.org/downloads/ - v2.7.\* is required ... maybe
 
 ## Install, setup and run
 
-1. Install node v12, git, cmake, python v2.7 and Visual Studio C++ build tools
-    - See the URLs in the software requirements for how to do this
-2. Clone this respository
+1. Clone this respository
     - `git clone https://github.com/nullabork/talkbot talkbot`
     - `git
-3. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
+2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
     - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
-4. Setup your prefered API provider - Google, Amazon AWS Polly or Azure or any combination of those.
+3. Setup your prefered API provider - Google, Amazon AWS Polly or Azure or any combination of those.
     - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
     - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
     - AZURE: To learn how to setup Azure [go here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free)
-5. Install NPM dependencies
+4. Install NPM dependencies
     ```yaml
     npm install
-    npm rebuild
     ```
-6. Run the bot!
+5. Run the bot!
     - `node bot.js`
 
 # Updating to the latest code
