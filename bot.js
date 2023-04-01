@@ -94,7 +94,7 @@
     });
 
     // when messages come in
-    bot.on('message', (message) => {
+    bot.on('messageCreate', (message) => {
         try {
             // ignore message from myself
             if (message.member && message.member.id == bot.user.id) return;
@@ -116,6 +116,7 @@
                 commands.process(message, server, world);
             } else if (message.member) {
                 // say it out loud
+                // 
                 server.speak(message);
             }
         } catch (ex) {

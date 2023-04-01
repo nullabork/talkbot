@@ -5,8 +5,16 @@ const Lang = require('lang.js'),
     commands = require('@commands'),
     botStuff = require('@helpers/bot-stuff'),
     Common = require('@helpers/common'),
-    fs = require('fs'),
-    TextToSpeechService = require('@services/TextToSpeechService');
+    fs = require('fs');
+    const {
+        joinVoiceChannel,
+        createAudioResource,
+        StreamType,
+        AudioPlayerStatus,
+        createAudioPlayer,
+        NoSubscriberBehavior,
+    } = require('@discordjs/voice');
+    const TextToSpeechService = require('@services/TextToSpeechService');
 
 const TIMEOUT_NEGLECT = botStuff.auth.neglect_timeout || 480 * 60 * 1000; // 2 hours
 
@@ -17,6 +25,12 @@ class Server {
     constructor(guild, world) {
         // the id of this server, note this needs to be before loadState();
         this.server_id = guild.id;
+
+        // the connection to the voice channel
+        this.connection = null;
+
+        // the voice channel the bot is in
+        this.player = null;
 
         // get the state file from the disk
         var state_data = this.loadState() || {};
@@ -215,17 +229,17 @@ class Server {
 
     // does this server think it's in a voice channel
     inChannel() {
-        return this.guild.voice != null && this.guild.voice.connection != null;
+        return this.connection != null;
     }
 
     release(callback) {
         const server = this;
         if (!server.guild.voice) return;
-        if (!server.guild.voice.connection) return;
+        if (!server.connection) return;
         if (server.leaving) return; // dont call it twice dude
-        if (callback) server.guild.voice.connection.on('disconnect', callback);
+        if (callback) server.connection.on('disconnect', callback);
         commands.notify('leaveVoice', { server: server });
-        server.guild.voice.connection.disconnect();
+        server.connection.disconnect();
     }
 
     // get the server to join a voice channel
@@ -239,15 +253,19 @@ class Server {
                 'joinVoiceChannel(' +
                     voiceChannel.id +
                     '): already joined to ' +
-                    server.guild.voice.connection.channel.id +
+                    server.connection.channel.id +
                     '!',
             );
         server.connecting = true;
-
-        let connection;
         try {
             // join the voice channel and setup all the listeners to deal with events
-            connection = await voiceChannel.join();
+            // connection = await voiceChannel.join();
+            server.connection = joinVoiceChannel({
+                channelId: voiceChannel.id,
+                guildId: server.guild.id,
+                adapterCreator: server.guild.voiceAdapterCreator,
+            });
+
         } catch (e) {
             server.stop('joinError');
             server.bound_to = null;
@@ -257,15 +275,18 @@ class Server {
             return false;
         }
 
+
         // when closing stop the voices and clear the neglect timeout
-        connection.on('closing', () => {
+        server.connection.on('closing', () => {
             server.leaving = true;
             server.stop('voiceClosing'); // stop playing
             clearTimeout(server.neglect_timeout);
         });
 
+
+
         // when disconnect clear the master - note that d/c may happen without a closing event
-        connection.on('disconnect', () => {
+        server.connection.on('disconnect', () => {
             server.stop('disconnect'); // stop playing
             server.bound_to = null;
             server.permitted = {};
@@ -274,13 +295,13 @@ class Server {
 
         // if an error occurs treat it like a d/c but capture the error
         // reset the state to as if there was no connection
-        connection.on('error', (error) => {
+        server.connection.on('error', (error) => {
             server.bound_to = null;
             server.permitted = {};
             server.leaving = false;
             server.connecting = false; // this might cause a race condition
             Common.error(error);
-            connection.disconnect(); // nerf the connection because we got an error
+            server.connection.disconnect(); // nerf the connection because we got an error
         });
 
         server.connecting = false;
@@ -288,18 +309,18 @@ class Server {
         server.world.setPresence();
         commands.notify('joinVoice', { server: server });
 
-        return connection;
+        return server.connection;
     }
 
     // switch from whatever the current voice channel is to this voice channel
     async switchVoiceChannel(voiceChannel) {
         var server = this;
         if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
-        if (!server.guild.voice.connection) return await server.joinVoiceChannel(voiceChannel);
-        if (voiceChannel.id == server.guild.voice.connection.channel.id)
+        if (!server.connection) return await server.joinVoiceChannel(voiceChannel);
+        if (voiceChannel.id == server.connection.channel.id)
             return Common.error('voiceChannel already joined');
 
-        server.guild.voice.connection.updateChannel(voiceChannel);
+        server.connection.updateChannel(voiceChannel);
     }
 
     // permit another user to speak
@@ -398,6 +419,8 @@ class Server {
             if (key == 'keepQueue') return undefined;
             if (key == 'switchQueue') return undefined;
             if (key == 'twitch') return undefined;
+            if (key == 'connection') return undefined;
+            if (key == 'player') return undefined;
             else return value;
         }
 
@@ -420,9 +443,15 @@ class Server {
     // speak a message in a voice channel - raw text
     talk(message, options, callback) {
         var server = this;
+        let i =0;
+
+
         if (!server.inChannel()) return;
+
         if (!options) options = {};
+
         if (!callback) callback = function () {};
+
 
         let settings = {};
 
@@ -431,22 +460,25 @@ class Server {
         if (options.speed != 'default') settings.speed = options.speed;
         if (options.voice_provider) settings.voice_provider = options.voice_provider;
 
+
         server.resetNeglectTimeout();
 
         let service =
             TextToSpeechService.getService(settings.voice_provider || server.defaultProvider) ||
             TextToSpeechService.defaultProvider;
+
         let request = service.buildRequest(message, settings, server);
 
+
         // Performs the Text-to-Speech request
-        service.getAudioContent(request, (err, audio) => {
+        service.getAudioContent(request, async (err, audio) => {
             if (err) {
                 Common.error(err);
                 return;
             }
             try {
                 // might have to queue the content if its playing currently
-                server.playAudioContent(audio, service.format, callback);
+                await server.playAudioContent(audio, service.format, callback);
             } catch (e) {
                 Common.error(e);
             }
@@ -463,29 +495,31 @@ class Server {
 
     // stop currently playing audio and empty the audio queue (all=true)
     stop(reason, all) {
-        if (all) {
-            this.audioQueue = [];
-        }
-        if (this.guild.voice.connection && this.guild.voice.connection.dispatcher)
-            this.guild.voice.connection.dispatcher.end(reason);
+        // if (all) {
+        //     this.audioQueue = [];
+        // }
+        // if (this.connection && this.connection.dispatcher)
+        //     this.connection.dispatcher.end(reason);
+
+        if (this.player) this.player.stop({ force: true});
     }
 
     // internal function for playing audio content returned from the TTS API and queuing it
-    playAudioContent(audioContent, format, callback) {
+    async playAudioContent(audioContent, format, callback) {
         var server = this;
         var readable = audioContent;
 
-        if (!readable.pipe) {
+        if (!readable.pipe && typeof readable != 'function') {
             return Common.error(
                 new Error('playAudioContent: Received audioContent that was not a readable stream'),
             );
         }
 
-        var endFunc = (reason) => {
+        var endFunc = async (reason) => {
             clearTimeout(server.voice_timeout);
             server.playing = false;
-            if (server.guild.voice.connection.dispatcher)
-                server.guild.voice.connection.dispatcher.setSpeaking(false);
+            if (server.connection.dispatcher)
+                server.connection.dispatcher.setSpeaking(false);
             server.voice_timeout = null;
             try {
                 callback();
@@ -498,20 +532,20 @@ class Server {
                 // if the stream hasn't ended normally
                 server.audioQueue = [];
                 Common.error('Cancelled queue: ' + reason);
-            } else if (nextAudio) nextAudio();
+            } else if (nextAudio) await nextAudio();
         };
 
         // queue it up if there's something playing
         // queueFunc is a call containing both the callback and the content
         if (server.playing) {
             if (!server.audioQueue) server.audioQueue = [];
-            var queueFunc = () => server.playAudioContent(readable, format, callback);
+            var queueFunc = async () => await server.playAudioContent(readable, format, callback);
             server.audioQueue.push(queueFunc);
             return;
         }
 
         if (server.leaving) return;
-        if (!server.guild.voice.connection)
+        if (!server.connection)
             return Common.error(
                 "Tried to play audio content when there's no voice connection. " + new Error().stack,
             );
@@ -521,17 +555,44 @@ class Server {
         clearTimeout(server.voice_timeout);
         server.voice_timeout = setTimeout(
             () =>
-                server.guild.voice.connection.dispatcher
-                    ? server.guild.voice.connection.dispatcher.end('timeout')
+                server.connection.dispatcher
+                    ? server.connection.dispatcher.end('timeout')
                     : null,
             60000,
         );
 
         try {
-            server.guild.voice.connection
-                .play(readable, { type: format })
-                .on('finish', endFunc)
-                .on('error', Common.error);
+
+            server.player = createAudioPlayer({
+                behaviors: {
+                    noSubscriber: NoSubscriberBehavior.Pause,
+                },
+            });
+
+            
+            server.player.on(AudioPlayerStatus.Idle, () => {
+                endFunc('stream');
+            });
+
+            if(typeof readable == 'function') {
+                readable = await readable();
+            }
+      
+            server.player.play(readable);
+            server.connection.subscribe(server.player);
+            
+
+
+            // player.addListener("stateChange", (oldOne, newOne) => {
+            //     if (newOne.status == "idle") {
+
+            //     }
+            // });
+
+            // server.connection
+            //     .play(readable, { type: format })
+            //     .on('finish', endFunc)
+            //     .on('error', Common.error);
         } catch (ex) {
             Common.error(ex);
         }

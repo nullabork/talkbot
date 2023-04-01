@@ -3,9 +3,6 @@
 const Common = require('@helpers/common'),
     auth = require('@auth'),
     fetch = require('node-fetch'),
-    lame = require('@suldashi/lame'),
-    samplerate = require('node-libsamplerate'),
-    prism = require('prism-media'),
     TextToSpeechService = require('@services/TextToSpeechService');
 
 class AlibabaTextToSpeechAPI extends TextToSpeechService {
@@ -16,7 +13,7 @@ class AlibabaTextToSpeechAPI extends TextToSpeechService {
 
     // is this API enabled
     get enabled() {
-        return auth.tts && auth.tts.alibaba && auth.tts.alibaba.enabled; // turn if off by not specifying it in the tts object
+        return false; //auth.tts && auth.tts.alibaba && auth.tts.alibaba.enabled; // turn if off by not specifying it in the tts object
     }
 
     // get the char limit for this service

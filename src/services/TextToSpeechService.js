@@ -174,6 +174,8 @@ class TextToSpeechService {
     for (let file of files) {
       try {
         var api = require(paths.tts + "/" + file);
+        if(!api) continue;
+
         var obj = new api();
         if (obj.enabled) {
           await obj.startupTests();

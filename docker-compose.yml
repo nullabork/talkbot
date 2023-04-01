@@ -2,7 +2,7 @@ version: '2'
 services:
     node:
         image: 'faxwang/talkbot:latest'
-        command: /usr/src/app/command.sh
+        entrypoint: ["/bin/bash", "-c", "/usr/src/app/command.sh"]
         volumes:
             - ./config:/usr/src/app/config
         environment:

@@ -2,7 +2,7 @@
 // class for all the details of a command
 const Common = require("@helpers/common"),
   auth = require("@auth"),
-  TextToSpeechService = require("@services/TextToSpeechService"),
+  TextToSpeechService = require('@services/TextToSpeechService'),
   { IamAuthenticator  } = require('ibm-watson/auth'),
   watson = require('ibm-watson/text-to-speech/v1');
 

@@ -6,6 +6,9 @@ const TextToSpeechService = require('@services/TextToSpeechService'),
     MessageSSML = require('@models/MessageSSML'),
     tts = require('@google-cloud/text-to-speech');
 
+
+
+
 class GoogleTextToSpeechAPI extends TextToSpeechService {
     static get client() {
         if (!GoogleTextToSpeechAPI.c) GoogleTextToSpeechAPI.c = new tts.TextToSpeechClient();
@@ -19,7 +22,7 @@ class GoogleTextToSpeechAPI extends TextToSpeechService {
     static set voices(voicelist) {
         this._voices = voicelist;
     }
-
+s
     // name of the service - eg. google, amazon, azure, watson
     get shortname() {
         return 'google';

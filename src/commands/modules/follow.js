@@ -39,7 +39,6 @@ async function follow(msg) {
             };
 
             server.setMaster(member);
-
             const connection = await server.joinVoiceChannel(member.voice.channel);
 
             if (!connection) {
