@@ -1,9 +1,16 @@
 const { createFFmpeg, fetchFile } = require('@ffmpeg/ffmpeg');
 const { Readable } = require('stream');
+const { join } = require('path');
+const {
+    joinVoiceChannel,
+    createAudioResource,
+    StreamType,
+    createAudioPlayer,
+    NoSubscriberBehavior,
+  } = require('@discordjs/voice');
 
 const ffmpeg = createFFmpeg({
-    //absolute path to relative file node_modules\@ffmpeg\core\dist\ffmpeg-core.js
-    corePath: 'C:\\Users\\aaron\\Projects\\talkbot\\core\\dist\\ffmpeg-core.js',
+    corePath: join(__dirname, '..','..', 'node_modules', '@ffmpeg', 'core', 'dist', 'ffmpeg-core.js'),
 });
 
 if (!ffmpeg.isLoaded()) {
@@ -21,15 +28,13 @@ async function streamToBuffer(readableStream) {
 
 
 const mp3ToAutoBuffer = async (mp3AudioStream) => {
+    let i = 0;
 
-    const audioBuffer = await streamToBuffer(audio.AudioStream);
-
-    // Ensure ffmpeg is ready
     if (!ffmpeg.isLoaded()) {
-        await ffmpeg.load();
+        ffmpeg.load();
     }
 
-    // Transcode audio to a format suitable for Discord
+    const audioBuffer = await streamToBuffer(mp3AudioStream);
     ffmpeg.FS('writeFile', 'input.mp3', new Uint8Array(audioBuffer));
     await ffmpeg.run('-i', 'input.mp3', '-c:a', 'libopus', 'output.opus');
     const outputBuffer = ffmpeg.FS('readFile', 'output.opus');
@@ -41,7 +46,11 @@ const mp3ToAutoBuffer = async (mp3AudioStream) => {
         },
     });
 
-    return outputReadableStream;
+    const resource = createAudioResource(outputReadableStream, {
+        inputType: StreamType.OggOpus,
+    });
+
+    return resource;
 }
 
 

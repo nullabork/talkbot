@@ -1,0 +1,4 @@
+(node:23084) Warning: Accessing non-existent property 'notify' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+2023-04-01T09:07:10.618Z LOG CHECKPOINT: THE BOT STARTED. THIS IS NOT AN ERROR MESSAGE
+(node:23084) Warning: Accessing non-existent property 'notify' of module exports inside circular dependency

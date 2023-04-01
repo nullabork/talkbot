@@ -9,6 +9,8 @@
         "postinstall": "patch-package"
     },
     "dependencies": {
+        "@discordjs/opus": "^0.9.0",
+        "@discordjs/voice": "^0.15.0",
         "@ffmpeg/core": "^0.11.0",
         "@ffmpeg/ffmpeg": "^0.11.6",
         "@google-cloud/text-to-speech": "4.2.1",
@@ -18,11 +20,10 @@
         "figlet": "1.5.0",
         "ibm-watson": "^8.0.0",
         "lang.js": "1.1.14",
+        "libsodium-wrappers": "^0.7.11",
         "module-alias": "2.2.2",
-        "node-fetch": "^2.6.9",
         "pad": "3.2.0",
         "patch-package": "^6.5.1",
-        "request": "2.88.2",
         "request-promise": "4.2.6",
         "ssml-validator": "0.1.0",
         "streamifier": "0.1.1",

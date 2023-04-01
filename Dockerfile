@@ -1,13 +1,13 @@
 FROM python:2.7
-LABEL Name="Talkbotv12"
+LABEL Name="Talkbotv14"
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # make sure apt is up to date
 RUN apt-get update --fix-missing
-RUN apt-get install -y curl build-essential libssl-dev libprotobuf-dev protobuf-compiler cmake
+RUN apt-get install -y curl libssl-dev libprotobuf-dev protobuf-compiler
 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 12.13.0
+ENV NODE_VERSION 18.15.0
 
 RUN mkdir -p $NVM_DIR
 # Install nvm with node and npm

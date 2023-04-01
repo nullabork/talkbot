@@ -7,6 +7,7 @@ module.exports = {
             error_file: 'err.log',
             out_file: 'out.log',
             log_file: 'combined.log',
+            node_args: '--experimental-wasm-threads',
             env: {
                 NODE_ENV: 'production',
                 GOOGLE_APPLICATION_CREDENTIALS: '/usr/src/app/config/google-auth.json',
@@ -19,6 +20,7 @@ module.exports = {
             error_file: 'err.log',
             out_file: 'out.log',
             log_file: 'combined.log',
+            node_args: '--experimental-wasm-threads',
             env: {
                 NODE_ENV: 'production',
                 GOOGLE_APPLICATION_CREDENTIALS: '/root/.google/auth.json',
@@ -31,6 +33,7 @@ module.exports = {
             error_file: 'err.log',
             out_file: 'out.log',
             log_file: 'combined.log',
+            node_args: '--experimental-wasm-threads',
             env: {
                 NODE_ENV: 'production',
                 GOOGLE_APPLICATION_CREDENTIALS: '/root/.google/auth.json',

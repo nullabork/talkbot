@@ -83,7 +83,7 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
             textType: 'ssml', // marks if it is ssml, text etc. - optional
             voiceId: settings.name || self.getDefaultVoice('FEMALE', 'en-US'), // Polly Voice -> also determines the language - optional settings.voice ||
             //outputFormat: "mp3", // all polly output formats like mp3, pcm etc. - optional
-            outputFormat: 'ogg',
+            outputFormat: 'mp3',
             sampleRate: self.rate, // use default unless PCM
         };
 
@@ -100,14 +100,17 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         var self = this;
 
         self.doBookkeeping(request);
-        try {
+        
             let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
-           
+            let thing = async () => {
+                return await ffmpegUtil.mp3ToAutoBuffer(audioStream);
+            };
 
             callback(
                 null,
-                await ffmpegUtil.mp3ToAutoBuffer(audioStream),
+                thing
             );
+            try {
         } catch (err) {
             Common.error(request);
             Common.error(err);

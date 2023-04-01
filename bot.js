@@ -116,6 +116,7 @@
                 commands.process(message, server, world);
             } else if (message.member) {
                 // say it out loud
+                // 
                 server.speak(message);
             }
         } catch (ex) {
