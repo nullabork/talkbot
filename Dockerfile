@@ -20,14 +20,16 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash \
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN npm config set python python2.7
-RUN npm config set msvs_version 2015
+# replaced with npmrc file
+# RUN npm config set python python2.7
+
 
 RUN npm install pm2 -g
 RUN npm install node-gyp -g
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+COPY .npmrc /usr/src/app
 COPY . /usr/src/app
 RUN chmod +x /usr/src/app/command.sh
 
