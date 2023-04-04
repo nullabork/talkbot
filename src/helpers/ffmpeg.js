@@ -27,7 +27,7 @@ async function streamToBuffer(readableStream) {
 
 
 
-const mp3ToAutoBuffer = async (mp3AudioStream) => {
+const mp3ToReadableOpusBuffer = async (mp3AudioStream) => {
     let i = 0;
 
     if (!ffmpeg.isLoaded()) {
@@ -55,5 +55,5 @@ const mp3ToAutoBuffer = async (mp3AudioStream) => {
 
 
 module.exports = {
-    mp3ToAutoBuffer
+    mp3ToReadableOpusBuffer
 };
