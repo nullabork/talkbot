@@ -72,28 +72,20 @@
 
     // handle voice state updates
     bot.on('voiceStateUpdate', (oldState, newState) => {
-
-        console.log('this is a test');
         try {
             let i = 0;
             const server = world.servers[oldState.guild.id];
-            console.log('this is a test a' + i++);
             server.channelJoined(newState);
-            console.log('this is a test b' + i++);
             if (!oldState) return;
-            console.log('this is a test c' + i++);
 
             if (!server.isMaster(oldState.guild.members.cache.get(oldState.id))) return;
-console.log(oldState.channelId);
             // they've changed voice channels
             if (
                 oldState.channelId &&
                 (!newState.channelId || !newState.guild.channels.cache.get(newState.channelId).joinable)
             ) {
-                console.log('this is a test  d' + i++);
                 server.release();
             } else if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
-                console.log('this is a test e' + i++);
                 server.switchVoiceChannel(newState.guild.channels.cache.get(newState.channelId));
             }
         } catch (ex) {
