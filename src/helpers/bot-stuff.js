@@ -30,7 +30,7 @@ class BotStuff {
     }
 
     isServerOwner(server, member) {
-        return server.guild.ownerID == member.id;
+        return server.guild.ownerId == member.id;
     }
 
     // determines if the user can manage this server
