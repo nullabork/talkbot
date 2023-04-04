@@ -47,7 +47,7 @@ function debug(msg) {
         if (server.isBound()) {
             active_server_count++;
             var chansize = 'no connection';
-            if (server.guild.voice.connection) chansize = server.guild.voice.connection.channel.members.size;
+            if (server.connection) chansize = server.connection.channel.members.size;
             active_server_names +=
                 server.server_name + '(' + chansize + '): ' + build_permitted_string(server) + '\n';
         }

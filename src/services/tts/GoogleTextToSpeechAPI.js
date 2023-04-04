@@ -134,7 +134,7 @@ s
             if (!response) return callback(err, null);
 
             var stm = new streamifier.createReadStream(response.audioContent);
-            callback(err, stm);
+            callback(err, async () => stm);
         });
     }
 

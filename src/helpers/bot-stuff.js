@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 
-const { Client, Events, GatewayIntentBits } = require('discord.js'),
+const { Client, Events, GatewayIntentBits, PermissionsBitFieldBitField } = require('discord.js'),
     auth = require('@auth'),
     Common = require('@helpers/common'),
     tl8 = require('@google-cloud/translate').v2;
@@ -36,8 +36,8 @@ class BotStuff {
     // determines if the user can manage this server
     canManageTheServer(server, member) {
         let rtn =
-            member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) ||
-            member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) ||
+            member.permissions.has(PermissionsBitField.Flags.Administrator) ||
+            member.permissions.has(PermissionsBitField.Flags.ManageGuild) ||
             this.isServerOwner(server, member);
 
         return rtn;
@@ -54,7 +54,7 @@ class BotStuff {
         let botMember = server.guild.members.cache.find((x) => x.id == this.bot.user.id);
         if (!botMember) return Common.error(new Error('Cant find the member object for this bot')); // something went wrong!
 
-        let rtn = botMember.hasPermission(Discord.Permissions.FLAGS.MANAGE_MESSAGES, false, true, true);
+        let rtn = botMember.hasPermission(PermissionsBitField.Flags.ManageMessages, false, true, true);
         return rtn;
     }
 

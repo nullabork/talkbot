@@ -103,7 +103,7 @@ class TencentTextToSpeechAPI extends TextToSpeechService {
 
         self.doBookkeeping(request);
         const cb = (err, audioStream) => {
-            callback(err, audioStream.Audio);
+            callback(err, async () => audioStream.Audio);
         };
 
         TencentTextToSpeechAPI.tencent.TextToVoice(request, cb);

@@ -121,7 +121,7 @@ class AzureTextToSpeechAPI extends TextToSpeechService {
         let p = rp(options)
             .on('response', (response) => {
                 if (response.statusCode === 200) {
-                    callback(null, response);
+                    callback(null, async () => response);
                 } else {
                     Common.error(response);
                     callback(new Error('HTTP ERROR: ' + response.statusCode));

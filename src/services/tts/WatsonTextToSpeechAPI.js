@@ -97,7 +97,7 @@ class WatsonTextToSpeechAPI extends TextToSpeechService {
     try {
       let audioStream = await WatsonTextToSpeechAPI.watson.synthesize(request);
 
-      callback(null, audioStream.result);
+      callback(null, async () => audioStream.result);
     } catch (err) {
       Common.error(request);
       Common.error(err);

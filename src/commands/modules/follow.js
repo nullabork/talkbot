@@ -3,6 +3,7 @@
 var BotCommand = require('@models/BotCommand'),
     auth = require('@auth');
 
+
 /* * *
  * Command: follow
  *
@@ -206,7 +207,7 @@ async function transfer(msg) {
     if (
         !newMaster.voice ||
         !newMaster.voice.channel ||
-        (server.guild.voice.channel && newMaster.voice.channel.id != server.guild.voice.connection.channel.id)
+        (server.guild.voice.channel && newMaster.voice.channel.id != server.connection.channel.id)
     ) {
         msg.il8nResponse('transfer.samevoice');
         return;

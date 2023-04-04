@@ -13,6 +13,7 @@ const Lang = require('lang.js'),
         AudioPlayerStatus,
         createAudioPlayer,
         NoSubscriberBehavior,
+        getVoiceConnection
     } = require('@discordjs/voice');
     const TextToSpeechService = require('@services/TextToSpeechService');
 
@@ -27,7 +28,8 @@ class Server {
         this.server_id = guild.id;
 
         // the connection to the voice channel
-        this.connection = null;
+        // set with a getter now
+        // this.connection = null;
 
         // the voice channel the bot is in
         this.player = null;
@@ -110,6 +112,10 @@ class Server {
 
         // idk??
         this.messages = {};
+    }
+
+    get connection() {
+        return getVoiceConnection(this.server_id);
     }
 
     // GuildMember
@@ -260,7 +266,7 @@ class Server {
         try {
             // join the voice channel and setup all the listeners to deal with events
             // connection = await voiceChannel.join();
-            server.connection = joinVoiceChannel({
+            joinVoiceChannel({
                 channelId: voiceChannel.id,
                 guildId: server.guild.id,
                 adapterCreator: server.guild.voiceAdapterCreator,
@@ -282,8 +288,6 @@ class Server {
             server.stop('voiceClosing'); // stop playing
             clearTimeout(server.neglect_timeout);
         });
-
-
 
         // when disconnect clear the master - note that d/c may happen without a closing event
         server.connection.on('disconnect', () => {
@@ -315,12 +319,18 @@ class Server {
     // switch from whatever the current voice channel is to this voice channel
     async switchVoiceChannel(voiceChannel) {
         var server = this;
-        if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
-        if (!server.connection) return await server.joinVoiceChannel(voiceChannel);
-        if (voiceChannel.id == server.connection.channel.id)
-            return Common.error('voiceChannel already joined');
+        // if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
+        // if (!server.connection) return await server.joinVoiceChannel(voiceChannel);
+        // if (voiceChannel.id == server.connection.channel.id)
+        //     return Common.error('voiceChannel already joined');
 
-        server.connection.updateChannel(voiceChannel);
+        server.connection.rejoin({channelId: voiceChannel.id});
+
+        // joinVoiceChannel({
+        //     channelId: voiceChannel.id,
+        //     guildId: server.guild.id,
+        //     adapterCreator: server.guild.voiceAdapterCreator,
+        // });
     }
 
     // permit another user to speak
@@ -516,7 +526,7 @@ class Server {
         }
 
         var endFunc = async (reason) => {
-            clearTimeout(server.voice_timeout);
+        clearTimeout(server.voice_timeout);
             server.playing = false;
             if (server.connection.dispatcher)
                 server.connection.dispatcher.setSpeaking(false);

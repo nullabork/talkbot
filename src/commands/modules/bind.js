@@ -135,11 +135,11 @@ class Bind extends Command {
 
     async onUserJoinedChannel({ channelState, member, server }) {
         // throw out these states
-        if (!member.voice.channelID) return;
+        if (!member.voice.channelId) return;
         if (!server.bind || !server.bind.length) return;
 
         if (
-            !server.bind.includes(channelState.channelID) &&
+            !server.bind.includes(channelState.channelId) &&
             !server.bind.some((id) => member.roles.cache.has(id))
         )
             return;
@@ -158,7 +158,7 @@ class Bind extends Command {
 
         if (
             //user not in a voice channel
-            !member.voice.channelID ||
+            !member.voice.channelId ||
             //bind does not exist
             !server.bind ||
             !server.bind.length ||
