@@ -144,7 +144,7 @@
         Common.error('rate limited');
         Common.error(info);
     });
-    bot.on('messageCreate', (replayed, shardID) => Common.error(`resume ${shardID}: ` + replayed));
+    bot.on('shardResume', (replayed, shardID) => Common.error(`resume ${shardID}: ` + replayed));
     bot.on('warn', (info) => Common.error('warn:' + info));
 
     bot.on('shardReconnecting', (id) => Common.error(`Shard with ID ${id} reconnected.`));

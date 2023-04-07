@@ -101,16 +101,16 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
 
         self.doBookkeeping(request);
         
-let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
-let thing = async () => {
-    return await ffmpegUtil.mp3ToReadableOpusBuffer(audioStream);
-};
+        try {
+            let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
 
-callback(
-    null,
-    thing
-);
-            try {
+            callback(
+                null,
+                async () => {
+                    return await ffmpegUtil.mp3ToReadableOpusBuffer(audioStream);
+                }
+            );
+
         } catch (err) {
             Common.error(request);
             Common.error(err);

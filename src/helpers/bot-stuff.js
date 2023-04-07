@@ -1,6 +1,6 @@
 /*jshint esversion: 9 */
 
-const { Client, Events, GatewayIntentBits, PermissionsBitFieldBitField } = require('discord.js'),
+const { Client, Events, GatewayIntentBits, PermissionsBitField } = require('discord.js'),
     auth = require('@auth'),
     Common = require('@helpers/common'),
     tl8 = require('@google-cloud/translate').v2;
@@ -54,8 +54,11 @@ class BotStuff {
         let botMember = server.guild.members.cache.find((x) => x.id == this.bot.user.id);
         if (!botMember) return Common.error(new Error('Cant find the member object for this bot')); // something went wrong!
 
-        let rtn = botMember.hasPermission(PermissionsBitField.Flags.ManageMessages, false, true, true);
-        return rtn;
+        // member
+
+        // let rtn = botMember.hasPermission(PermissionsBitField.Flags.ManageMessages, false, true, true);
+        
+        return botMember.permissions.has(PermissionsBitField.Flags.ManageMessages, true);
     }
 
     sendMessage(channel_id, message) {

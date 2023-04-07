@@ -32,7 +32,7 @@ async function follow(msg) {
             if (!member.voice.channel.joinable) return msg.il8nResponse('follow.permissions');
 
             if (exceeded_daily_limit(server)) return msg.il8nResponse('follow.limitexceeded');
-
+            
             const errorFunc = (error) => {
                 msg.il8nResponse('follow.error');
                 Common.error(error);
@@ -40,9 +40,9 @@ async function follow(msg) {
             };
 
             server.setMaster(member);
-            const connection = await server.joinVoiceChannel(member.voice.channel);
-
-            if (!connection) {
+            await server.joinVoiceChannel(member.voice.channel);
+            
+            if (!server.connection) {
                 msg.il8nResponse('follow.error');
                 server.release();
                 return;
@@ -51,7 +51,7 @@ async function follow(msg) {
             server.addMemberSetting(member, 'toLanguage', 'default');
             commands.notify('follow', { member: member, server: server });
             msg.il8nResponse('follow.okay');
-
+            
             // unmute them if they're muted
             if (server.getMemberSetting(member, 'muted')) {
                 server.addMemberSetting(member, 'muted', false);
@@ -92,10 +92,10 @@ function should_pester(server) {
  * * */
 function unfollow(msg) {
     var server = msg.server;
-
+    
     if (server.connecting) return msg.il8nResponse('unfollow.connecting');
     if (server.leaving) return msg.il8nResponse('unfollow.leaving');
-
+    
     if (!server.isBound()) {
         msg.il8nResponse('unfollow.none');
         return;
@@ -105,7 +105,7 @@ function unfollow(msg) {
         msg.il8nResponse('unfollow.nope');
         return;
     }
-
+    
     server.release(() => {
         commands.notify('unfollow', { member: msg.message.member, server: server });
 
@@ -151,9 +151,8 @@ function sidle(msg) {
 
     if (
         !newMaster.voice ||
-        !newMaster.voice.channel ||
-        !server.guild.voice.connection ||
-        newMaster.voice.channel.id != server.guild.voice.connection.channel.id
+        !server.connection ||
+        newMaster.voice.channel.id != server.connection.joinConfig.channelId
     ) {
         msg.il8nResponse('sidle.novoice');
         return;
@@ -204,11 +203,8 @@ async function transfer(msg) {
         return;
     }
 
-    if (
-        !newMaster.voice ||
-        !newMaster.voice.channel ||
-        (server.guild.voice.channel && newMaster.voice.channel.id != server.connection.channel.id)
-    ) {
+    let chanId = server?.connection?.joinConfig?.channelId;
+    if (chanId && newMaster?.voice?.channel?.id != chanId) {
         msg.il8nResponse('transfer.samevoice');
         return;
     }
@@ -219,14 +215,14 @@ async function transfer(msg) {
     }
 
     server.setMaster(newMaster);
-    if (server.guild.voice.connection) {
+    if (server.connection) {
         msg.il8nResponse('transfer.okay', { name: newMaster.displayName });
     } else {
         var errorFunc = (err) => {};
 
-        $connection = await server.joinVoiceChannel(newMaster.voice.channel);
+        await server.joinVoiceChannel(newMaster.voice.channel);
 
-        if (!$connection) {
+        if (!server.connection) {
             msg.il8nResponse('transfer.error');
             server.release();
             return;

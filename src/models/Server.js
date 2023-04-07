@@ -13,7 +13,8 @@ const Lang = require('lang.js'),
         AudioPlayerStatus,
         createAudioPlayer,
         NoSubscriberBehavior,
-        getVoiceConnection
+        getVoiceConnection,
+        VoiceConnectionStatus
     } = require('@discordjs/voice');
     const TextToSpeechService = require('@services/TextToSpeechService');
 
@@ -240,12 +241,20 @@ class Server {
 
     release(callback) {
         const server = this;
-        if (!server.guild.voice) return;
+        let i = 0;
+        // 
+        // if (!server.guild.me.voice) return;
+        
         if (!server.connection) return;
+        
         if (server.leaving) return; // dont call it twice dude
-        if (callback) server.connection.on('disconnect', callback);
+        
+        if (callback) server.connection.on(VoiceConnectionStatus.Disconnected, callback);
+        
         commands.notify('leaveVoice', { server: server });
-        server.connection.disconnect();
+        
+        // server.connection.disconnect();
+        server.connection.destroy();
     }
 
     // get the server to join a voice channel
@@ -255,11 +264,11 @@ class Server {
         if (server.connecting)
             return Common.error('joinVoiceChannel(' + voiceChannel.id + '): tried to connect twice!');
         if (server.inChannel())
-            return Common.error(
+            return Common.error( 
                 'joinVoiceChannel(' +
                     voiceChannel.id +
                     '): already joined to ' +
-                    server.connection.channel.id +
+                    server.connection.joinConfig.channelId +
                     '!',
             );
         server.connecting = true;
@@ -290,22 +299,22 @@ class Server {
         });
 
         // when disconnect clear the master - note that d/c may happen without a closing event
-        server.connection.on('disconnect', () => {
-            server.stop('disconnect'); // stop playing
-            server.bound_to = null;
-            server.permitted = {};
-            server.leaving = false;
-        });
+        // server.connection.on(VoiceConnectionStatus.Disconnected, () => {
+        //     console.log('disconnected');
+        //     server.stop('disconnect'); // stop playing
+        //     server.bound_to = null;
+        //     server.permitted = {};
+        //     server.leaving = false;
+        // });
 
         // if an error occurs treat it like a d/c but capture the error
         // reset the state to as if there was no connection
-        server.connection.on('error', (error) => {
+        server.connection.on(VoiceConnectionStatus.Destroyed, (error) => {
             server.bound_to = null;
             server.permitted = {};
             server.leaving = false;
-            server.connecting = false; // this might cause a race condition
-            Common.error(error);
-            server.connection.disconnect(); // nerf the connection because we got an error
+            server.connecting = false;      // this might cause a race condition
+            // server.connection.disconnect(); // nerf the connection because we got an error
         });
 
         server.connecting = false;
@@ -319,18 +328,12 @@ class Server {
     // switch from whatever the current voice channel is to this voice channel
     async switchVoiceChannel(voiceChannel) {
         var server = this;
-        // if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
-        // if (!server.connection) return await server.joinVoiceChannel(voiceChannel);
-        // if (voiceChannel.id == server.connection.channel.id)
-        //     return Common.error('voiceChannel already joined');
+        if (!voiceChannel) return Common.error(new Error('null voiceChannel passed'));
+        if (!server.connection) return await server.joinVoiceChannel(voiceChannel);
+        if (voiceChannel.id == server.connection.joinConfig.channelId)
+            return Common.error('voiceChannel already joined');
 
         server.connection.rejoin({channelId: voiceChannel.id});
-
-        // joinVoiceChannel({
-        //     channelId: voiceChannel.id,
-        //     guildId: server.guild.id,
-        //     adapterCreator: server.guild.voiceAdapterCreator,
-        // });
     }
 
     // permit another user to speak
@@ -505,9 +508,9 @@ class Server {
 
     // stop currently playing audio and empty the audio queue (all=true)
     stop(reason, all) {
-        // if (all) {
-        //     this.audioQueue = [];
-        // }
+        if (all) {
+            this.audioQueue = [];
+        }
         // if (this.connection && this.connection.dispatcher)
         //     this.connection.dispatcher.end(reason);
 

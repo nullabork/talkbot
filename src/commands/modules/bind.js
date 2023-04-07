@@ -88,6 +88,9 @@ class Bind extends Command {
         } else if (/^(permit)$/i.test(restriction_identifier)) {
             server.bindPermit = true;
             input.il8nResponse('bind.permit');
+        } else if (/^(echo)$/i.test(restriction_identifier)) {
+         
+            input.response(JSON.stringify(server.bind));
         } else if (input.args.length > 0) {
             const { mentions } = input.message;
 
@@ -114,9 +117,11 @@ class Bind extends Command {
                     const user = server.guild.members.cache.get(id);
                     const channel = server.guild.channels.cache.get(id);
                     const role = server.guild.roles.cache.get(id);
-                    if (user || (channel && channel.type != 'voice') || role) continue;
 
-                    if (!server.bind.includes(id)) server.bind.push(id);
+                    console.log(channel.type);
+                    if (user || channel?.isVoiceBased() !== true || role) continue;
+
+                    if (!server.bind.includes(id)) server.bind.push(id); 
                 }
             }
 

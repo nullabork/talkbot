@@ -214,6 +214,7 @@
         "shorthelp": "Bind talkbot to auto follow people who join specific channels",
         "permit": "Permit any user who joins bound channels",
         "unpermit": "Only follow the first person to join a bound channel"
+
     },
 
     "en.bindusage": {
