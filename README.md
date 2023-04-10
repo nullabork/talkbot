@@ -107,12 +107,6 @@ To update to the latest code run:
 
 Confirm you've put the path to your API credentials file in the env var GOOGLE_APPLICATION_CREDENTIALS. [See Google cloud docs here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
 
-## npm install issues
-
-Some of the packages are difficult to install particularly on Windows.
-Usually you'll need to check your PATH environment variable and confirm Visual Studio C++ build tools are available.
-Check you're using Node v14 or above
-Check you have Python installed and that it is version 2.7.\*. It may have to be before version 3 in your path variable for it to be picked up.
 
 # Acknowledgements
 
