@@ -12,7 +12,7 @@ Try it out here: [https://discord.gg/NxrPp8g](https://discord.gg/NxrPp8g)
 
 1. If your on windows10, Install wsl2 https://docs.microsoft.com/en-us/windows/wsl/install-win10 else go to step two ;)
 2. Install docker https://docs.docker.com/get-docker/
-3. Clone this repo or [Download the talkbot files](https://github.com/nullabork/talkbot/archive/betabot.zip) and extract them.
+3. Clone this repo or [Download the talkbot files](https://github.com/nullabork/talkbot/archive/refs/heads/master.zip) and extract them.
 4. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
     - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
     - AMAZON: To learn how to setup Amazon AWS Polly [go here](https://docs.aws.amazon.com/polly/latest/dg/setting-up.html)
@@ -75,14 +75,13 @@ Each of these services can be turned on and off in the configuration of the bot.
 
 -   node js - v18
 -   git
--   python - https://www.python.org/downloads/ - v2.7.\* is required ... maybe
 
 ## Install, setup and run
 
 1. Clone this respository
     - `git clone https://github.com/nullabork/talkbot talkbot`
     - `git
-2. Copy `config/auth.example` to `config/auth.json` and put in your discord app key.
+2. Duplicate the `auth.example` file in the `config` directory and rename the new file to `auth.json` edit the file and paste in your discord app key.
     - To learn how to setup a discord app and get this token [go here](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token)
 3. Setup your prefered API provider - Google, Amazon AWS Polly or Azure or any combination of those.
     - GOOGLE: To learn how to setup your Google API credentials [go here](https://cloud.google.com/text-to-speech/docs/quickstart-client-libraries)
