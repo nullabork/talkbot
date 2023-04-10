@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "outDir": "dist",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "baseUrl": "src",
+        "paths": {
+            "@Database/*": ["database/*"],
+            "@Util/*": ["util/*"],
+            "@Services/*": ["services/*"],
+        }
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"]
+}
