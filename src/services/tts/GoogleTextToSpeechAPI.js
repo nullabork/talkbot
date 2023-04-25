@@ -4,6 +4,7 @@ const TextToSpeechService = require('@services/TextToSpeechService'),
     auth = require('@auth'),
     streamifier = require('streamifier'),
     MessageSSML = require('@models/MessageSSML'),
+    MessageParser = require('@models/MessageParser'),
     tts = require('@google-cloud/text-to-speech');
 
 
@@ -98,7 +99,8 @@ s
      * @return  {[type]}  [return request object for this API]
      */
     buildRequest(msg, settings, server) {
-        var ssml = new MessageSSML(msg, { server: server }).build();
+        const parser = new MessageParser(msg);
+        var ssml = new MessageSSML(msg, { server: server }, parser).build();
         var request = {
             input: { text: null, ssml: ssml },
 

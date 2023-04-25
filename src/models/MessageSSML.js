@@ -1,22 +1,24 @@
 /*jshint esversion: 9 */
-const MessageParser = require('@models/MessageParser'),
-  ssmlConfig = require('@helpers/ssml-dictionary'),
+  const ssmlConfig = require('@helpers/ssml-dictionary'),
   commands = require('@commands'),
   Common = require('@helpers/common');
 
-class MessageSSML extends MessageParser {
-  constructor(text, opts) {
-    super(text);
+class MessageSSML {
+
+
+  constructor(text, opts, parser) {
+    // super(text);
 
     var find = ssmlConfig
       .map(function (tag) {
         return Common.escapeRegExp(tag.open) + "|" + Common.escapeRegExp(tag.close);
       })
       .join('|');
-
+    this.raw = text;
     this.server = opts.server;
     this.text = text.replace(new RegExp('(' + find + ')', 'g'), ' $1 ');
     this.tagStack = [];
+    this.parser = parser;
   }
 
   compile(token) {
@@ -86,13 +88,13 @@ class MessageSSML extends MessageParser {
 
 
   build() {
-    var compiled = this.parse();
+    var compiled = this.parser.parse();
 
     this.tagStack.forEach(function (element) {
       compiled.push(element.closeString());
     });
 
-    return '<speak>' + compiled.join(" ").trim() + this.messageBuffer() + '</speak>';
+    return '<speak>' +  this.raw + '</speak>';
   }
 }
 

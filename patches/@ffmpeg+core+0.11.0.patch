@@ -3,8 +3,7 @@ index a81e2fd..586f6e2 100644
 --- a/node_modules/@ffmpeg/core/dist/ffmpeg-core.js
 +++ b/node_modules/@ffmpeg/core/dist/ffmpeg-core.js
 @@ -1,7 +1,32 @@
-+//console.log('asdsad');
- 
+
  var createFFmpegCore = (function() {
    var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
 -  if (typeof __filename !== 'undefined') _scriptDir = _scriptDir || __filename;

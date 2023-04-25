@@ -5,6 +5,7 @@ const Common = require('@helpers/common'),
     auth = require('@auth'),    
     ssmlvalid = require('ssml-validator'),
     TextToSpeechService = require('@services/TextToSpeechService'),
+    MessageParser = require('@models/MessageParser'),
     MessageSSML = require('@models/MessageSSML'),
     polly = require('@services/tts/PollyTTS.js');
 
@@ -76,7 +77,8 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
         if (!settings['amazon-breaths-disabled'])
             msg = '<amazon:auto-breaths>' + msg + '</amazon:auto-breaths>';
 
-        var ssml = new MessageSSML(msg, { server: server }).build();
+        const parser = new MessageParser(msg);
+        var ssml = new MessageSSML(msg, { server: server }, parser).build();
         var self = this;
         let options = {
             text: ssml, // if textType is ssml, than here needs to be the ssml string
@@ -98,12 +100,10 @@ class AmazonTextToSpeechAPI extends TextToSpeechService {
      */
     async getAudioContent(request, callback) {
         var self = this;
-
         self.doBookkeeping(request);
         
         try {
             let audioStream = await AmazonTextToSpeechAPI.polly.textToSpeech(request);
-
             callback(
                 null,
                 async () => {
