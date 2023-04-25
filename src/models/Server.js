@@ -590,7 +590,7 @@ class Server {
             if(typeof readable == 'function') {
                 readable = await readable();
             }
-      
+
             server.player.play(readable);
             server.connection.subscribe(server.player);
             
