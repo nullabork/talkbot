@@ -1,2 +1,12 @@
-*/config
-*/node_modules
+node_modules
+dist
+.env
+.git
+.github
+.vscode
+.claude
+.devcontainer
+*.log
+*.server
+config/google-auth.json
+config/*.server

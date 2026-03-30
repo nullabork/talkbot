@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "WebFetch(domain:discordjs.guide)",
+      "WebFetch(domain:discord.js.org)",
+      "WebFetch(domain:discord.com)",
+      "WebFetch(domain:docs.discord.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm info:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s https://api.github.com/repos/discordjs/discord.js/contents/apps/guide/src/content)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(d[''''name''''], d[''''type'''']\\) for d in data]\")",
+      "Bash(curl -s https://api.github.com/repos/discordjs/guide/contents/guide)",
+      "Bash(python3 -c \"import json,sys; [print\\(d[''''name'''']\\) for d in json.load\\(sys.stdin\\)]\")",
+      "Bash(curl -s https://raw.githubusercontent.com/discordjs/guide/main/guide/creating-your-bot/command-handling.md)",
+      "Bash(curl -s https://raw.githubusercontent.com/discordjs/guide/main/guide/slash-commands/advanced-creation.md)",
+      "Bash(curl:*)",
+      "*",
+      "WebFetch(domain:gist.github.com)",
+      "Bash(ls /workspace/src/commands/modules/*.ts)",
+      "Bash(ls /workspace/src/commands/modules/*.js)",
+      "Bash(timeout 5 node dist/src/index.js)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npm install:*)",
+      "Bash(find src/ -name *.js)",
+      "Bash(done)"
+    ],
+    "defaultMode": "bypassPermissions"
+  }
+}

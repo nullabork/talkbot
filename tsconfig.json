@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "target": "ES2023",
+        "lib": ["ES2023"],
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "rootDir": ".",
+        "baseUrl": ".",
+        "paths": {
+            "@config/*": ["config/*"],
+            "@state": ["config/state.json"],
+            "@botconfig": ["config/config.json"],
+            "@paths": ["src/paths"],
+            "@src/*": ["src/*"],
+            "@helpers/*": ["src/helpers/*"],
+            "@commands": ["src/commands/index"],
+            "@commands/*": ["src/commands/*"],
+            "@models/*": ["src/models/*"],
+            "@services/*": ["src/services/*"],
+            "@tts/*": ["src/services/tts/*"]
+        },
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "declaration": false,
+        "sourceMap": true,
+        "allowJs": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
+}

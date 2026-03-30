@@ -1,8 +1,19 @@
 /node_modules/
-auth.json
 state.json
 /config/*.server
 /config/ohshit*
 talkbot.code-workspace
 samples
 /config/google-auth.json
+
+# TypeScript build output
+/dist/
+*.tsbuildinfo
+
+# Environment variables (secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log

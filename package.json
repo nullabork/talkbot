@@ -2,9 +2,19 @@
     "name": "talkbot",
     "version": "0.0.1",
     "description": "Text to speech bot",
-    "main": "bot.js",
+    "main": "dist/src/index.js",
     "author": "YOUR-NAME-HERE",
+    "engines": {
+        "node": ">=22.12.0"
+    },
     "scripts": {
+        "build": "tsc && tsc-alias && cp src/lang.json dist/src/lang.json",
+        "start": "node dist/src/index.js",
+        "dev": "nodemon --watch src --ext ts --exec \"node -r dotenv/config -r tsconfig-paths/register -r ts-node/register src/index.ts\"",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "deploy:commands": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register src/deploy-commands.ts",
+        "lint": "tsc --noEmit",
         "samples": "node bin/create-samples.js",
         "postinstall": "patch-package"
     },
@@ -16,11 +26,11 @@
         "@google-cloud/text-to-speech": "6.4.0",
         "@google-cloud/translate": "^9.3.0",
         "discord.js": "^14.25.1",
+        "dotenv": "^16.4.0",
         "figlet": "1.9.4",
         "ibm-watson": "^12.1.1",
         "lang.js": "1.1.14",
         "libsodium-wrappers": "^0.7.15",
-        "module-alias": "2.2.3",
         "pad": "3.3.0",
         "patch-package": "^8.0.1",
         "request-promise": "4.2.6",
@@ -30,24 +40,19 @@
         "tmi.js": "^1.8.5",
         "twitch-toolkit": "0.0.11",
         "xmlbuilder": "15.1.1",
+        "zod": "^3.23.0",
         "@snazzah/davey": "0.1.9"
     },
     "devDependencies": {
-        "jshint": "^2.13.6",
+        "@types/node": "^22.0.0",
         "nodemon": "^3.1.11",
         "sprintf-js": "^1.1.3",
-        "sync-request": "^6.1.0"
-    },
-    "_moduleAliases": {
-        "@config": "config",
-        "@state": "config/state.json",
-        "@auth": "config/auth.json",
-        "@paths": "src/paths",
-        "@src": "src",
-        "@helpers": "src/helpers",
-        "@commands": "src/commands",
-        "@models": "src/models",
-        "@services": "src/services",
-        "@tts": "src/services/tts"
+        "sync-request": "^6.1.0",
+        "ts-node": "^10.9.0",
+        "tsc-alias": "^1.8.0",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.7.0",
+        "vitest": "^3.0.0",
+        "module-alias": "2.2.3"
     }
 }

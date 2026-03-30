@@ -1,0 +1,26 @@
+{
+    "servers": {},
+
+    "tts": {
+        "google": {
+            "enabled": false,
+            "enforce_limit": false,
+            "limit": 1000000
+        },
+        "watson": {
+            "enabled": false,
+            "enforce_limit": false,
+            "limit": 1000000
+        },
+        "amazon": {
+            "enabled": true,
+            "enforce_limit": false,
+            "limit": 5000000
+        },
+        "azure": {
+            "enabled": false,
+            "enforce_limit": false,
+            "limit": 1000000
+        }
+    }
+}
