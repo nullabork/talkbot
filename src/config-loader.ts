@@ -24,6 +24,20 @@ export const botConfigPath = path.join(configPath, 'config.json');
 
 let _botConfig: any = null;
 
+function buildTtsConfigFromEnv(): Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> {
+    const providers = ['google', 'amazon', 'azure', 'watson', 'tencent', 'alibaba'] as const;
+    const tts: Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> = {};
+    for (const provider of providers) {
+        const prefix = `TTS_${provider.toUpperCase()}`;
+        tts[provider] = {
+            enabled: process.env[`${prefix}_ENABLED`] === 'true',
+            enforce_limit: process.env[`${prefix}_ENFORCE_LIMIT`] === 'true',
+            limit: parseInt(process.env[`${prefix}_LIMIT`] || '5000000', 10),
+        };
+    }
+    return tts;
+}
+
 export function getBotConfig(): any {
     if (!_botConfig) {
         if (!fs.existsSync(botConfigPath)) {
@@ -32,6 +46,7 @@ export function getBotConfig(): any {
             process.exit(1);
         }
         _botConfig = JSON.parse(fs.readFileSync(botConfigPath, 'utf-8'));
+        _botConfig.tts = buildTtsConfigFromEnv();
     }
     return _botConfig;
 }

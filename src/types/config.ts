@@ -2,7 +2,7 @@
 export interface BotConfig {
     /** Keyed by guild snowflake or "-1" for global defaults */
     servers: Record<string, ServerOverride>;
-    tts: TTSConfig;
+    tts?: TTSConfig;
 }
 
 /**

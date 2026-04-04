@@ -5,37 +5,5 @@
             "daily_char_limit": 10000,
             "twitch_audioQueue_limit": 10
         }
-    },
-    "tts": {
-        "google": {
-            "enabled": false,
-            "enforce_limit": false,
-            "limit": 5000000
-        },
-        "azure": {
-            "enabled": false,
-            "enforce_limit": false,
-            "limit": 5000000
-        },
-        "amazon": {
-            "enabled": false,
-            "enforce_limit": true,
-            "limit": 5000000
-        },
-        "watson": {
-            "enabled": false,
-            "enforce_limit": false,
-            "limit": 5000000
-        },
-        "tencent": {
-            "enabled": false,
-            "enforce_limit": true,
-            "limit": 1000000
-        },
-        "alibaba": {
-            "enabled": false,
-            "enforce_limit": true,
-            "limit": 1000000
-        }
     }
 }

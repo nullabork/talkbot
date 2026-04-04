@@ -44,6 +44,31 @@ const envSchema = z.object({
     ALIBABA_TOKEN: z.string().optional(),
     ALIBABA_ENDPOINT: z.string().optional(),
 
+    // TTS Provider Settings (enabled, enforce_limit, character limit)
+    TTS_GOOGLE_ENABLED: z.string().default('false'),
+    TTS_GOOGLE_ENFORCE_LIMIT: z.string().default('false'),
+    TTS_GOOGLE_LIMIT: z.coerce.number().default(5000000),
+
+    TTS_AMAZON_ENABLED: z.string().default('true'),
+    TTS_AMAZON_ENFORCE_LIMIT: z.string().default('false'),
+    TTS_AMAZON_LIMIT: z.coerce.number().default(5000000),
+
+    TTS_AZURE_ENABLED: z.string().default('false'),
+    TTS_AZURE_ENFORCE_LIMIT: z.string().default('false'),
+    TTS_AZURE_LIMIT: z.coerce.number().default(5000000),
+
+    TTS_WATSON_ENABLED: z.string().default('false'),
+    TTS_WATSON_ENFORCE_LIMIT: z.string().default('false'),
+    TTS_WATSON_LIMIT: z.coerce.number().default(5000000),
+
+    TTS_TENCENT_ENABLED: z.string().default('false'),
+    TTS_TENCENT_ENFORCE_LIMIT: z.string().default('true'),
+    TTS_TENCENT_LIMIT: z.coerce.number().default(1000000),
+
+    TTS_ALIBABA_ENABLED: z.string().default('false'),
+    TTS_ALIBABA_ENFORCE_LIMIT: z.string().default('true'),
+    TTS_ALIBABA_LIMIT: z.coerce.number().default(1000000),
+
     // Application
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),

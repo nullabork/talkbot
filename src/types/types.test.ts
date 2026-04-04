@@ -30,7 +30,7 @@ describe('types', () => {
                 },
             },
         };
-        expect(botConfig.tts.google?.enabled).toBe(true);
+        expect(botConfig.tts!.google?.enabled).toBe(true);
     });
 
     it('BotConfig allows all optional TTS providers to be absent', () => {
@@ -38,8 +38,8 @@ describe('types', () => {
             servers: {},
             tts: {},
         };
-        expect(botConfig.tts.google).toBeUndefined();
-        expect(botConfig.tts.azure).toBeUndefined();
+        expect(botConfig.tts!.google).toBeUndefined();
+        expect(botConfig.tts!.azure).toBeUndefined();
     });
 
     it('ServerStateData matches .server file shape', () => {
