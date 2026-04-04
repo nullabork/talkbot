@@ -25,14 +25,21 @@ export const botConfigPath = path.join(configPath, 'config.json');
 let _botConfig: any = null;
 
 function buildTtsConfigFromEnv(): Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> {
-    const providers = ['google', 'amazon', 'azure', 'watson', 'tencent', 'alibaba'] as const;
+    const defaults: Record<string, [string, string, string]> = {
+        google:  ['false', 'false', '5000000'],
+        amazon:  ['true',  'false', '5000000'],
+        azure:   ['false', 'false', '5000000'],
+        watson:  ['false', 'false', '5000000'],
+        tencent: ['false', 'true',  '1000000'],
+        alibaba: ['false', 'true',  '1000000'],
+    };
     const tts: Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> = {};
-    for (const provider of providers) {
+    for (const [provider, [defEnabled, defEnforce, defLimit]] of Object.entries(defaults)) {
         const prefix = `TTS_${provider.toUpperCase()}`;
         tts[provider] = {
-            enabled: process.env[`${prefix}_ENABLED`] === 'true',
-            enforce_limit: process.env[`${prefix}_ENFORCE_LIMIT`] === 'true',
-            limit: parseInt(process.env[`${prefix}_LIMIT`] || '5000000', 10),
+            enabled: (process.env[`${prefix}_ENABLED`] ?? defEnabled) === 'true',
+            enforce_limit: (process.env[`${prefix}_ENFORCE_LIMIT`] ?? defEnforce) === 'true',
+            limit: parseInt(process.env[`${prefix}_LIMIT`] ?? defLimit, 10),
         };
     }
     return tts;

@@ -69,6 +69,9 @@ const envSchema = z.object({
     TTS_ALIBABA_ENFORCE_LIMIT: z.string().default('true'),
     TTS_ALIBABA_LIMIT: z.coerce.number().default(1000000),
 
+    // Pipeline measurement
+    MEASURE: z.string().default('false'),
+
     // Application
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),

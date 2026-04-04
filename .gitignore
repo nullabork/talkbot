@@ -17,3 +17,6 @@ samples
 
 # Logs
 *.log
+
+# Measure output
+measure.json

@@ -19,6 +19,8 @@ const botStuff = require('@helpers/bot-stuff');
 const Common = require('@helpers/common');
 const fs = require('fs');
 const TextToSpeechService = require('@services/TextToSpeechService');
+const Measure = require('@services/Measure');
+import type { Trace } from '@services/Measure';
 import { env } from '../env';
 
 const TIMEOUT_NEGLECT: number = env.NEGLECT_TIMEOUT;
@@ -456,7 +458,7 @@ class Server {
     }
 
     // speak a message in a voice channel - raw text
-    talk(message: string, options: any, callback?: () => void): void {
+    talk(message: string, options: any, callback?: () => void, trace?: Trace | null): void {
         const server = this;
 
         if (!server.inChannel()) return;
@@ -479,15 +481,18 @@ class Server {
             TextToSpeechService.defaultProvider;
 
         const request = service.buildRequest(message, settings, server);
+        trace?.mark('build_request');
 
         // Performs the Text-to-Speech request
+        trace?.mark('api_call_start');
         service.getAudioContent(request, async (err: Error | null, audio: AudioContent | null) => {
+            trace?.mark('api_call_end');
             if (err) {
                 Common.error(err);
                 return;
             }
             try {
-                await server.playAudioContent(audio!, service.format, callback!);
+                await server.playAudioContent(audio!, service.format, callback!, trace);
             } catch (e) {
                 Common.error(e);
             }
@@ -512,7 +517,7 @@ class Server {
     }
 
     // internal function for playing audio content returned from the TTS API and queuing it
-    async playAudioContent(audioContent: AudioContent, format: string, callback: () => void): Promise<void> {
+    async playAudioContent(audioContent: AudioContent, format: string, callback: () => void, trace?: Trace | null): Promise<void> {
         const server = this;
         let readable: any = audioContent;
 
@@ -528,6 +533,8 @@ class Server {
             if ((server.connection as any)?.dispatcher)
                 (server.connection as any).dispatcher.setSpeaking(false);
             server.voice_timeout = null;
+            trace?.mark('playback_end');
+            trace?.end();
             try {
                 callback();
             } catch (ex) {
@@ -544,7 +551,11 @@ class Server {
         // queue it up if there's something playing
         if (server.playing) {
             if (!server.audioQueue) server.audioQueue = [];
-            const queueFunc = async () => await server.playAudioContent(readable, format, callback);
+            trace?.mark('queue_wait_start');
+            const queueFunc = async () => {
+                trace?.mark('queue_wait_end');
+                await server.playAudioContent(readable, format, callback, trace);
+            };
             server.audioQueue.push(queueFunc);
             return;
         }
@@ -578,9 +589,12 @@ class Server {
             });
 
             if (typeof readable == 'function') {
+                trace?.mark('transcode_start');
                 readable = await readable();
+                trace?.mark('transcode_end');
             }
 
+            trace?.mark('playback_start');
             server.player.play(readable);
             server.connection!.subscribe(server.player);
         } catch (ex) {
@@ -591,6 +605,7 @@ class Server {
     // call this if you want to check a msg content is valid and run it through translation
     speak(message: Message): void {
         const server = this;
+        const trace: Trace | null = Measure.getInstance().start();
         const settings = server.getMemberSettings(message.member as GuildMember | null);
 
         const ret = commands.notify('preValidate', {
@@ -627,6 +642,8 @@ class Server {
 
         if (content.length < 1) return;
 
+        trace?.mark('clean');
+
         const voiceRet = commands.notify('configureVoice', {
             message: message,
             original_settings: settings,
@@ -641,14 +658,16 @@ class Server {
                     content: message.content,
                     server: server,
                 }),
-            );
+            trace);
         }
 
         const tolang = server.getMemberSetting(message.member as GuildMember | null, 'toLanguage');
         if (tolang && tolang != 'default') {
+            trace?.mark('translate_start');
             botStuff.translate_client
                 .translate(content, tolang)
                 .then((results: any[]) => {
+                    trace?.mark('translate_end');
                     _speak(results[0], finalSettings);
                 })
                 .catch(Common.error);
