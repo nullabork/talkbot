@@ -2,6 +2,8 @@
 
 TalkBot reads Discord text channel messages aloud in voice channels. Type a message and the bot speaks it. Supports multiple voice providers, per-user voice customization, and works on any server.
 
+> **This is v2** — a major rewrite of TalkBot. The codebase has been migrated to TypeScript, all secrets moved to `.env`, and Docker startup has changed. A new [local TTS provider (Kokoro)](#kokoro-local--no-cloud-api-key-needed) has been added — no cloud API keys needed, runs on your machine. If you were running v1 and want to upgrade, see [Migrating to v2](#migrating-to-v2). If you need the old version, switch to the `master` branch on GitHub (click **Branch: v2** at the top of the repo and select `master`).
+
 ---
 
 ## Table of Contents
@@ -9,11 +11,11 @@ TalkBot reads Discord text channel messages aloud in voice channels. Type a mess
 - [What You Need](#what-you-need)
 - [Download](#download)
 - [Quick Start (Docker)](#quick-start-docker)
+- [Migrating to v2](#migrating-to-v2)
 - [Quick Start (No Docker)](#quick-start-no-docker)
 - [Discord Setup](#discord-setup)
 - [TTS Providers](#tts-providers)
 - [Commands](#commands)
-- [Migrating from auth.json](#migrating-from-authjson)
 - [Environment Variables Reference](#environment-variables-reference)
 - [Setup on Coolify](#setup-on-coolify)
 - [Local Development](#local-development)
@@ -26,7 +28,7 @@ TalkBot reads Discord text channel messages aloud in voice channels. Type a mess
 ## What You Need
 
 1. **A Discord bot token** — free from the [Discord Developer Portal](https://discord.com/developers/applications) (see [Discord Setup](#discord-setup))
-2. **API credentials for a TTS (text-to-speech) service** — at least one. Amazon Polly is the easiest to start with (see [TTS Providers](#tts-providers))
+2. **API credentials for a TTS (text-to-speech) service** — at least one. Amazon Polly is the easiest to start with (see [TTS Providers](#tts-providers)). Or skip the cloud APIs entirely and run a [local TTS model (Kokoro)](https://github.com/remsky/Kokoro-FastAPI) if you have spare CPU/GPU resources
 3. **A place to run the bot** — your own computer, a VPS, or a hosting service like [Coolify](#setup-on-coolify)
 
 ---
@@ -59,21 +61,82 @@ cd talkbot
    - Copy the file `.env.example` and rename the copy to `.env`
    - Open `.env` in a text editor (Notepad, VS Code, etc.)
    - Paste your Discord bot token after `DISCORD_TOKEN=`
-   - Paste your TTS provider credentials (see [TTS Providers](#tts-providers))
+   - Paste your TTS provider credentials (see [TTS Providers](#tts-providers)), or skip cloud APIs and use the [local Kokoro model](#kokoro-local--no-cloud-api-key-needed) instead
 
 4. **Start the bot:**
    ```bash
-   docker compose up -d
-   ```
+   # Mac / Linux:
+   ./docker-start.sh
 
-6. **Check it's working:**
+   # Windows:
+   docker-start.cmd
+   ```
+   The start script reads your `.env` and launches the right containers automatically (including Kokoro TTS if enabled). If Kokoro hasn't been downloaded yet, it will prompt you first.
+
+5. **Check it's working:**
    ```bash
-   docker compose logs -f
+   ./docker-start.sh logs        # Mac / Linux
+   docker-start.cmd logs         # Windows
    ```
    You should see `Loaded the <Provider> TTS API credentials OK.` and then the bot logging into Discord. Press Ctrl+C to stop watching logs (the bot keeps running).
 
-**To stop the bot:** `docker compose down`
-**To restart after changes:** `docker compose down && docker compose build && docker compose up -d`
+**To stop the bot:**
+- Mac / Linux: `./docker-start.sh down`
+- Windows: `docker-start.cmd down`
+
+**To restart after changes:**
+- Mac / Linux: `./docker-start.sh restart`
+- Windows: `docker-start.cmd restart`
+
+---
+
+## Migrating to v2
+
+If you had TalkBot running before, here's what changed and how to upgrade.
+
+### What's different
+
+- **All secrets and settings are now in `.env`** — `config/auth.json` and the TTS settings from `config/config.json` are gone. Everything is in one file.
+- **Docker startup changed** — instead of `docker compose up -d`, use the start scripts (`docker-start.sh` or `docker-start.cmd`). They read your `.env` and launch the right containers automatically.
+- **TTS providers are enabled in `.env`** — set `TTS_AMAZON_ENABLED=true` (or whichever provider you use) instead of editing `config.json`.
+- **New local TTS option** — Kokoro runs a TTS model on your machine, no cloud API keys needed.
+
+### Step by step
+
+1. **Pull the latest code:**
+   ```bash
+   git pull
+   git checkout v2
+   ```
+   Or re-download the ZIP from GitHub (make sure the branch says `v2`).
+
+2. **Create your `.env` file** — copy `.env.example` to `.env`, then move your credentials across:
+
+   | Old location (`auth.json` / `config.json`) | New location (`.env`) |
+   |---|---|
+   | `bot_token` | `DISCORD_TOKEN` |
+   | `client_id` | `CLIENT_ID` |
+   | `dev_ids` (array) | `DEV_IDS` (comma-separated) |
+   | `command_char` | `COMMAND_CHAR` |
+   | Amazon `accessKeyId` | `AWS_ACCESS_KEY_ID` |
+   | Amazon `secretAccessKey` | `AWS_SECRET_ACCESS_KEY` |
+   | Azure `subscriptionKey` | `AZURE_SUBSCRIPTION_KEY` |
+   | Watson `apikey` | `WATSON_API_KEY` |
+   | Watson `serviceUrl` | `WATSON_SERVICE_URL` |
+   | `tts.amazon.enabled: true` | `TTS_AMAZON_ENABLED=true` |
+
+3. **Start the bot:**
+   ```bash
+   # Mac / Linux:
+   ./docker-start.sh
+
+   # Windows:
+   docker-start.cmd
+   ```
+
+4. **Delete `auth.json`** — it's no longer used.
+
+Your `.server` files (per-guild state in `config/`) are unchanged and will continue to work. Voice settings, permissions, and sound effects are all preserved.
 
 ---
 
@@ -101,25 +164,6 @@ If you'd rather run the bot directly on your computer without Docker.
    ```
 
 The bot will start and connect to Discord. To stop it, press Ctrl+C.
-
----
-
-## Migrating from auth.json
-
-If you're upgrading from an older version that used `config/auth.json`:
-
-1. **Copy your bot token** from `auth.json` → `DISCORD_TOKEN` in `.env`
-2. **Copy your TTS provider credentials** for whichever provider you use:
-   - Amazon Polly: `accessKeyId` → `AWS_ACCESS_KEY_ID`, `secretAccessKey` → `AWS_SECRET_ACCESS_KEY`
-   - Azure: `subscriptionKey` → `AZURE_SUBSCRIPTION_KEY`
-   - Watson: `apikey` → `WATSON_API_KEY`, `serviceUrl` → `WATSON_SERVICE_URL`
-   - Google: already uses `GOOGLE_APPLICATION_CREDENTIALS` env var
-3. **Optionally move** other settings: `dev_ids` → `DEV_IDS` (comma-separated), `command_char` → `COMMAND_CHAR`
-4. **Delete `auth.json`** — it's no longer used. Everything is in `.env` now.
-
-**Your `.server` files** (per-guild state in `config/`) are unchanged and will continue to work.
-
-See the full [Environment Variables Reference](#environment-variables-reference) for all available settings and their defaults.
 
 ---
 
@@ -196,6 +240,24 @@ You need at least one provider enabled. Set the API credentials and `TTS_<PROVID
 
 The Alibaba provider is non-functional due to missing audio processing dependencies. It is hardcoded to `enabled: false`.
 
+### Kokoro (local — no cloud API key needed)
+
+Runs a local TTS model via [Kokoro-FastAPI](https://github.com/remsky/Kokoro-FastAPI). No API keys required — the model runs on your machine. The first startup downloads the model image (~4GB) and may take 5-20 minutes depending on your internet speed. Only CPU mode has been tested so far — GPU mode should work with NVIDIA hardware but is experimental.
+
+1. Add to `.env`:
+   ```
+   TTS_KOKORO_ENABLED=true
+   KOKORO_DEVICE=cpu
+   ```
+   Set `KOKORO_DEVICE=gpu` if you have an NVIDIA GPU with [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) installed.
+
+2. Start everything:
+   ```bash
+   ./docker-start.sh          # Mac / Linux
+   docker-start.cmd           # Windows
+   ```
+   The start script reads your `.env` and automatically launches the Kokoro container alongside the bot. On first run it will prompt to confirm the ~4GB model download.
+
 ---
 
 ## Commands
@@ -241,7 +303,9 @@ TalkBot uses prefix commands (default `!`). Type `!help` in any text channel the
 | `!help <group>` | Show commands for a group (control, personalization, info, server) |
 | `!ping` | Check if the bot is alive |
 | `!who` | Show master and permitted users |
-| `!voices` | Browse available TTS voices |
+| `!voices` | Browse voices — pick provider, language, see voice list |
+| `!voices set` | Set your voice via interactive dropdowns |
+| `!voices samples` | Open the online voice sample database |
 | `!details [@user]` | Show voice settings |
 | `!stats` | Show server TTS usage statistics |
 | `!invite` | Get the bot invite link |
@@ -317,6 +381,9 @@ All configuration is done through `.env`. Copy `.env.example` to get started.
 | `ALIBABA_APP_KEY` | Alibaba | Application key |
 | `ALIBABA_TOKEN` | Alibaba | Access token |
 | `ALIBABA_ENDPOINT` | Alibaba | TTS endpoint URL |
+| `KOKORO_BASE_URL` | Kokoro | Server URL (default `http://kokoro-tts:8880`) |
+| `KOKORO_DEFAULT_VOICE` | Kokoro | Default voice (default `af_heart`) |
+| `KOKORO_DEVICE` | Kokoro | `cpu` or `gpu` (picks Docker image) |
 
 ### TTS Provider Settings
 Each provider has `ENABLED`, `ENFORCE_LIMIT`, and `LIMIT` settings. Format: `TTS_<PROVIDER>_<SETTING>`.
@@ -341,6 +408,9 @@ Each provider has `ENABLED`, `ENFORCE_LIMIT`, and `LIMIT` settings. Format: `TTS
 | `TTS_ALIBABA_ENABLED` | `false` | Enable Alibaba Cloud |
 | `TTS_ALIBABA_ENFORCE_LIMIT` | `true` | Block requests after limit hit |
 | `TTS_ALIBABA_LIMIT` | `1000000` | Character limit |
+| `TTS_KOKORO_ENABLED` | `false` | Enable Kokoro local TTS |
+| `TTS_KOKORO_ENFORCE_LIMIT` | `false` | Block requests after limit hit |
+| `TTS_KOKORO_LIMIT` | `5000000` | Character limit |
 
 ---
 
@@ -466,8 +536,8 @@ config/
 - Subsequent messages are faster.
 - Google Cloud TTS is generally the fastest provider.
 
-### Migrating from old version
-- See [Migrating from auth.json](#migrating-from-authjson) for the full field mapping.
+### Upgrading from v1
+- See [Migrating to v2](#migrating-to-v2) for the full walkthrough.
 
 ---
 

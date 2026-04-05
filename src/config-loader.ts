@@ -27,11 +27,12 @@ let _botConfig: any = null;
 function buildTtsConfigFromEnv(): Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> {
     const defaults: Record<string, [string, string, string]> = {
         google:  ['false', 'false', '5000000'],
-        amazon:  ['true',  'false', '5000000'],
+        amazon:  ['false',  'false', '5000000'],
         azure:   ['false', 'false', '5000000'],
         watson:  ['false', 'false', '5000000'],
-        tencent: ['false', 'true',  '1000000'],
-        alibaba: ['false', 'true',  '1000000'],
+        tencent: ['false', 'false',  '1000000'],
+        alibaba: ['false', 'false',  '1000000'],
+        kokoro:  ['false', 'false', '5000000'],
     };
     const tts: Record<string, { enabled: boolean; enforce_limit: boolean; limit: number }> = {};
     for (const [provider, [defEnabled, defEnforce, defLimit]] of Object.entries(defaults)) {

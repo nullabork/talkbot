@@ -5,3 +5,17 @@ services:
     volumes:
       - ./config:/app/config
     restart: unless-stopped
+
+  # Kokoro local TTS — activated by bin/docker-start.js when TTS_KOKORO_ENABLED=true
+  # Image selected by KOKORO_DEVICE env var (cpu or gpu, default cpu)
+  # URL is always http://kokoro-tts:8880 inside the Docker network
+  kokoro-tts:
+    image: ghcr.io/remsky/kokoro-fastapi-${KOKORO_DEVICE:-cpu}:v0.2.4-master
+    profiles: [kokoro]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8880/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

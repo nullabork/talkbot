@@ -16,6 +16,10 @@
         "deploy:commands": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register src/deploy-commands.ts",
         "lint": "tsc --noEmit",
         "samples": "node bin/create-samples.js",
+        "docker:up": "bash docker-start.sh up",
+        "docker:down": "bash docker-start.sh down",
+        "docker:restart": "bash docker-start.sh restart",
+        "docker:logs": "bash docker-start.sh logs",
         "postinstall": "patch-package"
     },
     "dependencies": {

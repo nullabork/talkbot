@@ -133,8 +133,8 @@
     },
     "en.voices": {
         "okay": "```css\n:table\n```\n You can set your voice with the `Voice` or the `Alias` values.\nFor example:\n`:command_charmyvoice sally`",
-        "shorthelp": "List of voices, `:command_charvoices au`",
-        "longhelp": "List of voices, `:command_charvoices au`",
+        "shorthelp": "List voices: `:command_charvoices <provider>` or `:command_charvoices samples`",
+        "longhelp": "List enabled providers: `:command_charvoices`\nList voices for a provider: `:command_charvoices amazon`\nOnline voice samples: `:command_charvoices samples`",
         "more": "You must specify a language code. eg `:command_charvoices au`.\nYou can find language codes with :command_charlangs"
     },
     "en.textrule": {

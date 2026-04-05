@@ -69,6 +69,14 @@ const envSchema = z.object({
     TTS_ALIBABA_ENFORCE_LIMIT: z.string().default('true'),
     TTS_ALIBABA_LIMIT: z.coerce.number().default(1000000),
 
+    TTS_KOKORO_ENABLED: z.string().default('false'),
+    TTS_KOKORO_ENFORCE_LIMIT: z.string().default('false'),
+    TTS_KOKORO_LIMIT: z.coerce.number().default(5000000),
+
+    // Kokoro local TTS
+    KOKORO_BASE_URL: z.string().default('http://localhost:8880'),
+    KOKORO_DEFAULT_VOICE: z.string().default('af_heart'),
+
     // Pipeline measurement
     MEASURE: z.string().default('false'),
 

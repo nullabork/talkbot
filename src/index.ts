@@ -82,6 +82,20 @@ const bot = botStuff.bot;
         } catch (ex: any) { Common.error(ex); }
     });
 
+    // Interaction handling — slash commands + component interactions (select menus, buttons)
+    bot.on(Events.InteractionCreate, async (interaction: any) => {
+        try {
+            if (interaction.isChatInputCommand()) {
+                await commands.handleInteraction(interaction);
+            } else if (interaction.isStringSelectMenu() || interaction.isButton()) {
+                const voicePicker = require('@commands/modules/voices');
+                if (voicePicker.handleComponent) {
+                    await voicePicker.handleComponent(interaction);
+                }
+            }
+        } catch (ex: any) { Common.error(ex); }
+    });
+
     // Error/disconnect handlers
     bot.on(Events.ShardDisconnect, (evt: any, shardID: number) => {
         try {
