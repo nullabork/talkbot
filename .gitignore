@@ -20,3 +20,6 @@ samples
 
 # Measure output
 measure.json
+
+# Claude Code
+.claude/
